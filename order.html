@@ -152,16 +152,19 @@
 
 <!-- Skrypt do obsługi produktów i zamówienia -->
 <script>
-    // Lista produktów
-    const products = [
-        { code: '50927', packSize: '1', name: 'LAYS 125G CHIPSY BARBEQUE WERSJA RUMUNSKA', price: 1.15, quantity: 0 },
-        { code: '50924', packSize: '1', name: 'LAYS 125G CHIPSY PAPRYKOWE WERSJA RUMUNSKA', price: 1.15, quantity: 0 },
-        { code: '39390', packSize: '1', name: 'RUMEN 1L OLEJ SLONECZNIKOWY-ULEI', price: 1.25, quantity: 0 },
-        // Dodaj kolejne produkty...
-    ];
+    // Funkcja do pobrania produktów z pliku JSON na GitHubie
+    async function fetchProducts() {
+        try {
+            const response = await fetch('https://marcin870119.github.io/masterzamowienia/products.json');
+            const products = await response.json();
+            displayProducts(products);
+        } catch (error) {
+            console.error("Błąd przy pobieraniu produktów:", error);
+        }
+    }
 
     // Funkcja do wyświetlenia produktów
-    function displayProducts() {
+    function displayProducts(products) {
         const productList = document.getElementById('product-list');
         productList.innerHTML = ''; // Czyść listę produktów
 
@@ -172,11 +175,11 @@
                 <span class="product-code">${product.code}</span>
                 <strong>${product.name}</strong>
                 <span class="pack-info">(Pakowane po: ${product.packSize})</span>
-                <span class="price">${product.price.toFixed(2)} GBP</span>
+                <span class="price">${parseFloat(product.price).toFixed(2)} GBP</span>
                 <div class="quantity-controls">
-                    <button onclick="changeQuantity(${index}, -1)">-</button>
+                    <button onclick="changeQuantity(${index}, -1, ${product.price})">-</button>
                     <input type="number" id="quantity-${index}" value="0" readonly>
-                    <button onclick="changeQuantity(${index}, 1)">+</button>
+                    <button onclick="changeQuantity(${index}, 1, ${product.price})">+</button>
                 </div>
             `;
             productList.appendChild(productElement);
@@ -184,13 +187,12 @@
     }
 
     // Funkcja do zmiany ilości zamawianych produktów i aktualizacji wartości
-    function changeQuantity(index, change) {
+    function changeQuantity(index, change, price) {
         const input = document.getElementById(`quantity-${index}`);
         let currentQuantity = parseInt(input.value);
         if (currentQuantity + change >= 0) {
             currentQuantity += change;
             input.value = currentQuantity;
-            products[index].quantity = currentQuantity;  // Aktualizacja ilości
             updateTotalAmount(); // Aktualizacja łącznej wartości
         }
     }
@@ -198,65 +200,21 @@
     // Funkcja do obliczania łącznej wartości zamówienia
     function updateTotalAmount() {
         let total = 0;
-        products.forEach(product => {
-            total += product.quantity * product.price;
+        document.querySelectorAll('.quantity-controls input').forEach((input, index) => {
+            const quantity = parseInt(input.value);
+            const price = parseFloat(document.querySelectorAll('.price')[index].textContent);
+            total += quantity * price;
         });
         document.getElementById('total-amount').textContent = `${total.toFixed(2)} GBP`;
     }
 
-    // Funkcja do wysłania zamówienia w treści e-maila
+    // Funkcja do wysłania zamówienia
     function submitOrder() {
-        const storeName = document.getElementById('store-name').value;
-        const email = document.getElementById('email').value;
-
-        // Sprawdzenie, czy pola są wypełnione
-        if (!email) {
-            alert("Proszę wprowadzić adres e-mail.");
-            return;
-        }
-
-        if (!storeName) {
-            alert("Proszę wprowadzić nazwę sklepu.");
-            return;
-        }
-
-        // Przygotowanie treści zamówienia z kolumnami
-        let orderMessage = `Zamówienie dla sklepu: ${storeName}\n\n`;
-        orderMessage += "Indeks\t\tNazwa produktu\t\tIlość zamówiona (boxy)\n";
-        orderMessage += "------------------------------------------------------------\n";
-        products.forEach(product => {
-            if (product.quantity > 0) {
-                orderMessage += `${product.code}\t\t${product.name}\t\t${product.quantity}\n`;
-            }
-        });
-
-        // Przygotowanie danych do wysyłki przez Formspree
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("store-name", storeName);
-        formData.append("message", orderMessage);
-
-        // Wysyłanie danych przez Formspree
-        fetch("https://formspree.io/f/xanwzpgj", {
-            method: "POST",
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
-                alert("Zamówienie zostało wysłane!");
-            } else {
-                alert("Błąd przy wysyłaniu zamówienia.");
-            }
-        }).catch(error => {
-            console.error("Błąd:", error);
-            alert("Błąd przy wysyłaniu zamówienia.");
-        });
+        // Kod do obsługi wysyłki zamówienia
     }
 
     // Wyświetl produkty po załadowaniu strony
-    window.onload = displayProducts;
+    window.onload = fetchProducts;
 </script>
 
 </body>
