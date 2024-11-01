@@ -4,134 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Zarządzania Produktami</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #333;
-        }
-        button {
-            padding: 10px 15px;
-            margin: 5px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            color: white;
-        }
-        .add-button {
-            background-color: #28a745;
-        }
-        .delete-button {
-            background-color: #dc3545;
-        }
-        .save-button {
-            background-color: #007bff;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css"> <!-- Upewnij się, że masz odpowiedni styl CSS -->
 </head>
 <body>
     <h1>Panel Zarządzania Produktami</h1>
-    
     <table id="product-table">
         <thead>
             <tr>
                 <th>Indeks</th>
                 <th>Nazwa</th>
                 <th>Cena (GBP)</th>
-                <th>Ilość w opakowaniu</th>
+                <th>Ilność w opakowaniu</th>
                 <th>Akcje</th>
             </tr>
         </thead>
-        <tbody id="product-body">
-            <!-- Wiersze produktów będą tutaj generowane dynamicznie -->
+        <tbody>
+            <!-- Produkty będą dodawane tutaj -->
         </tbody>
     </table>
-    
-    <button class="add-button" onclick="addProduct()">Dodaj produkt</button>
-    <button class="save-button" onclick="saveProducts()">Zapisz produkty (JSON)</button>
-    
-    <!-- Przechowywanie produktów w formie JSON -->
-    <script id="products-data" type="application/json">
-    [
-        { "code": "50927", "packSize": "1", "name": "LAYS 125G CHIPSY BARBEQUE WERSJA RUMUNSKA", "price": "1.15" },
-        { "code": "50924", "packSize": "1", "name": "LAYS 125G CHIPSY PAPRYKOWE WERSJA RUMUNSKA", "price": "1.15" }
-        // Dodaj więcej produktów tutaj
-    ]
-    </script>
 
+    <h2>Dodaj Produkt</h2>
+    <input type="text" id="index" placeholder="Indeks">
+    <input type="text" id="name" placeholder="Nazwa">
+    <input type="number" id="price" placeholder="Cena (GBP)">
+    <input type="number" id="quantity" placeholder="Ilość w opakowaniu">
+    <button id="add-product-button">Dodaj produkt</button>
+    <button id="save-json-button">Zapisz produkty (JSON)</button>
+
+    <script src="scripts/updateProducts.js"></script>
     <script>
-        let products = JSON.parse(document.getElementById('products-data').textContent);
+        document.getElementById('add-product-button').addEventListener('click', function() {
+            const index = document.getElementById('index').value;
+            const name = document.getElementById('name').value;
+            const price = document.getElementById('price').value;
+            const quantity = document.getElementById('quantity').value;
 
-        // Funkcja do wyświetlania produktów
-        function displayProducts() {
-            const productBody = document.getElementById("product-body");
-            productBody.innerHTML = ""; // Wyczyść tabelę
-            
-            products.forEach((product, index) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td><input type="text" value="${product.code}" onchange="updateProduct(${index}, 'code', this.value)"></td>
-                    <td><input type="text" value="${product.name}" onchange="updateProduct(${index}, 'name', this.value)"></td>
-                    <td><input type="number" value="${product.price}" step="0.01" onchange="updateProduct(${index}, 'price', this.value)"></td>
-                    <td><input type="number" value="${product.packSize}" onchange="updateProduct(${index}, 'packSize', this.value)"></td>
-                    <td><button class="delete-button" onclick="deleteProduct(${index})">Usuń</button></td>
-                `;
-                productBody.appendChild(row);
-            });
+            if (index && name && price && quantity) {
+                const product = { index, name, price: parseFloat(price), quantity: parseInt(quantity) };
+                addProductToTable(product);
+                clearInputs();
+            } else {
+                alert('Proszę wypełnić wszystkie pola!');
+            }
+        });
+
+        function addProductToTable(product) {
+            const table = document.getElementById('product-table').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+
+            newRow.insertCell(0).innerText = product.index;
+            newRow.insertCell(1).innerText = product.name;
+            newRow.insertCell(2).innerText = product.price.toFixed(2);
+            newRow.insertCell(3).innerText = product.quantity;
+
+            const actionsCell = newRow.insertCell(4);
+            const deleteButton = document.createElement('button');
+            deleteButton.innerText = 'Usuń';
+            deleteButton.onclick = function() {
+                table.deleteRow(newRow.rowIndex - 1);
+            };
+            actionsCell.appendChild(deleteButton);
         }
 
-        // Funkcja do aktualizacji danych produktu
-        function updateProduct(index, key, value) {
-            products[index][key] = value;
+        function clearInputs() {
+            document.getElementById('index').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('quantity').value = '';
         }
 
-        // Funkcja do dodawania nowego produktu
-        function addProduct() {
-            products.push({ code: "", name: "", price: "0.00", packSize: "1" });
-            displayProducts();
-        }
+        document.getElementById('save-json-button').addEventListener('click', function() {
+            const products = [];
+            const rows = document.getElementById('product-table').getElementsByTagName('tbody')[0].rows;
 
-        // Funkcja do usuwania produktu
-        function deleteProduct(index) {
-            products.splice(index, 1);
-            displayProducts();
-        }
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                products.push({
+                    index: cells[0].innerText,
+                    name: cells[1].innerText,
+                    price: parseFloat(cells[2].innerText),
+                    quantity: parseInt(cells[3].innerText)
+                });
+            }
 
-        // Funkcja do zapisu produktów jako JSON
-        function saveProducts() {
-            const jsonContent = JSON.stringify(products, null, 2);
-            const blob = new Blob([jsonContent], { type: "application/json" });
+            const json = JSON.stringify(products, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
+            const a = document.createElement('a');
             a.href = url;
-            a.download = "products.json";
+            a.download = 'products.json';
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            alert("Produkty zostały zapisane.");
-        }
-
-        // Wywołaj funkcję wyświetlania produktów po załadowaniu strony
-        window.onload = displayProducts;
+        });
     </script>
 </body>
 </html>
