@@ -14,7 +14,7 @@
                 <th>Indeks</th>
                 <th>Nazwa</th>
                 <th>Cena (GBP)</th>
-                <th>Ilność w opakowaniu</th>
+                <th>Ilość w opakowaniu</th>
                 <th>Akcje</th>
             </tr>
         </thead>
@@ -33,6 +33,19 @@
 
     <script src="scripts/updateProducts.js"></script>
     <script>
+        // Funkcja do wczytania produktów z pliku JSON
+        async function loadProducts() {
+            const response = await fetch('products.json');
+            if (response.ok) {
+                const products = await response.json();
+                products.forEach(product => {
+                    addProductToTable(product);
+                });
+            } else {
+                console.error('Nie udało się załadować produktów:', response.statusText);
+            }
+        }
+
         document.getElementById('add-product-button').addEventListener('click', function() {
             const index = document.getElementById('index').value;
             const name = document.getElementById('name').value;
@@ -98,6 +111,9 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
+
+        // Wczytaj produkty z JSON na starcie
+        loadProducts();
     </script>
 </body>
 </html>
