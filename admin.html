@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Zarządzania Produktami</title>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Panel Zarządzania Produktami</h1>
@@ -27,6 +26,7 @@
             const response = await fetch('products.json');
             const products = await response.json();
             const tableBody = document.querySelector('#productTable tbody');
+
             products.forEach(product => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
