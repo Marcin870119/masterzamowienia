@@ -65,7 +65,17 @@
 <button onclick="submitOrder()">Wyślij zamówienie</button>
 
 <script>
-    let products = JSON.parse(localStorage.getItem('products')) || [];
+    let products = [];
+
+    async function loadProducts() {
+        try {
+            const response = await fetch('products.json');
+            products = await response.json();
+            displayProducts();
+        } catch (error) {
+            console.error("Błąd ładowania produktów:", error);
+        }
+    }
 
     function displayProducts() {
         const productList = document.getElementById('product-list');
@@ -81,7 +91,6 @@
             `;
             productList.appendChild(productElement);
         });
-        console.log("Produkty załadowane z LocalStorage:", products); // Weryfikacja wczytania
     }
 
     function submitOrder() {
@@ -99,8 +108,7 @@
         }
     }
 
-    // Wyświetl produkty po załadowaniu strony
-    displayProducts();
+    loadProducts();
 </script>
 
 </body>
