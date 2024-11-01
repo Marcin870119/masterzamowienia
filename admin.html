@@ -5,17 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Zarządzania Produktami</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
-        h1 { text-align: center; color: #333; }
-        table { width: 100%; margin-bottom: 20px; }
-        th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
-        th { background-color: #f0f0f0; }
-        .btn { padding: 8px 16px; margin-top: 10px; background-color: #28a745; color: white; border: none; cursor: pointer; }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+        .add-button {
+            background-color: #28a745;
+        }
+        .delete-button {
+            background-color: #dc3545;
+        }
+        .save-button {
+            background-color: #007bff;
+        }
     </style>
 </head>
 <body>
     <h1>Panel Zarządzania Produktami</h1>
-    <table>
+    
+    <table id="product-table">
         <thead>
             <tr>
                 <th>Indeks</th>
@@ -25,63 +62,76 @@
                 <th>Akcje</th>
             </tr>
         </thead>
-        <tbody id="product-table-body"></tbody>
+        <tbody id="product-body">
+            <!-- Wiersze produktów będą tutaj generowane dynamicznie -->
+        </tbody>
     </table>
-    <button class="btn" onclick="addProduct()">Dodaj produkt</button>
-    <button class="btn" onclick="downloadJSON()">Pobierz JSON</button>
+    
+    <button class="add-button" onclick="addProduct()">Dodaj produkt</button>
+    <button class="save-button" onclick="saveProducts()">Zapisz produkty (JSON)</button>
+    
+    <!-- Przechowywanie produktów w formie JSON -->
+    <script id="products-data" type="application/json">
+    [
+        { "code": "50927", "packSize": "1", "name": "LAYS 125G CHIPSY BARBEQUE WERSJA RUMUNSKA", "price": "1.15" },
+        { "code": "50924", "packSize": "1", "name": "LAYS 125G CHIPSY PAPRYKOWE WERSJA RUMUNSKA", "price": "1.15" }
+        // Dodaj więcej produktów tutaj
+    ]
+    </script>
 
     <script>
-        let products = [];
+        let products = JSON.parse(document.getElementById('products-data').textContent);
 
-        // Fetch products from products.json
-        async function fetchProducts() {
-            const response = await fetch('products.json');
-            products = await response.json();
-            displayProducts();
-        }
-
+        // Funkcja do wyświetlania produktów
         function displayProducts() {
-            const tableBody = document.getElementById("product-table-body");
-            tableBody.innerHTML = "";
+            const productBody = document.getElementById("product-body");
+            productBody.innerHTML = ""; // Wyczyść tabelę
+            
             products.forEach((product, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td><input type="text" value="${product.code}" onchange="updateProduct(${index}, 'code', this.value)" /></td>
-                    <td><input type="text" value="${product.name}" onchange="updateProduct(${index}, 'name', this.value)" /></td>
-                    <td><input type="text" value="${product.price}" onchange="updateProduct(${index}, 'price', this.value)" /></td>
-                    <td><input type="text" value="${product.packSize}" onchange="updateProduct(${index}, 'packSize', this.value)" /></td>
-                    <td><button onclick="removeProduct(${index})">Usuń</button></td>
+                    <td><input type="text" value="${product.code}" onchange="updateProduct(${index}, 'code', this.value)"></td>
+                    <td><input type="text" value="${product.name}" onchange="updateProduct(${index}, 'name', this.value)"></td>
+                    <td><input type="number" value="${product.price}" step="0.01" onchange="updateProduct(${index}, 'price', this.value)"></td>
+                    <td><input type="number" value="${product.packSize}" onchange="updateProduct(${index}, 'packSize', this.value)"></td>
+                    <td><button class="delete-button" onclick="deleteProduct(${index})">Usuń</button></td>
                 `;
-                tableBody.appendChild(row);
+                productBody.appendChild(row);
             });
         }
 
+        // Funkcja do aktualizacji danych produktu
+        function updateProduct(index, key, value) {
+            products[index][key] = value;
+        }
+
+        // Funkcja do dodawania nowego produktu
         function addProduct() {
-            products.push({ code: '', name: '', price: '', packSize: '' });
+            products.push({ code: "", name: "", price: "0.00", packSize: "1" });
             displayProducts();
         }
 
-        function updateProduct(index, field, value) {
-            products[index][field] = value;
-        }
-
-        function removeProduct(index) {
+        // Funkcja do usuwania produktu
+        function deleteProduct(index) {
             products.splice(index, 1);
             displayProducts();
         }
 
-        // Function to download updated JSON file
-        function downloadJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(products, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "products.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+        // Funkcja do zapisu produktów jako JSON
+        function saveProducts() {
+            const jsonContent = JSON.stringify(products, null, 2);
+            const blob = new Blob([jsonContent], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "products.json";
+            a.click();
+            URL.revokeObjectURL(url);
+            alert("Produkty zostały zapisane.");
         }
 
-        fetchProducts();
+        // Wywołaj funkcję wyświetlania produktów po załadowaniu strony
+        window.onload = displayProducts;
     </script>
 </body>
 </html>
