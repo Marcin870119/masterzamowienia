@@ -54,38 +54,28 @@
         }
         .product {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
             margin-bottom: 15px;
             padding: 15px;
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .product:nth-child(even) {
-            background-color: #f8f8f8;
-        }
-        .product strong {
-            font-size: 16px;
+        .product-info {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-bottom: 10px;
             color: #333;
-            flex-grow: 1;
         }
         .product-code {
-            font-size: 16px;
             font-weight: bold;
-            margin-right: 20px;
-            color: #444;
-        }
-        .pack-info {
-            font-size: 14px;
-            color: #666;
             margin-right: 10px;
         }
         .price {
-            font-size: 16px;
             font-weight: bold;
-            color: #000;
-            margin-right: 20px;
+            margin-right: 10px;
         }
         .quantity-controls {
             display: flex;
@@ -96,7 +86,6 @@
             height: 40px;
             font-size: 20px;
             text-align: center;
-            line-height: 1;
             background-color: #28a745;
             color: white;
             border: none;
@@ -122,6 +111,21 @@
             font-weight: bold;
             margin-top: 20px;
             font-size: 18px;
+        }
+        /* Media Queries for Mobile Devices */
+        @media (max-width: 768px) {
+            .product-info {
+                flex-direction: column;
+            }
+            .quantity-controls button {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+            .quantity-controls input {
+                width: 40px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -172,10 +176,12 @@
             const productElement = document.createElement('div');
             productElement.classList.add('product');
             productElement.innerHTML = `
-                <span class="product-code">${product.code}</span>
-                <strong>${product.name}</strong>
-                <span class="pack-info">(Pakowane po: ${product.packSize})</span>
-                <span class="price">${parseFloat(product.price).toFixed(2)} GBP</span>
+                <div class="product-info">
+                    <span class="product-code">${product.code}</span>
+                    <span>${product.name}</span>
+                    <span class="price">${parseFloat(product.price).toFixed(2)} GBP</span>
+                    <span class="pack-info">(Pakowane po: ${product.packSize})</span>
+                </div>
                 <div class="quantity-controls">
                     <button onclick="changeQuantity(${index}, -1, ${product.price})">-</button>
                     <input type="number" id="quantity-${index}" value="0" readonly>
