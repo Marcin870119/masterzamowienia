@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zamówienie produktów</title>
+    <style>
+        /* Stylowanie jak poprzednio... */
+    </style>
+</head>
+<body>
+    <h1>Zamówienie produktów</h1>
+
+    <!-- Lista produktów tylko do zamawiania -->
+    <div id="product-list" class="product-list"></div>
+
+    <!-- Formularz zamówienia -->
+    <form id="order-form">
+        <label>
+            Twój e-mail:
+            <input type="email" id="email" name="email" placeholder="Wprowadź swój e-mail" required>
+        </label>
+        
+        <label>
+            Nazwa sklepu:
+            <input type="text" id="store-name" name="store-name" placeholder="Wprowadź nazwę sklepu" required>
+        </label>
+        
+        <button type="button" onclick="submitOrder()">Wyślij zamówienie</button>
+    </form>
+
+    <script>
+        const products = [
+            { code: '50927', packSize: '1', name: 'LAYS 125G CHIPSY BARBEQUE WERSJA RUMUNSKA', price: '1.15', quantity: 0 },
+            //... kolejne produkty
+        ];
+
+        function displayProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = ''; 
+            products.forEach((product, index) => {
+                const productElement = document.createElement('div');
+                productElement.classList.add('product');
+                productElement.innerHTML = `
+                    <span class="product-code">${product.code}</span>
+                    <strong>${product.name}</strong>
+                    <span class="pack-info">(Pakowane po: ${product.packSize})</span>
+                    <span class="price">${product.price} GBP</span>
+                    <input type="number" min="0" id="quantity-${index}" placeholder="Ilość" />
+                `;
+                productList.appendChild(productElement);
+            });
+        }
+
+        function submitOrder() {
+            const email = document.getElementById('email').value;
+            const storeName = document.getElementById('store-name').value;
+            const orderItems = products
+                .map((product, index) => {
+                    const quantity = document.getElementById(`quantity-${index}`).value;
+                    return quantity > 0 ? `${product.code} - ${product.name} - ${quantity}` : '';
+                })
+                .filter(Boolean)
+                .join('\n');
+            
+            alert(`Zamówienie:\nEmail: ${email}\nSklep: ${storeName}\n${orderItems}`);
+        }
+
+        window.onload = displayProducts;
+    </script>
+</body>
+</html>

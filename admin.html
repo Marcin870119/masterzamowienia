@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Zarządzanie Produktami</title>
+    <style>
+        /* Stylowanie jak poprzednio... */
+    </style>
+</head>
+<body>
+    <h1>Panel Zarządzania Produktami</h1>
+
+    <!-- Panel zarządzania produktami -->
+    <div id="manage-products">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Indeks</th>
+                    <th>Nazwa</th>
+                    <th>Cena (GBP)</th>
+                    <th>Ilość w opakowaniu</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody id="product-management"></tbody>
+        </table>
+        <button onclick="addProduct()">Dodaj produkt</button>
+    </div>
+
+    <!-- Podgląd listy produktów dla zamówień -->
+    <h2>Podgląd Produktów</h2>
+    <div id="product-list" class="product-list"></div>
+
+    <!-- Skrypt do zarządzania produktami -->
+    <script>
+        let products = [
+            { code: '50927', packSize: '1', name: 'LAYS 125G CHIPSY BARBEQUE WERSJA RUMUNSKA', price: '1.15', quantity: 0 },
+            //... kolejne produkty
+        ];
+
+        function displayProductManagement() {
+            const productManagement = document.getElementById('product-management');
+            productManagement.innerHTML = '';
+            products.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" value="${product.code}" onchange="updateProduct(${index}, 'code', this.value)" /></td>
+                    <td><input type="text" value="${product.name}" onchange="updateProduct(${index}, 'name', this.value)" /></td>
+                    <td><input type="number" step="0.01" value="${product.price}" onchange="updateProduct(${index}, 'price', this.value)" /></td>
+                    <td><input type="number" value="${product.packSize}" onchange="updateProduct(${index}, 'packSize', this.value)" /></td>
+                    <td>
+                        <button onclick="deleteProduct(${index})">Usuń</button>
+                    </td>
+                `;
+                productManagement.appendChild(row);
+            });
+        }
+
+        function updateProduct(index, field, value) {
+            products[index][field] = value;
+            displayProducts();
+        }
+
+        function deleteProduct(index) {
+            products.splice(index, 1);
+            displayProductManagement();
+            displayProducts();
+        }
+
+        function addProduct() {
+            products.push({ code: '', name: '', price: '0', packSize: '1', quantity: 0 });
+            displayProductManagement();
+        }
+
+        function displayProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = ''; 
+            products.forEach((product, index) => {
+                const productElement = document.createElement('div');
+                productElement.classList.add('product');
+                productElement.innerHTML = `
+                    <span class="product-code">${product.code}</span>
+                    <strong>${product.name}</strong>
+                    <span class="pack-info">(Pakowane po: ${product.packSize})</span>
+                    <span class="price">${product.price} GBP</span>
+                `;
+                productList.appendChild(productElement);
+            });
+        }
+
+        window.onload = function() {
+            displayProductManagement();
+            displayProducts();
+        };
+    </script>
+</body>
+</html>
