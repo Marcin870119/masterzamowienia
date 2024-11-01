@@ -1,182 +1,218 @@
 [
     {
-        "index-cell": "37144",
-        "text-decoration-none": "BISZKOPT KAKAOWY DO CIAST WUZETEK - FOI PANDISPAN CU CACAO 380G BOROMIR",
-        "netto-cell": "£ 2.11"
+        "code": "37144",
+        "name": "BISZKOPT KAKAOWY DO CIAST WUZETEK - FOI PANDISPAN CU CACAO 380G BOROMIR",
+        "price": "2.11",
+        "packSize": "1"
     },
     {
-        "index-cell": "37143",
-        "text-decoration-none": "BISZKOPT WANILIOWY DO CIAST WUZETEK - FOI PANDISPAN 380G BOROMIR",
-        "netto-cell": "£ 1.65"
+        "code": "37143",
+        "name": "BISZKOPT WANILIOWY DO CIAST WUZETEK - FOI PANDISPAN 380G BOROMIR",
+        "price": "1.65",
+        "packSize": "1"
     },
     {
-        "index-cell": "28818",
-        "text-decoration-none": "BISZKOPTY LADYFINGERS - PISCOTURI 200G BOROMIR",
-        "netto-cell": "£ 0.65"
+        "code": "28818",
+        "name": "BISZKOPTY LADYFINGERS - PISCOTURI 200G BOROMIR",
+        "price": "0.65",
+        "packSize": "1"
     },
     {
-        "index-cell": "30500",
-        "text-decoration-none": "BISZKOPTY LADYFINGERS - PISCOTURI 400G BOROMIR",
-        "netto-cell": "£ 1.31"
+        "code": "30500",
+        "name": "BISZKOPTY LADYFINGERS - PISCOTURI 400G BOROMIR",
+        "price": "1.31",
+        "packSize": "1"
     },
     {
-        "index-cell": "32060",
-        "text-decoration-none": "BOROMIR 1KG PSZENICA PERLOWA-ARPACAS BOROMIR",
-        "netto-cell": "£ 0.56"
+        "code": "32060",
+        "name": "BOROMIR 1KG PSZENICA PERLOWA-ARPACAS BOROMIR",
+        "price": "0.56",
+        "packSize": "1"
     },
     {
-        "index-cell": "52386",
-        "text-decoration-none": "BOROMIR 50G MINI BABECZKA Z NADZ. KAKAOWYM-CHEC MINI CU CREMA CACAO BOROMIR",
-        "netto-cell": "£ 0.21"
+        "code": "52386",
+        "name": "BOROMIR 50G MINI BABECZKA Z NADZ. KAKAOWYM-CHEC MINI CU CREMA CACAO BOROMIR",
+        "price": "0.21",
+        "packSize": "1"
     },
     {
-        "index-cell": "52969",
-        "text-decoration-none": "BOROMIR 50G MINI BABECZKA Z NADZ.MLECZNEJ CZEKOLADY-CHEC MINI CIOCOLATA LAPTE BOROMIR",
-        "netto-cell": "£ 0.20"
+        "code": "52969",
+        "name": "BOROMIR 50G MINI BABECZKA Z NADZ.MLECZNEJ CZEKOLADY-CHEC MINI CIOCOLATA LAPTE BOROMIR",
+        "price": "0.20",
+        "packSize": "1"
     },
     {
-        "index-cell": "52389",
-        "text-decoration-none": "BOROMIR 50G MINI BABECZKA Z NADZ.MORELOWYM-CHEC MINI UMPLUTURA CU CAISE",
-        "netto-cell": "£ 0.20"
+        "code": "52389",
+        "name": "BOROMIR 50G MINI BABECZKA Z NADZ.MORELOWYM-CHEC MINI UMPLUTURA CU CAISE",
+        "price": "0.20",
+        "packSize": "1"
     },
     {
-        "index-cell": "52968",
-        "text-decoration-none": "BOROMIR 50G MINI BABECZKA Z NADZ.SLIWKOWYM-CHEC MINI UMPLUTURA CU PRUNE BOROMIR",
-        "netto-cell": "£ 0.20"
+        "code": "52968",
+        "name": "BOROMIR 50G MINI BABECZKA Z NADZ.SLIWKOWYM-CHEC MINI UMPLUTURA CU PRUNE BOROMIR",
+        "price": "0.20",
+        "packSize": "1"
     },
     {
-        "index-cell": "52385",
-        "text-decoration-none": "BOROMIR 50G MINI BABECZKA Z NADZ.SMIETANKOWYM-CHEC MINI CU CREMA LAPTE BOROMIR",
-        "netto-cell": "£ 0.21"
+        "code": "52385",
+        "name": "BOROMIR 50G MINI BABECZKA Z NADZ.SMIETANKOWYM-CHEC MINI CU CREMA LAPTE BOROMIR",
+        "price": "0.21",
+        "packSize": "1"
     },
     {
-        "index-cell": "52964",
-        "text-decoration-none": "BOROMIR 50G MINI BABECZKA Z NADZ.WANILIOWYM-CHEC MINI CREMA CU VANILIE BOROMIR",
-        "netto-cell": "£ 0.22"
+        "code": "52964",
+        "name": "BOROMIR 50G MINI BABECZKA Z NADZ.WANILIOWYM-CHEC MINI CREMA CU VANILIE BOROMIR",
+        "price": "0.22",
+        "packSize": "1"
     },
     {
-        "index-cell": "52966",
-        "text-decoration-none": "BOROMIR 50G MINI BABECZKA Z NADZ.WISNIOWYM-CHEC MINI UMPLUTURA CU VISINE BOROMIR",
-        "netto-cell": "£ 0.20"
+        "code": "52966",
+        "name": "BOROMIR 50G MINI BABECZKA Z NADZ.WISNIOWYM-CHEC MINI UMPLUTURA CU VISINE BOROMIR",
+        "price": "0.20",
+        "packSize": "1"
     },
     {
-        "index-cell": "48120",
-        "text-decoration-none": "BOROMIR 60G ROGALIK CROISSANT -CREMA CU CIOCOLATA LAPTE BOROMIR",
-        "netto-cell": "£ 0.20"
+        "code": "48120",
+        "name": "BOROMIR 60G ROGALIK CROISSANT -CREMA CU CIOCOLATA LAPTE BOROMIR",
+        "price": "0.20",
+        "packSize": "1"
     },
     {
-        "index-cell": "52963",
-        "text-decoration-none": "BOROMIR 60G ROGALIK CROISSANT-CREMA CU VANILIE BOROMIR",
-        "netto-cell": "£ 0.20"
+        "code": "52963",
+        "name": "BOROMIR 60G ROGALIK CROISSANT-CREMA CU VANILIE BOROMIR",
+        "price": "0.20",
+        "packSize": "1"
     },
     {
-        "index-cell": "52961",
-        "text-decoration-none": "BOROMIR 60G ROGALIK CROISSANT-UMPLUTURA CU PRUNE BOROMIR",
-        "netto-cell": "£ 0.20"
+        "code": "52961",
+        "name": "BOROMIR 60G ROGALIK CROISSANT-UMPLUTURA CU PRUNE BOROMIR",
+        "price": "0.20",
+        "packSize": "1"
     },
     {
-        "index-cell": "52962",
-        "text-decoration-none": "BOROMIR 60G ROGALIK CROISSANT-UMPLUTURA CU VISINE BOROMIR",
-        "netto-cell": "£ 0.20"
+        "code": "52962",
+        "name": "BOROMIR 60G ROGALIK CROISSANT-UMPLUTURA CU VISINE BOROMIR",
+        "price": "0.20",
+        "packSize": "1"
     },
     {
-        "index-cell": "28821",
-        "text-decoration-none": "BULKA TARTA - PESMET 500G BOROMIR",
-        "netto-cell": "£ 0.78"
+        "code": "28821",
+        "name": "BULKA TARTA - PESMET 500G BOROMIR",
+        "price": "0.78",
+        "packSize": "1"
     },
     {
-        "index-cell": "28817",
-        "text-decoration-none": "CHALWA - HALVA CLASICA FELEACUL 200G BOROMIR",
-        "netto-cell": "£ 0.76"
+        "code": "28817",
+        "name": "CHALWA - HALVA CLASICA FELEACUL 200G BOROMIR",
+        "price": "0.76",
+        "packSize": "1"
     },
     {
-        "index-cell": "32633",
-        "text-decoration-none": "CHALWA KAKAOWA - HALVA CU CACAO FELEACUL 200G BOROMIR",
-        "netto-cell": "£ 0.76"
+        "code": "32633",
+        "name": "CHALWA KAKAOWA - HALVA CU CACAO FELEACUL 200G BOROMIR",
+        "price": "0.76",
+        "packSize": "1"
     },
     {
-        "index-cell": "26905",
-        "text-decoration-none": "CIASTECZKA Z DZEMEM JABLKOWYM 300G - CRONULETE FRAGEZITE CU VIN SI GEM DE MERE 300G BOROMIR",
-        "netto-cell": "£ 1.29"
+        "code": "26905",
+        "name": "CIASTECZKA Z DZEMEM JABLKOWYM 300G - CRONULETE FRAGEZITE CU VIN SI GEM DE MERE 300G BOROMIR",
+        "price": "1.29",
+        "packSize": "1"
     },
     {
-        "index-cell": "28813",
-        "text-decoration-none": "CIASTECZKA Z DZEMEM MORELOWYM - CORNULETE CU VIN ALB SI GEM DE CAISE 300G BOROMIR",
-        "netto-cell": "£ 1.32"
+        "code": "28813",
+        "name": "CIASTECZKA Z DZEMEM MORELOWYM - CORNULETE CU VIN ALB SI GEM DE CAISE 300G BOROMIR",
+        "price": "1.32",
+        "packSize": "1"
     },
     {
-        "index-cell": "26904",
-        "text-decoration-none": "CIASTECZKA Z DZEMEM SLIWKOWYM 300G - CRONULETE FRAGEZITE CU VIN SI GEM DE PRUNE 300G BOROMIR",
-        "netto-cell": "£ 1.29"
+        "code": "26904",
+        "name": "CIASTECZKA Z DZEMEM SLIWKOWYM 300G - CRONULETE FRAGEZITE CU VIN SI GEM DE PRUNE 300G BOROMIR",
+        "price": "1.29",
+        "packSize": "1"
     },
     {
-        "index-cell": "48131",
-        "text-decoration-none": "CIASTECZKA Z DZEMEM WISNIOWYM 300G - CRONULETE FRAGEZITE CU VIN SI GEM DE VISINE 300G BOROMIR",
-        "netto-cell": "£ 1.32"
+        "code": "48131",
+        "name": "CIASTECZKA Z DZEMEM WISNIOWYM 300G - CRONULETE FRAGEZITE CU VIN SI GEM DE VISINE 300G BOROMIR",
+        "price": "1.32",
+        "packSize": "1"
     },
     {
-        "index-cell": "35439",
-        "text-decoration-none": "CIASTKA KAKAOWE - DIVERTIS CREMA CACAO FAMILY PACK 240G BOROMIR",
-        "netto-cell": "£ 1.00"
+        "code": "35439",
+        "name": "CIASTKA KAKAOWE - DIVERTIS CREMA CACAO FAMILY PACK 240G BOROMIR",
+        "price": "1.00",
+        "packSize": "1"
     },
     {
-        "index-cell": "43172",
-        "text-decoration-none": "CIASTO ANIELSKIE Z KREMEM FISTASZKOWYM - PRAJITURA INGERILOR CU CREMA CU FISTIC 250G PREORDER BOROMI",
-        "netto-cell": "£ 1.41"
+        "code": "43172",
+        "name": "CIASTO ANIELSKIE Z KREMEM FISTASZKOWYM - PRAJITURA INGERILOR CU CREMA CU FISTIC 250G PREORDER BOROMI",
+        "price": "1.41",
+        "packSize": "1"
     },
     {
-        "index-cell": "43169",
-        "text-decoration-none": "CIASTO ANIELSKIE Z KREMEM KOKOSOWYM - PRAJITURA INGERILOR CU CREMA CU COCOS 250G BOROMIR",
-        "netto-cell": "£ 1.41"
+        "code": "43169",
+        "name": "CIASTO ANIELSKIE Z KREMEM KOKOSOWYM - PRAJITURA INGERILOR CU CREMA CU COCOS 250G BOROMIR",
+        "price": "1.41",
+        "packSize": "1"
     },
     {
-        "index-cell": "43193",
-        "text-decoration-none": "CIASTO ANIELSKIE Z KREMEM MANGO - PRAJITURA INGERILOR CU CREMA CU MANGO 250G BOROMIR",
-        "netto-cell": "£ 1.41"
+        "code": "43193",
+        "name": "CIASTO ANIELSKIE Z KREMEM MANGO - PRAJITURA INGERILOR CU CREMA CU MANGO 250G BOROMIR",
+        "price": "1.41",
+        "packSize": "1"
     },
     {
-        "index-cell": "35082",
-        "text-decoration-none": "CIASTO BABKA MARMURKOWA CLASSIC - CHEC MARMORAT CLASSIC 400G BOROMIR",
-        "netto-cell": "£ 1.95"
+        "code": "35082",
+        "name": "CIASTO BABKA MARMURKOWA CLASSIC - CHEC MARMORAT CLASSIC 400G BOROMIR",
+        "price": "1.95",
+        "packSize": "1"
     },
     {
-        "index-cell": "35083",
-        "text-decoration-none": "CIASTO BABKA MARMURKOWA Z KREMEM CZEKOLADOWO-ORZECHOWYM - CHEC MARMORAT CREMA CIOCOLATA CU ALUNE 400G BOROMIR",
-        "netto-cell": "£ 1.95"
+        "code": "35083",
+        "name": "CIASTO BABKA MARMURKOWA Z KREMEM CZEKOLADOWO-ORZECHOWYM - CHEC MARMORAT CREMA CIOCOLATA CU ALUNE 400G BOROMIR",
+        "price": "1.95",
+        "packSize": "1"
     },
     {
-        "index-cell": "37134",
-        "text-decoration-none": "CIASTO CAPPUCCINO - PRAJITURA CAPPUCCINO 250G BOROMIR",
-        "netto-cell": "£ 1.25"
+        "code": "37134",
+        "name": "CIASTO CAPPUCCINO - PRAJITURA CAPPUCCINO 250G BOROMIR",
+        "price": "1.25",
+        "packSize": "1"
     },
     {
-        "index-cell": "37138",
-        "text-decoration-none": "CIASTO CYTRYNOWE - PRAJITURA CU LAMAIE 250G BOROMIR",
-        "netto-cell": "£ 1.44"
+        "code": "37138",
+        "name": "CIASTO CYTRYNOWE - PRAJITURA CU LAMAIE 250G BOROMIR",
+        "price": "1.44",
+        "packSize": "1"
     },
     {
-        "index-cell": "32063",
-        "text-decoration-none": "CIASTO DOBOSZA - PRAJITURA DOBOS 250G BOROMIR",
-        "netto-cell": "£ 1.25"
+        "code": "32063",
+        "name": "CIASTO DOBOSZA - PRAJITURA DOBOS 250G BOROMIR",
+        "price": "1.25",
+        "packSize": "1"
     },
     {
-        "index-cell": "37139",
-        "text-decoration-none": "CIASTO DO KAWY - PRAJITURA MOKACINO 250G BOROMIR",
-        "netto-cell": "£ 1.41"
+        "code": "37139",
+        "name": "CIASTO DO KAWY - PRAJITURA MOKACINO 250G BOROMIR",
+        "price": "1.41",
+        "packSize": "1"
     },
     {
-        "index-cell": "43176",
-        "text-decoration-none": "CIASTO DROZDZOWE W PUDELKU Z MLEKIEM - COZONAC CU LAPTE 450G BOROMIR",
-        "netto-cell": "£ 2.74"
+        "code": "43176",
+        "name": "CIASTO DROZDZOWE W PUDELKU Z MLEKIEM - COZONAC CU LAPTE 450G BOROMIR",
+        "price": "2.74",
+        "packSize": "1"
     },
     {
-        "index-cell": "28808",
-        "text-decoration-none": "CIASTO DROZDZOWE Z KREMEM CZEKOLADOWO-KARMELOWYM - COZONAC CU CREMA CARAMEL SI CIOCOLATA 450G BOROMIR",
-        "netto-cell": "£ 2.02"
+        "code": "28808",
+        "name": "CIASTO DROZDZOWE Z KREMEM CZEKOLADOWO-KARMELOWYM - COZONAC CU CREMA CARAMEL SI CIOCOLATA 450G BOROMIR",
+        "price": "2.02",
+        "packSize": "1"
     },
     {
-        "index-cell": "28809",
-        "text-decoration-none": "CIASTO DROZDZOWE Z KREMEM CZEKOLADOWO-ORZECHOWYM - COZONAC CU CREMA CIOCOLATA CU ALUNE 450G BOROMIR",
-        "netto-cell": "£ 1.76"
+        "code": "28809",
+        "name": "CIASTO DROZDZOWE Z KREMEM CZEKOLADOWO-ORZECHOWYM - COZONAC CU CREMA CIOCOLATA CU ALUNE 450G BOROMIR",
+        "price": "1.76",
+        "packSize": "1"
     }
 ]
