@@ -1,93 +1,144 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zamówienie produktów</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
-        h1 { text-align: center; color: #333; margin-bottom: 20px; }
-        .product { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd; }
-        .product-info { flex-grow: 1; font-weight: bold; }
-        .quantity { display: flex; align-items: center; }
-        .quantity input { width: 50px; text-align: center; margin: 0 10px; font-size: 16px; }
-        .btn { background-color: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; font-size: 16px; border-radius: 5px; }
-        .btn:disabled { background-color: #ddd; cursor: not-allowed; }
-        #submit-order { background-color: #007bff; margin-top: 20px; width: 100%; }
-        .quantity-button { padding: 5px 10px; font-size: 16px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zamówienie produktów</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      width: 80%;
+      max-width: 900px;
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+    }
+    .quantity-controls button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 5px;
+      margin: 0 5px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .quantity-controls input {
+      width: 40px;
+      text-align: center;
+    }
+    .submit-btn {
+      display: block;
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
     <h1>Zamówienie produktów</h1>
-    <div id="product-list"></div>
-    <input type="email" id="email" placeholder="Twój e-mail" style="width: 100%; padding: 10px; margin-top: 20px;">
-    <input type="text" id="shopName" placeholder="Nazwa sklepu" style="width: 100%; padding: 10px; margin-top: 10px;">
-    <button id="submit-order" class="btn" onclick="submitOrder()">Wyślij zamówienie</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Nazwa</th>
+          <th>Cena (GBP)</th>
+          <th>Pakowane po</th>
+          <th>Ilość</th>
+        </tr>
+      </thead>
+      <tbody id="product-list">
+        <!-- Produkty będą tutaj ładowane -->
+      </tbody>
+    </table>
+    <button class="submit-btn">Wyślij zamówienie</button>
+  </div>
 
-    <script>
-        let cart = [];
+  <script>
+    // Przykładowy URL do pliku JSON na GitHub Pages
+    const jsonUrl = 'https://marcin870119.github.io/masterzamowienia/products.json';
 
-        async function fetchProducts() {
-            const response = await fetch('products.json');
-            const products = await response.json();
-            displayProducts(products);
-        }
+    // Funkcja ładowania produktów z pliku JSON
+    async function loadProducts() {
+      try {
+        const response = await fetch(jsonUrl);
+        const products = await response.json();
+        const productList = document.getElementById('product-list');
 
-        function displayProducts(products) {
-            const productList = document.getElementById('product-list');
-            productList.innerHTML = '';
-            products.forEach(product => {
-                const productDiv = document.createElement('div');
-                productDiv.classList.add('product');
-                productDiv.innerHTML = `
-                    <div class="product-info">${product.name} - ${product.price} GBP (Pakowane po: ${product.packSize})</div>
-                    <div class="quantity">
-                        <button class="btn quantity-button" onclick="updateQuantity('${product.code}', -1)">-</button>
-                        <input type="number" id="quantity-${product.code}" value="0" min="0" onchange="changeQuantity('${product.code}', this.value)">
-                        <button class="btn quantity-button" onclick="updateQuantity('${product.code}', 1)">+</button>
-                    </div>
-                `;
-                productList.appendChild(productDiv);
-                cart.push({ code: product.code, name: product.name, price: product.price, packSize: product.packSize, quantity: 0 });
-            });
-        }
+        products.forEach(product => {
+          const row = document.createElement('tr');
 
-        function updateQuantity(code, delta) {
-            const quantityInput = document.getElementById(`quantity-${code}`);
-            const newQuantity = Math.max(0, parseInt(quantityInput.value) + delta);
-            quantityInput.value = newQuantity;
-            changeQuantity(code, newQuantity);
-        }
+          row.innerHTML = `
+            <td>${product.name}</td>
+            <td>${product.price} GBP</td>
+            <td>${product.packSize}</td>
+            <td>
+              <div class="quantity-controls">
+                <button onclick="decreaseQuantity(this)">-</button>
+                <input type="number" value="0" min="0" />
+                <button onclick="increaseQuantity(this)">+</button>
+              </div>
+            </td>
+          `;
+          productList.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Błąd ładowania produktów:', error);
+      }
+    }
 
-        function changeQuantity(code, quantity) {
-            const product = cart.find(item => item.code === code);
-            if (product) {
-                product.quantity = parseInt(quantity);
-            }
-        }
+    // Funkcje do zwiększania i zmniejszania ilości
+    function increaseQuantity(button) {
+      const input = button.previousElementSibling;
+      input.value = parseInt(input.value) + 1;
+    }
 
-        function submitOrder() {
-            const email = document.getElementById('email').value;
-            const shopName = document.getElementById('shopName').value;
+    function decreaseQuantity(button) {
+      const input = button.nextElementSibling;
+      if (input.value > 0) {
+        input.value = parseInt(input.value) - 1;
+      }
+    }
 
-            if (!email || !shopName) {
-                alert("Proszę podać e-mail i nazwę sklepu.");
-                return;
-            }
-
-            const orderItems = cart.filter(item => item.quantity > 0);
-            if (orderItems.length === 0) {
-                alert("Proszę dodać przynajmniej jeden produkt do zamówienia.");
-                return;
-            }
-
-            const orderDetails = orderItems.map(item => `${item.name}: ${item.quantity} szt. - ${item.price} GBP`).join("\n");
-            const mailtoLink = `mailto:${email}?subject=Zamówienie&body=Nazwa sklepu: ${shopName}%0D%0A%0D%0A${orderDetails}`;
-
-            window.location.href = mailtoLink;
-        }
-
-        fetchProducts();
-    </script>
+    // Wywołanie funkcji ładującej produkty po załadowaniu strony
+    window.onload = loadProducts;
+  </script>
 </body>
 </html>
