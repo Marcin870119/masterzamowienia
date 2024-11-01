@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Zarządzania Produktami</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Upewnij się, że masz odpowiedni styl CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Panel Zarządzania Produktami</h1>
-    <table id="product-table">
+    <table id="productTable">
         <thead>
             <tr>
                 <th>Indeks</th>
@@ -18,102 +18,39 @@
                 <th>Akcje</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Produkty będą dodawane tutaj -->
-        </tbody>
+        <tbody></tbody>
     </table>
+    <button id="saveProducts">Zapisz produkty (JSON)</button>
 
-    <h2>Dodaj Produkt</h2>
-    <input type="text" id="index" placeholder="Indeks">
-    <input type="text" id="name" placeholder="Nazwa">
-    <input type="number" id="price" placeholder="Cena (GBP)">
-    <input type="number" id="quantity" placeholder="Ilość w opakowaniu">
-    <button id="add-product-button">Dodaj produkt</button>
-    <button id="save-json-button">Zapisz produkty (JSON)</button>
-
-    <script src="scripts/updateProducts.js"></script>
     <script>
-        // Funkcja do wczytania produktów z pliku JSON
-        async function loadProducts() {
+        async function fetchProducts() {
             const response = await fetch('products.json');
-            if (response.ok) {
-                const products = await response.json();
-                products.forEach(product => {
-                    addProductToTable(product);
-                });
-            } else {
-                console.error('Nie udało się załadować produktów:', response.statusText);
-            }
+            const products = await response.json();
+            const tableBody = document.querySelector('#productTable tbody');
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.index}</td>
+                    <td>${product.name}</td>
+                    <td>${product.price}</td>
+                    <td>${product.quantity}</td>
+                    <td><button onclick="addToOrder('${product.index}')">Dodaj do zamówienia</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
         }
 
-        document.getElementById('add-product-button').addEventListener('click', function() {
-            const index = document.getElementById('index').value;
-            const name = document.getElementById('name').value;
-            const price = document.getElementById('price').value;
-            const quantity = document.getElementById('quantity').value;
+        function addToOrder(index) {
+            alert(`Produkt o indeksie ${index} został dodany do zamówienia!`);
+            // Tutaj możesz dodać kod do aktualizacji order.html
+        }
 
-            if (index && name && price && quantity) {
-                const product = { index, name, price: parseFloat(price), quantity: parseInt(quantity) };
-                addProductToTable(product);
-                clearInputs();
-            } else {
-                alert('Proszę wypełnić wszystkie pola!');
-            }
+        document.getElementById('saveProducts').addEventListener('click', () => {
+            // Zapisz aktualne produkty do pliku JSON
+            console.log("Zapisz produkty do JSON");
         });
 
-        function addProductToTable(product) {
-            const table = document.getElementById('product-table').getElementsByTagName('tbody')[0];
-            const newRow = table.insertRow();
-
-            newRow.insertCell(0).innerText = product.index;
-            newRow.insertCell(1).innerText = product.name;
-            newRow.insertCell(2).innerText = product.price.toFixed(2);
-            newRow.insertCell(3).innerText = product.quantity;
-
-            const actionsCell = newRow.insertCell(4);
-            const deleteButton = document.createElement('button');
-            deleteButton.innerText = 'Usuń';
-            deleteButton.onclick = function() {
-                table.deleteRow(newRow.rowIndex - 1);
-            };
-            actionsCell.appendChild(deleteButton);
-        }
-
-        function clearInputs() {
-            document.getElementById('index').value = '';
-            document.getElementById('name').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('quantity').value = '';
-        }
-
-        document.getElementById('save-json-button').addEventListener('click', function() {
-            const products = [];
-            const rows = document.getElementById('product-table').getElementsByTagName('tbody')[0].rows;
-
-            for (let i = 0; i < rows.length; i++) {
-                const cells = rows[i].cells;
-                products.push({
-                    index: cells[0].innerText,
-                    name: cells[1].innerText,
-                    price: parseFloat(cells[2].innerText),
-                    quantity: parseInt(cells[3].innerText)
-                });
-            }
-
-            const json = JSON.stringify(products, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'products.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
-
-        // Wczytaj produkty z JSON na starcie
-        loadProducts();
+        fetchProducts();
     </script>
 </body>
 </html>
