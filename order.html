@@ -7,34 +7,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <aside class="sidebar">
-            <h2>Kategorie produktów</h2>
-            <ul>
-                <li><a href="#">Nabiał</a></li>
-                <li><a href="#">Produkty suche</a></li>
-                <li><a href="#">Słodycze</a></li>
-                <li><a href="#">Wędliny</a></li>
-                <li><a href="#">Napoje</a></li>
-            </ul>
-        </aside>
-        <main class="main-content">
-            <h1>Panel Zarządzania Produktami</h1>
-            <table id="productTable">
-                <thead>
-                    <tr>
-                        <th>Indeks</th>
-                        <th>Nazwa</th>
-                        <th>Cena (GBP)</th>
-                        <th>Ilość w opakowaniu</th>
-                        <th>Akcje</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <button id="saveProducts">Zapisz produkty (JSON)</button>
-        </main>
-    </div>
+    <h1>Panel Zarządzania Produktami</h1>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>Indeks</th>
+                <th>Nazwa</th>
+                <th>Cena (GBP)</th>
+                <th>Ilość w opakowaniu</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="saveProducts">Zapisz produkty (JSON)</button>
 
     <script>
         async function fetchProducts() {
@@ -43,27 +29,28 @@
             const tableBody = document.querySelector('#productTable tbody');
             products.forEach(product => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.code}</td>
+                row.innerHTML = 
+                    <td>${product.index}</td>
                     <td>${product.name}</td>
-                    <td class="price">${product.price} GBP</td>
-                    <td>${product.packSize}</td>
-                    <td><button onclick="addToOrder('${product.code}')">Dodaj do zamówienia</button></td>
-                `;
+                    <td>${product.price}</td>
+                    <td>${product.quantity}</td>
+                    <td><button onclick="addToOrder('${product.index}')">Dodaj do zamówienia</button></td>
+                ;
                 tableBody.appendChild(row);
             });
         }
 
-        function addToOrder(code) {
-            alert(`Produkt o indeksie ${code} został dodany do zamówienia!`);
+        function addToOrder(index) {
+            alert(Produkt o indeksie ${index} został dodany do zamówienia!);
             // Tutaj możesz dodać kod do aktualizacji order.html
         }
 
         document.getElementById('saveProducts').addEventListener('click', () => {
+            // Zapisz aktualne produkty do pliku JSON
             console.log("Zapisz produkty do JSON");
         });
 
         fetchProducts();
     </script>
 </body>
-</html>
+</html> 
