@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zamówienie produktów</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Panel Zarządzania Produktami</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <aside class="sidebar">
-            <h2>Kategorie</h2>
+            <h2>Kategorie produktów</h2>
             <ul>
                 <li><a href="#">Nabiał</a></li>
                 <li><a href="#">Produkty suche</a></li>
@@ -19,13 +19,51 @@
             </ul>
         </aside>
         <main class="main-content">
-            <h1>Zamówienie produktów</h1>
-            <div id="product-list">
-                <!-- Lista produktów zostanie wypełniona przez JavaScript -->
-            </div>
+            <h1>Panel Zarządzania Produktami</h1>
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>Indeks</th>
+                        <th>Nazwa</th>
+                        <th>Cena (GBP)</th>
+                        <th>Ilość w opakowaniu</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="saveProducts">Zapisz produkty (JSON)</button>
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        async function fetchProducts() {
+            const response = await fetch('products.json');
+            const products = await response.json();
+            const tableBody = document.querySelector('#productTable tbody');
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.code}</td>
+                    <td>${product.name}</td>
+                    <td class="price">${product.price} GBP</td>
+                    <td>${product.packSize}</td>
+                    <td><button onclick="addToOrder('${product.code}')">Dodaj do zamówienia</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function addToOrder(code) {
+            alert(`Produkt o indeksie ${code} został dodany do zamówienia!`);
+            // Tutaj możesz dodać kod do aktualizacji order.html
+        }
+
+        document.getElementById('saveProducts').addEventListener('click', () => {
+            console.log("Zapisz produkty do JSON");
+        });
+
+        fetchProducts();
+    </script>
 </body>
 </html>
