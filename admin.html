@@ -55,9 +55,21 @@
     <tbody id="product-management"></tbody>
 </table>
 <button onclick="addProduct()">Dodaj produkt</button>
+<button onclick="downloadJSON()">Pobierz JSON</button>
 
 <script>
-    let products = JSON.parse(localStorage.getItem('products')) || [];
+    let products = [];
+
+    // Wczytaj produkty z pliku JSON przy załadowaniu strony
+    async function loadProducts() {
+        try {
+            const response = await fetch('products.json');
+            products = await response.json();
+            displayProducts();
+        } catch (error) {
+            console.error("Błąd ładowania produktów:", error);
+        }
+    }
 
     function displayProducts() {
         const productManagement = document.getElementById('product-management');
@@ -73,7 +85,6 @@
             `;
             productManagement.appendChild(row);
         });
-        saveProducts(); // Zapisz zmiany po każdym wyświetleniu
     }
 
     function updateProduct(index, field, value) {
@@ -91,13 +102,18 @@
         displayProducts();
     }
 
-    function saveProducts() {
-        localStorage.setItem('products', JSON.stringify(products));
-        console.log("Produkty zapisane do LocalStorage:", products); // Sprawdzenie zapisu
+    // Pobierz zmienione dane jako plik JSON
+    function downloadJSON() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(products, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "products.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     }
 
-    // Wyświetl produkty po załadowaniu strony
-    displayProducts();
+    loadProducts();
 </script>
 
 </body>
