@@ -81,6 +81,7 @@
             `;
             productList.appendChild(productElement);
         });
+        console.log("Produkty załadowane z LocalStorage:", products); // Weryfikacja wczytania
     }
 
     function submitOrder() {
@@ -98,6 +99,7 @@
         }
     }
 
+    // Wyświetl produkty po załadowaniu strony
     displayProducts();
 </script>
 
