@@ -61,6 +61,11 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+    .order-value, .total-value {
+      font-weight: bold;
+      color: #007bff;
+      text-align: right;
+    }
     .submit-btn {
       display: block;
       width: 100%;
@@ -72,10 +77,6 @@
       cursor: pointer;
       border-radius: 4px;
       margin-top: 20px;
-      font-weight: bold;
-    }
-    .product-index {
-      color: #555;
       font-weight: bold;
     }
   </style>
@@ -91,20 +92,20 @@
           <th>Cena (GBP)</th>
           <th>Pakowane po</th>
           <th>Ilość</th>
+          <th>Wartość</th>
         </tr>
       </thead>
       <tbody id="product-list">
         <!-- Produkty będą tutaj ładowane -->
       </tbody>
     </table>
+    <div class="total-value">Łączna wartość zamówienia: <span id="total-amount">0.00 GBP</span></div>
     <button class="submit-btn">Wyślij zamówienie</button>
   </div>
 
   <script>
-    // Przykładowy URL do pliku JSON na GitHub Pages
     const jsonUrl = 'https://marcin870119.github.io/masterzamowienia/products.json';
 
-    // Funkcja ładowania produktów z pliku JSON
     async function loadProducts() {
       try {
         const response = await fetch(jsonUrl);
@@ -113,7 +114,6 @@
 
         products.forEach(product => {
           const row = document.createElement('tr');
-
           row.innerHTML = `
             <td class="product-index">${product.code}</td>
             <td>${product.name}</td>
@@ -122,10 +122,11 @@
             <td>
               <div class="quantity-controls">
                 <button onclick="decreaseQuantity(this)">-</button>
-                <input type="number" value="0" min="0" />
+                <input type="number" value="0" min="0" oninput="updateOrderValue(this, ${product.price})" />
                 <button onclick="increaseQuantity(this)">+</button>
               </div>
             </td>
+            <td class="order-value">0.00 GBP</td>
           `;
           productList.appendChild(row);
         });
@@ -134,20 +135,36 @@
       }
     }
 
-    // Funkcje do zwiększania i zmniejszania ilości
     function increaseQuantity(button) {
       const input = button.previousElementSibling;
       input.value = parseInt(input.value) + 1;
+      updateOrderValue(input, parseFloat(button.closest('tr').querySelector('td:nth-child(3)').textContent));
     }
 
     function decreaseQuantity(button) {
       const input = button.nextElementSibling;
       if (input.value > 0) {
         input.value = parseInt(input.value) - 1;
+        updateOrderValue(input, parseFloat(button.closest('tr').querySelector('td:nth-child(3)').textContent));
       }
     }
 
-    // Wywołanie funkcji ładującej produkty po załadowaniu strony
+    function updateOrderValue(input, price) {
+      const quantity = parseInt(input.value) || 0;
+      const value = quantity * price;
+      const orderValueCell = input.closest('tr').querySelector('.order-value');
+      orderValueCell.textContent = `${value.toFixed(2)} GBP`;
+      updateTotalValue();
+    }
+
+    function updateTotalValue() {
+      let total = 0;
+      document.querySelectorAll('.order-value').forEach(cell => {
+        total += parseFloat(cell.textContent) || 0;
+      });
+      document.getElementById('total-amount').textContent = `${total.toFixed(2)} GBP`;
+    }
+
     window.onload = loadProducts;
   </script>
 </body>
