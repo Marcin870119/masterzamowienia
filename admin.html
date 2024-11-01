@@ -73,7 +73,7 @@
             `;
             productManagement.appendChild(row);
         });
-        saveProducts();
+        saveProducts(); // Zapisz zmiany po każdym wyświetleniu
     }
 
     function updateProduct(index, field, value) {
@@ -93,9 +93,10 @@
 
     function saveProducts() {
         localStorage.setItem('products', JSON.stringify(products));
-        console.log("Products saved to LocalStorage:", products); // Sprawdzenie zapisu
+        console.log("Produkty zapisane do LocalStorage:", products); // Sprawdzenie zapisu
     }
 
+    // Wyświetl produkty po załadowaniu strony
     displayProducts();
 </script>
 
