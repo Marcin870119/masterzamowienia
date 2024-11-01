@@ -4,8 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Zarządzania Produktami</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="scripts/updateProducts.js" defer></script>
+    <script>
+        let products = [];
+
+        // Funkcja do wczytywania produktów z pliku JSON
+        function loadProducts() {
+            fetch('products.json')
+                .then(response => response.json())
+                .then(data => {
+                    products = data;
+                    displayProducts();
+                })
+                .catch(error => console.error('Błąd przy wczytywaniu danych:', error));
+        }
+
+        // Funkcja do wyświetlania produktów w tabeli
+        function displayProducts() {
+            const productTable = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+            productTable.innerHTML = ''; // Czyści istniejące wiersze
+
+            products.forEach(product => {
+                const newRow = productTable.insertRow();
+                newRow.insertCell(0).innerText = product.code;
+                newRow.insertCell(1).innerText = product.name;
+                newRow.insertCell(2).innerText = product.price;
+                newRow.insertCell(3).innerText = product.packSize;
+                newRow.insertCell(4).innerHTML = '<button onclick="removeProduct(this)">Usuń</button>';
+            });
+        }
+
+        // Funkcja do dodawania nowego produktu
+        function addProduct() {
+            const code = document.getElementById('indexInput').value;
+            const name = document.getElementById('nameInput').value;
+            const price = document.getElementById('priceInput').value;
+            const packSize = document.getElementById('packSizeInput').value;
+
+            const newProduct = { code, name, price, packSize };
+            products.push(newProduct);
+            displayProducts();
+            clearInputs();
+        }
+
+        // Funkcja do usuwania produktu
+        function removeProduct(button) {
+            const row = button.parentElement.parentElement;
+            const code = row.cells[0].innerText;
+            products = products.filter(product => product.code !== code);
+            displayProducts();
+        }
+
+        // Funkcja do czyszczenia inputów
+        function clearInputs() {
+            document.getElementById('indexInput').value = '';
+            document.getElementById('nameInput').value = '';
+            document.getElementById('priceInput').value = '';
+            document.getElementById('packSizeInput').value = '';
+        }
+
+        // Funkcja do zapisywania produktów do pliku JSON
+        function saveProducts() {
+            const json = JSON.stringify(products, null, 2);
+            console.log(json); // W przyszłości dodaj funkcjonalność zapisu do pliku
+        }
+
+        window.onload = loadProducts;
+    </script>
 </head>
 <body>
     <h1>Panel Zarządzania Produktami</h1>
@@ -23,82 +87,13 @@
             <!-- Produkty będą dodawane tutaj -->
         </tbody>
     </table>
-    
+
     <h2>Dodaj Produkt</h2>
     <input type="text" id="indexInput" placeholder="Indeks">
     <input type="text" id="nameInput" placeholder="Nazwa">
     <input type="number" id="priceInput" placeholder="Cena (GBP)">
     <input type="number" id="packSizeInput" placeholder="Ilość w opakowaniu">
-    <button id="addProductButton">Dodaj produkt</button>
-    <button id="saveProductsButton">Zapisz produkty (JSON)</button>
-
-    <script>
-        const productTable = document.getElementById('productTable').getElementsByTagName('tbody')[0];
-
-        // Wczytywanie produktów
-        function loadProducts() {
-            fetch('products.json')
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(product => {
-                        const newRow = productTable.insertRow();
-                        newRow.insertCell(0).innerText = product.code;
-                        newRow.insertCell(1).innerText = product.name;
-                        newRow.insertCell(2).innerText = product.price;
-                        newRow.insertCell(3).innerText = product.packSize;
-                        newRow.insertCell(4).innerHTML = '<button class="removeButton">Usuń</button>';
-                        
-                        newRow.querySelector('.removeButton').addEventListener('click', () => {
-                            productTable.deleteRow(newRow.rowIndex - 1);
-                        });
-                    });
-                })
-                .catch(error => console.error('Błąd przy wczytywaniu danych:', error));
-        }
-
-        // Dodawanie produktu
-        document.getElementById('addProductButton').addEventListener('click', () => {
-            const index = document.getElementById('indexInput').value;
-            const name = document.getElementById('nameInput').value;
-            const price = document.getElementById('priceInput').value;
-            const packSize = document.getElementById('packSizeInput').value;
-
-            const newRow = productTable.insertRow();
-            newRow.insertCell(0).innerText = index;
-            newRow.insertCell(1).innerText = name;
-            newRow.insertCell(2).innerText = price;
-            newRow.insertCell(3).innerText = packSize;
-            newRow.insertCell(4).innerHTML = '<button class="removeButton">Usuń</button>';
-
-            newRow.querySelector('.removeButton').addEventListener('click', () => {
-                productTable.deleteRow(newRow.rowIndex - 1);
-            });
-
-            document.getElementById('indexInput').value = '';
-            document.getElementById('nameInput').value = '';
-            document.getElementById('priceInput').value = '';
-            document.getElementById('packSizeInput').value = '';
-        });
-
-        // Zapisz produkty
-        document.getElementById('saveProductsButton').addEventListener('click', () => {
-            const products = [];
-            for (let i = 0; i < productTable.rows.length; i++) {
-                const row = productTable.rows[i];
-                const product = {
-                    code: row.cells[0].innerText,
-                    name: row.cells[1].innerText,
-                    price: row.cells[2].innerText,
-                    packSize: row.cells[3].innerText,
-                };
-                products.push(product);
-            }
-            const json = JSON.stringify(products);
-            console.log(json); // Tutaj zrób zapisywanie do pliku
-        });
-
-        // Wczytaj produkty po załadowaniu strony
-        window.onload = loadProducts;
-    </script>
+    <button onclick="addProduct()">Dodaj produkt</button>
+    <button onclick="saveProducts()">Zapisz produkty (JSON)</button>
 </body>
 </html>
