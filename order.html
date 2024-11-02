@@ -123,14 +123,48 @@
             margin-top: 20px;
             font-size: 18px;
         }
+
+        /* Media Queries for Mobile Devices */
+        @media (max-width: 768px) {
+            .product {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .product-code, .pack-info, .price {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .quantity-controls {
+                margin-top: 10px;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            input, button {
+                padding: 10px;
+                font-size: 1rem;
+            }
+
+            .quantity-controls input {
+                width: 40px;
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
-
-<!-- Baner promocyjny -->
-<div class="banner-container">
-    <img src='https://i.postimg.cc/z3YYzZWs/logo-2.png' alt='Logo' />
-</div>
 
 <h1>Zamówienie produktów</h1>
 
