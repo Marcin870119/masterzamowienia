@@ -3,125 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Zarządzania Produktami</title>
+    <title>Panel Administracyjny</title>
     <style>
-        /* Dodaj odpowiednie style */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #444;
+        }
+        input, button {
+            padding: 12px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
     </style>
 </head>
 <body>
-    <h1>Panel Zarządzania Produktami</h1>
-    <form id="product-form">
-        <label for="code">Indeks:</label>
-        <input type="text" id="code" required>
-        <label for="name">Nazwa:</label>
-        <input type="text" id="name" required>
-        <label for="price">Cena:</label>
-        <input type="number" id="price" step="0.01" required>
-        <label for="packSize">Ilość w opakowaniu:</label>
-        <input type="text" id="packSize" required>
-        <label for="imageUrl">Link do zdjęcia:</label>
-        <input type="url" id="imageUrl" required>
-        <button type="button" onclick="addProduct()">Dodaj/Edytuj produkt</button>
-    </form>
 
-    <h2>Produkty</h2>
-    <table id="productTable">
-        <thead>
-            <tr>
-                <th>Indeks</th>
-                <th>Nazwa</th>
-                <th>Cena</th>
-                <th>Ilość</th>
-                <th>Zdjęcie</th>
-                <th>Akcje</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+<h1>Panel Administracyjny - Dodaj Produkt</h1>
 
-    <script>
-        let products = [];
+<!-- Formularz do dodawania produktów -->
+<form id="productForm" action="save_products.php" method="post">
+    <label for="code">Kod produktu:</label>
+    <input type="text" id="code" name="code" required>
 
-        async function fetchProducts() {
-            const response = await fetch('products.json');
-            products = await response.json();
-            displayProducts();
-        }
+    <label for="name">Nazwa produktu:</label>
+    <input type="text" id="name" name="name" required>
 
-        function displayProducts() {
-            const tableBody = document.querySelector('#productTable tbody');
-            tableBody.innerHTML = '';
-            products.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.code}</td>
-                    <td>${product.name}</td>
-                    <td>${product.price}</td>
-                    <td>${product.packSize}</td>
-                    <td><img src="${product.imageUrl}" alt="${product.name}" style="width: 50px;"></td>
-                    <td><button onclick="editProduct('${product.code}')">Edytuj</button></td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
+    <label for="packSize">Rozmiar opakowania:</label>
+    <input type="text" id="packSize" name="packSize" required>
 
-        function addProduct() {
-            const code = document.getElementById('code').value;
-            const name = document.getElementById('name').value;
-            const price = document.getElementById('price').value;
-            const packSize = document.getElementById('packSize').value;
-            const imageUrl = document.getElementById('imageUrl').value;
+    <label for="price">Cena:</label>
+    <input type="number" step="0.01" id="price" name="price" required>
 
-            const existingProductIndex = products.findIndex(p => p.code === code);
-            if (existingProductIndex !== -1) {
-                // Edytuj istniejący produkt
-                products[existingProductIndex] = { code, name, price, packSize, imageUrl };
-            } else {
-                // Dodaj nowy produkt
-                products.push({ code, name, price, packSize, imageUrl });
-            }
+    <button type="submit">Zapisz produkt</button>
+</form>
 
-            saveProducts();
-            displayProducts();
-            clearForm();
-        }
-
-        function editProduct(code) {
-            const product = products.find(p => p.code === code);
-            if (product) {
-                document.getElementById('code').value = product.code;
-                document.getElementById('name').value = product.name;
-                document.getElementById('price').value = product.price;
-                document.getElementById('packSize').value = product.packSize;
-                document.getElementById('imageUrl').value = product.imageUrl;
-            }
-        }
-
-        function clearForm() {
-            document.getElementById('code').value = '';
-            document.getElementById('name').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('packSize').value = '';
-            document.getElementById('imageUrl').value = '';
-        }
-
-        async function saveProducts() {
-            const response = await fetch('save_products.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(products),
-            });
-
-            if (response.ok) {
-                console.log('Produkty zapisane pomyślnie.');
-            } else {
-                console.error('Błąd przy zapisywaniu produktów.');
-            }
-        }
-
-        fetchProducts();
-    </script>
 </body>
 </html>
