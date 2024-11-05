@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edytor Oferty</title>
+    <title>Edytor Oferty z Importem CSV</title>
     <style>
         body { font-family: Arial, sans-serif; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
         input[type="text"] { width: 80px; }
+        canvas { height: 50px; } /* Ustawienie wysokości dla kodów kreskowych */
     </style>
-    <!-- Wczytanie biblioteki JsBarcode -->
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bwip-js@2.0.9/dist/bwip-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
-<h1>Edytor Oferty</h1>
+<h1>Edytor Oferty z Importem CSV</h1>
+<input type="file" id="fileInput" accept=".csv">
 <table>
     <thead>
         <tr>
@@ -33,82 +34,136 @@
     </tbody>
 </table>
 
-<button onclick="saveAsPDF()">Zapisz do PDF</button>
+<button onclick="generatePDF()">Zapisz do PDF</button>
 
 <script>
-    const products = [
-        { name: "AZUGA FILET SUCEDO - PLASTRY FILETA DROBIOWEGO Z AZUGI - MUSCHI AZUGA SKIN 100G CRISTIM", netto: "£1.03", ean: "5941265002001" },
-        { name: "BACON SLICED - BOCZEK PLASTRY - 100G CRISTIM", netto: "£1.48", ean: "5941265002028" },
-        { name: "BALERON 100G - MUSCHI TIGANESC MATACHE MACELARU 100G CRISTIM", netto: "£1.11", ean: "5941265018522" },
-        // Dodaj więcej produktów według potrzeb
-    ];
+    document.getElementById('fileInput').addEventListener('change', loadCSV);
 
-    // Funkcja do wczytania produktów do tabeli
-    function loadProducts() {
-        const tbody = document.getElementById("product-list");
-        products.forEach((product, index) => {
-            const row = document.createElement("tr");
-
-            // Kolumna z polem wyboru
-            const checkboxCell = document.createElement("td");
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.id = `select-${index}`;
-            checkboxCell.appendChild(checkbox);
-            row.appendChild(checkboxCell);
-
-            // Nazwa produktu
-            const nameCell = document.createElement("td");
-            nameCell.innerText = product.name;
-            row.appendChild(nameCell);
-
-            // Cena netto
-            const nettoCell = document.createElement("td");
-            const nettoInput = document.createElement("input");
-            nettoInput.type = "text";
-            nettoInput.value = product.netto;
-            nettoInput.id = `netto-${index}`;
-            nettoCell.appendChild(nettoInput);
-            row.appendChild(nettoCell);
-
-            // Kod EAN
-            const eanCell = document.createElement("td");
-            eanCell.innerText = product.ean;
-            row.appendChild(eanCell);
-
-            // Kod kreskowy
-            const barcodeCell = document.createElement("td");
-            const barcodeCanvas = document.createElement("canvas");
-            barcodeCanvas.id = `barcode-${index}`;
-            barcodeCell.appendChild(barcodeCanvas);
-            row.appendChild(barcodeCell);
-
-            tbody.appendChild(row);
-
-            // Generowanie kodu kreskowego i debugowanie
-            console.log("Generowanie kodu kreskowego dla EAN:", product.ean); // Debugowanie
-            if (typeof JsBarcode === "undefined") {
-                console.error("JsBarcode nie jest dostępny.");
-            } else {
-                try {
-                    JsBarcode(barcodeCanvas, product.ean, {
-                        format: "EAN13",
-                        lineColor: "#000",
-                        width: 2,
-                        height: 50,
-                        displayValue: false
-                    });
-                    console.log("Kod kreskowy wygenerowany dla EAN:", product.ean);
-                } catch (error) {
-                    console.error("Błąd generowania kodu kreskowego dla EAN:", product.ean, error);
+    function loadCSV(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const csv = e.target.result;
+            const separator = csv.includes(';') ? ';' : ','; // Wykrywanie separatora
+            const rows = csv.split('\n');
+            rows.forEach((row, index) => {
+                if (index === 0) return; // Pomijanie nagłówka
+                const cols = row.split(separator);
+                if (cols.length >= 4) {
+                    const product = {
+                        name: cols[1].trim(),
+                        netto: cols[2].trim(),
+                        ean: cols[3].trim()
+                    };
+                    addProductToTable(product);
                 }
-            }
-        });
+            });
+        };
+        reader.onerror = function() {
+            console.error("Błąd wczytywania pliku CSV");
+            alert("Wystąpił błąd podczas wczytywania pliku CSV.");
+        };
+        reader.readAsText(file);
     }
 
-    // Funkcja do zapisu oferty jako PDF
-    function saveAsPDF() {
-        const element = document.body;
+    function addProductToTable(product) {
+        const tbody = document.getElementById("product-list");
+        const row = document.createElement("tr");
+
+        // Kolumna z polem wyboru
+        const checkboxCell = document.createElement("td");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "product-checkbox";
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+
+        // Nazwa produktu
+        const nameCell = document.createElement("td");
+        nameCell.innerText = product.name;
+        row.appendChild(nameCell);
+
+        // Cena netto
+        const nettoCell = document.createElement("td");
+        const nettoInput = document.createElement("input");
+        nettoInput.type = "text";
+        nettoInput.value = product.netto;
+        nettoCell.appendChild(nettoInput);
+        row.appendChild(nettoCell);
+
+        // Kod EAN
+        const eanCell = document.createElement("td");
+        eanCell.innerText = product.ean;
+        row.appendChild(eanCell);
+
+        // Kod kreskowy
+        const barcodeCell = document.createElement("td");
+        const barcodeCanvas = document.createElement("canvas");
+        barcodeCanvas.id = `barcode-${product.ean}`;
+        barcodeCell.appendChild(barcodeCanvas);
+        row.appendChild(barcodeCell);
+
+        tbody.appendChild(row);
+
+        // Generowanie kodu kreskowego za pomocą bwip-js
+        try {
+            bwipjs.toCanvas(barcodeCanvas, {
+                bcid: 'ean13', // Typ kodu kreskowego
+                text: product.ean,
+                scale: 3,
+                height: 10, // wysokość w pikselach
+                includetext: false, // bez wyświetlania wartości numerycznej
+                textxalign: 'center',
+            });
+        } catch (error) {
+            console.error("Błąd generowania kodu kreskowego dla EAN:", product.ean, error);
+        }
+    }
+
+    // Funkcja do generowania PDF tylko z wybranymi produktami
+    function generatePDF() {
+        const selectedProducts = Array.from(document.querySelectorAll('.product-checkbox'))
+            .map((checkbox, index) => {
+                if (checkbox.checked) {
+                    const row = checkbox.closest("tr");
+                    return {
+                        name: row.cells[1].innerText,
+                        netto: row.cells[2].querySelector("input").value,
+                        ean: row.cells[3].innerText,
+                        barcode: row.cells[4].querySelector("canvas")
+                    };
+                }
+                return null;
+            })
+            .filter(product => product !== null);
+
+        // Tworzenie nowego elementu do generowania PDF
+        const pdfContent = document.createElement("div");
+
+        selectedProducts.forEach(product => {
+            const productRow = document.createElement("div");
+            productRow.style.marginBottom = "20px";
+
+            const name = document.createElement("p");
+            name.innerText = `Nazwa: ${product.name}`;
+            productRow.appendChild(name);
+
+            const netto = document.createElement("p");
+            netto.innerText = `Cena Netto: ${product.netto}`;
+            productRow.appendChild(netto);
+
+            const ean = document.createElement("p");
+            ean.innerText = `EAN: ${product.ean}`;
+            productRow.appendChild(ean);
+
+            const barcode = document.createElement("img");
+            barcode.src = product.barcode.toDataURL();
+            productRow.appendChild(barcode);
+
+            pdfContent.appendChild(productRow);
+        });
+
+        // Generowanie PDF
         const opt = {
             margin:       0.5,
             filename:     'Oferta.pdf',
@@ -116,11 +171,8 @@
             html2canvas:  { scale: 2 },
             jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().from(element).set(opt).save();
+        html2pdf().from(pdfContent).set(opt).save();
     }
-
-    // Wczytanie produktów po załadowaniu strony
-    window.onload = loadProducts;
 </script>
 
 </body>
