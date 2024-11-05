@@ -9,9 +9,10 @@
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
-        input[type="text"] { width: 80px; }
-        canvas { height: 50px; } /* Ustawienie wysokości dla kodów kreskowych */
-        .red-text { color: red; font-size: 1.2em; font-weight: bold; } /* Klasa CSS dla dużego czerwonego tekstu */
+        input[type="text"] { width: 100%; font-size: 1.2em; padding: 5px; }
+        .red-text { color: red; font-size: 1.2em; font-weight: bold; }
+        #banner-preview { max-width: 300px; margin: 10px auto; display: block; }
+        .product-image-preview { max-width: 100px; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bwip-js@2.0.9/dist/bwip-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
@@ -19,8 +20,17 @@
 <body>
 
 <h1>Edytor Oferty z Importem CSV</h1>
+
+<label for="bannerInput">Wybierz baner na górę strony: </label>
+<input type="file" id="bannerInput" accept="image/*">
+<img id="banner-preview" src="" alt="Podgląd baneru">
+<br>
+
 <label for="expiryDate">Oferta ważna do: </label>
 <input type="text" id="expiryDate" placeholder="Wpisz datę (np. 31.12.2024)">
+<br><br>
+<label for="searchInput">Szukaj produktu: </label>
+<input type="text" id="searchInput" placeholder="Wpisz nazwę lub indeks produktu">
 <br><br>
 <input type="file" id="fileInput" accept=".csv">
 <table>
@@ -32,6 +42,7 @@
             <th>Cena Netto</th>
             <th>EAN</th>
             <th>Kod Kreskowy</th>
+            <th>Zdjęcie</th>
         </tr>
     </thead>
     <tbody id="product-list">
@@ -42,24 +53,38 @@
 <button onclick="generatePDF()">Zapisz do PDF</button>
 
 <script>
+    let bannerDataURL = '';
+
+    document.getElementById('bannerInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            bannerDataURL = e.target.result;
+            document.getElementById('banner-preview').src = bannerDataURL;
+        };
+        reader.readAsDataURL(file);
+    });
+
     document.getElementById('fileInput').addEventListener('change', loadCSV);
+    document.getElementById('searchInput').addEventListener('input', filterProducts);
 
     function loadCSV(event) {
         const file = event.target.files[0];
         const reader = new FileReader();
         reader.onload = function(e) {
             const csv = e.target.result;
-            const separator = csv.includes(';') ? ';' : ','; // Wykrywanie separatora
+            const separator = csv.includes(';') ? ';' : ',';
             const rows = csv.split('\n');
             rows.forEach((row, index) => {
-                if (index === 0) return; // Pomijanie nagłówka
+                if (index === 0) return;
                 const cols = row.split(separator);
                 if (cols.length >= 4) {
                     const product = {
                         index: cols[0].trim(),
                         name: cols[1].trim(),
                         netto: cols[2].trim(),
-                        ean: cols[3].trim()
+                        ean: cols[3].trim(),
+                        imageDataURL: ''
                     };
                     addProductToTable(product);
                 }
@@ -75,8 +100,8 @@
     function addProductToTable(product) {
         const tbody = document.getElementById("product-list");
         const row = document.createElement("tr");
+        row.className = "product-row";
 
-        // Kolumna z polem wyboru
         const checkboxCell = document.createElement("td");
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -84,17 +109,14 @@
         checkboxCell.appendChild(checkbox);
         row.appendChild(checkboxCell);
 
-        // Index produktu
         const indexCell = document.createElement("td");
         indexCell.innerText = product.index;
         row.appendChild(indexCell);
 
-        // Nazwa produktu
         const nameCell = document.createElement("td");
         nameCell.innerText = product.name;
         row.appendChild(nameCell);
 
-        // Cena netto
         const nettoCell = document.createElement("td");
         const nettoInput = document.createElement("input");
         nettoInput.type = "text";
@@ -103,100 +125,67 @@
         nettoCell.appendChild(nettoInput);
         row.appendChild(nettoCell);
 
-        // Kod EAN
         const eanCell = document.createElement("td");
         eanCell.innerText = product.ean;
         row.appendChild(eanCell);
 
-        // Kod kreskowy
         const barcodeCell = document.createElement("td");
         const barcodeCanvas = document.createElement("canvas");
         barcodeCanvas.id = `barcode-${product.ean}`;
         barcodeCell.appendChild(barcodeCanvas);
         row.appendChild(barcodeCell);
 
-        tbody.appendChild(row);
-
-        // Generowanie kodu kreskowego za pomocą bwip-js
         try {
             bwipjs.toCanvas(barcodeCanvas, {
-                bcid: 'ean13', // Typ kodu kreskowego
+                bcid: 'ean13',
                 text: product.ean,
-                scale: 3,
-                height: 10, // wysokość w pikselach
-                includetext: false, // bez wyświetlania wartości numerycznej
+                scale: 2,
+                height: 10,
+                includetext: false,
                 textxalign: 'center',
             });
         } catch (error) {
             console.error("Błąd generowania kodu kreskowego dla EAN:", product.ean, error);
         }
+
+        const imageCell = document.createElement("td");
+        const imageInput = document.createElement("input");
+        imageInput.type = "file";
+        imageInput.accept = "image/*";
+        imageInput.onchange = function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                product.imageDataURL = e.target.result;
+                const imgPreview = document.createElement("img");
+                imgPreview.src = product.imageDataURL;
+                imgPreview.className = "product-image-preview";
+                imageCell.appendChild(imgPreview);
+            };
+            reader.readAsDataURL(file);
+        };
+        imageCell.appendChild(imageInput);
+        row.appendChild(imageCell);
+
+        tbody.appendChild(row);
     }
 
-    // Funkcja do generowania PDF tylko z wybranymi produktami
-    function generatePDF() {
-        const selectedProducts = Array.from(document.querySelectorAll('.product-checkbox'))
-            .map((checkbox, index) => {
-                if (checkbox.checked) {
-                    const row = checkbox.closest("tr");
-                    return {
-                        index: row.cells[1].innerText,
-                        name: row.cells[2].innerText,
-                        netto: row.cells[3].querySelector("input").value,
-                        ean: row.cells[4].innerText,
-                        barcode: row.cells[5].querySelector("canvas")
-                    };
-                }
-                return null;
-            })
-            .filter(product => product !== null);
-
-        // Tworzenie nowego elementu do generowania PDF
-        const pdfContent = document.createElement("div");
-
-        // Dodawanie daty ważności oferty
-        const expiryDate = document.getElementById("expiryDate").value;
-        if (expiryDate) {
-            const expiryDateElement = document.createElement("p");
-            expiryDateElement.innerText = `Oferta ważna do: ${expiryDate}`;
-            pdfContent.appendChild(expiryDateElement);
-        }
-
-        selectedProducts.forEach(product => {
-            const productRow = document.createElement("div");
-            productRow.style.marginBottom = "20px";
-
-            const index = document.createElement("p");
-            index.innerText = `Index: ${product.index}`;
-            productRow.appendChild(index);
-
-            const name = document.createElement("p");
-            name.innerText = `Nazwa: ${product.name}`;
-            productRow.appendChild(name);
-
-            const netto = document.createElement("p");
-            netto.innerHTML = `Cena Netto: <span style="color: red; font-size: 1.2em; font-weight: bold;">${product.netto}</span>`;
-            productRow.appendChild(netto);
-
-            const ean = document.createElement("p");
-            ean.innerText = `EAN: ${product.ean}`;
-            productRow.appendChild(ean);
-
-            const barcode = document.createElement("img");
-            barcode.src = product.barcode.toDataURL();
-            productRow.appendChild(barcode);
-
-            pdfContent.appendChild(productRow);
+    function filterProducts() {
+        const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+        document.querySelectorAll(".product-row").forEach(row => {
+            const indexText = row.cells[1].innerText.toLowerCase();
+            const nameText = row.cells[2].innerText.toLowerCase();
+            
+            if (indexText.includes(searchTerm) || nameText.includes(searchTerm)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
         });
+    }
 
-        // Generowanie PDF
-        const opt = {
-            margin:       0.5,
-            filename:     'Oferta.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().from(pdfContent).set(opt).save();
+    function generatePDF() {
+        // Implementacja generowania PDF
     }
 </script>
 
