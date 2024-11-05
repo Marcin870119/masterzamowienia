@@ -9,7 +9,7 @@
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
-        input[type="text"] { width: 100%; font-size: 1.2em; padding: 5px; }
+        input[type="text"] { width: 100%; }
         .red-text { color: red; font-size: 1.2em; font-weight: bold; }
         #banner-preview { max-width: 300px; margin: 10px auto; display: block; }
         .product-image-preview { max-width: 100px; }
@@ -29,9 +29,10 @@
 <label for="expiryDate">Oferta ważna do: </label>
 <input type="text" id="expiryDate" placeholder="Wpisz datę (np. 31.12.2024)">
 <br><br>
-<label for="searchInput">Szukaj produktu: </label>
-<input type="text" id="searchInput" placeholder="Wpisz nazwę lub indeks produktu">
+
+<input type="text" id="searchInput" placeholder="Szukaj produktu:" style="width: 100%; font-size: 16px; padding: 8px;">
 <br><br>
+
 <input type="file" id="fileInput" accept=".csv">
 <table>
     <thead>
@@ -66,7 +67,6 @@
     });
 
     document.getElementById('fileInput').addEventListener('change', loadCSV);
-    document.getElementById('searchInput').addEventListener('input', filterProducts);
 
     function loadCSV(event) {
         const file = event.target.files[0];
@@ -100,7 +100,6 @@
     function addProductToTable(product) {
         const tbody = document.getElementById("product-list");
         const row = document.createElement("tr");
-        row.className = "product-row";
 
         const checkboxCell = document.createElement("td");
         const checkbox = document.createElement("input");
@@ -170,22 +169,103 @@
         tbody.appendChild(row);
     }
 
-    function filterProducts() {
-        const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-        document.querySelectorAll(".product-row").forEach(row => {
-            const indexText = row.cells[1].innerText.toLowerCase();
-            const nameText = row.cells[2].innerText.toLowerCase();
-            
-            if (indexText.includes(searchTerm) || nameText.includes(searchTerm)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
+    document.getElementById("searchInput").addEventListener("input", function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.getElementById("product-list").getElementsByTagName("tr");
+        for (let i = 0; i < rows.length; i++) {
+            const nameCell = rows[i].cells[2];
+            const name = nameCell ? nameCell.textContent.toLowerCase() : "";
+            rows[i].style.display = name.includes(filter) ? "" : "none";
+        }
+    });
 
     function generatePDF() {
-        // Implementacja generowania PDF
+        const selectedProducts = Array.from(document.querySelectorAll('.product-checkbox'))
+            .map((checkbox, index) => {
+                if (checkbox.checked) {
+                    const row = checkbox.closest("tr");
+                    return {
+                        index: row.cells[1].innerText,
+                        name: row.cells[2].innerText,
+                        netto: row.cells[3].querySelector("input").value,
+                        ean: row.cells[4].innerText,
+                        barcode: row.cells[5].querySelector("canvas"),
+                        image: row.cells[6].querySelector("img")?.src || ""
+                    };
+                }
+                return null;
+            })
+            .filter(product => product !== null);
+
+        const pdfContent = document.createElement("div");
+
+        if (bannerDataURL) {
+            const banner = document.createElement("img");
+            banner.src = bannerDataURL;
+            banner.style.maxWidth = "300px";
+            banner.style.display = "block";
+            banner.style.margin = "0 auto 20px";
+            pdfContent.appendChild(banner);
+        }
+
+        const expiryDate = document.getElementById("expiryDate").value;
+        if (expiryDate) {
+            const expiryDateElement = document.createElement("p");
+            expiryDateElement.innerText = `Oferta ważna do: ${expiryDate}`;
+            pdfContent.appendChild(expiryDateElement);
+        }
+
+        selectedProducts.forEach(product => {
+            const productRow = document.createElement("div");
+            productRow.style.display = "flex";
+            productRow.style.alignItems = "center";
+            productRow.style.marginBottom = "20px";
+
+            const textContent = document.createElement("div");
+            textContent.style.flex = "1";
+
+            const index = document.createElement("p");
+            index.innerText = `Index: ${product.index}`;
+            textContent.appendChild(index);
+
+            const name = document.createElement("p");
+            name.innerText = `Nazwa: ${product.name}`;
+            textContent.appendChild(name);
+
+            const netto = document.createElement("p");
+            netto.innerHTML = `Cena Netto: <span class="red-text">${product.netto}</span>`;
+            textContent.appendChild(netto);
+
+            const ean = document.createElement("p");
+            ean.innerText = `EAN: ${product.ean}`;
+            textContent.appendChild(ean);
+
+            const barcode = document.createElement("img");
+            barcode.src = product.barcode.toDataURL();
+            barcode.style.marginBottom = "10px";
+            textContent.appendChild(barcode);
+
+            productRow.appendChild(textContent);
+
+            if (product.image) {
+                const img = document.createElement("img");
+                img.src = product.image;
+                img.style.maxWidth = "150px";
+                img.style.marginLeft = "10px";
+                productRow.appendChild(img);
+            }
+
+            pdfContent.appendChild(productRow);
+        });
+
+        const opt = {
+            margin:       0.5,
+            filename:     'Oferta.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().from(pdfContent).set(opt).save();
     }
 </script>
 
