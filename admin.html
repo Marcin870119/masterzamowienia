@@ -11,6 +11,7 @@
         th { background-color: #f2f2f2; }
         input[type="text"] { width: 80px; }
         canvas { height: 50px; } /* Ustawienie wysokości dla kodów kreskowych */
+        .red-text { color: red; font-size: 1.2em; font-weight: bold; } /* Klasa CSS dla dużego czerwonego tekstu */
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bwip-js@2.0.9/dist/bwip-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
@@ -18,11 +19,15 @@
 <body>
 
 <h1>Edytor Oferty z Importem CSV</h1>
+<label for="expiryDate">Oferta ważna do: </label>
+<input type="text" id="expiryDate" placeholder="Wpisz datę (np. 31.12.2024)">
+<br><br>
 <input type="file" id="fileInput" accept=".csv">
 <table>
     <thead>
         <tr>
             <th>Wybierz</th>
+            <th>Index</th>
             <th>Nazwa Produktu</th>
             <th>Cena Netto</th>
             <th>EAN</th>
@@ -51,6 +56,7 @@
                 const cols = row.split(separator);
                 if (cols.length >= 4) {
                     const product = {
+                        index: cols[0].trim(),
                         name: cols[1].trim(),
                         netto: cols[2].trim(),
                         ean: cols[3].trim()
@@ -78,6 +84,11 @@
         checkboxCell.appendChild(checkbox);
         row.appendChild(checkboxCell);
 
+        // Index produktu
+        const indexCell = document.createElement("td");
+        indexCell.innerText = product.index;
+        row.appendChild(indexCell);
+
         // Nazwa produktu
         const nameCell = document.createElement("td");
         nameCell.innerText = product.name;
@@ -88,6 +99,7 @@
         const nettoInput = document.createElement("input");
         nettoInput.type = "text";
         nettoInput.value = product.netto;
+        nettoInput.classList.add("red-text");
         nettoCell.appendChild(nettoInput);
         row.appendChild(nettoCell);
 
@@ -127,10 +139,11 @@
                 if (checkbox.checked) {
                     const row = checkbox.closest("tr");
                     return {
-                        name: row.cells[1].innerText,
-                        netto: row.cells[2].querySelector("input").value,
-                        ean: row.cells[3].innerText,
-                        barcode: row.cells[4].querySelector("canvas")
+                        index: row.cells[1].innerText,
+                        name: row.cells[2].innerText,
+                        netto: row.cells[3].querySelector("input").value,
+                        ean: row.cells[4].innerText,
+                        barcode: row.cells[5].querySelector("canvas")
                     };
                 }
                 return null;
@@ -140,16 +153,28 @@
         // Tworzenie nowego elementu do generowania PDF
         const pdfContent = document.createElement("div");
 
+        // Dodawanie daty ważności oferty
+        const expiryDate = document.getElementById("expiryDate").value;
+        if (expiryDate) {
+            const expiryDateElement = document.createElement("p");
+            expiryDateElement.innerText = `Oferta ważna do: ${expiryDate}`;
+            pdfContent.appendChild(expiryDateElement);
+        }
+
         selectedProducts.forEach(product => {
             const productRow = document.createElement("div");
             productRow.style.marginBottom = "20px";
+
+            const index = document.createElement("p");
+            index.innerText = `Index: ${product.index}`;
+            productRow.appendChild(index);
 
             const name = document.createElement("p");
             name.innerText = `Nazwa: ${product.name}`;
             productRow.appendChild(name);
 
             const netto = document.createElement("p");
-            netto.innerText = `Cena Netto: ${product.netto}`;
+            netto.innerHTML = `Cena Netto: <span style="color: red; font-size: 1.2em; font-weight: bold;">${product.netto}</span>`;
             productRow.appendChild(netto);
 
             const ean = document.createElement("p");
