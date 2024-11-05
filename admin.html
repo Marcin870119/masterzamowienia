@@ -3,46 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Edytor Oferty</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        input[type="text"] { width: 80px; }
+    </style>
+    <!-- Wczytanie biblioteki JsBarcode -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <h1>Panel Admina</h1>
 
-    <h2>Dodaj nowy produkt</h2>
-    <form id="productForm">
-        <label for="code">Indeks produktu:</label>
-        <input type="text" id="code" name="code" required>
+<h1>Edytor Oferty</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Wybierz</th>
+            <th>Nazwa Produktu</th>
+            <th>Cena Netto</th>
+            <th>EAN</th>
+            <th>Kod Kreskowy</th>
+        </tr>
+    </thead>
+    <tbody id="product-list">
+        <!-- Wiersze zostaną dodane przez JavaScript -->
+    </tbody>
+</table>
 
-        <label for="name">Nazwa produktu:</label>
-        <input type="text" id="name" name="name" required>
+<button onclick="saveAsPDF()">Zapisz do PDF</button>
 
-        <label for="price">Cena:</label>
-        <input type="number" id="price" name="price" required>
+<script>
+    const products = [
+        { name: "AZUGA FILET SUCEDO - PLASTRY FILETA DROBIOWEGO Z AZUGI - MUSCHI AZUGA SKIN 100G CRISTIM", netto: "£1.03", ean: "5941265002001" },
+        { name: "BACON SLICED - BOCZEK PLASTRY - 100G CRISTIM", netto: "£1.48", ean: "5941265002028" },
+        { name: "BALERON 100G - MUSCHI TIGANESC MATACHE MACELARU 100G CRISTIM", netto: "£1.11", ean: "5941265018522" },
+        // Dodaj więcej produktów według potrzeb
+    ];
 
-        <label for="packSize">Rozmiar opakowania:</label>
-        <input type="text" id="packSize" name="packSize" required>
+    // Funkcja do wczytania produktów do tabeli
+    function loadProducts() {
+        const tbody = document.getElementById("product-list");
+        products.forEach((product, index) => {
+            const row = document.createElement("tr");
 
-        <label for="image">URL zdjęcia:</label>
-        <input type="url" id="image" name="image" required>
+            // Kolumna z polem wyboru
+            const checkboxCell = document.createElement("td");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = `select-${index}`;
+            checkboxCell.appendChild(checkbox);
+            row.appendChild(checkboxCell);
 
-        <button type="submit">Dodaj produkt</button>
-    </form>
+            // Nazwa produktu
+            const nameCell = document.createElement("td");
+            nameCell.innerText = product.name;
+            row.appendChild(nameCell);
 
-    <script>
-        document.getElementById('productForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Zapobiega przeładowaniu strony
-            const formData = new FormData(this);
-            const response = await fetch('save_products.php', {
-                method: 'POST',
-                body: formData
-            });
+            // Cena netto
+            const nettoCell = document.createElement("td");
+            const nettoInput = document.createElement("input");
+            nettoInput.type = "text";
+            nettoInput.value = product.netto;
+            nettoInput.id = `netto-${index}`;
+            nettoCell.appendChild(nettoInput);
+            row.appendChild(nettoCell);
 
-            if (response.ok) {
-                alert("Produkt dodany!");
+            // Kod EAN
+            const eanCell = document.createElement("td");
+            eanCell.innerText = product.ean;
+            row.appendChild(eanCell);
+
+            // Kod kreskowy
+            const barcodeCell = document.createElement("td");
+            const barcodeCanvas = document.createElement("canvas");
+            barcodeCanvas.id = `barcode-${index}`;
+            barcodeCell.appendChild(barcodeCanvas);
+            row.appendChild(barcodeCell);
+
+            tbody.appendChild(row);
+
+            // Generowanie kodu kreskowego i debugowanie
+            console.log("Generowanie kodu kreskowego dla EAN:", product.ean); // Debugowanie
+            if (typeof JsBarcode === "undefined") {
+                console.error("JsBarcode nie jest dostępny.");
             } else {
-                alert("Błąd przy dodawaniu produktu.");
+                try {
+                    JsBarcode(barcodeCanvas, product.ean, {
+                        format: "EAN13",
+                        lineColor: "#000",
+                        width: 2,
+                        height: 50,
+                        displayValue: false
+                    });
+                    console.log("Kod kreskowy wygenerowany dla EAN:", product.ean);
+                } catch (error) {
+                    console.error("Błąd generowania kodu kreskowego dla EAN:", product.ean, error);
+                }
             }
         });
-    </script>
+    }
+
+    // Funkcja do zapisu oferty jako PDF
+    function saveAsPDF() {
+        const element = document.body;
+        const opt = {
+            margin:       0.5,
+            filename:     'Oferta.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().from(element).set(opt).save();
+    }
+
+    // Wczytanie produktów po załadowaniu strony
+    window.onload = loadProducts;
+</script>
+
 </body>
 </html>
