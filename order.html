@@ -17,6 +17,16 @@
             text-align: center;
             color: #333;
         }
+        .banner {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .banner img {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+        }
         .product-list {
             margin-top: 20px;
         }
@@ -126,12 +136,27 @@
         button:hover {
             background-color: #005bb5;
         }
+
+        /* Media Queries for Mobile Devices */
+        @media (max-width: 768px) {
+            .product {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .product img {
+                margin-bottom: 10px;
+            }
+            .price, .quantity-controls {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <!-- Baner -->
-<div style="text-align: center;">
+<div class="banner">
     <img src="https://i.postimg.cc/SNYKPTtw/Tekst-akapitu.jpg" alt="Baner">
 </div>
 
