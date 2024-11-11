@@ -126,6 +126,12 @@
         button:hover {
             background-color: #005bb5;
         }
+        .total-price {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -148,13 +154,17 @@
     <button type="button" onclick="submitOrder()">Wyślij zamówienie</button>
 </form>
 
+<div id="total-price" class="total-price">Całkowita wartość zamówienia: 0 GBP</div>
+
 <script>
 // Funkcja do pobierania danych z JSON i wyświetlania produktów
+let totalOrderValue = 0;
 fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
     .then(response => response.json())
     .then(data => {
         const productList = document.getElementById("product-list");
         data.forEach((product, index) => {
+            const productValue = (parseFloat(product['Cena Netto']) * parseInt(product['OPAKOWANIE'])).toFixed(2);
             const productElement = document.createElement("div");
             productElement.classList.add("product");
             productElement.innerHTML = `
@@ -163,7 +173,7 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
                     <div class="product-code">Indeks: ${product['Index']}</div>
                     <div class="product-name">${product['Nazwa Produktu']}</div>
                     <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
-                    <div class="price">${product['Cena Netto']} PLN</div>
+                    <div class="price">${product['Cena Netto']} GBP (Suma: ${productValue} GBP)</div>
                 </div>
                 <div class="quantity-controls">
                     <button onclick="changeQuantity(${index}, -1)">-</button>
@@ -183,7 +193,27 @@ function changeQuantity(index, change) {
     if (currentQuantity + change >= 0) {
         currentQuantity += change;
         input.value = currentQuantity;
+
+        // Aktualizowanie sumy wartości zamówienia
+        updateTotalPrice();
     }
+}
+
+// Funkcja aktualizująca sumę wartości zamówienia
+function updateTotalPrice() {
+    totalOrderValue = 0;
+    const productList = document.getElementById("product-list").children;
+    fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
+        .then(response => response.json())
+        .then(data => {
+            data.forEach((product, index) => {
+                const quantity = parseInt(document.getElementById(`quantity-${index}`).value);
+                const productValue = parseFloat(product['Cena Netto']) * parseInt(product['OPAKOWANIE']) * quantity;
+                totalOrderValue += productValue;
+            });
+            document.getElementById("total-price").textContent = `Całkowita wartość zamówienia: ${totalOrderValue.toFixed(2)} GBP`;
+        })
+        .catch(error => console.error("Błąd wczytywania danych:", error));
 }
 
 // Funkcja wysyłania zamówienia
