@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zamówienie produktów</title>
     <style>
+        /* Stylizacja strony */
         body {
             font-family: Arial, sans-serif;
             max-width: 800px;
@@ -65,33 +66,27 @@
         .product:nth-child(even) {
             background-color: #f8f8f8;
         }
-        .product-details {
+        .product strong {
+            font-size: 16px;
+            color: #333;
             flex-grow: 1;
-            margin-left: 20px;
-        }
-        .product img {
-            max-width: 100px;
-            border-radius: 5px;
         }
         .product-code {
             font-size: 16px;
             font-weight: bold;
+            margin-right: 20px;
             color: #444;
         }
-        .product-name {
-            font-size: 16px;
-            color: #333;
-        }
-        .pack-info {
+        .pack-info, .total-price {
             font-size: 14px;
             color: #666;
-            margin-top: 5px;
+            margin-right: 10px;
         }
         .price {
             font-size: 16px;
             font-weight: bold;
             color: #000;
-            margin-top: 5px;
+            margin-right: 20px;
         }
         .quantity-controls {
             display: flex;
@@ -123,20 +118,33 @@
             border-radius: 5px;
             font-size: 18px;
         }
+        .total-box {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 18px;
+        }
 
-        /* Media Queries for Mobile Devices */
+        /* Stylizacja dla urządzeń mobilnych */
         @media (max-width: 768px) {
             .product {
                 flex-direction: column;
                 align-items: flex-start;
             }
 
-            .product img {
-                max-width: 80px;
+            .product-code, .pack-info, .price, .total-price {
+                margin-right: 0;
                 margin-bottom: 10px;
             }
+
             .quantity-controls {
                 margin-top: 10px;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -145,7 +153,6 @@
 
 <h1>Zamówienie produktów</h1>
 
-<!-- Lista produktów -->
 <div id="product-list" class="product-list"></div>
 
 <!-- Formularz z danymi -->
@@ -163,55 +170,31 @@
     <button type="button" onclick="submitOrder()">Wyślij zamówienie</button>
 </form>
 
-<!-- Skrypt do obsługi produktów i zamówienia -->
+<div class="total-box" id="order-total">Łączna suma zamówienia: 0 PLN</div>
+
 <script>
-    // Lista produktów
     const products = [
-        {
-            "Index": "47554",
-            "Nazwa Produktu": "CHAŁWA SŁONECZNIKOWA Z KAKAO 200G – HALVA FLOARE CACAO 200G TECSA",
-            "Cena Netto": "0.69",
-            "OPAKOWANIE": "20",
-            "": "https://i.postimg.cc/NKF57cHJ/47554.webp"
-        },
-        {
-            "Index": "47555",
-            "Nazwa Produktu": "CHAŁWA SŁONECZNIKOWA WANILIOWA 200G – HALVA FLOARE VANILIE 200G TECSA",
-            "Cena Netto": "0.59",
-            "OPAKOWANIE": "20",
-            "": "https://i.postimg.cc/XrHXsz4V/47555.webp"
-        },
-        {
-            "Index": "48884",
-            "Nazwa Produktu": "OWOCE KANDYZOWANE 450G – RAHAT ASORTAT 450G TECSA",
-            "Cena Netto": "1.29",
-            "OPAKOWANIE": "10",
-            "": "https://i.postimg.cc/pp0nSTBb/48884.webp"
-        },
-        {
-            "Index": "47557",
-            "Nazwa Produktu": "KREM GULASZ SŁODKI 160G – CREMA GULAS DULCE 160G UNIVER",
-            "Cena Netto": "1.15",
-            "OPAKOWANIE": "12",
-            "": "https://i.postimg.cc/N2c0yh7x/47557.webp"
-        }
+        { code: '47554', name: 'CHALWA SŁONECZNIKOWA Z KAKAO', price: 0.69, packSize: 20, quantity: 0, image: 'https://i.postimg.cc/NKF57chJ/47554.webp' },
+        { code: '47555', name: 'CHALWA SŁONECZNIKOWA WANILIOWA', price: 0.59, packSize: 20, quantity: 0, image: 'https://i.postimg.cc/XrHXsz4V/47555.webp' },
+        { code: '48884', name: 'OWOCE KANDYZOWANE 450G', price: 1.29, packSize: 10, quantity: 0, image: 'https://i.postimg.cc/pp0nSTBb/48884.webp' },
+        { code: '47557', name: 'KREM GULASZ SŁODKI', price: 1.15, packSize: 12, quantity: 0, image: 'https://i.postimg.cc/N2c0yh7x/47557.webp' }
     ];
 
-    // Funkcja do wyświetlenia produktów
     function displayProducts() {
         const productList = document.getElementById('product-list');
-        productList.innerHTML = ''; // Czyść listę produktów
+        productList.innerHTML = '';
 
         products.forEach((product, index) => {
             const productElement = document.createElement('div');
             productElement.classList.add('product');
             productElement.innerHTML = `
-                <img src="${product['']}" alt="Zdjęcie produktu">
-                <div class="product-details">
-                    <div class="product-code">Indeks: ${product['Index']}</div>
-                    <div class="product-name">${product['Nazwa Produktu']}</div>
-                    <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
-                    <div class="price">${product['Cena Netto']} PLN</div>
+                <img src="${product.image}" alt="${product.name}" style="width: 100px; height: auto; margin-right: 10px;">
+                <div>
+                    <span class="product-code">Indeks: ${product.code}</span>
+                    <strong>${product.name}</strong><br>
+                    <span class="pack-info">Opakowanie: ${product.packSize}</span><br>
+                    <span class="price">${product.price.toFixed(2)} PLN</span><br>
+                    <span class="total-price" id="total-price-${index}">Suma: 0 PLN</span>
                 </div>
                 <div class="quantity-controls">
                     <button onclick="changeQuantity(${index}, -1)">-</button>
@@ -223,55 +206,50 @@
         });
     }
 
-    // Funkcja do zmiany ilości zamawianych produktów
     function changeQuantity(index, change) {
         const input = document.getElementById(`quantity-${index}`);
         let currentQuantity = parseInt(input.value);
         if (currentQuantity + change >= 0) {
             currentQuantity += change;
             input.value = currentQuantity;
-            products[index].quantity = currentQuantity;  // Aktualizacja ilości
+            products[index].quantity = currentQuantity;
+            updateTotal(index);
+            updateOrderTotal();
         }
     }
 
-    // Funkcja do wysłania zamówienia
+    function updateTotal(index) {
+        const product = products[index];
+        const total = product.quantity * product.price * product.packSize;
+        document.getElementById(`total-price-${index}`).textContent = `Suma: ${total.toFixed(2)} PLN`;
+    }
+
+    function updateOrderTotal() {
+        let orderTotal = 0;
+        products.forEach(product => {
+            orderTotal += product.quantity * product.price * product.packSize;
+        });
+        document.getElementById('order-total').textContent = `Łączna suma zamówienia: ${orderTotal.toFixed(2)} PLN`;
+    }
+
     function submitOrder() {
-        const storeName = document.getElementById('store-name').value;
         const email = document.getElementById('email').value;
+        const storeName = document.getElementById('store-name').value;
 
         if (!email || !storeName) {
-            alert("Proszę wprowadzić adres e-mail oraz nazwę sklepu.");
+            alert("Proszę uzupełnić wszystkie pola.");
             return;
         }
 
-        let orderMessage = `Zamówienie dla sklepu: ${storeName}\n\n`;
-        orderMessage += "Indeks\t\tNazwa produktu\t\tIlość zamówiona\n";
-        orderMessage += "------------------------------------------------------------\n";
+        let orderSummary = "Zamówienie:\n\n";
         products.forEach(product => {
             if (product.quantity > 0) {
-                orderMessage += `${product.Index}\t\t${product['Nazwa Produktu']}\t\t${product.quantity}\n`;
+                const productTotal = (product.quantity * product.price * product.packSize).toFixed(2);
+                orderSummary += `${product.name} - ${product.quantity} x ${product.packSize} (Suma: ${productTotal} PLN)\n`;
             }
         });
 
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("store-name", storeName);
-        formData.append("message", orderMessage);
-
-        fetch("https://formspree.io/f/xanwzpgj", {
-            method: "POST",
-            body: formData,
-            headers: { 'Accept': 'application/json' }
-        }).then(response => {
-            if (response.ok) {
-                alert("Zamówienie zostało wysłane!");
-            } else {
-                alert("Błąd przy wysyłaniu zamówienia.");
-            }
-        }).catch(error => {
-            console.error("Błąd:", error);
-            alert("Błąd przy wysyłaniu zamówienia.");
-        });
+        alert(`Zamówienie wysłane!\n\n${orderSummary}`);
     }
 
     window.onload = displayProducts;
