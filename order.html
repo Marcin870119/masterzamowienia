@@ -13,9 +13,9 @@
             padding: 20px;
             background-color: #f5f5f5;
         }
-        .banner-container {
+        h1 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #333;
         }
         .product-list {
             margin-top: 20px;
@@ -126,26 +126,19 @@
         button:hover {
             background-color: #005bb5;
         }
-        .total-sum {
-            text-align: right;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
 
 <!-- Baner -->
-<div class="banner-container">
-    <img src="https://i.postimg.cc/cgZTMrLV/Zrzut-ekranu-2024-11-11-o-21-17-44.png" alt="Baner" style="width: 100%;">
+<div style="text-align: center;">
+    <img src="https://i.postimg.cc/SNYKPTtw/Tekst-akapitu.jpg" alt="Baner">
 </div>
+
+<h1>Zamówienie produktów</h1>
 
 <!-- Lista produktów -->
 <div id="product-list" class="product-list"></div>
-
-<!-- Podsumowanie zamówienia -->
-<div id="total-sum" class="total-sum">Łączna wartość zamówienia: 0 GBP</div>
 
 <!-- Formularz z danymi -->
 <form id="order-form">
@@ -169,14 +162,13 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
         data.forEach((product, index) => {
             const productElement = document.createElement("div");
             productElement.classList.add("product");
-            const totalProductPrice = (product['Cena Netto'] * product['OPAKOWANIE']).toFixed(2);
             productElement.innerHTML = `
                 <img src="${product['']}" alt="Zdjęcie produktu">
                 <div class="product-details">
                     <div class="product-code">Indeks: ${product['Index']}</div>
                     <div class="product-name">${product['Nazwa Produktu']}</div>
                     <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
-                    <div class="price">${product['Cena Netto']} GBP (Suma: ${totalProductPrice} GBP)</div>
+                    <div class="price">${product['Cena Netto']} GBP (Suma: ${(product['Cena Netto'] * product['OPAKOWANIE']).toFixed(2)} GBP)</div>
                 </div>
                 <div class="quantity-controls">
                     <button onclick="changeQuantity(${index}, -1)">-</button>
@@ -189,33 +181,14 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
     })
     .catch(error => console.error("Błąd wczytywania danych:", error));
 
-let orderData = [];
-
-// Zmiana ilości i aktualizacja podsumowania
+// Zmiana ilości
 function changeQuantity(index, change) {
     const input = document.getElementById(`quantity-${index}`);
     let currentQuantity = parseInt(input.value);
     if (currentQuantity + change >= 0) {
         currentQuantity += change;
         input.value = currentQuantity;
-
-        orderData[index] = currentQuantity;
-        updateTotalSum();
     }
-}
-
-// Aktualizacja łącznej wartości zamówienia
-function updateTotalSum() {
-    fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
-        .then(response => response.json())
-        .then(data => {
-            let totalSum = 0;
-            data.forEach((product, index) => {
-                const quantity = orderData[index] || 0;
-                totalSum += quantity * product['Cena Netto'] * product['OPAKOWANIE'];
-            });
-            document.getElementById("total-sum").innerText = `Łączna wartość zamówienia: ${totalSum.toFixed(2)} GBP`;
-        });
 }
 
 // Funkcja wysyłania zamówienia
@@ -229,40 +202,34 @@ function submitOrder() {
     }
 
     let orderMessage = `Zamówienie dla sklepu: ${storeName}\n\n`;
-    orderMessage += "Indeks\tNazwa\tIlość\tWartość\n";
-    fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
-        .then(response => response.json())
-        .then(data => {
-            data.forEach((product, index) => {
-                const quantity = orderData[index] || 0;
-                if (quantity > 0) {
-                    const totalPrice = (product['Cena Netto'] * product['OPAKOWANIE'] * quantity).toFixed(2);
-                    orderMessage += `${product['Index']}\t${product['Nazwa Produktu']}\t${quantity}\t${totalPrice} GBP\n`;
-                }
-            });
+    orderMessage += "Indeks\tNazwa\tIlość\n";
+    data.forEach(product => {
+        if (product.quantity > 0) {
+            orderMessage += `${product.code}\t${product.name}\t${product.quantity}\n`;
+        }
+    });
 
-            const formData = new FormData();
-            formData.append("email", email);
-            formData.append("store-name", storeName);
-            formData.append("message", orderMessage);
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("store-name", storeName);
+    formData.append("message", orderMessage);
 
-            fetch("https://formspree.io/f/xanwzpgj", {
-                method: "POST",
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    alert("Zamówienie zostało wysłane!");
-                } else {
-                    alert("Błąd przy wysyłaniu zamówienia.");
-                }
-            }).catch(error => {
-                console.error("Błąd:", error);
-                alert("Błąd przy wysyłaniu zamówienia.");
-            });
-        });
+    fetch("https://formspree.io/f/xanwzpgj", {
+        method: "POST",
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            alert("Zamówienie zostało wysłane!");
+        } else {
+            alert("Błąd przy wysyłaniu zamówienia.");
+        }
+    }).catch(error => {
+        console.error("Błąd:", error);
+        alert("Błąd przy wysyłaniu zamówienia.");
+    });
 }
 </script>
 
