@@ -4,122 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zamówienie produktów</title>
-    <style>
-        /* Style są zgodne z Twoimi wymaganiami */
-        /* Dodaj je tutaj */
-    </style>
 </head>
 <body>
+    <h1>Zamówienie produktów</h1>
+    <label for="email">Twój e-mail:</label>
+    <input type="email" id="email" placeholder="Wprowadź swój e-mail">
+    <label for="store">Nazwa sklepu:</label>
+    <input type="text" id="store" placeholder="Wprowadź nazwę sklepu">
+    <button onclick="submitOrder()">Wyślij zamówienie</button>
 
-<div class="banner-container">
-    <img src='https://i.postimg.cc/z3YYzZWs/logo-2.png' alt='Logo' />
-</div>
+    <div id="product-list"></div>
 
-<h1>Zamówienie produktów</h1>
+    <script>
+        async function loadProducts() {
+            const response = await fetch('produktyjson.json');
+            const products = await response.json();
+            const productList = document.getElementById('product-list');
 
-<div id="product-list" class="product-list"></div>
-
-<form id="order-form">
-    <label>
-        Twój e-mail:
-        <input type="email" id="email" name="email" placeholder="Wprowadź swój e-mail" required>
-    </label>
-    
-    <label>
-        Nazwa sklepu:
-        <input type="text" id="store-name" name="store-name" placeholder="Wprowadź nazwę sklepu" required>
-    </label>
-    
-    <button type="button" onclick="submitOrder()">Wyślij zamówienie</button>
-</form>
-
-<script>
-    let products = [];
-
-    // Wczytaj dane z pliku JSON
-    fetch('https://twoj_github_user.github.io/twoje_repozytorium/produktyjson.json')
-        .then(response => response.json())
-        .then(data => {
-            products = data;
-            displayProducts();
-        })
-        .catch(error => console.error('Błąd podczas wczytywania danych:', error));
-
-    function displayProducts() {
-        const productList = document.getElementById('product-list');
-        productList.innerHTML = ''; 
-
-        products.forEach((product, index) => {
-            const productElement = document.createElement('div');
-            productElement.classList.add('product');
-            productElement.innerHTML = `
-                <span class="product-code">${product.Index}</span>
-                <strong>${product['Nazwa Produktu']}</strong>
-                <span class="price">${product['Cena Netto']} GBP</span>
-                <div class="quantity-controls">
-                    <button onclick="changeQuantity(${index}, -1)">-</button>
-                    <input type="number" id="quantity-${index}" value="0" readonly>
-                    <button onclick="changeQuantity(${index}, 1)">+</button>
-                </div>
-            `;
-            productList.appendChild(productElement);
-        });
-    }
-
-    function changeQuantity(index, change) {
-        const input = document.getElementById(`quantity-${index}`);
-        let currentQuantity = parseInt(input.value);
-        if (currentQuantity + change >= 0) {
-            currentQuantity += change;
-            input.value = currentQuantity;
-            products[index].quantity = currentQuantity;
-        }
-    }
-
-    function submitOrder() {
-        const storeName = document.getElementById('store-name').value;
-        const email = document.getElementById('email').value;
-
-        if (!email || !storeName) {
-            alert("Proszę wprowadzić wszystkie wymagane informacje.");
-            return;
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.innerHTML = `
+                    <p><strong>${product['Nazwa Produktu']}</strong></p>
+                    <p>Index: ${product['Index']}</p>
+                    <p>Cena Netto: ${product['Cena Netto']} zł</p>
+                    <p>EAN: ${product['EAN']}</p>
+                    <img src="${product['']}" alt="${product['Nazwa Produktu']}" width="100">
+                    <hr>
+                `;
+                productList.appendChild(productDiv);
+            });
         }
 
-        let orderMessage = `Zamówienie dla sklepu: ${storeName}\n\n`;
-        orderMessage += "Indeks\t\tNazwa produktu\t\tIlość zamówiona\n";
-        orderMessage += "------------------------------------------------------------\n";
-        products.forEach(product => {
-            if (product.quantity > 0) {
-                orderMessage += `${product.Index}\t\t${product['Nazwa Produktu']}\t\t${product.quantity}\n`;
+        function submitOrder() {
+            const email = document.getElementById('email').value;
+            const store = document.getElementById('store').value;
+            if (!email || !store) {
+                alert("Proszę wypełnić wszystkie pola.");
+                return;
             }
-        });
+            alert(`Zamówienie złożone przez ${email} dla sklepu ${store}.`);
+        }
 
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("store-name", storeName);
-        formData.append("message", orderMessage);
-
-        fetch("https://formspree.io/f/xanwzpgj", {
-            method: "POST",
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
-                alert("Zamówienie zostało wysłane!");
-            } else {
-                alert("Błąd przy wysyłaniu zamówienia.");
-            }
-        }).catch(error => {
-            console.error("Błąd:", error);
-            alert("Błąd przy wysyłaniu zamówienia.");
-        });
-    }
-
-    // Wyświetl produkty po załadowaniu strony
-    window.onload = displayProducts;
-</script>
-
+        window.onload = loadProducts;
+    </script>
 </body>
 </html>
