@@ -135,6 +135,12 @@
         button:hover {
             background-color: #005bb5;
         }
+        .total-sum {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -148,6 +154,9 @@
 
 <!-- Lista produktów -->
 <div id="product-list" class="product-list"></div>
+
+<!-- Podsumowanie wartości zamówienia -->
+<div id="total-sum" class="total-sum">Łączna wartość zamówienia: 0.00 GBP</div>
 
 <!-- Formularz z danymi -->
 <form id="order-form">
@@ -163,10 +172,14 @@
 </form>
 
 <script>
+// Lista produktów i funkcje
+let productsData = [];
+
 // Funkcja do pobierania danych z JSON i wyświetlania produktów
 fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
     .then(response => response.json())
     .then(data => {
+        productsData = data;
         const productList = document.getElementById("product-list");
         data.forEach((product, index) => {
             const productElement = document.createElement("div");
@@ -190,14 +203,27 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
     })
     .catch(error => console.error("Błąd wczytywania danych:", error));
 
-// Zmiana ilości
+// Funkcja do zmiany ilości i aktualizacji sumy
 function changeQuantity(index, change) {
     const input = document.getElementById(`quantity-${index}`);
     let currentQuantity = parseInt(input.value);
     if (currentQuantity + change >= 0) {
         currentQuantity += change;
         input.value = currentQuantity;
+        productsData[index].quantity = currentQuantity;  // Aktualizacja ilości
+        updateTotalSum();
     }
+}
+
+// Funkcja do aktualizacji łącznej wartości zamówienia
+function updateTotalSum() {
+    let total = 0;
+    productsData.forEach(product => {
+        if (product.quantity) {
+            total += product['Cena Netto'] * product.quantity * product['OPAKOWANIE'];
+        }
+    });
+    document.getElementById("total-sum").innerText = `Łączna wartość zamówienia: ${total.toFixed(2)} GBP`;
 }
 
 // Funkcja wysyłania zamówienia
@@ -212,9 +238,9 @@ function submitOrder() {
 
     let orderMessage = `Zamówienie dla sklepu: ${storeName}\n\n`;
     orderMessage += "Indeks\tNazwa\tIlość\n";
-    data.forEach(product => {
+    productsData.forEach(product => {
         if (product.quantity > 0) {
-            orderMessage += `${product.code}\t${product.name}\t${product.quantity}\n`;
+            orderMessage += `${product['Index']}\t${product['Nazwa Produktu']}\t${product.quantity}\n`;
         }
     });
 
