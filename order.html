@@ -112,11 +112,11 @@
             border-radius: 5px;
             font-size: 18px;
         }
-        .total-box {
-            text-align: right;
-            font-weight: bold;
-            margin-top: 20px;
-            font-size: 18px;
+        .product img {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+            margin-right: 20px;
         }
     </style>
 </head>
@@ -147,12 +147,19 @@
 
 <!-- Skrypt do obsługi produktów i zamówienia -->
 <script>
-    const products = [
-        { code: '50927', name: 'LAYS 125G CHIPSY BARBEQUE', price: 1.15 },
-        { code: '50924', name: 'LAYS 125G CHIPSY PAPRYKOWE', price: 1.15 },
-        { code: '39390', name: 'RUMEN 1L OLEJ SLONECZNIKOWY', price: 1.25 }
-    ];
+    let products = [];
     const cart = [];
+
+    // Pobieranie produktów z pliku JSON
+    async function fetchProducts() {
+        try {
+            const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json");
+            products = await response.json();
+            displayProducts();
+        } catch (error) {
+            console.error("Błąd przy pobieraniu produktów:", error);
+        }
+    }
 
     // Funkcja do wyświetlenia produktów
     function displayProducts() {
@@ -162,6 +169,7 @@
             const productElement = document.createElement('div');
             productElement.classList.add('product');
             productElement.innerHTML = `
+                <img src="${product.image}" alt="${product.name}">
                 <span class="product-code">${product.code}</span>
                 <strong>${product.name}</strong>
                 <span class="price">${product.price.toFixed(2)} PLN</span>
@@ -231,7 +239,7 @@
         alert(orderDetails);
     }
 
-    window.onload = displayProducts;
+    window.onload = fetchProducts;
 </script>
 
 </body>
