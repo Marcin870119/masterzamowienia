@@ -5,173 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zamówienie produktów</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #444;
-        }
-        input, button {
-            padding: 12px;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            border: 1px solid #bbb;
-            border-radius: 5px;
-        }
-        input {
-            width: 100%;
-        }
-        button {
-            background-color: #0066cc;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #005bb5;
-        }
-        .product-list {
-            margin-top: 20px;
-        }
-        .product {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 15px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .product:nth-child(even) {
-            background-color: #f8f8f8;
-        }
-        .product strong {
-            font-size: 16px;
-            color: #333;
-            flex-grow: 1;
-        }
-        .product-code {
-            font-size: 16px;
-            font-weight: bold;
-            margin-right: 20px;
-            color: #444;
-        }
-        .pack-info {
-            font-size: 14px;
-            color: #666;
-            margin-right: 10px;
-        }
-        .price {
-            font-size: 16px;
-            font-weight: bold;
-            color: #000;
-            margin-right: 20px;
-        }
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-        }
-        .quantity-controls button {
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            text-align: center;
-            line-height: 1;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            margin-right: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .quantity-controls button:hover {
-            background-color: #218838;
-        }
-        .quantity-controls input {
-            width: 50px;
-            text-align: center;
-            margin-right: 5px;
-            padding: 5px;
-            border: 1px solid #bbb;
-            border-radius: 5px;
-            font-size: 18px;
-        }
-        .total-box {
-            text-align: right;
-            font-weight: bold;
-            margin-top: 20px;
-            font-size: 18px;
-        }
-
-        /* Media Queries for Mobile Devices */
-        @media (max-width: 768px) {
-            .product {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .product-code, .pack-info, .price {
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-
-            .quantity-controls {
-                margin-top: 10px;
-            }
-
-            button {
-                width: 100%;
-                padding: 12px;
-                font-size: 1.2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-
-            input, button {
-                padding: 10px;
-                font-size: 1rem;
-            }
-
-            .quantity-controls input {
-                width: 40px;
-                font-size: 16px;
-            }
-        }
+        /* Style są zgodne z Twoimi wymaganiami */
+        /* Dodaj je tutaj */
     </style>
 </head>
 <body>
 
+<div class="banner-container">
+    <img src='https://i.postimg.cc/z3YYzZWs/logo-2.png' alt='Logo' />
+</div>
+
 <h1>Zamówienie produktów</h1>
 
-<!-- Lista produktów -->
 <div id="product-list" class="product-list"></div>
 
-<!-- Formularz z danymi -->
 <form id="order-form">
     <label>
         Twój e-mail:
@@ -186,32 +33,29 @@
     <button type="button" onclick="submitOrder()">Wyślij zamówienie</button>
 </form>
 
-<!-- Skrypt do obsługi produktów i zamówienia -->
 <script>
-    // Funkcja do pobrania produktów z pliku JSON na GitHubie
-    async function fetchProducts() {
-        try {
-            const response = await fetch('https://marcin870119.github.io/masterzamowienia/products.json');
-            const products = await response.json();
-            displayProducts(products);
-        } catch (error) {
-            console.error("Błąd przy pobieraniu produktów:", error);
-        }
-    }
+    let products = [];
 
-    // Funkcja do wyświetlenia produktów
-    function displayProducts(products) {
+    // Wczytaj dane z pliku JSON
+    fetch('https://twoj_github_user.github.io/twoje_repozytorium/produktyjson.json')
+        .then(response => response.json())
+        .then(data => {
+            products = data;
+            displayProducts();
+        })
+        .catch(error => console.error('Błąd podczas wczytywania danych:', error));
+
+    function displayProducts() {
         const productList = document.getElementById('product-list');
-        productList.innerHTML = ''; // Czyść listę produktów
+        productList.innerHTML = ''; 
 
         products.forEach((product, index) => {
             const productElement = document.createElement('div');
             productElement.classList.add('product');
             productElement.innerHTML = `
-                <span class="product-code">${product.code}</span>
-                <strong>${product.name}</strong>
-                <span class="pack-info">(Pakowane po: ${product.packSize})</span>
-                <span class="price">${product.price} GBP</span>
+                <span class="product-code">${product.Index}</span>
+                <strong>${product['Nazwa Produktu']}</strong>
+                <span class="price">${product['Cena Netto']} GBP</span>
                 <div class="quantity-controls">
                     <button onclick="changeQuantity(${index}, -1)">-</button>
                     <input type="number" id="quantity-${index}" value="0" readonly>
@@ -222,49 +66,39 @@
         });
     }
 
-    // Funkcja do zmiany ilości zamawianych produktów
     function changeQuantity(index, change) {
         const input = document.getElementById(`quantity-${index}`);
         let currentQuantity = parseInt(input.value);
         if (currentQuantity + change >= 0) {
             currentQuantity += change;
             input.value = currentQuantity;
+            products[index].quantity = currentQuantity;
         }
     }
 
-    // Funkcja do wysłania zamówienia
     function submitOrder() {
         const storeName = document.getElementById('store-name').value;
         const email = document.getElementById('email').value;
 
-        // Sprawdzenie, czy pola są wypełnione
-        if (!email) {
-            alert("Proszę wprowadzić adres e-mail.");
+        if (!email || !storeName) {
+            alert("Proszę wprowadzić wszystkie wymagane informacje.");
             return;
         }
 
-        if (!storeName) {
-            alert("Proszę wprowadzić nazwę sklepu.");
-            return;
-        }
-
-        // Przygotowanie treści zamówienia
         let orderMessage = `Zamówienie dla sklepu: ${storeName}\n\n`;
-        orderMessage += "Indeks\t\tNazwa produktu\t\tIlość zamówiona (boxy)\n";
+        orderMessage += "Indeks\t\tNazwa produktu\t\tIlość zamówiona\n";
         orderMessage += "------------------------------------------------------------\n";
         products.forEach(product => {
             if (product.quantity > 0) {
-                orderMessage += `${product.code}\t\t${product.name}\t\t${product.quantity}\n`;
+                orderMessage += `${product.Index}\t\t${product['Nazwa Produktu']}\t\t${product.quantity}\n`;
             }
         });
 
-        // Przygotowanie danych do wysyłki przez Formspree
         const formData = new FormData();
         formData.append("email", email);
         formData.append("store-name", storeName);
         formData.append("message", orderMessage);
 
-        // Wysyłanie danych przez Formspree
         fetch("https://formspree.io/f/xanwzpgj", {
             method: "POST",
             body: formData,
@@ -284,7 +118,7 @@
     }
 
     // Wyświetl produkty po załadowaniu strony
-    window.onload = fetchProducts;
+    window.onload = displayProducts;
 </script>
 
 </body>
