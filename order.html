@@ -221,13 +221,12 @@ function changeQuantity(index, change) {
     }
 }
 
-// Obliczanie łącznej wartości zamówienia
 function calculateTotal() {
     let totalValue = 0;
     productsData.forEach(product => {
-        if (product.quantity > 0) {
-            totalValue += product['Cena Netto'] * product['OPAKOWANIE'] * product.quantity;
-        }
+        const price = parseFloat(product['Cena Netto']) || 0;
+        const packaging = parseInt(product['OPAKOWANIE'], 10) || 1;
+        totalValue += price * packaging * product.quantity;
     });
     document.getElementById("total-value").innerText = `Łączna wartość zamówienia: ${totalValue.toFixed(2)} GBP`;
 }
