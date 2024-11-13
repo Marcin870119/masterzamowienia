@@ -23,6 +23,7 @@
         }
         .product {
             display: flex;
+            flex-direction: column; /* Pionowy układ na mniejszych ekranach */
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
@@ -30,18 +31,20 @@
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
-            width: 100%;
             box-sizing: border-box;
+            width: 100%;
         }
         .product:nth-child(even) {
             background-color: #f8f8f8;
         }
         .product img {
-            max-width: 100px;
-            margin-right: 15px;
+            max-width: 80px;
+            height: auto;
+            margin-bottom: 10px;
         }
         .product-details {
-            flex-grow: 1;
+            text-align: center;
+            margin-bottom: 10px;
         }
         .product-code {
             font-size: 14px;
@@ -57,17 +60,19 @@
         .pack-info {
             font-size: 14px;
             color: #666;
-            margin-right: 10px;
+            margin-bottom: 5px;
         }
         .price {
             font-size: 16px;
             font-weight: bold;
             color: #000;
-            margin-right: 20px;
+            margin-bottom: 10px;
         }
         .quantity-controls {
             display: flex;
             align-items: center;
+            justify-content: center;
+            margin-top: 10px;
         }
         .quantity-controls button {
             width: 40px;
@@ -80,7 +85,7 @@
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            margin-right: 5px;
+            margin: 0 5px;
             transition: background-color 0.3s ease;
         }
         .quantity-controls button:hover {
@@ -89,7 +94,6 @@
         .quantity-controls input {
             width: 50px;
             text-align: center;
-            margin-right: 5px;
             padding: 5px;
             border: 1px solid #bbb;
             border-radius: 5px;
@@ -135,6 +139,19 @@
             margin-top: 20px;
             font-size: 18px;
         }
+        @media (min-width: 600px) {
+            .product {
+                flex-direction: row; /* Poziomy układ dla większych ekranów */
+                align-items: flex-start;
+            }
+            .product img {
+                margin-right: 15px;
+            }
+            .product-details {
+                text-align: left;
+                margin-bottom: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -162,13 +179,12 @@
 <script>
 let productsData = [];
 
-// Pobieranie danych z JSON i wyświetlanie produktów
 fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
     .then(response => response.json())
     .then(data => {
         productsData = data.map(product => ({
             ...product,
-            quantity: 0 // Inicjalizuj pole quantity na 0
+            quantity: 0
         }));
 
         const productList = document.getElementById("product-list");
@@ -176,7 +192,7 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
             const productElement = document.createElement("div");
             productElement.classList.add("product");
             productElement.innerHTML = `
-                <img src="${product[''] || 'https://via.placeholder.com/100'}" alt="Zdjęcie produktu">
+                <img src="${product[''] || 'https://via.placeholder.com/80'}" alt="Zdjęcie produktu">
                 <div class="product-details">
                     <div class="product-code">Indeks: ${product['Index']}</div>
                     <div class="product-name">${product['Nazwa Produktu']}</div>
@@ -194,19 +210,17 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
     })
     .catch(error => console.error("Błąd wczytywania danych:", error));
 
-// Zmiana ilości
 function changeQuantity(index, change) {
     const input = document.getElementById(`quantity-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
     if (currentQuantity + change >= 0) {
         currentQuantity += change;
         input.value = currentQuantity;
-        productsData[index].quantity = currentQuantity; // Aktualizuj ilość
+        productsData[index].quantity = currentQuantity;
         calculateTotal();
     }
 }
 
-// Obliczanie łącznej wartości zamówienia
 function calculateTotal() {
     let totalValue = 0;
     productsData.forEach(product => {
@@ -217,7 +231,6 @@ function calculateTotal() {
     document.getElementById("total-value").innerText = `Łączna wartość zamówienia: ${totalValue.toFixed(2)} GBP`;
 }
 
-// Wysyłanie zamówienia
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
     const email = document.getElementById('email').value;
@@ -250,10 +263,7 @@ function submitOrder() {
         } else {
             alert("Błąd przy wysyłaniu zamówienia.");
         }
-    }).catch(error => {
-        console.error("Błąd:", error);
-        alert("Błąd przy wysyłaniu zamówienia.");
-    });
+    }).catch(error => console.error("Błąd:", error));
 }
 </script>
 
