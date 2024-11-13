@@ -15,14 +15,7 @@
         .banner-container {
             display: flex;
             justify-content: center;
-            align-items: center;
             margin-bottom: 20px;
-        }
-        .banner-container img {
-            width: 100%;
-            max-width: 800px;
-            height: auto;
-            border-radius: 8px; /* Dodanie zaokrąglenia */
         }
         .product-list {
             margin-top: 20px;
@@ -30,7 +23,6 @@
         }
         .product {
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
@@ -45,13 +37,11 @@
             background-color: #f8f8f8;
         }
         .product img {
-            max-width: 80px;
-            height: auto;
-            margin-bottom: 10px;
+            max-width: 100px;
+            margin-right: 15px;
         }
         .product-details {
-            text-align: center;
-            margin-bottom: 10px;
+            flex-grow: 1;
         }
         .product-code {
             font-size: 14px;
@@ -67,19 +57,17 @@
         .pack-info {
             font-size: 14px;
             color: #666;
-            margin-bottom: 5px;
+            margin-right: 10px;
         }
         .price {
             font-size: 16px;
             font-weight: bold;
             color: #000;
-            margin-bottom: 10px;
+            margin-right: 20px;
         }
         .quantity-controls {
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-top: 10px;
         }
         .quantity-controls button {
             width: 40px;
@@ -92,7 +80,7 @@
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            margin: 0 5px;
+            margin-right: 5px;
             transition: background-color 0.3s ease;
         }
         .quantity-controls button:hover {
@@ -101,6 +89,7 @@
         .quantity-controls input {
             width: 50px;
             text-align: center;
+            margin-right: 5px;
             padding: 5px;
             border: 1px solid #bbb;
             border-radius: 5px;
@@ -146,19 +135,6 @@
             margin-top: 20px;
             font-size: 18px;
         }
-        @media (min-width: 600px) {
-            .product {
-                flex-direction: row;
-                align-items: flex-start;
-            }
-            .product img {
-                margin-right: 15px;
-            }
-            .product-details {
-                text-align: left;
-                margin-bottom: 0;
-            }
-        }
     </style>
 </head>
 <body>
@@ -186,26 +162,24 @@
 <script>
 let productsData = [];
 
-// Pobieranie danych z JSON i wyświetlanie produktów
 fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
     .then(response => response.json())
     .then(data => {
         productsData = data.map(product => ({
             ...product,
-            quantity: 0 // Inicjalizuj pole quantity na 0
+            quantity: 0
         }));
-
         const productList = document.getElementById("product-list");
         productsData.forEach((product, index) => {
             const productElement = document.createElement("div");
             productElement.classList.add("product");
             productElement.innerHTML = `
-                <img src="${product[''] || 'https://via.placeholder.com/80'}" alt="Zdjęcie produktu">
+                <img src="${product['img_url']}" alt="Zdjęcie produktu">
                 <div class="product-details">
                     <div class="product-code">Indeks: ${product['Index']}</div>
                     <div class="product-name">${product['Nazwa Produktu']}</div>
-                    <div class="pack-info">Opakowanie: ${product['OPAKOWANIE'] || 'Brak danych'}</div>
-                    <div class="price">${product['Cena Netto']} GBP</div>
+                    <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
+                    <div class="price">${product['Cena Netto']} GBP <span style="font-size: 12px; color: #666;">*cena netto</span> (Suma: ${(parseFloat(product['Cena Netto']) * parseInt(product['OPAKOWANIE'], 10)).toFixed(2)} GBP)</div>
                 </div>
                 <div class="quantity-controls">
                     <button onclick="changeQuantity(${index}, -1)">-</button>
@@ -218,7 +192,6 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
     })
     .catch(error => console.error("Błąd wczytywania danych:", error));
 
-// Zmiana ilości
 function changeQuantity(index, change) {
     const input = document.getElementById(`quantity-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
