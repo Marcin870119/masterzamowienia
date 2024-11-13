@@ -8,7 +8,7 @@
         /* Stylizacja strony */
         body {
             font-family: Arial, sans-serif;
-            max-width: 1000px; /* Zwiększona maksymalna szerokość strony */
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
@@ -19,17 +19,17 @@
             margin-bottom: 20px;
         }
         .banner-container img {
-            width: 100%; /* Baner będzie zajmował pełną szerokość */
-            max-width: 800px; /* Maksymalna szerokość banera */
+            width: 100%;
+            max-width: 800px;
             height: auto;
         }
         .product-list {
             margin-top: 20px;
-            width: 100%; /* Zwiększona szerokość listy produktów */
+            width: 100%;
         }
         .product {
             display: flex;
-            flex-direction: column; /* Ułożenie pionowe dla lepszej responsywności */
+            flex-direction: column;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
@@ -37,12 +37,12 @@
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
-            width: 100%; /* Zwiększona szerokość produktów */
+            width: 100%;
             box-sizing: border-box;
         }
         @media(min-width: 600px) {
             .product {
-                flex-direction: row; /* Układ poziomy dla większych ekranów */
+                flex-direction: row;
             }
         }
         .product:nth-child(even) {
@@ -56,7 +56,7 @@
         }
         .product-details {
             flex-grow: 1;
-            text-align: center; /* Wyśrodkowanie tekstu na mniejszych ekranach */
+            text-align: center;
             margin-bottom: 10px;
         }
         .product-code {
@@ -191,12 +191,12 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
             const productElement = document.createElement("div");
             productElement.classList.add("product");
             productElement.innerHTML = `
-                <img src="${product['']}" alt="Zdjęcie produktu">
+                <img src="${product['img_url']}" alt="Zdjęcie produktu">
                 <div class="product-details">
                     <div class="product-code">Indeks: ${product['Index']}</div>
                     <div class="product-name">${product['Nazwa Produktu']}</div>
-                    <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
-                    <div class="price">${product['Cena Netto']} GBP <span style="font-size: 12px; color: #666;">*cena netto</span> (Suma: ${(product['Cena Netto'] * product['OPAKOWANIE']).toFixed(2)} GBP)</div>
+                    <div class="pack-info">Opakowanie: ${product['Opakowanie']}</div>
+                    <div class="price">${product['Cena Netto']} GBP</div>
                 </div>
                 <div class="quantity-controls">
                     <button onclick="changeQuantity(${index}, -1)">-</button>
@@ -216,7 +216,7 @@ function changeQuantity(index, change) {
     if (currentQuantity + change >= 0) {
         currentQuantity += change;
         input.value = currentQuantity;
-        productsData[index].quantity = currentQuantity; // Ustaw aktualną ilość
+        productsData[index].quantity = currentQuantity;
         calculateTotal();
     }
 }
@@ -226,7 +226,7 @@ function calculateTotal() {
     let totalValue = 0;
     productsData.forEach(product => {
         if (product.quantity > 0) {
-            totalValue += product['Cena Netto'] * product['OPAKOWANIE'] * product.quantity;
+            totalValue += product['Cena Netto'] * product['Opakowanie'] * product.quantity;
         }
     });
     document.getElementById("total-value").innerText = `Łączna wartość zamówienia: ${totalValue.toFixed(2)} GBP`;
