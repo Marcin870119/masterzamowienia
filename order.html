@@ -15,7 +15,14 @@
         .banner-container {
             display: flex;
             justify-content: center;
+            align-items: center;
             margin-bottom: 20px;
+        }
+        .banner-container img {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 8px; /* Dodanie zaokrąglenia */
         }
         .product-list {
             margin-top: 20px;
@@ -23,7 +30,7 @@
         }
         .product {
             display: flex;
-            flex-direction: column; /* Pionowy układ na mniejszych ekranach */
+            flex-direction: column;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
@@ -31,8 +38,8 @@
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
-            box-sizing: border-box;
             width: 100%;
+            box-sizing: border-box;
         }
         .product:nth-child(even) {
             background-color: #f8f8f8;
@@ -141,7 +148,7 @@
         }
         @media (min-width: 600px) {
             .product {
-                flex-direction: row; /* Poziomy układ dla większych ekranów */
+                flex-direction: row;
                 align-items: flex-start;
             }
             .product img {
@@ -179,12 +186,13 @@
 <script>
 let productsData = [];
 
+// Pobieranie danych z JSON i wyświetlanie produktów
 fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
     .then(response => response.json())
     .then(data => {
         productsData = data.map(product => ({
             ...product,
-            quantity: 0
+            quantity: 0 // Inicjalizuj pole quantity na 0
         }));
 
         const productList = document.getElementById("product-list");
@@ -196,7 +204,7 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
                 <div class="product-details">
                     <div class="product-code">Indeks: ${product['Index']}</div>
                     <div class="product-name">${product['Nazwa Produktu']}</div>
-                    <div class="pack-info">Opakowanie: ${product['OPAKOWANIE'] || 1}</div>
+                    <div class="pack-info">Opakowanie: ${product['OPAKOWANIE'] || 'Brak danych'}</div>
                     <div class="price">${product['Cena Netto']} GBP</div>
                 </div>
                 <div class="quantity-controls">
@@ -210,6 +218,7 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
     })
     .catch(error => console.error("Błąd wczytywania danych:", error));
 
+// Zmiana ilości
 function changeQuantity(index, change) {
     const input = document.getElementById(`quantity-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
