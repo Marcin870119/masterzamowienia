@@ -17,6 +17,11 @@
             justify-content: center;
             margin-bottom: 20px;
         }
+        .banner-container img {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+        }
         .product-list {
             margin-top: 20px;
             width: 100%;
@@ -162,7 +167,8 @@
 <script>
 let productsData = [];
 
-fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json")
+// Pobieranie danych z JSON
+fetch("https://raw.githubusercontent.com/swistak1985/mojezamowienia/main/produktyjson2.json")
     .then(response => response.json())
     .then(data => {
         productsData = data.map(product => ({
@@ -174,12 +180,12 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
             const productElement = document.createElement("div");
             productElement.classList.add("product");
             productElement.innerHTML = `
-                <img src="${product['img_url']}" alt="Zdjęcie produktu">
+                <img src="${product['img_url'] || 'https://via.placeholder.com/100'}" alt="Zdjęcie produktu">
                 <div class="product-details">
                     <div class="product-code">Indeks: ${product['Index']}</div>
                     <div class="product-name">${product['Nazwa Produktu']}</div>
-                    <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
-                    <div class="price">${product['Cena Netto']} GBP <span style="font-size: 12px; color: #666;">*cena netto</span> (Suma: ${(parseFloat(product['Cena Netto']) * parseInt(product['OPAKOWANIE'], 10)).toFixed(2)} GBP)</div>
+                    <div class="pack-info">Opakowanie: ${product['OPAKOWANIE'] || 'Brak danych'}</div>
+                    <div class="price">${product['Cena Netto']} GBP</div>
                 </div>
                 <div class="quantity-controls">
                     <button onclick="changeQuantity(${index}, -1)">-</button>
@@ -192,6 +198,7 @@ fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/prod
     })
     .catch(error => console.error("Błąd wczytywania danych:", error));
 
+// Zmiana ilości
 function changeQuantity(index, change) {
     const input = document.getElementById(`quantity-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
@@ -203,6 +210,7 @@ function changeQuantity(index, change) {
     }
 }
 
+// Obliczanie łącznej wartości zamówienia
 function calculateTotal() {
     let totalValue = 0;
     productsData.forEach(product => {
@@ -213,6 +221,7 @@ function calculateTotal() {
     document.getElementById("total-value").innerText = `Łączna wartość zamówienia: ${totalValue.toFixed(2)} GBP`;
 }
 
+// Funkcja wysyłania zamówienia
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
     const email = document.getElementById('email').value;
