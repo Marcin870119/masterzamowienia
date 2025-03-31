@@ -48,10 +48,12 @@
             background-color: #f8f8f8;
         }
         .product img {
-            max-width: 80px;
-            margin-right: 15px;
-            width: 100%;
+            max-width: 60px; /* Zmniejszamy maksymalną szerokość zdjęcia */
+            max-height: 100px; /* Ograniczamy wysokość zdjęcia */
+            width: auto;
             height: auto;
+            margin-right: 15px;
+            object-fit: contain; /* Zapewniamy, że zdjęcie nie będzie zniekształcone */
         }
         .product-details {
             flex-grow: 1;
@@ -156,7 +158,7 @@
 <body>
 
 <div class="banner-container">
-    <img src="https://i.postimg.cc/SNYKPTtw/Tekst-akapitu.jpg" alt="Banner">
+    <img src="https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/baner.jpg" alt="Banner">
 </div>
 
 <!-- Lista produktów -->
