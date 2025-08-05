@@ -1,0 +1,525 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zamówienie produktów</title>
+    <style>
+        /* Stylizacja strony */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            margin: 0 5px;
+            background-color: #ddd;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .tab.active {
+            background-color: #0066cc;
+            color: white;
+        }
+        .tab:hover {
+            background-color: #ccc;
+        }
+        .tab.active:hover {
+            background-color: #005bb5;
+        }
+        .banner-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .banner-container img {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+        }
+        .product-list {
+            margin-top: 20px;
+            width: 100%;
+            display: none;
+        }
+        .product-list.active {
+            display: block;
+        }
+        .product {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        @media(min-width: 600px) {
+            .product {
+                flex-direction: row;
+            }
+        }
+        .product:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+        .product img {
+            max-width: 80px;
+            margin-right: 15px;
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease; /* Efekt powiększania */
+        }
+        .product img:hover {
+            transform: scale(1.2); /* Powiększenie zdjęcia o 20% po najechaniu */
+            cursor: pointer;
+        }
+        .product-details {
+            flex-grow: 1;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .product-code {
+            font-size: 14px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 5px;
+        }
+        .product-name {
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
+        .pack-info {
+            font-size: 14px;
+            color: #666;
+            margin-right: 10px;
+        }
+        .price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin-right: 20px;
+        }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quantity-controls button {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            text-align: center;
+            line-height: 1;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .quantity-controls button:hover {
+            background-color: #218838;
+        }
+        .quantity-controls input {
+            width: 50px;
+            text-align: center;
+            margin-right: 5px;
+            padding: 5px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #444;
+        }
+        input, button {
+            padding: 12px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+        }
+        input {
+            width: 100%;
+        }
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
+        .total-box {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .category-totals {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('lithuania')">Litwa</div>
+    <div class="tab" onclick="switchTab('bulgaria')">Bułgaria</div>
+    <div class="tab" onclick="switchTab('ukraine')">Ukraina</div>
+</div>
+<div class="banner-container" id="banner-container">
+    <img src="" alt="Baner" id="banner-image">
+</div>
+<!-- Lista produktów -->
+<div id="product-list-lithuania" class="product-list active"></div>
+<div id="product-list-bulgaria" class="product-list"></div>
+<div id="product-list-ukraine" class="product-list"></div>
+<!-- Formularz z danymi -->
+<form id="order-form">
+    <label>
+        Twój e-mail:
+        <input type="email" id="email" name="email" placeholder="Wprowadź swój e-mail" required>
+    </label>
+    <label>
+        Nazwa sklepu:
+        <input type="text" id="store-name" name="store-name" placeholder="Wprowadź nazwę sklepu" required>
+    </label>
+    <button type="button" onclick="submitOrder()">Wyślij zamówienie</button>
+</form>
+<div id="category-totals" class="category-totals"></div>
+<div id="total-value" class="total-box">Łączna wartość zamówienia: 0 GBP</div>
+<script>
+let productsData = {
+    lithuania: [],
+    bulgaria: [],
+    ukraine: []
+};
+let activeTab = 'lithuania';
+let categoryTotals = {
+    lithuania: 0,
+    bulgaria: 0,
+    ukraine: 0
+};
+
+// Funkcja do ustawiania baneru na podstawie aktywnej zakładki
+function updateBanner() {
+    const bannerImage = document.getElementById('banner-image');
+    switch (activeTab) {
+        case 'lithuania':
+            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/LITWA BANER.jpg';
+            break;
+        case 'bulgaria':
+            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/bulgaria baner.jpg';
+            break;
+        case 'ukraine':
+            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/ukraina baner.jpg';
+            break;
+        default:
+            bannerImage.src = 'https://i.postimg.cc/SNYKPTtw/Tekst-akapitu.jpg'; // Domyślny baner
+    }
+}
+
+// Funkcja do pobierania danych z JSON i wyświetlania produktów
+function loadProducts(country) {
+    console.log("Ładowanie danych dla:", country); // Debug
+    let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
+    if (country === 'lithuania') {
+        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/LITWA.json';
+    } else if (country === 'bulgaria') {
+        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BLUGARIA.json';
+    } else if (country === 'ukraine') {
+        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json';
+    }
+    fetch(url)
+        .then(response => {
+            console.log("Odpowiedź fetch dla", country, ":", response.status); // Debug
+            if (!response.ok) {
+                throw new Error(`Błąd HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dane załadowane dla", country, ":", data); // Debug
+            productsData[country] = data.map(product => ({ ...product, quantity: 0 }));
+            const productList = document.getElementById(`product-list-${country}`);
+            productList.innerHTML = '';
+            data.forEach((product, index) => {
+                const productElement = document.createElement("div");
+                productElement.classList.add("product");
+                let imageUrl = '';
+                if (country === 'lithuania') {
+                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-litwa/${product['INDEKS']}.jpg`;
+                    const imgTest = new Image();
+                    imgTest.src = imageUrl;
+                    imgTest.onload = () => {
+                        productElement.innerHTML = `
+                            <img src="${imageUrl}" alt="Zdjęcie produktu" onload="console.log('Zdjęcie załadowane: ${imageUrl}')" onerror="console.error('Błąd ładowania zdjęcia: ${imageUrl}')">
+                            <div class="product-details">
+                                <div class="product-code">Indeks: ${product['INDEKS']}</div>
+                                <div class="product-name">${product['NAZWA']}</div>
+                                <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
+                                <div class="price">${product['CENA']} GBP</div>
+                            </div>
+                            <div class="quantity-controls">
+                                <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
+                                <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                                <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                            </div>
+                        `;
+                        productList.appendChild(productElement);
+                    };
+                    imgTest.onerror = () => {
+                        console.warn(`Pominięto indeks ${product['INDEKS']} z powodu braku zdjęcia: ${imageUrl}`);
+                    };
+                } else if (country === 'bulgaria') {
+                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-bulgaria/${product['INDEKS']}.jpg`;
+                    const imgTest = new Image();
+                    imgTest.src = imageUrl;
+                    imgTest.onload = () => {
+                        productElement.innerHTML = `
+                            <img src="${imageUrl}" alt="Zdjęcie produktu" onload="console.log('Zdjęcie załadowane: ${imageUrl}')" onerror="console.error('Błąd ładowania zdjęcia: ${imageUrl}')">
+                            <div class="product-details">
+                                <div class="product-code">Indeks: ${product['INDEKS']}</div>
+                                <div class="product-name">${product['NAZWA']}</div>
+                                <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
+                                <div class="price">${product['CENA']} GBP</div>
+                            </div>
+                            <div class="quantity-controls">
+                                <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
+                                <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                                <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                            </div>
+                        `;
+                        productList.appendChild(productElement);
+                    };
+                    imgTest.onerror = () => {
+                        console.warn(`Pominięto indeks ${product['INDEKS']} z powodu braku zdjęcia: ${imageUrl}`);
+                    };
+                } else if (country === 'ukraine') {
+                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${product['INDEKS']}.jpg`;
+                    const imgTest = new Image();
+                    imgTest.src = imageUrl;
+                    imgTest.onload = () => {
+                        productElement.innerHTML = `
+                            <img src="${imageUrl}" alt="Zdjęcie produktu" onload="console.log('Zdjęcie załadowane: ${imageUrl}')" onerror="console.error('Błąd ładowania zdjęcia: ${imageUrl}')">
+                            <div class="product-details">
+                                <div class="product-code">Indeks: ${product['INDEKS']}</div>
+                                <div class="product-name">${product['NAZWA']}</div>
+                                <div class="pack-info">Opakowanie: ${product['OPAKOWANIE']}</div>
+                                <div class="price">${product['CENA']} GBP</div>
+                            </div>
+                            <div class="quantity-controls">
+                                <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
+                                <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                                <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                            </div>
+                        `;
+                        productList.appendChild(productElement);
+                    };
+                    imgTest.onerror = () => {
+                        console.warn(`Pominięto indeks ${product['INDEKS']} z powodu braku zdjęcia: ${imageUrl}`);
+                    };
+                }
+            });
+            calculateTotal();
+        })
+        .catch(error => console.error(`Błąd wczytywania danych dla ${country}:`, error));
+}
+
+// Przełączanie zakładek
+function switchTab(country) {
+    activeTab = country;
+    console.log("Przełączanie na zakładkę:", country); // Debug
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.product-list').forEach(list => list.classList.remove('active'));
+    const selectedTab = document.querySelector(`[onclick="switchTab('${country}')"]`);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    } else {
+        console.error("Zakładka nie znaleziona:", country);
+    }
+    const selectedList = document.getElementById(`product-list-${country}`);
+    if (selectedList) {
+        selectedList.classList.add('active');
+    } else {
+        console.error("Lista produktów nie znaleziona dla:", country);
+    }
+    updateBanner(); // Aktualizacja baneru
+    if (productsData[country].length === 0) {
+        loadProducts(country); // Ładowanie danych, jeśli jeszcze nie załadowano
+    } else {
+        calculateTotal(); // Aktualizacja wartości po przełączeniu
+    }
+}
+
+// Zmiana ilości
+function changeQuantity(country, index, change) {
+    const input = document.getElementById(`quantity-${country}-${index}`);
+    let currentQuantity = parseInt(input.value);
+    if (currentQuantity + change >= 0) {
+        currentQuantity += change;
+        input.value = currentQuantity;
+        productsData[country][index].quantity = currentQuantity;
+        calculateTotal();
+    }
+}
+
+// Obliczanie łącznej wartości zamówienia
+function calculateTotal() {
+    let totalValue = 0;
+    let categoryValue = 0;
+    let categoryTotalsText = '';
+
+    // Oblicz wartości dla każdej kategorii
+    for (let country in productsData) {
+        let countryTotal = 0;
+        productsData[country].forEach(product => {
+            if (product.quantity > 0) {
+                countryTotal += product['CENA'] * product['OPAKOWANIE'] * product.quantity;
+            }
+        });
+        categoryTotals[country] = countryTotal;
+        if (countryTotal > 0) {
+            categoryTotalsText += `${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n`;
+        }
+    }
+
+    // Wartość dla aktualnej kategorii
+    categoryValue = categoryTotals[activeTab] || 0;
+
+    // Aktualizacja wyświetlanego tekstu
+    document.getElementById("category-totals").innerText = categoryTotalsText.trim();
+    document.getElementById("total-value").innerText = `Łączna wartość zamówienia: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine).toFixed(2)} GBP`;
+}
+
+// Funkcja wysyłania zamówienia
+function submitOrder() {
+    const storeName = document.getElementById('store-name').value;
+    const email = document.getElementById('email').value;
+    if (!email || !storeName) {
+        alert("Proszę uzupełnić wszystkie pola.");
+        return;
+    }
+    let orderMessage = `Zamówienie dla sklepu: ${storeName}\n\n`;
+    // Agregacja danych ze wszystkich kategorii
+    for (let country in productsData) {
+        let countryTotal = 0;
+        let hasItems = false;
+        orderMessage += `${country.charAt(0).toUpperCase() + country.slice(1)}:\n`;
+        orderMessage += "Indeks\tNazwa\tIlość\n";
+        productsData[country].forEach(product => {
+            if (product.quantity > 0) {
+                hasItems = true;
+                orderMessage += `${product.INDEKS}\t${product['NAZWA']}\t${product.quantity}\n`;
+                countryTotal += product['CENA'] * product['OPAKOWANIE'] * product.quantity;
+            }
+        });
+        if (!hasItems) {
+            orderMessage += "Brak pozycji w koszyku dla tej kategorii.\n\n";
+        } else {
+            orderMessage += `Suma dla ${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n\n`;
+        }
+    }
+    orderMessage += `Łączna wartość zamówienia: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine).toFixed(2)} GBP`;
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("store-name", storeName);
+    formData.append("message", orderMessage);
+    console.log("Wysyłanie zamówienia:", { email, storeName, orderMessage }); // Debug
+    fetch("https://formspree.io/f/xanwzpgj", {
+        method: "POST",
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        console.log("Odpowiedź serwera:", response.status, response.statusText); // Debug
+        if (response.ok) {
+            alert("Zamówienie zostało wysłane!");
+        } else {
+            throw new Error("Błąd odpowiedzi serwera");
+        }
+    }).catch(error => {
+        console.error("Błąd przy wysyłaniu zamówienia:", error); // Debug
+        alert("Błąd przy wysyłaniu zamówienia.");
+    });
+}
+
+// Wczytaj produkty dla początkowej zakładki i ustaw baner
+loadProducts('lithuania');
+updateBanner();
+</script>
+</body>
+</html>
