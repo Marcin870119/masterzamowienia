@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
@@ -471,13 +432,28 @@ function submitOrder() {
         alert("Proszę uzupełnić wszystkie pola.");
         return;
     }
-    let orderMessage = `Zamówienie dla sklepu: ${storeName}\nKraj: ${activeTab}\n\n`;
-    orderMessage += "Indeks\tNazwa\tIlość\n";
-    productsData[activeTab].forEach(product => {
-        if (product.quantity > 0) {
-            orderMessage += `${product.INDEKS}\t${product['NAZWA']}\t${product.quantity}\n`;
+    let orderMessage = `Zamówienie dla sklepu: ${storeName}\n\n`;
+    // Agregacja danych ze wszystkich kategorii
+    for (let country in productsData) {
+        let countryTotal = 0;
+        let hasItems = false;
+        orderMessage += `${country.charAt(0).toUpperCase() + country.slice(1)}:\n`;
+        orderMessage += "Indeks\tNazwa\tIlość\n";
+        productsData[country].forEach(product => {
+            if (product.quantity > 0) {
+                hasItems = true;
+                orderMessage += `${product.INDEKS}\t${product['NAZWA']}\t${product.quantity}\n`;
+                countryTotal += product['CENA'] * product['OPAKOWANIE'] * product.quantity;
+            }
+        });
+        if (!hasItems) {
+            orderMessage += "Brak pozycji w koszyku dla tej kategorii.\n\n";
+        } else {
+            orderMessage += `Suma dla ${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n\n`;
         }
-    });
+    }
+    orderMessage += `Łączna wartość zamówienia: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine).toFixed(2)} GBP`;
+
     const formData = new FormData();
     formData.append("email", email);
     formData.append("store-name", storeName);
