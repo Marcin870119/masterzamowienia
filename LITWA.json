@@ -3,348 +3,406 @@
     "INDEKS": "55008",
     "NAZWA": "BAZARNYE PRAZONE NASIONA SLONECZNIKA CZARNE 300G LITWA",
     "OPAKOWANIE": "18",
-    "CENA": "1.29"
+    "CENA": "1.29",
+    "Cena konkurencji": "1.25"
   },
   {
     "INDEKS": "55012",
     "NAZWA": "BAZARNYE PRAZONE NASIONA SLONECZNIKA CZARNE SOLONE 300G LITWA",
     "OPAKOWANIE": "18",
-    "CENA": "1.29"
+    "CENA": "1.29",
+    "Cena konkurencji": "1.25"
   },
   {
     "INDEKS": "56801",
     "NAZWA": "CIDO NAPOJ OWSIANY O SMAKU MANGO I BANANA 1L LITWA",
     "OPAKOWANIE": "15",
-    "CENA": "2.22"
+    "CENA": "2.22",
+    "Cena konkurencji": "2.22"
   },
   {
     "INDEKS": "56802",
     "NAZWA": "CIDO NAPOJ OWSIANY O SMAKU MANGO I BANANA 200ML LITWA",
     "OPAKOWANIE": "18",
-    "CENA": "0.55"
+    "CENA": "0.55",
+    "Cena konkurencji": "0.55"
   },
   {
     "INDEKS": "56803",
     "NAZWA": "CIDO NAPOJ OWSIANY O SMAKU TRUSKAWKI I BANANA 1L LITWA",
     "OPAKOWANIE": "15",
-    "CENA": "2.22"
+    "CENA": "2.22",
+    "Cena konkurencji": "2.22"
   },
   {
     "INDEKS": "56805",
     "NAZWA": "CIDO NAPOJ OWSIANY O SMAKU TRUSKAWKI I BANANA 200ML LITWA",
     "OPAKOWANIE": "18",
-    "CENA": "0.55"
+    "CENA": "0.55",
+    "Cena konkurencji": "0.54"
   },
   {
     "INDEKS": "56806",
     "NAZWA": "CIDO NATURALNY KWAS CHLEBOWY TAURAS 500ML LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.98"
+    "CENA": "0.98",
+    "Cena konkurencji": "1.02"
   },
   {
     "INDEKS": "54934",
     "NAZWA": "DZIUGAS CHRUPKI SEROWE CEBULA 50G LITWA",
     "OPAKOWANIE": "10",
-    "CENA": "1.6"
+    "CENA": "1.6",
+    "Cena konkurencji": "1.56"
   },
   {
     "INDEKS": "54937",
     "NAZWA": "DZIUGAS CHRUPKI SEROWE KLASYCZNE 50G LITWA",
     "OPAKOWANIE": "10",
-    "CENA": "1.39"
+    "CENA": "1.39",
+    "Cena konkurencji": "1.44"
   },
   {
     "INDEKS": "54938",
     "NAZWA": "DZIUGAS CHRUPKI SEROWE POMIDOR 50G LITWA",
     "OPAKOWANIE": "10",
-    "CENA": "1.6"
+    "CENA": "1.6",
+    "Cena konkurencji": "1.65"
   },
   {
     "INDEKS": "54939",
     "NAZWA": "DZIUGAS CHRUPKI SEROWE SMIETANA I CEBULA 50G LITWA",
     "OPAKOWANIE": "10",
-    "CENA": "1.39"
+    "CENA": "1.39",
+    "Cena konkurencji": "1.33"
   },
   {
     "INDEKS": "55262",
     "NAZWA": "ESTRELLA CHIPSY SEROWE 130G LITWA",
     "OPAKOWANIE": "20",
-    "CENA": "1.54"
+    "CENA": "1.54",
+    "Cena konkurencji": "1.55"
   },
   {
     "INDEKS": "55271",
     "NAZWA": "ESTRELLA CHIPSY SMIETANA CHILLI 115G LITWA",
     "OPAKOWANIE": "12",
-    "CENA": "1.53"
+    "CENA": "1.53",
+    "Cena konkurencji": "1.55"
   },
   {
     "INDEKS": "55263",
     "NAZWA": "ESTRELLA MICROPOPCORN SLODKI 90G LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.92"
+    "CENA": "0.92",
+    "Cena konkurencji": "0.91"
   },
   {
     "INDEKS": "27287",
     "NAZWA": "ESTRELLA MICROPOPCORN SOLONY 90G LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.92"
+    "CENA": "0.92",
+    "Cena konkurencji": "0.91"
   },
   {
     "INDEKS": "27286",
     "NAZWA": "ESTRELLA MICROPOPCORN Z MASLEM 90G LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.92"
+    "CENA": "0.92",
+    "Cena konkurencji": "0.91"
   },
   {
     "INDEKS": "55019",
     "NAZWA": "GARSO CHLEB LITEWSKI BORODINSKI 300G LITWA",
     "OPAKOWANIE": "20",
-    "CENA": "0.99"
+    "CENA": "0.99",
+    "Cena konkurencji": "1.01"
   },
   {
     "INDEKS": "55021",
     "NAZWA": "GARSO CHLEB LITEWSKI BORODINSKI ZE SLONECZNIKIEM 300G LITWA",
     "OPAKOWANIE": "20",
-    "CENA": "0.99"
+    "CENA": "0.99",
+    "Cena konkurencji": "1.01"
   },
   {
     "INDEKS": "55022",
     "NAZWA": "GARSO CHLEB LITEWSKI SLODKO KWASNY 300G LITWA",
     "OPAKOWANIE": "16",
-    "CENA": "0.99"
+    "CENA": "0.99",
+    "Cena konkurencji": "1.01"
   },
   {
     "INDEKS": "55023",
     "NAZWA": "GARSO CHLEB LITEWSKI TRADYCYJNY 300G LITWA",
     "OPAKOWANIE": "16",
-    "CENA": "0.99"
+    "CENA": "0.99",
+    "Cena konkurencji": "1.01"
   },
   {
     "INDEKS": "55024",
     "NAZWA": "GARSO CHLEB LITEWSKI WIEJSKI 300G LITWA",
     "OPAKOWANIE": "16",
-    "CENA": "0.99"
+    "CENA": "0.99",
+    "Cena konkurencji": "1.01"
   },
   {
     "INDEKS": "55040",
     "NAZWA": "KOLUMBO KONCENTRAT POMIDOROWY 300G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.36"
+    "CENA": "1.36",
+    "Cena konkurencji": "1.33"
   },
   {
     "INDEKS": "53575",
     "NAZWA": "LAYS CHIPSY 130G BARBECUE RIBS",
     "OPAKOWANIE": "21",
-    "CENA": "1.34"
+    "CENA": "1.34",
+    "Cena konkurencji": "1.35"
   },
   {
     "INDEKS": "53551",
     "NAZWA": "LAYS CHIPSY 130G FOREST CREAMY MUSHROOMS",
     "OPAKOWANIE": "21",
-    "CENA": "1.34"
+    "CENA": "1.34",
+    "Cena konkurencji": "1.35"
   },
   {
     "INDEKS": "53563",
     "NAZWA": "LAYS CHIPSY 130G GRILLED BACON",
     "OPAKOWANIE": "21",
-    "CENA": "1.34"
+    "CENA": "1.34",
+    "Cena konkurencji": "1.35"
   },
   {
     "INDEKS": "55036",
     "NAZWA": "RIVONA BURAKI MARYNOWANE 500G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "0.9"
+    "CENA": "0.9",
+    "Cena konkurencji": "1"
   },
   {
     "INDEKS": "55031",
     "NAZWA": "RIVONA BURAKI MARYNOWANE PREMIUM 500G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1"
+    "CENA": "1",
+    "Cena konkurencji": "0.98"
   },
   {
     "INDEKS": "55034",
     "NAZWA": "RIVONA BURAKI MARYNOWANE W OCCIE JABLKOWYM 500G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.06"
+    "CENA": "1.06",
+    "Cena konkurencji": "1.09"
   },
   {
     "INDEKS": "55053",
     "NAZWA": "RIVONA DZEM MALINOWY 580G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "3"
+    "CENA": "3",
+    "Cena konkurencji": "3.05"
   },
   {
     "INDEKS": "55055",
     "NAZWA": "RIVONA DZEM MORELOWY 580G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "3"
+    "CENA": "3",
+    "Cena konkurencji": "3.05"
   },
   {
     "INDEKS": "55044",
     "NAZWA": "RIVONA KONFITURA BOROWKA 350G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "2.14"
+    "CENA": "2.14",
+    "Cena konkurencji": "2.18"
   },
   {
     "INDEKS": "55048",
     "NAZWA": "RIVONA KONFITURA BOROWKA 580G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "3.27"
+    "CENA": "3.27",
+    "Cena konkurencji": "3.33"
   },
   {
     "INDEKS": "55045",
     "NAZWA": "RIVONA KONFITURA MALINOWA 350G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "2.14"
+    "CENA": "2.14",
+    "Cena konkurencji": "2.15"
   },
   {
     "INDEKS": "55049",
     "NAZWA": "RIVONA KONFITURA MALINOWA 580G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "3.27"
+    "CENA": "3.27",
+    "Cena konkurencji": "3.22"
   },
   {
     "INDEKS": "55041",
     "NAZWA": "RIVONA KONFITURA TRUSKAWKOWA 350G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.63"
+    "CENA": "1.63",
+    "Cena konkurencji": "1.65"
   },
   {
     "INDEKS": "55046",
     "NAZWA": "RIVONA KONFITURA TRUSKAWKOWA 580G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "2.27"
+    "CENA": "2.27",
+    "Cena konkurencji": "2.3"
   },
   {
     "INDEKS": "55050",
     "NAZWA": "RIVONA KONFITURA WISNIOWA 580G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "3.3"
+    "CENA": "3.3",
+    "Cena konkurencji": "3.34"
   },
   {
     "INDEKS": "55042",
     "NAZWA": "RIVONA KONFITURA Z CZARNEJ PORZECZKI 350G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.9"
+    "CENA": "1.9",
+    "Cena konkurencji": "1.95"
   },
   {
     "INDEKS": "55047",
     "NAZWA": "RIVONA KONFITURA Z CZARNEJ PORZECZKI 580G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "2.75"
+    "CENA": "2.75",
+    "Cena konkurencji": "2.8"
   },
   {
     "INDEKS": "55051",
     "NAZWA": "RIVONA MUS JABLKOWY 500G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.39"
+    "CENA": "1.39",
+    "Cena konkurencji": "1.4"
   },
   {
     "INDEKS": "55037",
     "NAZWA": "RIVONA PIECZARKI MARYNOWANE 500G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "2.28"
+    "CENA": "2.28",
+    "Cena konkurencji": "2.3"
   },
   {
     "INDEKS": "55038",
     "NAZWA": "RIVONA SOS POMIDOROWY OSTRY 500G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.53"
+    "CENA": "1.53",
+    "Cena konkurencji": "1.55"
   },
   {
     "INDEKS": "55039",
     "NAZWA": "RIVONA SOS POMIDOROWY SVENTINIS 500G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.42"
+    "CENA": "1.42",
+    "Cena konkurencji": "1.45"
   },
   {
     "INDEKS": "56243",
     "NAZWA": "RIVONA ZUPA BARSZCZ UKRAINSKI Z BOROWIKAMI 480G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.55"
+    "CENA": "1.55",
+    "Cena konkurencji": "1.56"
   },
   {
     "INDEKS": "56239",
     "NAZWA": "RIVONA ZUPA BARSZCZ Z BEKONEM 480G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.76"
+    "CENA": "1.76",
+    "Cena konkurencji": "1.75"
   },
   {
     "INDEKS": "56247",
     "NAZWA": "RIVONA ZUPA BURACZANA 480G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.34"
+    "CENA": "1.34",
+    "Cena konkurencji": "1.33"
   },
   {
     "INDEKS": "56242",
     "NAZWA": "RIVONA ZUPA CHARCIO 480G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.64"
+    "CENA": "1.64",
+    "Cena konkurencji": "1.65"
   },
   {
     "INDEKS": "56241",
     "NAZWA": "RIVONA ZUPA CHILLI 480G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "2.09"
+    "CENA": "2.09",
+    "Cena konkurencji": "2.11"
   },
   {
     "INDEKS": "56245",
     "NAZWA": "RIVONA ZUPA SOLIANKA 480G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.62"
+    "CENA": "1.62",
+    "Cena konkurencji": "1.65"
   },
   {
     "INDEKS": "56244",
     "NAZWA": "RIVONA ZUPA Z CZERWONA FASOLA 480G LITWA",
     "OPAKOWANIE": "8",
-    "CENA": "1.55"
+    "CENA": "1.55",
+    "Cena konkurencji": "1.59"
   },
   {
     "INDEKS": "55005",
     "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA BIALE 120G LITWA",
     "OPAKOWANIE": "16",
-    "CENA": "1.01"
+    "CENA": "1.01",
+    "Cena konkurencji": "1.05"
   },
   {
     "INDEKS": "55006",
     "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA BIALE SOLONE 120G LITWA",
     "OPAKOWANIE": "16",
-    "CENA": "1.01"
+    "CENA": "1.01",
+    "Cena konkurencji": "1.05"
   },
   {
     "INDEKS": "55007",
     "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA CZARNE 150G LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.68"
+    "CENA": "0.68",
+    "Cena konkurencji": "0.7"
   },
   {
     "INDEKS": "54995",
     "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA PASKOWANE 150G LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.68"
+    "CENA": "0.68",
+    "Cena konkurencji": "0.7"
   },
   {
     "INDEKS": "54997",
     "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA PASKOWANE O SMAKU SERA 150G LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.79"
+    "CENA": "0.79",
+    "Cena konkurencji": "0.81"
   },
   {
     "INDEKS": "55004",
     "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA PASKOWANE O SMAKU SMIETANY I CEBULI 150G LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.75"
+    "CENA": "0.75",
+    "Cena konkurencji": "0.77"
   },
   {
     "INDEKS": "54996",
     "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA PASKOWANE SOLONE 150G LITWA",
     "OPAKOWANIE": "24",
-    "CENA": "0.68"
+    "CENA": "0.68",
+    "Cena konkurencji": "0.71"
   },
   {
     "INDEKS": "55013",
     "NAZWA": "Y.E.S. PRAZONE PESTKI DYNI SOLONE 150G LITWA",
     "OPAKOWANIE": "18",
-    "CENA": "1.29"
+    "CENA": "1.29",
+    "Cena konkurencji": "1.31"
   }
 ]
