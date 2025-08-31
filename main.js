@@ -1,4 +1,3 @@
-
 var gk_isXlsx = false;
 var gk_xlsxFileLookup = {};
 var gk_fileData = {};
@@ -160,7 +159,7 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-// Tworzenie stałego panelu po lewej stronie
+// Tworzenie stałego panelu po lewej stronie z toggle'em na telefonach
 function createSidebar() {
     const sidebar = document.createElement('div');
     sidebar.style.cssText = `
@@ -174,8 +173,29 @@ function createSidebar() {
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         z-index: 1000;
         font-family: Arial, sans-serif;
-        font-size: 12px; /* Mniejsza czcionka */
+        font-size: 12px;
     `;
+    // Przycisk toggle dla telefonów
+    const toggleButton = document.createElement('button');
+    toggleButton.innerText = '☰';
+    toggleButton.style.cssText = `
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        font-size: 20px;
+        padding: 5px;
+        background-color: #0066cc;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 1001;
+        display: none; /* Domyślnie ukryte na dużych ekranach */
+    `;
+    toggleButton.onclick = () => {
+        sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
+    };
+
     const discountInfo = document.createElement('div');
     discountInfo.id = 'discountInfo';
     discountInfo.style.cssText = `margin-bottom: 10px; font-weight: bold; color: #333;`;
@@ -218,6 +238,22 @@ function createSidebar() {
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
     document.body.appendChild(sidebar);
+    document.body.appendChild(toggleButton);
+
+    // Responsywność w JS (pokazanie toggle na telefonach)
+    if (window.innerWidth <= 600) {
+        sidebar.style.display = 'none'; // Ukrycie paska na starcie na telefonach
+        toggleButton.style.display = 'block'; // Pokaż przycisk toggle
+    }
+    window.addEventListener('resize', () => {
+        if (window.innerWidth <= 600) {
+            sidebar.style.display = 'none';
+            toggleButton.style.display = 'block';
+        } else {
+            sidebar.style.display = 'block';
+            toggleButton.style.display = 'none';
+        }
+    });
 }
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
@@ -233,8 +269,8 @@ function createSearchBar() {
     const searchBarContainer = document.createElement('div');
     searchBarContainer.style.cssText = `
         width: 100%;
-        max-width: 900px; /* Dopasowanie do max-width body minus marginesy */
-        margin: 10px auto 0; /* Wyśrodkowanie i margines od góry pod banerem */
+        max-width: 900px;
+        margin: 10px auto 0;
         padding: 10px;
         background-color: #f1f1f1;
         border-radius: 4px;
@@ -243,6 +279,7 @@ function createSearchBar() {
         display: flex;
         gap: 10px;
         align-items: center;
+        flex-wrap: wrap; /* Pozwala na zawijanie elementów na małych ekranach */
     `;
 
     // Pasek wyszukiwania
@@ -256,6 +293,7 @@ function createSearchBar() {
         border-radius: 4px;
         font-size: 14px;
         box-sizing: border-box;
+        min-width: 150px; /* Minimalna szerokość dla mobilności */
     `;
 
     // Filtr kategorii
@@ -266,6 +304,7 @@ function createSearchBar() {
         border-radius: 4px;
         font-size: 14px;
         box-sizing: border-box;
+        min-width: 120px; /* Minimalna szerokość dla mobilności */
     `;
     const filterOptions = [
         { value: '', text: 'All Categories' },
@@ -293,6 +332,7 @@ function createSearchBar() {
         font-size: 14px;
         cursor: pointer;
         transition: background-color 0.3s;
+        min-width: 100px; /* Minimalna szerokość dla mobilności */
     `;
     clearFiltersButton.onmouseover = () => clearFiltersButton.style.backgroundColor = '#5a6268';
     clearFiltersButton.onmouseout = () => clearFiltersButton.style.backgroundColor = '#6c757d';
