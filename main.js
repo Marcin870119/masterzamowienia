@@ -47,7 +47,8 @@ function applyDiscount(price) {
 }
 // Funkcja aktualizująca ceny i cashback bez resetowania koszyka
 function updatePrices() {
-    calculateTotal(); // Przeliczanie totali na podstawie istniejących ilości
+    calculateTotal(); // Przeliczanie totali na podstawie istniejących ilości z rabatem
+    updateCart(); // Aktualizacja koszyka z nowymi cenami
     updateCartInfo(); // Aktualizacja informacji o koszyku
     updateDiscountInfo(); // Aktualizacja informacji o rabacie i cashbacku
 }
@@ -133,7 +134,7 @@ function showInitialDialog() {
         if (discountPercentage > 100) discountPercentage = 100;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
-        updatePrices(); // Aktualizacja bez resetowania koszyka
+        updatePrices(); // Aktualizacja z rabatem
         document.body.removeChild(modal);
     };
     const cancelButton = document.createElement('button');
@@ -240,7 +241,7 @@ function createSidebar() {
         if (discountPercentage > 100) discountPercentage = 100;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
-        updatePrices(); // Ręczne wywołanie aktualizacji
+        updatePrices(); // Ręczne wywołanie aktualizacji z rabatem
         updateDiscountInfo();
     };
 
