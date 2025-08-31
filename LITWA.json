@@ -1,408 +1,826 @@
 [
   {
-    "INDEKS": "55008",
-    "NAZWA": "BAZARNYE PRAZONE NASIONA SLONECZNIKA CZARNE 300G LITWA",
-    "OPAKOWANIE": "18",
-    "CENA": "1.29",
-    "Cena konkurencji": "1.25"
+    "INDEKS": "55665",
+    "NAZWA": "22 CARATS CROISSANT Z NADZIENIEM O SMAKU CREME BRULEE 55G SOFIO BULGARIA",
+    "OPAKOWANIE": "32",
+    "CENA": "0.35",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "55012",
-    "NAZWA": "BAZARNYE PRAZONE NASIONA SLONECZNIKA CZARNE SOLONE 300G LITWA",
-    "OPAKOWANIE": "18",
-    "CENA": "1.29",
-    "Cena konkurencji": "1.25"
+    "INDEKS": "47486",
+    "NAZWA": "22 CARATS CROISSANT Z NADZIENIEM TRUSKAWKOWYM 52G SOFIO BULGARIA",
+    "OPAKOWANIE": "32",
+    "CENA": "0.35",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "56801",
-    "NAZWA": "CIDO NAPOJ OWSIANY O SMAKU MANGO I BANANA 1L LITWA",
-    "OPAKOWANIE": "15",
-    "CENA": "2.22",
-    "Cena konkurencji": "2.22"
-  },
-  {
-    "INDEKS": "56802",
-    "NAZWA": "CIDO NAPOJ OWSIANY O SMAKU MANGO I BANANA 200ML LITWA",
-    "OPAKOWANIE": "18",
-    "CENA": "0.55",
-    "Cena konkurencji": "0.55"
-  },
-  {
-    "INDEKS": "56803",
-    "NAZWA": "CIDO NAPOJ OWSIANY O SMAKU TRUSKAWKI I BANANA 1L LITWA",
-    "OPAKOWANIE": "15",
-    "CENA": "2.22",
-    "Cena konkurencji": "2.22"
-  },
-  {
-    "INDEKS": "56805",
-    "NAZWA": "CIDO NAPOJ OWSIANY O SMAKU TRUSKAWKI I BANANA 200ML LITWA",
-    "OPAKOWANIE": "18",
-    "CENA": "0.55",
-    "Cena konkurencji": "0.54"
-  },
-  {
-    "INDEKS": "56806",
-    "NAZWA": "CIDO NATURALNY KWAS CHLEBOWY TAURAS 500ML LITWA",
+    "INDEKS": "55667",
+    "NAZWA": "22 CARATS DUO CROISSANT Z NADZIENIEM KAKAOWO-MLECZNYM 80G SOFIO BULGARIA",
     "OPAKOWANIE": "24",
-    "CENA": "0.98",
-    "Cena konkurencji": "1.02"
+    "CENA": "0.54",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "54934",
-    "NAZWA": "DZIUGAS CHRUPKI SEROWE CEBULA 50G LITWA",
-    "OPAKOWANIE": "10",
+    "INDEKS": "55666",
+    "NAZWA": "22 CARATS DUO CROISSANT Z NADZIENIEM O SMAKU WISNIOWO-MLECZNYM 80G SOFIO BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.54",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56238",
+    "NAZWA": "7 DAYS 185G ROGALIK Z NADZ.MILLEFEUILLE BULGARIA MONDELEZ",
+    "OPAKOWANIE": "8",
     "CENA": "1.6",
-    "Cena konkurencji": "1.56"
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "54937",
-    "NAZWA": "DZIUGAS CHRUPKI SEROWE KLASYCZNE 50G LITWA",
-    "OPAKOWANIE": "10",
-    "CENA": "1.39",
-    "Cena konkurencji": "1.44"
+    "INDEKS": "56240",
+    "NAZWA": "7 DAYS 60G ROGALIK Z NADZ.MILLEFEUILLE BULGARIA MONDELEZ",
+    "OPAKOWANIE": "15",
+    "CENA": "0.64",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "54938",
-    "NAZWA": "DZIUGAS CHRUPKI SEROWE POMIDOR 50G LITWA",
-    "OPAKOWANIE": "10",
-    "CENA": "1.6",
-    "Cena konkurencji": "1.65"
-  },
-  {
-    "INDEKS": "54939",
-    "NAZWA": "DZIUGAS CHRUPKI SEROWE SMIETANA I CEBULA 50G LITWA",
-    "OPAKOWANIE": "10",
-    "CENA": "1.39",
-    "Cena konkurencji": "1.33"
-  },
-  {
-    "INDEKS": "55262",
-    "NAZWA": "ESTRELLA CHIPSY SEROWE 130G LITWA",
+    "INDEKS": "56231",
+    "NAZWA": "7 DAYS 60G ROGALIK Z NADZ.MORELOWYM BULGARIA MONDELEZ",
     "OPAKOWANIE": "20",
-    "CENA": "1.54",
-    "Cena konkurencji": "1.55"
+    "CENA": "0.53",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "55271",
-    "NAZWA": "ESTRELLA CHIPSY SMIETANA CHILLI 115G LITWA",
+    "INDEKS": "56227",
+    "NAZWA": "7 DAYS 60G ROGALIK Z NADZ.SZAMPANSKIM BULGARIA MONDELEZ",
+    "OPAKOWANIE": "30",
+    "CENA": "0.52",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56236",
+    "NAZWA": "7 DAYS 92G ROGALIK Z NADZ.KAKAO&WANILIA BULGARIA MONDELEZ",
+    "OPAKOWANIE": "20",
+    "CENA": "0.6",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56237",
+    "NAZWA": "7 DAYS 92G ROGALIK Z NADZ.KREM BRULEE BULGARIA MONDELEZ",
+    "OPAKOWANIE": "20",
+    "CENA": "0.59",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56235",
+    "NAZWA": "7 DAYS 92G ROGALIK Z NADZ.KWASNEJ WISNI I WANILII BULGARIA MONDELEZ",
+    "OPAKOWANIE": "20",
+    "CENA": "0.6",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55653",
+    "NAZWA": "AGI CIASTKA KRUCHE Z MIGDALAMI W CUKRZE PUDRZE 280G SOFIO BULGARIA",
+    "OPAKOWANIE": "14",
+    "CENA": "2.19",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55562",
+    "NAZWA": "AMPHORA 135G PRALINY AMFORA BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.99",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55788",
+    "NAZWA": "ARTU 80G CZEKOLADA DUBAJSKA ARTU BULGARIA",
+    "OPAKOWANIE": "22",
+    "CENA": "3.99",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56972",
+    "NAZWA": "BATONIK DUBAJSKI BOLCI 30G BULGARIA",
+    "OPAKOWANIE": "96",
+    "CENA": "1.61",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55789",
+    "NAZWA": "BEYOGLU 36G CZEKOLADA DUBAJSKA BEYOGLU BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "2.06",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56357",
+    "NAZWA": "BOROVETS 52G WAFELEK ZE SKORKA POMARANCZOWA W CZEKOLADZIE BULGARIA DAY & NIGHT",
+    "OPAKOWANIE": "72",
+    "CENA": "0.24",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56353",
+    "NAZWA": "BOROVETS 55G WAFELEK ORZECHOWY W CZEKOLADZIE BULGARIA DAY & NIGHT",
+    "OPAKOWANIE": "72",
+    "CENA": "0.24",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56355",
+    "NAZWA": "BOROVETS 630G WAFELKI ORZECHOWE BULGARIA DAY & NIGHT",
+    "OPAKOWANIE": "21",
+    "CENA": "2.12",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55560",
+    "NAZWA": "CHERNOMORTES 172G PRALINY CHERNOMORETS BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "1.97",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55559",
+    "NAZWA": "CHERNOMORTES 75G TORCIK WAFLOWY O SMAKU POMARANCZOWYM CHERNOMORETS BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.42",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56121",
+    "NAZWA": "CHOFA 110G WAFEL Z KREMEM KAKAOWY W MLECZNEJ CZEKOLADZIE BULGARIA SWEET PLUS",
     "OPAKOWANIE": "12",
-    "CENA": "1.53",
-    "Cena konkurencji": "1.55"
-  },
-  {
-    "INDEKS": "55263",
-    "NAZWA": "ESTRELLA MICROPOPCORN SLODKI 90G LITWA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.92",
-    "Cena konkurencji": "0.91"
-  },
-  {
-    "INDEKS": "27287",
-    "NAZWA": "ESTRELLA MICROPOPCORN SOLONY 90G LITWA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.92",
-    "Cena konkurencji": "0.91"
-  },
-  {
-    "INDEKS": "27286",
-    "NAZWA": "ESTRELLA MICROPOPCORN Z MASLEM 90G LITWA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.92",
-    "Cena konkurencji": "0.91"
-  },
-  {
-    "INDEKS": "55019",
-    "NAZWA": "GARSO CHLEB LITEWSKI BORODINSKI 300G LITWA",
-    "OPAKOWANIE": "20",
-    "CENA": "0.99",
-    "Cena konkurencji": "1.01"
-  },
-  {
-    "INDEKS": "55021",
-    "NAZWA": "GARSO CHLEB LITEWSKI BORODINSKI ZE SLONECZNIKIEM 300G LITWA",
-    "OPAKOWANIE": "20",
-    "CENA": "0.99",
-    "Cena konkurencji": "1.01"
-  },
-  {
-    "INDEKS": "55022",
-    "NAZWA": "GARSO CHLEB LITEWSKI SLODKO KWASNY 300G LITWA",
-    "OPAKOWANIE": "16",
-    "CENA": "0.99",
-    "Cena konkurencji": "1.01"
-  },
-  {
-    "INDEKS": "55023",
-    "NAZWA": "GARSO CHLEB LITEWSKI TRADYCYJNY 300G LITWA",
-    "OPAKOWANIE": "16",
-    "CENA": "0.99",
-    "Cena konkurencji": "1.01"
-  },
-  {
-    "INDEKS": "55024",
-    "NAZWA": "GARSO CHLEB LITEWSKI WIEJSKI 300G LITWA",
-    "OPAKOWANIE": "16",
-    "CENA": "0.99",
-    "Cena konkurencji": "1.01"
-  },
-  {
-    "INDEKS": "55040",
-    "NAZWA": "KOLUMBO KONCENTRAT POMIDOROWY 300G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.36",
-    "Cena konkurencji": "1.33"
-  },
-  {
-    "INDEKS": "53575",
-    "NAZWA": "LAYS CHIPSY 130G BARBECUE RIBS",
-    "OPAKOWANIE": "21",
-    "CENA": "1.34",
-    "Cena konkurencji": "1.35"
-  },
-  {
-    "INDEKS": "53551",
-    "NAZWA": "LAYS CHIPSY 130G FOREST CREAMY MUSHROOMS",
-    "OPAKOWANIE": "21",
-    "CENA": "1.34",
-    "Cena konkurencji": "1.35"
-  },
-  {
-    "INDEKS": "53563",
-    "NAZWA": "LAYS CHIPSY 130G GRILLED BACON",
-    "OPAKOWANIE": "21",
-    "CENA": "1.34",
-    "Cena konkurencji": "1.35"
-  },
-  {
-    "INDEKS": "55036",
-    "NAZWA": "RIVONA BURAKI MARYNOWANE 500G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "0.9",
-    "Cena konkurencji": "1"
-  },
-  {
-    "INDEKS": "55031",
-    "NAZWA": "RIVONA BURAKI MARYNOWANE PREMIUM 500G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1",
-    "Cena konkurencji": "0.98"
-  },
-  {
-    "INDEKS": "55034",
-    "NAZWA": "RIVONA BURAKI MARYNOWANE W OCCIE JABLKOWYM 500G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.06",
-    "Cena konkurencji": "1.09"
-  },
-  {
-    "INDEKS": "55053",
-    "NAZWA": "RIVONA DZEM MALINOWY 580G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "3",
-    "Cena konkurencji": "3.05"
-  },
-  {
-    "INDEKS": "55055",
-    "NAZWA": "RIVONA DZEM MORELOWY 580G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "3",
-    "Cena konkurencji": "3.05"
-  },
-  {
-    "INDEKS": "55044",
-    "NAZWA": "RIVONA KONFITURA BOROWKA 350G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "2.14",
-    "Cena konkurencji": "2.18"
-  },
-  {
-    "INDEKS": "55048",
-    "NAZWA": "RIVONA KONFITURA BOROWKA 580G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "3.27",
-    "Cena konkurencji": "3.33"
-  },
-  {
-    "INDEKS": "55045",
-    "NAZWA": "RIVONA KONFITURA MALINOWA 350G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "2.14",
-    "Cena konkurencji": "2.15"
-  },
-  {
-    "INDEKS": "55049",
-    "NAZWA": "RIVONA KONFITURA MALINOWA 580G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "3.27",
-    "Cena konkurencji": "3.22"
-  },
-  {
-    "INDEKS": "55041",
-    "NAZWA": "RIVONA KONFITURA TRUSKAWKOWA 350G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.63",
-    "Cena konkurencji": "1.65"
-  },
-  {
-    "INDEKS": "55046",
-    "NAZWA": "RIVONA KONFITURA TRUSKAWKOWA 580G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "2.27",
-    "Cena konkurencji": "2.3"
-  },
-  {
-    "INDEKS": "55050",
-    "NAZWA": "RIVONA KONFITURA WISNIOWA 580G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "3.3",
-    "Cena konkurencji": "3.34"
-  },
-  {
-    "INDEKS": "55042",
-    "NAZWA": "RIVONA KONFITURA Z CZARNEJ PORZECZKI 350G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.9",
-    "Cena konkurencji": "1.95"
-  },
-  {
-    "INDEKS": "55047",
-    "NAZWA": "RIVONA KONFITURA Z CZARNEJ PORZECZKI 580G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "2.75",
-    "Cena konkurencji": "2.8"
-  },
-  {
-    "INDEKS": "55051",
-    "NAZWA": "RIVONA MUS JABLKOWY 500G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.39",
-    "Cena konkurencji": "1.4"
-  },
-  {
-    "INDEKS": "55037",
-    "NAZWA": "RIVONA PIECZARKI MARYNOWANE 500G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "2.28",
-    "Cena konkurencji": "2.3"
-  },
-  {
-    "INDEKS": "55038",
-    "NAZWA": "RIVONA SOS POMIDOROWY OSTRY 500G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.53",
-    "Cena konkurencji": "1.55"
-  },
-  {
-    "INDEKS": "55039",
-    "NAZWA": "RIVONA SOS POMIDOROWY SVENTINIS 500G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.42",
-    "Cena konkurencji": "1.45"
-  },
-  {
-    "INDEKS": "56243",
-    "NAZWA": "RIVONA ZUPA BARSZCZ UKRAINSKI Z BOROWIKAMI 480G LITWA",
-    "OPAKOWANIE": "8",
     "CENA": "1.55",
-    "Cena konkurencji": "1.56"
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "56239",
-    "NAZWA": "RIVONA ZUPA BARSZCZ Z BEKONEM 480G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.76",
-    "Cena konkurencji": "1.75"
+    "INDEKS": "56973",
+    "NAZWA": "CZEKOLADA DUBAJSKA BOLCI 100G BULGARIA",
+    "OPAKOWANIE": "45",
+    "CENA": "4.28",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "56247",
-    "NAZWA": "RIVONA ZUPA BURACZANA 480G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.34",
-    "Cena konkurencji": "1.33"
+    "INDEKS": "55654",
+    "NAZWA": "DAISY 180G TRUFLE DUBAJSKIE DAISY BULGARIA",
+    "OPAKOWANIE": "20",
+    "CENA": "1.59",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "56242",
-    "NAZWA": "RIVONA ZUPA CHARCIO 480G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.64",
-    "Cena konkurencji": "1.65"
+    "INDEKS": "55656",
+    "NAZWA": "DAISY 60G BATONIK DUBAJSKI DAISY BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.44",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "56241",
-    "NAZWA": "RIVONA ZUPA CHILLI 480G LITWA",
+    "INDEKS": "56467",
+    "NAZWA": "DERONI 1,05KG LUTENICA PASTA WARZYWNA DOMOWA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "4",
+    "CENA": "5.79",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56457",
+    "NAZWA": "DERONI 260G LUTENICA PASTA WARZYWNA DOMOWA D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "1.58",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56456",
+    "NAZWA": "DERONI 260G LUTENICA PASTA WARZYWNA TRADYCYJNA D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "1.5",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56462",
+    "NAZWA": "DERONI 265G LUTENICA PASTA WARZYWNA DOMOWA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "1.94",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56475",
+    "NAZWA": "DERONI 270G LUTENICA PASTA WARZYWNA PETEL YELLOW LABEL D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "0.94",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56469",
+    "NAZWA": "DERONI 310G LUTENICA PASTA WARZYWNA TODORKA DOMOWA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "1.35",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56470",
+    "NAZWA": "DERONI 310G LUTENICA PASTA WARZYWNA TODORKA YELLOW LABEL D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "1.25",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56476",
+    "NAZWA": "DERONI 400G KASZA KUSKUS BULGARIA",
+    "OPAKOWANIE": "27",
+    "CENA": "0.85",
+    "Kategoria": "Kuchnia w proszku",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56468",
+    "NAZWA": "DERONI 510G LUTENICA PASTA WARZYWNA FINES DOMOWA BEZ CUKRU G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "3.8",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56464",
+    "NAZWA": "DERONI 515G LUTENICA PASTA WARZYWNA VELIKA DOMOWA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "4.89",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56463",
+    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA DOMOWA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "3.32",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56455",
+    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA GORNOTRAKIYSKA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.65",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56465",
+    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA PIKANTNA D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.45",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56453",
+    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA STAROSIELSKA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "3.65",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56458",
+    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA TRADYCYJNA D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.29",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56466",
+    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA TSARITSA DOMOWA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "4.46",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56460",
+    "NAZWA": "DERONI 525G LUTENICA PASTA WARZYWNA DOMOWA D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.68",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56473",
+    "NAZWA": "DERONI 570G LUTENICA PASTA WARZYWNA PETEL G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.22",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "27266",
+    "NAZWA": "DERONI 570G LUTENICA PASTA WARZYWNA TODORKA DOMOWA G.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.51",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56474",
+    "NAZWA": "DERONI 575G LUTENICA PASTA WARZYWNA PETEL YELLOW LABEL D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "1.67",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56472",
+    "NAZWA": "DERONI 575G LUTENICA PASTA WARZYWNA TODORKA YELLOW LABEL D.MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.22",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45881",
+    "NAZWA": "DIAMANT 50G CIASTKO CZEKOLADOWE BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.31",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45808",
+    "NAZWA": "DUO CIASTKA KAKAOWE Z KREMEM 165G SOFIO BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "1.22",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45809",
+    "NAZWA": "DUO CIASTKA KAKAOWE Z KREMEM W POLEWIE 150G SOFIO BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "1.22",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56964",
+    "NAZWA": "EURENI 80G CZEKOLADA ANGEL HAIR MIX BULGARIA/EURENI MIXED CHOCOLATES ANGEL HAIR 80G",
+    "OPAKOWANIE": "10",
+    "CENA": "4.09",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56120",
+    "NAZWA": "EVERYDAY 240G HERBATNIKI Z PIANKA O SMAKU WANILIOWYM W POLEWIE KAKAOWEJ BULGARIA KARMELA",
+    "OPAKOWANIE": "12",
+    "CENA": "1.8",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45810",
+    "NAZWA": "GOFRA CIASTKA W KSZTALCIE GOFROW 155G SOFIO BULGARIA",
+    "OPAKOWANIE": "12",
+    "CENA": "1.37",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55554",
+    "NAZWA": "KUBETI KUBZ 60G CHRUPKI O SMAKU KETCHUPU KUBETI BULGARIA",
+    "OPAKOWANIE": "15",
+    "CENA": "0.57",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55555",
+    "NAZWA": "KUBETI KUBZ 60G CHRUPKI O SMAKU PIZZY KUBETI BULGARIA",
+    "OPAKOWANIE": "15",
+    "CENA": "0.57",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55553",
+    "NAZWA": "KUBETI KUBZ 60G CHRUPKI O SMAKU TZATZIKI BULGARIA",
+    "OPAKOWANIE": "15",
+    "CENA": "0.57",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56122",
+    "NAZWA": "MEDENKI 50G CIASTKO O SMAKU MIODOWO-CYNAMONOWYM W POLEWIE BULGARIA SWEET PLUS",
+    "OPAKOWANIE": "16",
+    "CENA": "0.3",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55556",
+    "NAZWA": "MEDOVINKA 40G CIASTKA MIODOWE W CZEKOLADZIE MEDOVINA BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.29",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55557",
+    "NAZWA": "MEDOVINKA 50G CIASTKA MIODOWE W CZEKOLADZIE MEDOVINA BULGARIA",
+    "OPAKOWANIE": "20",
+    "CENA": "0.28",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55558",
+    "NAZWA": "MEDOVINKA 65G CIASTKA CZEKOLADOWE Z NADZ.JABLKOWYM MEDOVINA BULGARIA",
+    "OPAKOWANIE": "16",
+    "CENA": "0.34",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56311",
+    "NAZWA": "MILKA CZEKOLADA 100G Z CALYMI ORZECHAMI BULGARIA",
+    "OPAKOWANIE": "17",
+    "CENA": "1.16",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56310",
+    "NAZWA": "MILKA CZEKOLADA 90G MOCNO CZEKOLADOWA BULGARIA",
+    "OPAKOWANIE": "25",
+    "CENA": "1.16",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56312",
+    "NAZWA": "MILKA CZEKOLADA 90G NOISETTE BULGARIA",
+    "OPAKOWANIE": "25",
+    "CENA": "1.16",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55564",
+    "NAZWA": "MLIN 60G HRUS HRUS PALUSZKI SLONE MLIN BULGARIA",
+    "OPAKOWANIE": "60",
+    "CENA": "0.18",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55671",
+    "NAZWA": "NAPOLEON DESER Z CIASTA FRANC. Z NADZIENIEM KAKAOWYM 90G SOFIO BULGARIA",
+    "OPAKOWANIE": "10",
+    "CENA": "0.52",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55670",
+    "NAZWA": "NAPOLEON DESER Z CIASTA FRANC. Z NADZIENIEM O SMAKU MLECZNYM 90G SOFIO BULGARIA",
+    "OPAKOWANIE": "10",
+    "CENA": "0.52",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55669",
+    "NAZWA": "NAPOLEON DESER Z CIASTA FRANC. Z NADZIENIEM O SMAKU WANILIOWYM 90G SOFIO BULGARIA",
+    "OPAKOWANIE": "10",
+    "CENA": "0.52",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55658",
+    "NAZWA": "OLIMPIA CIASTKA Z DODATKIEM MASLA 120G SOFIO BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "1.15",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56056",
+    "NAZWA": "OLINESA 230G MAJONEZ WEDZONY BULGARIA",
     "OPAKOWANIE": "8",
+    "CENA": "1.25",
+    "Kategoria": "Dodatki do potraw",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56054",
+    "NAZWA": "OLINESA 470G MAJONEZ STOLOWY BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "1.89",
+    "Kategoria": "Dodatki do potraw",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56061",
+    "NAZWA": "OLINESA 480G AJVAR W STYLU DOMOWYM GRUBO MIELONY BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "3.49",
+    "Kategoria": "Dodatki do potraw",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56062",
+    "NAZWA": "OLINESA 510G KYOPOOLU PASTA Z BAKLAZANA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.6",
+    "Kategoria": "Dodatki do potraw",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56063",
+    "NAZWA": "OLINESA 510G PASTA Z BAKLAZANA W STYLU DOMOWYM GRUBO MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "1.98",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56060",
+    "NAZWA": "OLINESA 515G LUTENICA PASTA WARZYWNA PREMIUM GRUBO MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "3.6",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56058",
+    "NAZWA": "OLINESA 515G LUTENICA PASTA WARZYWNA W STYLU DOMOWYM LAGODNA GRUBO MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.83",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56057",
+    "NAZWA": "OLINESA 520G LUTENICA PASTA WARZYWNA TRADYCYJNA LAGODNA GLADKA BULGARIA",
+    "OPAKOWANIE": "6",
     "CENA": "2.09",
-    "Cena konkurencji": "2.11"
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "56245",
-    "NAZWA": "RIVONA ZUPA SOLIANKA 480G LITWA",
+    "INDEKS": "56059",
+    "NAZWA": "OLINESA 530G LUTENICA PASTA WARZYWNA RODZINNA RECEPTURA LAGODNA GRUBO MIELONA BULGARIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.99",
+    "Kategoria": "Kuchnia dania gotowe",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56065",
+    "NAZWA": "OLINESA 670G MINI OGORKI KONSERWOWE (3-6) BULGARIA",
+    "OPAKOWANIE": "4",
+    "CENA": "2.01",
+    "Kategoria": "Przetwory owocowo warzywne",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56064",
+    "NAZWA": "OLINESA 670G OGORKI KONSERWOWE (6-9) BULGARIA",
+    "OPAKOWANIE": "4",
+    "CENA": "1.36",
+    "Kategoria": "Przetwory owocowo warzywne",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56055",
+    "NAZWA": "OLINESA MAJONEZ Z KORNISZONEM 230G BULGARIA",
     "OPAKOWANIE": "8",
-    "CENA": "1.62",
-    "Cena konkurencji": "1.65"
+    "CENA": "1.15",
+    "Kategoria": "Dodatki do potraw",
+    "Stany magazynowe": "1500 szt."
   },
   {
-    "INDEKS": "56244",
-    "NAZWA": "RIVONA ZUPA Z CZERWONA FASOLA 480G LITWA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.55",
-    "Cena konkurencji": "1.59"
-  },
-  {
-    "INDEKS": "55005",
-    "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA BIALE 120G LITWA",
-    "OPAKOWANIE": "16",
-    "CENA": "1.01",
-    "Cena konkurencji": "1.05"
-  },
-  {
-    "INDEKS": "55006",
-    "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA BIALE SOLONE 120G LITWA",
-    "OPAKOWANIE": "16",
-    "CENA": "1.01",
-    "Cena konkurencji": "1.05"
-  },
-  {
-    "INDEKS": "55007",
-    "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA CZARNE 150G LITWA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.68",
-    "Cena konkurencji": "0.7"
-  },
-  {
-    "INDEKS": "54995",
-    "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA PASKOWANE 150G LITWA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.68",
-    "Cena konkurencji": "0.7"
-  },
-  {
-    "INDEKS": "54997",
-    "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA PASKOWANE O SMAKU SERA 150G LITWA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.79",
-    "Cena konkurencji": "0.81"
-  },
-  {
-    "INDEKS": "55004",
-    "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA PASKOWANE O SMAKU SMIETANY I CEBULI 150G LITWA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.75",
-    "Cena konkurencji": "0.77"
-  },
-  {
-    "INDEKS": "54996",
-    "NAZWA": "Y.E.S. PRAZONE NASIONA SLONECZNIKA PASKOWANE SOLONE 150G LITWA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.68",
-    "Cena konkurencji": "0.71"
-  },
-  {
-    "INDEKS": "55013",
-    "NAZWA": "Y.E.S. PRAZONE PESTKI DYNI SOLONE 150G LITWA",
+    "INDEKS": "56969",
+    "NAZWA": "ONLY 85G CZEKOLADA ANGEL HAIR BULGARIA",
     "OPAKOWANIE": "18",
-    "CENA": "1.29",
-    "Cena konkurencji": "1.31"
+    "CENA": "3.97",
+    "Kategoria": "Dodatki do potraw",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56974",
+    "NAZWA": "PRALINY DUBAJSKIE BOLCI 96G BULGARIA",
+    "OPAKOWANIE": "12",
+    "CENA": "6",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45897",
+    "NAZWA": "SALZA PALUCHY KLASYCZNE Z SOLA 220G SOFIO BULGARIA",
+    "OPAKOWANIE": "12",
+    "CENA": "1.32",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45899",
+    "NAZWA": "SALZA PALUCHY Z MAKA Z SAMOPSZY I SOLA HIMALAJSKA 220G SOFIO BULGARIA",
+    "OPAKOWANIE": "12",
+    "CENA": "1.32",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45898",
+    "NAZWA": "SALZA PALUCHY Z MAKIEM 220G SOFIO BULGARIA",
+    "OPAKOWANIE": "12",
+    "CENA": "1.32",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55668",
+    "NAZWA": "SALZA PALUCHY Z SEZAMEM 190G SOFIO BULGARIA",
+    "OPAKOWANIE": "12",
+    "CENA": "1.32",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55565",
+    "NAZWA": "SAVIMEX ZLATNA DOBRUDJA 60G PALUSZKI SLONE SAVIMEX BULGARIA",
+    "OPAKOWANIE": "60",
+    "CENA": "0.18",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55561",
+    "NAZWA": "SEZONI 160G PRALINY TRUSKAWKOWE SEZONI BULGARIA",
+    "OPAKOWANIE": "14",
+    "CENA": "1.99",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45939",
+    "NAZWA": "STRACCIATELLA WAFELEK 32G SOFIO BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.29",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55652",
+    "NAZWA": "SWEET PLUS 140G CIASTKA DUBAI Z KREMEM PISTACJOWYM I KREMEM KADAIF SWEET + BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "1.44",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55566",
+    "NAZWA": "SWEET PLUS 150G CIASTKA KAWOWE W CZEKOLADZIE SWEET PLUS BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "1.11",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55648",
+    "NAZWA": "SWEET PLUS 35G WAFELEK Z KREMEM PISTACJOWYM I Z KREMEM KADAIF OBLEWANY CZEKOLADA SWEET +",
+    "OPAKOWANIE": "12",
+    "CENA": "0.39",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55649",
+    "NAZWA": "SWEET PLUS 50G BISZKOPT W KREMEM PISTACJOWYM I KREMEM KADAIF SWEET + BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.37",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55567",
+    "NAZWA": "SWEET PLUS MIRACLE 75G WAFELEK ORZECHOWY W CZEKOLADZIE SWEET PLUS BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.42",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45954",
+    "NAZWA": "VARNA WAFELEK Z KREMEM KAKAOWYM 32G SOFIO BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.29",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45952",
+    "NAZWA": "VARNA WAFELEK Z KREMEM MLECZNYM 32G SOFIO BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "0.29",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56108",
+    "NAZWA": "WAFER ROLLS 130G RURKI WAFLOWE Z KREMEM KAKAOWYM BULGARIA SWEET PLUS",
+    "OPAKOWANIE": "24",
+    "CENA": "0.96",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56119",
+    "NAZWA": "WAFER ROLLS 130G RURKI WAFLOWE Z KREMEM ORZECHOWYM BULGARIA SWEET PLUS",
+    "OPAKOWANIE": "24",
+    "CENA": "0.96",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "55563",
+    "NAZWA": "ZAKUSKA 315G HERBATNIKI ZAKUSKA BULGARIA",
+    "OPAKOWANIE": "24",
+    "CENA": "1.14",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56308",
+    "NAZWA": "ZAYO BAYO 40G CHRUPKI MASLANE NATURALNE BULGARIA SANI KONS TODOROVI",
+    "OPAKOWANIE": "20",
+    "CENA": "0.24",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56306",
+    "NAZWA": "ZAYO BAYO 45G CHRUPKI CEBULKOWE BULGARIA SANI KONS TODOROVI",
+    "OPAKOWANIE": "20",
+    "CENA": "0.3",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "56307",
+    "NAZWA": "ZAYO BAYO 60G CHRUPKI SMIETANA&KOPEREK BULGARIA SANI KONS TODOROVI",
+    "OPAKOWANIE": "20",
+    "CENA": "0.33",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45887",
+    "NAZWA": "ZEFFO CIASTKA KAKAOWE Z PIANKA POSYPANE WIORKAMI KOKOSOWYMI 115G SOFIO BULGARIA",
+    "OPAKOWANIE": "12",
+    "CENA": "1.46",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
+  },
+  {
+    "INDEKS": "45886",
+    "NAZWA": "ZEFFO CIASTKA KAKAOWE Z PIANKA W POLEWIE KAKOWEJ 150G SOFIO BULGARIA",
+    "OPAKOWANIE": "12",
+    "CENA": "1.46",
+    "Kategoria": "Słodycze",
+    "Stany magazynowe": "1500 szt."
   }
 ]
