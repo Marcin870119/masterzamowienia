@@ -159,41 +159,44 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-// Tworzenie stałego panelu po lewej stronie z toggle'em na telefonach
+// Tworzenie panelu rabatowego z toggle'em na telefonach
 function createSidebar() {
     const sidebar = document.createElement('div');
+    sidebar.id = 'discount-panel'; // Dodanie ID dla łatwiejszego sterowania
     sidebar.style.cssText = `
         position: fixed;
         left: 0;
         top: 0;
-        width: 100px;
-        height: 100%;
+        width: 100%;
+        height: auto;
         background-color: #f8f8f8;
         padding: 15px;
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         z-index: 1000;
         font-family: Arial, sans-serif;
         font-size: 12px;
+        display: none; /* Domyślnie ukryte */
     `;
-    // Przycisk toggle dla telefonów
+    // Przycisk toggle dla telefonu
     const toggleButton = document.createElement('button');
-    toggleButton.innerText = '☰';
+    toggleButton.id = 'discount-toggle';
+    toggleButton.innerText = 'Discount';
     toggleButton.style.cssText = `
         position: fixed;
         top: 10px;
         left: 10px;
-        font-size: 20px;
-        padding: 5px;
+        font-size: 16px;
+        padding: 8px 15px;
         background-color: #0066cc;
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         z-index: 1001;
-        display: none; /* Domyślnie ukryte na dużych ekranach */
     `;
     toggleButton.onclick = () => {
-        sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
+        const panel = document.getElementById('discount-panel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
     };
 
     const discountInfo = document.createElement('div');
@@ -242,16 +245,21 @@ function createSidebar() {
 
     // Responsywność w JS (pokazanie toggle na telefonach)
     if (window.innerWidth <= 600) {
-        sidebar.style.display = 'none'; // Ukrycie paska na starcie na telefonach
+        sidebar.style.display = 'none'; // Ukrycie panelu na starcie na telefonach
         toggleButton.style.display = 'block'; // Pokaż przycisk toggle
+    } else {
+        sidebar.style.display = 'block'; // Pokaż pasek na większych ekranach
+        toggleButton.style.display = 'none'; // Ukryj przycisk toggle
     }
     window.addEventListener('resize', () => {
+        const panel = document.getElementById('discount-panel');
+        const button = document.getElementById('discount-toggle');
         if (window.innerWidth <= 600) {
-            sidebar.style.display = 'none';
-            toggleButton.style.display = 'block';
+            panel.style.display = 'none';
+            button.style.display = 'block';
         } else {
-            sidebar.style.display = 'block';
-            toggleButton.style.display = 'none';
+            panel.style.display = 'block';
+            button.style.display = 'none';
         }
     });
 }
@@ -524,21 +532,35 @@ function loadProducts(country) {
                             }
                         }
                         const discountedPrice = applyDiscount(product['CENA']);
-                        productElement.innerHTML = `
-                            <img src="${imageUrl}" alt="Photo" style="position: relative; z-index: 0;">
-                            <div class="product-details">
-                                <div class="product-code">Index: ${product['INDEKS']}</div>
-                                <div class="product-name">${product['NAZWA']}</div>
-                                <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                                <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${product['CENA']} GBP)</div>
-                                <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
-                            </div>
-                            <div class="quantity-controls">
-                                <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                                <input type="number" id="quantity-${country}-${index}" value="0" readonly>
-                                <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                            </div>
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = "Photo";
+                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative; z-index: 0;';
+                        // Dodanie zdarzenia powiększania tylko na telefonach
+                        if (window.innerWidth <= 600) {
+                            img.onclick = function() {
+                                this.classList.toggle('enlarged');
+                            };
+                        }
+                        productElement.appendChild(img);
+                        const details = document.createElement('div');
+                        details.classList.add('product-details');
+                        details.innerHTML = `
+                            <div class="product-code">Index: ${product['INDEKS']}</div>
+                            <div class="product-name">${product['NAZWA']}</div>
+                            <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
+                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${product['CENA']} GBP)</div>
+                            <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
                         `;
+                        productElement.appendChild(details);
+                        const controls = document.createElement('div');
+                        controls.classList.add('quantity-controls');
+                        controls.innerHTML = `
+                            <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
+                            <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                            <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                        `;
+                        productElement.appendChild(controls);
                         productList.appendChild(productElement);
                     };
                     imgTest.onerror = () => {
@@ -549,20 +571,33 @@ function loadProducts(country) {
                     const imgTest = new Image();
                     imgTest.src = imageUrl;
                     imgTest.onload = () => {
-                        productElement.innerHTML = `
-                            <img src="${imageUrl}" alt="Photo">
-                            <div class="product-details">
-                                <div class="product-code">Index: ${product['INDEKS']}</div>
-                                <div class="product-name">${product['NAZWA']}</div>
-                                <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                                <div class="price">${product['CENA']} GBP</div>
-                            </div>
-                            <div class="quantity-controls">
-                                <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                                <input type="number" id="quantity-${country}-${index}" value="0" readonly>
-                                <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                            </div>
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = "Photo";
+                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative;';
+                        if (window.innerWidth <= 600) {
+                            img.onclick = function() {
+                                this.classList.toggle('enlarged');
+                            };
+                        }
+                        productElement.appendChild(img);
+                        const details = document.createElement('div');
+                        details.classList.add('product-details');
+                        details.innerHTML = `
+                            <div class="product-code">Index: ${product['INDEKS']}</div>
+                            <div class="product-name">${product['NAZWA']}</div>
+                            <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
+                            <div class="price">${product['CENA']} GBP</div>
                         `;
+                        productElement.appendChild(details);
+                        const controls = document.createElement('div');
+                        controls.classList.add('quantity-controls');
+                        controls.innerHTML = `
+                            <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
+                            <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                            <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                        `;
+                        productElement.appendChild(controls);
                         productList.appendChild(productElement);
                     };
                     imgTest.onerror = () => {
@@ -573,20 +608,33 @@ function loadProducts(country) {
                     const imgTest = new Image();
                     imgTest.src = imageUrl;
                     imgTest.onload = () => {
-                        productElement.innerHTML = `
-                            <img src="${imageUrl}" alt="Photo">
-                            <div class="product-details">
-                                <div class="product-code">Index: ${product['INDEKS']}</div>
-                                <div class="product-name">${product['NAZWA']}</div>
-                                <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                                <div class="price">${product['CENA']} GBP</div>
-                            </div>
-                            <div class="quantity-controls">
-                                <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                                <input type="number" id="quantity-${country}-${index}" value="0" readonly>
-                                <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                            </div>
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = "Photo";
+                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative;';
+                        if (window.innerWidth <= 600) {
+                            img.onclick = function() {
+                                this.classList.toggle('enlarged');
+                            };
+                        }
+                        productElement.appendChild(img);
+                        const details = document.createElement('div');
+                        details.classList.add('product-details');
+                        details.innerHTML = `
+                            <div class="product-code">Index: ${product['INDEKS']}</div>
+                            <div class="product-name">${product['NAZWA']}</div>
+                            <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
+                            <div class="price">${product['CENA']} GBP</div>
                         `;
+                        productElement.appendChild(details);
+                        const controls = document.createElement('div');
+                        controls.classList.add('quantity-controls');
+                        controls.innerHTML = `
+                            <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
+                            <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                            <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                        `;
+                        productElement.appendChild(controls);
                         productList.appendChild(productElement);
                     };
                     imgTest.onerror = () => {
