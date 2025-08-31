@@ -45,17 +45,11 @@ let customCashBackPercentage = 2; // Domyślna wartość 2%, może być zmienion
 function applyDiscount(price) {
     return Number((price * (1 - discountPercentage / 100)).toFixed(2));
 }
-// Funkcja aktualizująca ceny na stronie
+// Funkcja aktualizująca ceny i cashback bez resetowania koszyka
 function updatePrices() {
-    if (productsData['lithuania'].length > 0) {
-        loadProducts('lithuania');
-    }
-    if (activeTab === 'cart') {
-        updateCart();
-    }
-    calculateTotal();
-    updateCartInfo();
-    updateDiscountInfo(); // Aktualizacja informacji w pasku bocznym
+    calculateTotal(); // Przeliczanie totali na podstawie istniejących ilości
+    updateCartInfo(); // Aktualizacja informacji o koszyku
+    updateDiscountInfo(); // Aktualizacja informacji o rabacie i cashbacku
 }
 // Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
@@ -139,7 +133,7 @@ function showInitialDialog() {
         if (discountPercentage > 100) discountPercentage = 100;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
-        updatePrices();
+        updatePrices(); // Aktualizacja bez resetowania koszyka
         document.body.removeChild(modal);
     };
     const cancelButton = document.createElement('button');
@@ -216,7 +210,7 @@ function createSidebar() {
         discountPercentage = parseFloat(discountInput.value) || 0;
         if (discountPercentage < 0) discountPercentage = 0;
         if (discountPercentage > 100) discountPercentage = 100;
-        updatePrices();
+        updatePrices(); // Aktualizacja bez resetowania koszyka
         updateDiscountInfo();
     };
     const cashBackLabel = document.createElement('label');
@@ -232,7 +226,7 @@ function createSidebar() {
         customCashBackPercentage = parseFloat(cashBackInput.value) || 2;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
-        updatePrices();
+        updatePrices(); // Aktualizacja bez resetowania koszyka
         updateDiscountInfo();
     };
     sidebar.appendChild(discountInfo);
@@ -510,7 +504,17 @@ function loadProducts(country) {
         })
         .then(data => {
             console.log("Data loaded for", country, ":", data);
-            productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
+            // Zachowaj istniejące ilości produktów, jeśli już są załadowane
+            if (productsData[country].length > 0) {
+                data = data.map((product, index) => {
+                    if (productsData[country][index] && productsData[country][index].quantity) {
+                        return { ...product, quantity: productsData[country][index].quantity, dataset: { index } };
+                    }
+                    return { ...product, quantity: 0, dataset: { index } };
+                });
+            } else {
+                productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
+            }
             const productList = document.getElementById(`product-list-${country}`);
             productList.innerHTML = '';
             data.forEach((product, index) => {
@@ -557,7 +561,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
@@ -594,7 +598,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
@@ -631,7 +635,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="0" readonly>
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
