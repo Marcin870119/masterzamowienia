@@ -43,19 +43,22 @@ let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
 // Funkcja obliczająca cenę z rabatem z precyzyjnym zaokrągleniem
 function applyDiscount(price) {
-    console.log("Applying discount:", discountPercentage, "to price:", price); // Debug
-    return Number((price * (1 - discountPercentage / 100)).toFixed(2));
+    return Number((parseFloat(price) * (1 - discountPercentage / 100)).toFixed(2));
 }
-// Funkcja aktualizująca ceny i cashback bez resetowania koszyka
+// Funkcja aktualizująca ceny na stronie (z Twojego przykładu)
 function updatePrices() {
-    calculateTotal(); // Przeliczanie totali na podstawie istniejących ilości z rabatem
-    updateCart(); // Aktualizacja koszyka z nowymi cenami
-    updateCartInfo(); // Aktualizacja informacji o koszyku
-    updateDiscountInfo(); // Aktualizacja informacji o rabacie i cashbacku
+    if (productsData['lithuania'].length > 0) {
+        loadProducts('lithuania'); // Ponowne załadowanie z nowym rabatem
+    }
+    if (activeTab === 'cart') {
+        updateCart();
+    }
+    calculateTotal();
+    updateCartInfo();
+    updateDiscountInfo(); // Aktualizacja informacji w pasku bocznym
 }
 // Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
-    // Tworzenie elementu modalnego
     const modal = document.createElement('div');
     modal.style.cssText = `
         position: fixed;
@@ -80,12 +83,12 @@ function showInitialDialog() {
         overflow-y: auto;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         font-family: Arial, sans-serif;
-        font-size: 14px; /* Mniejsza czcionka */
+        font-size: 14px;
         color: #333;
         margin-top: 20px;
     `;
     const closeButton = document.createElement('button');
-    closeButton.innerText = '×'; // Zmiana na mniejszy krzyżyk
+    closeButton.innerText = '×';
     closeButton.style.cssText = `
         position: absolute;
         top: 10px;
@@ -135,7 +138,7 @@ function showInitialDialog() {
         if (discountPercentage > 100) discountPercentage = 100;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
-        updatePrices(); // Aktualizacja z rabatem
+        updatePrices();
         document.body.removeChild(modal);
     };
     const cancelButton = document.createElement('button');
@@ -155,10 +158,9 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-// Tworzenie panelu rabatowego z toggle'em i przyciskiem "Zastosuj" tylko na telefonach
+// Tworzenie stałego panelu po lewej stronie (z Twojego przykładu)
 function createSidebar() {
     const sidebar = document.createElement('div');
-    sidebar.id = 'discount-panel';
     sidebar.style.cssText = `
         position: fixed;
         left: 0;
@@ -172,29 +174,6 @@ function createSidebar() {
         font-family: Arial, sans-serif;
         font-size: 12px;
     `;
-    // Przycisk toggle dla telefonu
-    const toggleButton = document.createElement('button');
-    toggleButton.id = 'discount-toggle';
-    toggleButton.innerText = 'Discount';
-    toggleButton.style.cssText = `
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        font-size: 16px;
-        padding: 8px 15px;
-        background-color: #0066cc;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        z-index: 1001;
-        display: none; /* Domyślnie ukryte na desktopie */
-    `;
-    toggleButton.onclick = () => {
-        const panel = document.getElementById('discount-panel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-    };
-
     const discountInfo = document.createElement('div');
     discountInfo.id = 'discountInfo';
     discountInfo.style.cssText = `margin-bottom: 10px; font-weight: bold; color: #333;`;
@@ -208,6 +187,13 @@ function createSidebar() {
     discountInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
     discountInput.min = 0;
     discountInput.max = 100;
+    discountInput.onchange = () => {
+        discountPercentage = parseFloat(discountInput.value) || 0;
+        if (discountPercentage < 0) discountPercentage = 0;
+        if (discountPercentage > 100) discountPercentage = 100;
+        updatePrices();
+        updateDiscountInfo();
+    };
     const cashBackLabel = document.createElement('label');
     cashBackLabel.innerText = 'Cash Back (%): ';
     cashBackLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
@@ -217,64 +203,19 @@ function createSidebar() {
     cashBackInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
     cashBackInput.min = 0;
     cashBackInput.max = 100;
-    // Przycisk "Zastosuj"
-    const applyButton = document.createElement('button');
-    applyButton.innerText = 'Zastosuj';
-    applyButton.style.cssText = `
-        display: block;
-        width: 100%;
-        padding: 8px;
-        margin-top: 10px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-        transition: background-color 0.3s;
-    `;
-    applyButton.onmouseover = () => applyButton.style.backgroundColor = '#218838';
-    applyButton.onmouseout = () => applyButton.style.backgroundColor = '#28a745';
-    applyButton.onclick = () => {
-        discountPercentage = parseFloat(discountInput.value) || 0;
+    cashBackInput.onchange = () => {
         customCashBackPercentage = parseFloat(cashBackInput.value) || 0;
-        if (discountPercentage < 0) discountPercentage = 0;
-        if (discountPercentage > 100) discountPercentage = 100;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
-        updatePrices(); // Ręczne wywołanie aktualizacji z rabatem
+        updatePrices();
         updateDiscountInfo();
-        console.log("Discount applied:", discountPercentage); // Debug
     };
-
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
     sidebar.appendChild(discountInput);
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
-    sidebar.appendChild(applyButton);
     document.body.appendChild(sidebar);
-    document.body.appendChild(toggleButton);
-
-    // Responsywność: toggle tylko na telefonach, pasek widoczny na desktopie
-    if (window.innerWidth <= 600) {
-        sidebar.style.display = 'none'; // Ukrycie paska na telefonach
-        toggleButton.style.display = 'block'; // Pokaż przycisk toggle
-    } else {
-        sidebar.style.display = 'block'; // Pasek widoczny na desktopie
-        toggleButton.style.display = 'none'; // Ukryj przycisk toggle
-    }
-    window.addEventListener('resize', () => {
-        const panel = document.getElementById('discount-panel');
-        const button = document.getElementById('discount-toggle');
-        if (window.innerWidth <= 600) {
-            panel.style.display = 'none';
-            button.style.display = 'block';
-        } else {
-            panel.style.display = 'block';
-            button.style.display = 'none';
-        }
-    });
 }
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
@@ -300,10 +241,8 @@ function createSearchBar() {
         display: flex;
         gap: 10px;
         align-items: center;
-        flex-wrap: wrap; /* Pozwala na zawijanie elementów na małych ekranach */
+        flex-wrap: wrap;
     `;
-
-    // Pasek wyszukiwania
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.placeholder = 'Search products...';
@@ -314,10 +253,8 @@ function createSearchBar() {
         border-radius: 4px;
         font-size: 14px;
         box-sizing: border-box;
-        min-width: 150px; /* Minimalna szerokość dla mobilności */
+        min-width: 150px;
     `;
-
-    // Filtr kategorii
     const categoryFilter = document.createElement('select');
     categoryFilter.style.cssText = `
         padding: 8px;
@@ -325,7 +262,7 @@ function createSearchBar() {
         border-radius: 4px;
         font-size: 14px;
         box-sizing: border-box;
-        min-width: 120px; /* Minimalna szerokość dla mobilności */
+        min-width: 120px;
     `;
     const filterOptions = [
         { value: '', text: 'All Categories' },
@@ -340,8 +277,6 @@ function createSearchBar() {
         optionElement.text = option.text;
         categoryFilter.appendChild(optionElement);
     });
-
-    // Przycisk Wyczyść filtry
     const clearFiltersButton = document.createElement('button');
     clearFiltersButton.innerText = 'Wyczyść filtry';
     clearFiltersButton.style.cssText = `
@@ -353,7 +288,7 @@ function createSearchBar() {
         font-size: 14px;
         cursor: pointer;
         transition: background-color 0.3s;
-        min-width: 100px; /* Minimalna szerokość dla mobilności */
+        min-width: 100px;
     `;
     clearFiltersButton.onmouseover = () => clearFiltersButton.style.backgroundColor = '#5a6268';
     clearFiltersButton.onmouseout = () => clearFiltersButton.style.backgroundColor = '#6c757d';
@@ -366,20 +301,15 @@ function createSearchBar() {
             product.style.position = 'relative';
         });
     };
-
     searchBarContainer.appendChild(searchInput);
     searchBarContainer.appendChild(categoryFilter);
     searchBarContainer.appendChild(clearFiltersButton);
-
-    // Wstawienie paska wyszukiwania i filtrów pod kontenerem banera
     const bannerContainer = document.querySelector('.banner-container');
     if (bannerContainer) {
         bannerContainer.parentNode.insertBefore(searchBarContainer, bannerContainer.nextSibling);
     } else {
         console.error("Banner container element not found for search bar placement!");
     }
-
-    // Obsługa zdarzeń dla wyszukiwania i filtru
     const applyFilters = () => {
         const searchTerm = searchInput.value.toLowerCase().trim();
         const selectedCategory = categoryFilter.value;
@@ -389,11 +319,8 @@ function createSearchBar() {
             const productCode = product.querySelector('.product-code').textContent.toLowerCase();
             const productCategory = productsData[activeTab][product.dataset.index]?.Kategoria?.toLowerCase() || '';
             const nameWords = productName.split(/\s+/);
-
-            // Normalizacja kategorii dla porównania (zamiana myślników na spacje i odwrotnie)
             const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
             const normalizedProductCategory = productCategory.replace(/-/g, ' ');
-
             if (searchTerm === '' && selectedCategory === '') {
                 product.style.visibility = 'visible';
                 product.style.position = 'relative';
@@ -412,7 +339,6 @@ function createSearchBar() {
             }
         });
     };
-
     searchInput.oninput = applyFilters;
     categoryFilter.onchange = applyFilters;
 }
@@ -484,7 +410,7 @@ function loadCartState() {
             if (productsData[country]) {
                 loadedData[country].forEach((product, index) => {
                     if (productsData[country][index]) {
-                        productsData[country][index].quantity = product.quantity || 0; // Ustaw "0", jeśli brak wartości
+                        productsData[country][index].quantity = product.quantity || 0;
                     }
                 });
             }
@@ -529,7 +455,7 @@ function loadProducts(country) {
                     if (productsData[country][index] && productsData[country][index].quantity) {
                         return { ...product, quantity: productsData[country][index].quantity, dataset: { index } };
                     }
-                    return { ...product, quantity: 0, dataset: { index } }; // Ustaw "0" jako domyślne
+                    return { ...product, quantity: 0, dataset: { index } };
                 });
             } else {
                 productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
@@ -554,12 +480,11 @@ function loadProducts(country) {
                                 competitorPriceColor = 'color: green;';
                             }
                         }
-                        const discountedPrice = applyDiscount(parseFloat(product['CENA'])); // Parsowanie na float
+                        const discountedPrice = applyDiscount(parseFloat(product['CENA']));
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
                         img.style.cssText = 'max-width: 80px; width: 100%; height: auto; position: relative; z-index: 0;';
-                        // Powiększanie tylko na telefonach
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
@@ -580,7 +505,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly> <!-- Ustaw "0" jeśli brak -->
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
@@ -617,7 +542,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly> <!-- Ustaw "0" jeśli brak -->
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
@@ -654,7 +579,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly> <!-- Ustaw "0" jeśli brak -->
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
@@ -674,7 +599,6 @@ function loadProducts(country) {
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
-// Funkcja przełączania zakładek z inicjalizacją
 function switchTab(country) {
     activeTab = country;
     console.log("Switching to tab:", country);
@@ -744,7 +668,7 @@ function updateCart() {
                     'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/'}${product['INDEKS']}.jpg`;
                 const productElement = document.createElement("div");
                 productElement.classList.add("product");
-                const originalPrice = parseFloat(product['CENA']); // Pobranie ceny z JSON jako float
+                const originalPrice = parseFloat(product['CENA']);
                 const discountedPrice = applyDiscount(originalPrice);
                 const itemValue = discountedPrice * parseFloat(product['OPAKOWANIE']) * product.quantity;
                 productElement.innerHTML = `
@@ -757,7 +681,7 @@ function updateCart() {
                     </div>
                     <div class="quantity-controls cart">
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                        <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly> <!-- Ustaw "0" jeśli brak -->
+                        <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         <button class="remove-btn" onclick="removeItem('${country}', ${index})">X</button>
                     </div>
@@ -780,7 +704,6 @@ function removeItem(country, index) {
         updateCartInfo();
     }
     saveCartState();
-    // Dodanie aktualizacji ilości w ofercie po usunięciu z koszyka
     if (document.getElementById(`quantity-${country}-${index}`)) {
         document.getElementById(`quantity-${country}-${index}`).value = '0';
     }
