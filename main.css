@@ -35,16 +35,16 @@ body {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
-    width: 100vw; /* Rozciągnięcie na pełną szerokość widoku */
+    width: 80vw; /* Rozciągnięcie na pełną szerokość widoku */
     position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+    left: 40%;
+    right: 40%;
+    margin-left: -40vw;
+    margin-right: -40vw;
 }
 .banner-container img {
-    width: 100%;
-    max-width: 100vw; /* Maksymalna szerokość na całą szerokość widoku */
+    width: 80%;
+    max-width: 80vw; /* Maksymalna szerokość na całą szerokość widoku */
     height: auto; /* Zachowanie proporcji obrazu */
     max-height: none; /* Usunięcie ograniczenia wysokości */
     object-fit: contain; /* Wyświetlanie obrazu w całości, bez przycinania */
