@@ -65,7 +65,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    padding: 15px;
+    padding: 10px;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -100,6 +100,7 @@ body {
     flex-grow: 1;
     text-align: center;
     margin-bottom: 10px;
+    width: 100%; /* Upewnienie się, że zajmuje pełną szerokość w pionie */
 }
 
 .product-code {
@@ -132,6 +133,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    margin-top: 10px; /* Dodatkowy odstęp od szczegółów */
 }
 
 .quantity-controls button {
@@ -265,7 +268,7 @@ button:hover {
 /* Responsywność dla telefonów (ekrany poniżej 600px) */
 @media (max-width: 600px) {
     body {
-        padding: 10px;
+        padding: 5px; /* Zmniejszono padding dla oszczędności miejsca */
     }
 
     .tabs {
@@ -285,18 +288,21 @@ button:hover {
     }
 
     .product {
-        padding: 10px;
+        padding: 8px; /* Zmniejszono padding */
+        margin-bottom: 10px; /* Więcej odstępu między produktami */
     }
 
     .product img {
         max-width: 50px;
-        margin-right: 8px;
+        margin-right: 5px;
+        margin-bottom: 5px; /* Odstęp od szczegółów poniżej */
     }
 
     .product-details {
         margin-bottom: 5px;
         text-align: left;
         font-size: 12px;
+        padding: 0 5px; /* Dodatkowy padding dla czytelności */
     }
 
     .product-code {
@@ -314,12 +320,14 @@ button:hover {
 
     .price {
         font-size: 12px;
-        margin-right: 8px;
+        margin-right: 5px;
     }
 
     .quantity-controls {
         flex-direction: column;
         align-items: center;
+        width: 100%;
+        margin-top: 5px; /* Odstęp od szczegółów */
     }
 
     .quantity-controls button {
@@ -388,11 +396,13 @@ button:hover {
 
     .product img {
         max-width: 40px;
-        margin-right: 5px;
+        margin-right: 3px;
+        margin-bottom: 3px;
     }
 
     .product-details {
         font-size: 10px;
+        padding: 0 3px;
     }
 
     .product-code {
