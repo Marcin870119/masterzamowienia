@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Products</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="main.js"></script>
+</head>
+<body>
+<div class="cart-icon" onclick="switchTab('cart')">🛒</div>
+<div class="cart-info" id="cart-info"></div>
+<div class="cash-back-info" id="cash-back-info"></div>
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('lithuania')">Lithuania</div>
+    <div class="tab" onclick="switchTab('bulgaria')">Bulgaria</div>
+    <div class="tab" onclick="switchTab('ukraine')">Ukraine</div>
+    <div class="tab" onclick="switchTab('cart')">Cart</div>
+</div>
+<div class="banner-container" id="banner-container">
+    <img src="" alt="Banner" id="banner-image">
+</div>
+<!-- Lista produktów -->
+<div id="product-list-lithuania" class="product-list active"></div>
+<div id="product-list-bulgaria" class="product-list"></div>
+<div id="product-list-ukraine" class="product-list"></div>
+<!-- Cart -->
+<div id="product-list-cart" class="product-list"></div>
+<!-- Formularz z danymi -->
+<form id="order-form">
+    <label>
+        Enter your email:
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+    </label>
+    <label>
+        Store name:
+        <input type="text" id="store-name" name="store-name" placeholder="Enter store name" required>
+    </label>
+    <button type="button" onclick="submitOrder()">Send order</button>
+</form>
+<div id="category-totals" class="category-totals"></div>
+<div id="total-value" class="total-box">Total order value: 0 GBP</div>
+<div id="cart-total" class="cart-total">Cart value: 0 GBP</div>
+</body>
+</html>
