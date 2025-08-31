@@ -475,18 +475,17 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative; z-index: 0;'; // Zmniejszono max-width
+                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative; z-index: 0;';
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
                             };
                         } else {
-                            // Dla desktopu mniejszy i estetyczny układ
-                            productElement.style.minWidth = '350px'; // Zmniejszono z 600px do 350px
-                            productElement.style.padding = '10px'; // Zmniejszono z 20px do 10px
+                            productElement.style.minWidth = '350px';
+                            productElement.style.padding = '10px';
                             const details = productElement.querySelector('.product-details');
                             if (details) {
-                                details.style.fontSize = '14px'; // Zmniejszono z 18px do 14px
+                                details.style.fontSize = '14px';
                             }
                         }
                         productElement.appendChild(img);
@@ -506,6 +505,7 @@ function loadProducts(country) {
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                             <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                            <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
                         `;
                         productElement.appendChild(controls);
                         productList.appendChild(productElement);
@@ -521,17 +521,17 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative;'; // Zmniejszono max-width
+                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative;';
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
                             };
                         } else {
-                            productElement.style.minWidth = '350px'; // Zmniejszono z 600px do 350px
-                            productElement.style.padding = '10px'; // Zmniejszono z 20px do 10px
+                            productElement.style.minWidth = '350px';
+                            productElement.style.padding = '10px';
                             const details = productElement.querySelector('.product-details');
                             if (details) {
-                                details.style.fontSize = '14px'; // Zmniejszono z 18px do 14px
+                                details.style.fontSize = '14px';
                             }
                         }
                         productElement.appendChild(img);
@@ -550,6 +550,7 @@ function loadProducts(country) {
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                             <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                            <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
                         `;
                         productElement.appendChild(controls);
                         productList.appendChild(productElement);
@@ -565,17 +566,17 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative;'; // Zmniejszono max-width
+                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative;';
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
                             };
                         } else {
-                            productElement.style.minWidth = '350px'; // Zmniejszono z 600px do 350px
-                            productElement.style.padding = '10px'; // Zmniejszono z 20px do 10px
+                            productElement.style.minWidth = '350px';
+                            productElement.style.padding = '10px';
                             const details = productElement.querySelector('.product-details');
                             if (details) {
-                                details.style.fontSize = '14px'; // Zmniejszono z 18px do 14px
+                                details.style.fontSize = '14px';
                             }
                         }
                         productElement.appendChild(img);
@@ -594,6 +595,7 @@ function loadProducts(country) {
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                             <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                            <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
                         `;
                         productElement.appendChild(controls);
                         productList.appendChild(productElement);
@@ -694,7 +696,7 @@ function updateCart() {
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                         <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                        <button class="remove-btn" onclick="removeItem('${country}', ${index})">X</button>
+                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
                     </div>
                 `;
                 cartList.appendChild(productElement);
