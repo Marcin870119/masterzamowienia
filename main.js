@@ -465,7 +465,7 @@ function loadCartState() {
             if (productsData[country]) {
                 loadedData[country].forEach((product, index) => {
                     if (productsData[country][index]) {
-                        productsData[country][index].quantity = product.quantity;
+                        productsData[country][index].quantity = product.quantity || 0;
                     }
                 });
             }
@@ -699,7 +699,7 @@ function switchTab(country) {
 }
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
-    let currentQuantity = parseInt(input.value);
+    let currentQuantity = parseInt(input.value) || 0; // Domyślnie 0, jeśli nieparsowalne
     if (currentQuantity + change >= 0) {
         currentQuantity += change;
         input.value = currentQuantity;
