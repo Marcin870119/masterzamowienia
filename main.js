@@ -552,7 +552,7 @@ function loadProducts(country) {
                                 competitorPriceColor = 'color: green;';
                             }
                         }
-                        const discountedPrice = applyDiscount(product['CENA']);
+                        const discountedPrice = applyDiscount(parseFloat(product['CENA'])); // Parsowanie na float
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
@@ -742,8 +742,9 @@ function updateCart() {
                     'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/'}${product['INDEKS']}.jpg`;
                 const productElement = document.createElement("div");
                 productElement.classList.add("product");
-                const discountedPrice = applyDiscount(product['CENA']);
-                const itemValue = discountedPrice * product['OPAKOWANIE'] * product.quantity;
+                const originalPrice = parseFloat(product['CENA']); // Pobranie ceny z JSON jako float
+                const discountedPrice = applyDiscount(originalPrice);
+                const itemValue = discountedPrice * parseFloat(product['OPAKOWANIE']) * product.quantity;
                 productElement.innerHTML = `
                     <img src="${imageUrl}" alt="Photo" style="position: relative; z-index: 0;">
                     <div class="product-details">
@@ -761,7 +762,7 @@ function updateCart() {
                 `;
                 cartList.appendChild(productElement);
                 totalCartValue += itemValue;
-                console.log(`Product: ${product['NAZWA']}, Price: ${product['CENA']}, Pack: ${product['OPAKOWANIE']}, Quantity: ${product.quantity}, Item Value: ${itemValue}, Total so far: ${totalCartValue}`);
+                console.log(`Product: ${product['NAZWA']}, Original Price: ${originalPrice}, Discounted Price: ${discountedPrice}, Pack: ${product['OPAKOWANIE']}, Quantity: ${product.quantity}, Item Value: ${itemValue}, Total so far: ${totalCartValue}`);
             }
         });
     }
@@ -790,7 +791,7 @@ function calculateTotal() {
         let countryTotal = 0;
         productsData[country].forEach(product => {
             if (product.quantity > 0) {
-                countryTotal += applyDiscount(product['CENA']) * product['OPAKOWANIE'] * product.quantity;
+                countryTotal += applyDiscount(parseFloat(product['CENA'])) * parseFloat(product['OPAKOWANIE']) * product.quantity;
             }
         });
         categoryTotals[country] = Number(countryTotal.toFixed(2));
@@ -819,7 +820,7 @@ function submitOrder() {
             if (product.quantity > 0) {
                 hasItems = true;
                 orderMessage += `${product.INDEKS}\t${product['NAZWA']}\t${product.quantity}\n`;
-                countryTotal += applyDiscount(product['CENA']) * product['OPAKOWANIE'] * product.quantity;
+                countryTotal += applyDiscount(parseFloat(product['CENA'])) * parseFloat(product['OPAKOWANIE']) * product.quantity;
             }
         });
         if (!hasItems) {
