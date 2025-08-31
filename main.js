@@ -43,6 +43,7 @@ let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
 // Funkcja obliczająca cenę z rabatem z precyzyjnym zaokrągleniem
 function applyDiscount(price) {
+    console.log("Applying discount:", discountPercentage, "to price:", price); // Debug
     return Number((price * (1 - discountPercentage / 100)).toFixed(2));
 }
 // Funkcja aktualizująca ceny i cashback bez resetowania koszyka
@@ -243,6 +244,7 @@ function createSidebar() {
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
         updatePrices(); // Ręczne wywołanie aktualizacji z rabatem
         updateDiscountInfo();
+        console.log("Discount applied:", discountPercentage); // Debug
     };
 
     sidebar.appendChild(discountInfo);
@@ -458,7 +460,7 @@ function updateCartInfo() {
         productsData[country].forEach(product => {
             if (product.quantity > 0) {
                 totalItems += product.quantity;
-                totalValue += applyDiscount(product['CENA']) * product['OPAKOWANIE'] * product.quantity;
+                totalValue += applyDiscount(parseFloat(product['CENA'])) * parseFloat(product['OPAKOWANIE']) * product.quantity;
             }
         });
     }
