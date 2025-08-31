@@ -159,23 +159,22 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-// Tworzenie panelu rabatowego z toggle'em na telefonach
+// Tworzenie panelu rabatowego z toggle'em tylko na telefonach
 function createSidebar() {
     const sidebar = document.createElement('div');
-    sidebar.id = 'discount-panel'; // Dodanie ID dla łatwiejszego sterowania
+    sidebar.id = 'discount-panel';
     sidebar.style.cssText = `
         position: fixed;
         left: 0;
         top: 0;
-        width: 100%;
-        height: auto;
+        width: 100px;
+        height: 100%;
         background-color: #f8f8f8;
         padding: 15px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         z-index: 1000;
         font-family: Arial, sans-serif;
         font-size: 12px;
-        display: none; /* Domyślnie ukryte */
     `;
     // Przycisk toggle dla telefonu
     const toggleButton = document.createElement('button');
@@ -193,6 +192,7 @@ function createSidebar() {
         border-radius: 5px;
         cursor: pointer;
         z-index: 1001;
+        display: none; /* Domyślnie ukryte na desktopie */
     `;
     toggleButton.onclick = () => {
         const panel = document.getElementById('discount-panel');
@@ -243,12 +243,12 @@ function createSidebar() {
     document.body.appendChild(sidebar);
     document.body.appendChild(toggleButton);
 
-    // Responsywność w JS (pokazanie toggle na telefonach)
+    // Responsywność: toggle tylko na telefonach, pasek widoczny na desktopie
     if (window.innerWidth <= 600) {
-        sidebar.style.display = 'none'; // Ukrycie panelu na starcie na telefonach
+        sidebar.style.display = 'none'; // Ukrycie paska na telefonach
         toggleButton.style.display = 'block'; // Pokaż przycisk toggle
     } else {
-        sidebar.style.display = 'block'; // Pokaż pasek na większych ekranach
+        sidebar.style.display = 'block'; // Pasek widoczny na desktopie
         toggleButton.style.display = 'none'; // Ukryj przycisk toggle
     }
     window.addEventListener('resize', () => {
@@ -535,8 +535,8 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative; z-index: 0;';
-                        // Dodanie zdarzenia powiększania tylko na telefonach
+                        img.style.cssText = 'max-width: 80px; width: 100%; height: auto; position: relative; z-index: 0;';
+                        // Powiększanie tylko na telefonach
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
@@ -574,7 +574,7 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative;';
+                        img.style.cssText = 'max-width: 80px; width: 100%; height: auto; position: relative;';
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
@@ -611,7 +611,7 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative;';
+                        img.style.cssText = 'max-width: 80px; width: 100%; height: auto; position: relative;';
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
