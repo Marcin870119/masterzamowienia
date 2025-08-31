@@ -241,6 +241,7 @@ function updateDiscountInfo() {
 // Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtr pod banerem
 function createSearchBar() {
     const searchBarContainer = document.createElement('div');
+    searchBarContainer.id = 'search-bar';
     searchBarContainer.style.cssText = `
         width: 100%;
         max-width: 900px;
@@ -307,11 +308,7 @@ function createSearchBar() {
     clearFiltersButton.onclick = () => {
         searchInput.value = '';
         categoryFilter.value = '';
-        const productLists = document.querySelectorAll('.product-list.active .product');
-        productLists.forEach(product => {
-            product.style.visibility = 'visible';
-            product.style.position = 'relative';
-        });
+        applyFilters();
     };
     searchBarContainer.appendChild(searchInput);
     searchBarContainer.appendChild(categoryFilter);
@@ -322,7 +319,7 @@ function createSearchBar() {
     } else {
         console.error("Banner container element not found for search bar placement!");
     }
-    const applyFilters = () => {
+    function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase().trim();
         const selectedCategory = categoryFilter.value;
         const productLists = document.querySelectorAll('.product-list.active .product');
@@ -350,7 +347,7 @@ function createSearchBar() {
                 }
             }
         });
-    };
+    }
     searchInput.oninput = applyFilters;
     categoryFilter.onchange = applyFilters;
 }
@@ -657,11 +654,41 @@ function switchTab(country) {
         const categoryFilter = searchBar.querySelector('select');
         if (searchInput) searchInput.value = '';
         if (categoryFilter) categoryFilter.value = '';
-        const productLists = document.querySelectorAll('.product-list .product');
+        const productLists = document.querySelectorAll('.product-list.active .product');
         productLists.forEach(product => {
             product.style.visibility = 'visible';
             product.style.position = 'relative';
         });
+        // Wywołanie applyFilters, aby upewnić się, że filtry są zresetowane
+        const applyFilters = () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedCategory = categoryFilter.value;
+            productLists.forEach(product => {
+                const productName = product.querySelector('.product-name').textContent.toLowerCase();
+                const productCode = product.querySelector('.product-code').textContent.toLowerCase();
+                const productCategory = productsData[activeTab][product.dataset.index]?.Kategoria?.toLowerCase() || '';
+                const nameWords = productName.split(/\s+/);
+                const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
+                const normalizedProductCategory = productCategory.replace(/-/g, ' ');
+                if (searchTerm === '' && selectedCategory === '') {
+                    product.style.visibility = 'visible';
+                    product.style.position = 'relative';
+                } else {
+                    const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
+                        nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
+                    );
+                    const categoryMatch = selectedCategory === '' || normalizedProductCategory === normalizedSelectedCategory;
+                    if (searchMatch && categoryMatch) {
+                        product.style.visibility = 'visible';
+                        product.style.position = 'relative';
+                    } else {
+                        product.style.visibility = 'hidden';
+                        product.style.position = 'absolute';
+                    }
+                }
+            });
+        };
+        applyFilters();
     }
     if (country === 'cart') {
         updateCart();
