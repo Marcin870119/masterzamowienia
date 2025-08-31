@@ -268,7 +268,7 @@ button:hover {
 /* Responsywność dla telefonów (ekrany poniżej 600px) */
 @media (max-width: 600px) {
     body {
-        padding: 5px; /* Zmniejszono padding dla oszczędności miejsca */
+        padding: 5px;
     }
 
     .tabs {
@@ -293,7 +293,7 @@ button:hover {
     }
 
     .product img {
-        max-width: 50px;
+        max-width: 80px; /* Zwiększono z 50px na 80px dla lepszej widoczności */
         margin-right: 5px;
         margin-bottom: 5px;
     }
@@ -385,9 +385,9 @@ button:hover {
         margin-left: 3px;
     }
 
-    /* Ukrycie paska bocznego na telefonach */
+    /* Ukrycie paska bocznego na telefonach, sterowane przez JS */
     .sidebar {
-        display: none; /* Ukrycie paska bocznego na małych ekranach */
+        display: none;
     }
 }
 
@@ -400,7 +400,7 @@ button:hover {
     }
 
     .product img {
-        max-width: 40px;
+        max-width: 70px; /* Zwiększono z 40px na 70px dla lepszej widoczności */
         margin-right: 3px;
         margin-bottom: 3px;
     }
