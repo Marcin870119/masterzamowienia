@@ -455,6 +455,10 @@ function loadProducts(country) {
                 productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
             }
             const productList = document.getElementById(`product-list-${country}`);
+            if (!productList) {
+                console.error(`Product list element for ${country} not found!`);
+                return;
+            }
             productList.innerHTML = '';
             data.forEach((product, index) => {
                 const productElement = document.createElement("div");
