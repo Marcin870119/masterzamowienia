@@ -45,9 +45,9 @@ body {
 .banner-container img {
     width: 100%;
     max-width: 100vw; /* Maksymalna szerokość na całą szerokość widoku */
-    height: auto;
-    max-height: 300px; /* Ograniczenie wysokości, aby baner nie był za wysoki */
-    object-fit: cover; /* Przycięcie obrazu, aby zachować proporcje */
+    height: auto; /* Zachowanie proporcji obrazu */
+    max-height: none; /* Usunięcie ograniczenia wysokości */
+    object-fit: contain; /* Wyświetlanie obrazu w całości, bez przycinania */
 }
 .product-list {
     margin-top: 20px;
