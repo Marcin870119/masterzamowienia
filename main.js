@@ -1,3 +1,4 @@
+
 var gk_isXlsx = false;
 var gk_xlsxFileLookup = {};
 var gk_fileData = {};
@@ -555,9 +556,14 @@ function loadProducts(country) {
             });
             calculateTotal();
             updateCartInfo();
+            // Ręczne wywołanie switchTab po załadowaniu danych dla aktywnej zakładki
+            if (country === activeTab) {
+                switchTab(activeTab);
+            }
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
+// Funkcja przełączania zakładek z inicjalizacją
 function switchTab(country) {
     activeTab = country;
     console.log("Switching to tab:", country);
@@ -743,8 +749,9 @@ window.onload = function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
+    // Automatyczne załadowanie danych dla wszystkich krajów przy starcie
+    ['lithuania', 'bulgaria', 'ukraine'].forEach(country => loadProducts(country));
 };
 loadCartState();
-loadProducts('lithuania');
 updateBanner();
 updateCartInfo();
