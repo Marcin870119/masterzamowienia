@@ -363,7 +363,7 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
-// Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtr pod banerem
+// Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
     if (!bannerImage) {
