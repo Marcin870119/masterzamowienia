@@ -1,9 +1,11 @@
 var gk_isXlsx = false;
 var gk_xlsxFileLookup = {};
 var gk_fileData = {};
+
 function filledCell(cell) {
     return cell !== '' && cell != null;
 }
+
 function loadFileData(filename) {
     if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
         try {
@@ -28,6 +30,7 @@ function loadFileData(filename) {
     }
     return gk_fileData[filename] || "";
 }
+
 let productsData = {
     lithuania: [],
     bulgaria: [],
@@ -41,16 +44,18 @@ let categoryTotals = {
 };
 let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
+
 // Funkcja obliczająca cenę z rabatem z precyzyjnym zaokrągleniem
 function applyDiscount(price) {
-    return Number((parseFloat(price) * (1 - discountPercentage / 100)).toFixed(2));
+    const parsedPrice = parseFloat(price) || 0;
+    return Number((parsedPrice * (1 - discountPercentage / 100)).toFixed(2));
 }
-// Funkcja aktualizująca ceny na stronie (poprawiona dla wszystkich krajów)
+
+// Funkcja aktualizująca ceny na stronie
 function updatePrices() {
-    const countries = ['lithuania', 'bulgaria', 'ukraine'];
-    countries.forEach(country => {
+    ['lithuania', 'bulgaria', 'ukraine'].forEach(country => {
         if (productsData[country].length > 0) {
-            loadProducts(country); // Ponowne załadowanie dla каждого kraju
+            loadProducts(country); // Ponowne załadowanie z nowym rabatem
         }
     });
     if (activeTab === 'cart') {
@@ -58,8 +63,9 @@ function updatePrices() {
     }
     calculateTotal();
     updateCartInfo();
-    updateDiscountInfo(); // Aktualizacja informacji w pasku bocznym
+    updateDiscountInfo();
 }
+
 // Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
     const modal = document.createElement('div');
@@ -161,7 +167,8 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-// Tworzenie stałego panelu po lewej stronie (z Twojego przykładu)
+
+// Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
     sidebar.style.cssText = `
@@ -180,7 +187,7 @@ function createSidebar() {
     const discountInfo = document.createElement('div');
     discountInfo.id = 'discountInfo';
     discountInfo.style.cssText = `margin-bottom: 10px; font-weight: bold; color: #333;`;
-    updateDiscountInfo(); // Inicjalna aktualizacja informacji
+    updateDiscountInfo();
     const discountLabel = document.createElement('label');
     discountLabel.innerText = 'Discount (%): ';
     discountLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
@@ -220,6 +227,7 @@ function createSidebar() {
     sidebar.appendChild(cashBackInput);
     document.body.appendChild(sidebar);
 }
+
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
     const discountInfo = document.getElementById('discountInfo');
@@ -229,6 +237,7 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
+
 // Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtr pod banerem
 function createSearchBar() {
     const searchBarContainer = document.createElement('div');
@@ -345,6 +354,7 @@ function createSearchBar() {
     searchInput.oninput = applyFilters;
     categoryFilter.onchange = applyFilters;
 }
+
 // Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
@@ -373,6 +383,7 @@ function updateBanner() {
             bannerImage.style.display = 'block';
     }
 }
+
 function updateCartInfo() {
     let totalItems = 0;
     let totalValue = 0;
@@ -380,7 +391,7 @@ function updateCartInfo() {
         productsData[country].forEach(product => {
             if (product.quantity > 0) {
                 totalItems += product.quantity;
-                totalValue += applyDiscount(parseFloat(product['CENA'])) * parseFloat(product['OPAKOWANIE']) * product.quantity;
+                totalValue += applyDiscount(parseFloat(product['CENA']) || 0) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
             }
         });
     }
@@ -389,13 +400,16 @@ function updateCartInfo() {
     updateCashBackInfo(totalValue);
     saveCartState();
 }
+
 function updateCashBackInfo(totalValue) {
     const cashBack = Number((totalValue * (customCashBackPercentage / 100)).toFixed(2));
     document.getElementById('cash-back-info').innerText = `Cash Back: ${cashBack.toFixed(2)} GBP`;
 }
+
 function saveCartState() {
     localStorage.setItem('productsData', JSON.stringify(productsData));
 }
+
 function loadCartState() {
     const savedData = localStorage.getItem('productsData');
     if (savedData) {
@@ -413,6 +427,7 @@ function loadCartState() {
         updateCartInfo();
     }
 }
+
 function clearCartState() {
     for (let country in productsData) {
         productsData[country].forEach(product => {
@@ -423,6 +438,7 @@ function clearCartState() {
     calculateTotal();
     updateCartInfo();
 }
+
 function loadProducts(country) {
     console.log("Loading data for:", country);
     let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
@@ -443,7 +459,6 @@ function loadProducts(country) {
         })
         .then(data => {
             console.log("Data loaded for", country, ":", data);
-            // Zachowaj istniejące ilości produktów, jeśli już są załadowane
             if (productsData[country].length > 0) {
                 data = data.map((product, index) => {
                     if (productsData[country][index] && productsData[country][index].quantity) {
@@ -455,15 +470,13 @@ function loadProducts(country) {
                 productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
             }
             const productList = document.getElementById(`product-list-${country}`);
-            if (!productList) {
-                console.error(`Product list element for ${country} not found!`);
-                return;
-            }
             productList.innerHTML = '';
             data.forEach((product, index) => {
                 const productElement = document.createElement("div");
                 productElement.classList.add("product");
-                productElement.dataset.index = index; // Dodanie indeksu do dataset dla filtrowania
+                productElement.dataset.index = index;
+                const originalPrice = parseFloat(product['CENA']) || 0;
+                const discountedPrice = applyDiscount(originalPrice);
                 let imageUrl = '';
                 if (country === 'lithuania') {
                     imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-litwa/${product['INDEKS']}.jpg`;
@@ -471,14 +484,13 @@ function loadProducts(country) {
                     imgTest.src = imageUrl;
                     imgTest.onload = () => {
                         let competitorPriceColor = '';
-                        if (product['Cena konkurencji'] && product['CENA']) {
-                            if (parseFloat(product['Cena konkurencji']) < parseFloat(product['CENA'])) {
+                        if (product['Cena konkurencji'] && originalPrice) {
+                            if (parseFloat(product['Cena konkurencji']) < originalPrice) {
                                 competitorPriceColor = 'color: red;';
-                            } else if (parseFloat(product['Cena konkurencji']) > parseFloat(product['CENA'])) {
+                            } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
                                 competitorPriceColor = 'color: green;';
                             }
                         }
-                        const discountedPrice = applyDiscount(parseFloat(product['CENA']));
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
@@ -502,7 +514,7 @@ function loadProducts(country) {
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${product['CENA']} GBP)</div>
+                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)</div>
                             <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
                         `;
                         productElement.appendChild(details);
@@ -548,8 +560,7 @@ function loadProducts(country) {
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${product['CENA']} GBP)</div>
-                            <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
+                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)</div>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
@@ -594,8 +605,7 @@ function loadProducts(country) {
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${product['CENA']} GBP)</div>
-                            <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
+                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)</div>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
@@ -622,6 +632,7 @@ function loadProducts(country) {
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
+
 function switchTab(country) {
     activeTab = country;
     console.log("Switching to tab:", country);
@@ -662,6 +673,7 @@ function switchTab(country) {
     }
     updateCartInfo();
 }
+
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
@@ -678,6 +690,7 @@ function changeQuantity(country, index, change) {
         saveCartState();
     }
 }
+
 function updateCart() {
     const cartList = document.getElementById('product-list-cart');
     cartList.innerHTML = '';
@@ -690,9 +703,9 @@ function updateCart() {
                     'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/'}${product['INDEKS']}.jpg`;
                 const productElement = document.createElement("div");
                 productElement.classList.add("product");
-                const originalPrice = parseFloat(product['CENA']);
+                const originalPrice = parseFloat(product['CENA']) || 0;
                 const discountedPrice = applyDiscount(originalPrice);
-                const itemValue = discountedPrice * parseFloat(product['OPAKOWANIE']) * product.quantity;
+                const itemValue = discountedPrice * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
                 productElement.innerHTML = `
                     <img src="${imageUrl}" alt="Photo" style="position: relative; z-index: 0;">
                     <div class="product-details">
@@ -710,13 +723,13 @@ function updateCart() {
                 `;
                 cartList.appendChild(productElement);
                 totalCartValue += itemValue;
-                console.log(`Product: ${product['NAZWA']}, Original Price: ${originalPrice}, Discounted Price: ${discountedPrice}, Pack: ${product['OPAKOWANIE']}, Quantity: ${product.quantity}, Item Value: ${itemValue}, Total so far: ${totalCartValue}`);
             }
         });
     }
     document.getElementById("cart-total").innerText = `Cart value: ${totalCartValue.toFixed(2)} GBP`;
     updateCartInfo();
 }
+
 function removeItem(country, index) {
     productsData[country][index].quantity = 0;
     if (activeTab === 'cart') {
@@ -730,15 +743,15 @@ function removeItem(country, index) {
         document.getElementById(`quantity-${country}-${index}`).value = '0';
     }
 }
+
 function calculateTotal() {
     let totalValue = 0;
-    let categoryValue = 0;
     let categoryTotalsText = '';
     for (let country in productsData) {
         let countryTotal = 0;
         productsData[country].forEach(product => {
             if (product.quantity > 0) {
-                countryTotal += applyDiscount(parseFloat(product['CENA'])) * parseFloat(product['OPAKOWANIE']) * product.quantity;
+                countryTotal += applyDiscount(parseFloat(product['CENA']) || 0) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
             }
         });
         categoryTotals[country] = Number(countryTotal.toFixed(2));
@@ -746,10 +759,11 @@ function calculateTotal() {
             categoryTotalsText += `${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n`;
         }
     }
-    categoryValue = categoryTotals[activeTab] || 0;
+    totalValue = categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine;
     document.getElementById("category-totals").innerText = categoryTotalsText.trim();
-    document.getElementById("total-value").innerText = `Total order value: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine).toFixed(2)} GBP`;
+    document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
 }
+
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
     const email = document.getElementById('email').value;
@@ -767,7 +781,7 @@ function submitOrder() {
             if (product.quantity > 0) {
                 hasItems = true;
                 orderMessage += `${product.INDEKS}\t${product['NAZWA']}\t${product.quantity}\n`;
-                countryTotal += applyDiscount(parseFloat(product['CENA'])) * parseFloat(product['OPAKOWANIE']) * product.quantity;
+                countryTotal += applyDiscount(parseFloat(product['CENA']) || 0) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
             }
         });
         if (!hasItems) {
@@ -801,12 +815,12 @@ function submitOrder() {
         alert("Error sending order.");
     });
 }
+
 // Wywołanie okna dialogowego, stworzenie paska bocznego i paska wyszukiwania z filtrem po załadowaniu strony
 window.onload = function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
-    // Automatyczne załadowanie danych dla wszystkich krajów przy starcie
     ['lithuania', 'bulgaria', 'ukraine'].forEach(country => loadProducts(country));
 };
 loadCartState();
