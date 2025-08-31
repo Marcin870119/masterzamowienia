@@ -39,8 +39,8 @@ let categoryTotals = {
     bulgaria: 0,
     ukraine: 0
 };
-let discountPercentage = 0; // Przechowuje rabat w procentach
-let customCashBackPercentage = 2; // Domyślna wartość 2%, może być zmieniona przez użytkownika
+let discountPercentage = 0; // Domyślnie 0% zamiast 0
+let customCashBackPercentage = 0; // Domyślnie 0% zamiast 2%
 // Funkcja obliczająca cenę z rabatem z precyzyjnym zaokrągleniem
 function applyDiscount(price) {
     return Number((price * (1 - discountPercentage / 100)).toFixed(2));
@@ -128,7 +128,7 @@ function showInitialDialog() {
     saveButton.onmouseout = () => saveButton.style.backgroundColor = '#007bff';
     saveButton.onclick = () => {
         discountPercentage = parseFloat(discountInput.value) || 0;
-        customCashBackPercentage = parseFloat(cashBackInput.value) || 2;
+        customCashBackPercentage = parseFloat(cashBackInput.value) || 0; // Ustawiono 0 jako domyślne
         if (discountPercentage < 0) discountPercentage = 0;
         if (discountPercentage > 100) discountPercentage = 100;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
@@ -223,7 +223,7 @@ function createSidebar() {
     cashBackInput.min = 0;
     cashBackInput.max = 100;
     cashBackInput.onchange = () => {
-        customCashBackPercentage = parseFloat(cashBackInput.value) || 2;
+        customCashBackPercentage = parseFloat(cashBackInput.value) || 0; // Ustawiono 0 jako domyślne
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
         updatePrices(); // Aktualizacja bez resetowania koszyka
@@ -465,7 +465,7 @@ function loadCartState() {
             if (productsData[country]) {
                 loadedData[country].forEach((product, index) => {
                     if (productsData[country][index]) {
-                        productsData[country][index].quantity = product.quantity || 0;
+                        productsData[country][index].quantity = product.quantity || 0; // Ustaw "0", jeśli brak wartości
                     }
                 });
             }
@@ -510,7 +510,7 @@ function loadProducts(country) {
                     if (productsData[country][index] && productsData[country][index].quantity) {
                         return { ...product, quantity: productsData[country][index].quantity, dataset: { index } };
                     }
-                    return { ...product, quantity: 0, dataset: { index } };
+                    return { ...product, quantity: 0, dataset: { index } }; // Ustaw "0" jako domyślne
                 });
             } else {
                 productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
@@ -561,7 +561,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity}" readonly>
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly> <!-- Ustaw "0" jeśli brak -->
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
@@ -598,7 +598,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity}" readonly>
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly> <!-- Ustaw "0" jeśli brak -->
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
@@ -635,7 +635,7 @@ function loadProducts(country) {
                         controls.classList.add('quantity-controls');
                         controls.innerHTML = `
                             <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity}" readonly>
+                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly> <!-- Ustaw "0" jeśli brak -->
                             <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         `;
                         productElement.appendChild(controls);
@@ -737,7 +737,7 @@ function updateCart() {
                     </div>
                     <div class="quantity-controls cart">
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                        <input type="number" id="quantity-${country}-${index}" value="${product.quantity}" readonly>
+                        <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly> <!-- Ustaw "0" jeśli brak -->
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                         <button class="remove-btn" onclick="removeItem('${country}', ${index})">X</button>
                     </div>
