@@ -45,11 +45,14 @@ let customCashBackPercentage = 0; // Domyślnie 0%
 function applyDiscount(price) {
     return Number((parseFloat(price) * (1 - discountPercentage / 100)).toFixed(2));
 }
-// Funkcja aktualizująca ceny na stronie (z Twojego przykładu)
+// Funkcja aktualizująca ceny na stronie (poprawiona dla wszystkich krajów)
 function updatePrices() {
-    if (productsData['lithuania'].length > 0) {
-        loadProducts('lithuania'); // Ponowne załadowanie z nowym rabatem
-    }
+    const countries = ['lithuania', 'bulgaria', 'ukraine'];
+    countries.forEach(country => {
+        if (productsData[country].length > 0) {
+            loadProducts(country); // Ponowne załadowanie dla каждого kraju
+        }
+    });
     if (activeTab === 'cart') {
         updateCart();
     }
@@ -541,7 +544,8 @@ function loadProducts(country) {
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${product['CENA']} GBP</div>
+                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${product['CENA']} GBP)</div>
+                            <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
@@ -586,7 +590,8 @@ function loadProducts(country) {
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${product['CENA']} GBP</div>
+                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${product['CENA']} GBP)</div>
+                            <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
