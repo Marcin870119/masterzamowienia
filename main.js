@@ -39,8 +39,8 @@ let categoryTotals = {
     bulgaria: 0,
     ukraine: 0
 };
-let discountPercentage = 0; // Domyślnie 0% zamiast 0
-let customCashBackPercentage = 0; // Domyślnie 0% zamiast 2%
+let discountPercentage = 0; // Domyślnie 0%
+let customCashBackPercentage = 0; // Domyślnie 0%
 // Funkcja obliczająca cenę z rabatem z precyzyjnym zaokrągleniem
 function applyDiscount(price) {
     return Number((price * (1 - discountPercentage / 100)).toFixed(2));
@@ -128,7 +128,7 @@ function showInitialDialog() {
     saveButton.onmouseout = () => saveButton.style.backgroundColor = '#007bff';
     saveButton.onclick = () => {
         discountPercentage = parseFloat(discountInput.value) || 0;
-        customCashBackPercentage = parseFloat(cashBackInput.value) || 0; // Ustawiono 0 jako domyślne
+        customCashBackPercentage = parseFloat(cashBackInput.value) || 0;
         if (discountPercentage < 0) discountPercentage = 0;
         if (discountPercentage > 100) discountPercentage = 100;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
@@ -153,7 +153,7 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-// Tworzenie panelu rabatowego z toggle'em tylko na telefonach
+// Tworzenie panelu rabatowego z toggle'em i przyciskiem "Zastosuj" tylko na telefonach
 function createSidebar() {
     const sidebar = document.createElement('div');
     sidebar.id = 'discount-panel';
@@ -206,13 +206,6 @@ function createSidebar() {
     discountInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
     discountInput.min = 0;
     discountInput.max = 100;
-    discountInput.onchange = () => {
-        discountPercentage = parseFloat(discountInput.value) || 0;
-        if (discountPercentage < 0) discountPercentage = 0;
-        if (discountPercentage > 100) discountPercentage = 100;
-        updatePrices(); // Aktualizacja bez resetowania koszyka
-        updateDiscountInfo();
-    };
     const cashBackLabel = document.createElement('label');
     cashBackLabel.innerText = 'Cash Back (%): ';
     cashBackLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
@@ -222,18 +215,41 @@ function createSidebar() {
     cashBackInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
     cashBackInput.min = 0;
     cashBackInput.max = 100;
-    cashBackInput.onchange = () => {
-        customCashBackPercentage = parseFloat(cashBackInput.value) || 0; // Ustawiono 0 jako domyślne
+    // Przycisk "Zastosuj"
+    const applyButton = document.createElement('button');
+    applyButton.innerText = 'Zastosuj';
+    applyButton.style.cssText = `
+        display: block;
+        width: 100%;
+        padding: 8px;
+        margin-top: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background-color 0.3s;
+    `;
+    applyButton.onmouseover = () => applyButton.style.backgroundColor = '#218838';
+    applyButton.onmouseout = () => applyButton.style.backgroundColor = '#28a745';
+    applyButton.onclick = () => {
+        discountPercentage = parseFloat(discountInput.value) || 0;
+        customCashBackPercentage = parseFloat(cashBackInput.value) || 0;
+        if (discountPercentage < 0) discountPercentage = 0;
+        if (discountPercentage > 100) discountPercentage = 100;
         if (customCashBackPercentage < 0) customCashBackPercentage = 0;
         if (customCashBackPercentage > 100) customCashBackPercentage = 100;
-        updatePrices(); // Aktualizacja bez resetowania koszyka
+        updatePrices(); // Ręczne wywołanie aktualizacji
         updateDiscountInfo();
     };
+
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
     sidebar.appendChild(discountInput);
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
+    sidebar.appendChild(applyButton);
     document.body.appendChild(sidebar);
     document.body.appendChild(toggleButton);
 
