@@ -475,18 +475,18 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative; z-index: 0;'; // Zwiększono max-width
+                        img.style.cssText = 'max-width: 150px; width: 100%; height: auto; position: relative; z-index: 0;'; // Zwiększono max-width
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
                             };
                         } else {
-                            // Dla desktopu większy rozmiar i odstępy
-                            productElement.style.minWidth = '400px'; // Zwiększona minimalna szerokość
-                            productElement.style.padding = '15px'; // Większe odstępy
+                            // Dla desktopu jeszcze szerszy układ
+                            productElement.style.minWidth = '600px'; // Zwiększono z 400px do 600px
+                            productElement.style.padding = '20px'; // Większe odstępy
                             const details = productElement.querySelector('.product-details');
                             if (details) {
-                                details.style.fontSize = '16px'; // Większa czcionka dla tekstu
+                                details.style.fontSize = '18px'; // Jeszcze większa czcionka
                             }
                         }
                         productElement.appendChild(img);
@@ -521,17 +521,17 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative;';
+                        img.style.cssText = 'max-width: 150px; width: 100%; height: auto; position: relative;';
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
                             };
                         } else {
-                            productElement.style.minWidth = '400px'; // Zwiększona minimalna szerokość
-                            productElement.style.padding = '15px'; // Większe odstępy
+                            productElement.style.minWidth = '600px'; // Zwiększono z 400px do 600px
+                            productElement.style.padding = '20px'; // Większe odstępy
                             const details = productElement.querySelector('.product-details');
                             if (details) {
-                                details.style.fontSize = '16px'; // Większa czcionka
+                                details.style.fontSize = '18px'; // Jeszcze większa czcionka
                             }
                         }
                         productElement.appendChild(img);
@@ -565,17 +565,17 @@ function loadProducts(country) {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.alt = "Photo";
-                        img.style.cssText = 'max-width: 120px; width: 100%; height: auto; position: relative;';
+                        img.style.cssText = 'max-width: 150px; width: 100%; height: auto; position: relative;';
                         if (window.innerWidth <= 600) {
                             img.onclick = function() {
                                 this.classList.toggle('enlarged');
                             };
                         } else {
-                            productElement.style.minWidth = '400px'; // Zwiększona minimalna szerokość
-                            productElement.style.padding = '15px'; // Większe odstępy
+                            productElement.style.minWidth = '600px'; // Zwiększono z 400px do 600px
+                            productElement.style.padding = '20px'; // Większe odstępy
                             const details = productElement.querySelector('.product-details');
                             if (details) {
-                                details.style.fontSize = '16px'; // Większa czcionka
+                                details.style.fontSize = '18px'; // Jeszcze większa czcionka
                             }
                         }
                         productElement.appendChild(img);
@@ -605,7 +605,6 @@ function loadProducts(country) {
             });
             calculateTotal();
             updateCartInfo();
-            // Ręczne wywołanie switchTab po załadowaniu danych dla aktywnej zakładki
             if (country === activeTab) {
                 switchTab(activeTab);
             }
