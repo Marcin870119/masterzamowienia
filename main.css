@@ -288,21 +288,21 @@ button:hover {
     }
 
     .product {
-        padding: 8px; /* Zmniejszono padding */
-        margin-bottom: 10px; /* Więcej odstępu między produktami */
+        padding: 8px;
+        margin-bottom: 10px;
     }
 
     .product img {
         max-width: 50px;
         margin-right: 5px;
-        margin-bottom: 5px; /* Odstęp od szczegółów poniżej */
+        margin-bottom: 5px;
     }
 
     .product-details {
         margin-bottom: 5px;
         text-align: left;
         font-size: 12px;
-        padding: 0 5px; /* Dodatkowy padding dla czytelności */
+        padding: 0 5px;
     }
 
     .product-code {
@@ -327,7 +327,7 @@ button:hover {
         flex-direction: column;
         align-items: center;
         width: 100%;
-        margin-top: 5px; /* Odstęp od szczegółów */
+        margin-top: 5px;
     }
 
     .quantity-controls button {
@@ -383,6 +383,11 @@ button:hover {
         height: 20px;
         font-size: 12px;
         margin-left: 3px;
+    }
+
+    /* Ukrycie paska bocznego na telefonach */
+    .sidebar {
+        display: none; /* Ukrycie paska bocznego na małych ekranach */
     }
 }
 
