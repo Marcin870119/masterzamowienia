@@ -97,15 +97,17 @@ body {
 }
 
 /* Styl dla powiększonych zdjęć na telefonach */
-.product img.enlarged {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    z-index: 1002;
-    background-color: rgba(0, 0, 0, 0.8);
+@media (max-width: 600px) {
+    .product img.enlarged {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+        z-index: 1002;
+        background-color: rgba(0, 0, 0, 0.8); /* Ciemne tło dla lepszej widoczności */
+    }
 }
 
 .product-details {
@@ -305,7 +307,7 @@ button:hover {
     }
 
     .product img {
-        max-width: 120px; /* Domyślny rozmiar */
+        max-width: 120px;
         margin-right: 5px;
         margin-bottom: 5px;
     }
@@ -398,7 +400,7 @@ button:hover {
     }
 
     /* Ukrycie paska bocznego na telefonach, sterowane przez JS */
-    .sidebar {
+    #discount-panel {
         display: none;
     }
 }
@@ -412,7 +414,7 @@ button:hover {
     }
 
     .product img {
-        max-width: 100px; /* Domyślny rozmiar */
+        max-width: 100px;
         margin-right: 3px;
         margin-bottom: 3px;
     }
