@@ -719,6 +719,10 @@ function switchTab(country) {
         calculateTotal();
         updateCartInfo();
     }
+    // Upewnienie się, że koszyk jest aktualizowany po przełączeniu
+    if (document.getElementById('product-list-cart')) {
+        updateCart();
+    }
     updateCartInfo();
 }
 function changeQuantity(country, index, change) {
@@ -728,17 +732,19 @@ function changeQuantity(country, index, change) {
         currentQuantity += change;
         input.value = currentQuantity;
         productsData[country][index].quantity = currentQuantity;
-        if (activeTab === 'cart') {
-            updateCart();
-        } else {
-            calculateTotal();
-            updateCartInfo();
-        }
+        // Aktualizacja koszyka za każdym razem, gdy zmienia się ilość
+        updateCart();
+        calculateTotal();
+        updateCartInfo();
         saveCartState();
     }
 }
 function updateCart() {
     const cartList = document.getElementById('product-list-cart');
+    if (!cartList) {
+        console.error("Cart list element not found!");
+        return;
+    }
     cartList.innerHTML = '';
     let totalCartValue = 0;
     for (let country in productsData) {
