@@ -5,7 +5,9 @@
     "OPAKOWANIE": "32",
     "CENA": "0.35",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "1",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "47486",
@@ -13,7 +15,9 @@
     "OPAKOWANIE": "32",
     "CENA": "0.35",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "2",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55667",
@@ -21,7 +25,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.54",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "3",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55666",
@@ -29,7 +35,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.54",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "4",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "56238",
@@ -37,7 +45,9 @@
     "OPAKOWANIE": "8",
     "CENA": "1.6",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "5",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "56240",
@@ -45,7 +55,9 @@
     "OPAKOWANIE": "15",
     "CENA": "0.64",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "6",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "56231",
@@ -53,7 +65,9 @@
     "OPAKOWANIE": "20",
     "CENA": "0.53",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "7",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "56227",
@@ -61,7 +75,9 @@
     "OPAKOWANIE": "30",
     "CENA": "0.52",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "8",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "56236",
@@ -69,7 +85,9 @@
     "OPAKOWANIE": "20",
     "CENA": "0.6",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "9",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "56237",
@@ -77,7 +95,9 @@
     "OPAKOWANIE": "20",
     "CENA": "0.59",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "10",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "56235",
@@ -85,7 +105,9 @@
     "OPAKOWANIE": "20",
     "CENA": "0.6",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "11",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "55653",
@@ -93,7 +115,9 @@
     "OPAKOWANIE": "14",
     "CENA": "2.19",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "12",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55562",
@@ -101,7 +125,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.99",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "13",
+    "Producent": "AMFORA"
   },
   {
     "INDEKS": "55788",
@@ -109,7 +135,9 @@
     "OPAKOWANIE": "22",
     "CENA": "3.99",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "14",
+    "Producent": "ARTU"
   },
   {
     "INDEKS": "56972",
@@ -117,7 +145,9 @@
     "OPAKOWANIE": "96",
     "CENA": "1.61",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "15",
+    "Producent": "BOLCI"
   },
   {
     "INDEKS": "55789",
@@ -125,7 +155,9 @@
     "OPAKOWANIE": "24",
     "CENA": "2.06",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "16",
+    "Producent": "BEYOGLU"
   },
   {
     "INDEKS": "56357",
@@ -133,7 +165,9 @@
     "OPAKOWANIE": "72",
     "CENA": "0.24",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "17",
+    "Producent": "DAY & NIGHT LTD"
   },
   {
     "INDEKS": "56353",
@@ -141,7 +175,9 @@
     "OPAKOWANIE": "72",
     "CENA": "0.24",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "18",
+    "Producent": "DAY & NIGHT LTD"
   },
   {
     "INDEKS": "56355",
@@ -149,7 +185,9 @@
     "OPAKOWANIE": "21",
     "CENA": "2.12",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "19",
+    "Producent": "DAY & NIGHT LTD"
   },
   {
     "INDEKS": "55560",
@@ -157,7 +195,9 @@
     "OPAKOWANIE": "24",
     "CENA": "1.97",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "20",
+    "Producent": "CHERNOMORETS"
   },
   {
     "INDEKS": "55559",
@@ -165,7 +205,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.42",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "21",
+    "Producent": "CHERNOMORETS"
   },
   {
     "INDEKS": "56121",
@@ -173,7 +215,9 @@
     "OPAKOWANIE": "12",
     "CENA": "1.55",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "22",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "56973",
@@ -181,7 +225,9 @@
     "OPAKOWANIE": "45",
     "CENA": "4.28",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "23",
+    "Producent": "BOLCI"
   },
   {
     "INDEKS": "55654",
@@ -189,7 +235,9 @@
     "OPAKOWANIE": "20",
     "CENA": "1.59",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "24",
+    "Producent": "DAISY"
   },
   {
     "INDEKS": "55656",
@@ -197,7 +245,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.44",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "25",
+    "Producent": "DAISY"
   },
   {
     "INDEKS": "56467",
@@ -205,7 +255,9 @@
     "OPAKOWANIE": "4",
     "CENA": "5.79",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "26",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56457",
@@ -213,7 +265,9 @@
     "OPAKOWANIE": "6",
     "CENA": "1.58",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "27",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56456",
@@ -221,7 +275,9 @@
     "OPAKOWANIE": "6",
     "CENA": "1.5",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "28",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56462",
@@ -229,7 +285,9 @@
     "OPAKOWANIE": "6",
     "CENA": "1.94",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "29",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56475",
@@ -237,7 +295,9 @@
     "OPAKOWANIE": "6",
     "CENA": "0.94",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "30",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56469",
@@ -245,7 +305,9 @@
     "OPAKOWANIE": "6",
     "CENA": "1.35",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "31",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56470",
@@ -253,7 +315,9 @@
     "OPAKOWANIE": "6",
     "CENA": "1.25",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "32",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56476",
@@ -261,7 +325,9 @@
     "OPAKOWANIE": "27",
     "CENA": "0.85",
     "Kategoria": "Kuchnia w proszku",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "33",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56468",
@@ -269,7 +335,9 @@
     "OPAKOWANIE": "6",
     "CENA": "3.8",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "34",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56464",
@@ -277,7 +345,9 @@
     "OPAKOWANIE": "6",
     "CENA": "4.89",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "35",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56463",
@@ -285,7 +355,9 @@
     "OPAKOWANIE": "6",
     "CENA": "3.32",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "36",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56455",
@@ -293,7 +365,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.65",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "37",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56465",
@@ -301,7 +375,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.45",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "38",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56453",
@@ -309,7 +385,9 @@
     "OPAKOWANIE": "6",
     "CENA": "3.65",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "39",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56458",
@@ -317,7 +395,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.29",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "40",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56466",
@@ -325,7 +405,9 @@
     "OPAKOWANIE": "6",
     "CENA": "4.46",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "41",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56460",
@@ -333,7 +415,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.68",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "42",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56473",
@@ -341,7 +425,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.22",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "43",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "27266",
@@ -349,7 +435,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.51",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "44",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56474",
@@ -357,7 +445,9 @@
     "OPAKOWANIE": "6",
     "CENA": "1.67",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "45",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "56472",
@@ -365,7 +455,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.22",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "46",
+    "Producent": "DERONI"
   },
   {
     "INDEKS": "45881",
@@ -373,7 +465,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.31",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "47",
+    "Producent": "DIAMANT"
   },
   {
     "INDEKS": "45808",
@@ -381,7 +475,9 @@
     "OPAKOWANIE": "24",
     "CENA": "1.22",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "48",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "45809",
@@ -389,7 +485,9 @@
     "OPAKOWANIE": "24",
     "CENA": "1.22",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "49",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "56964",
@@ -397,7 +495,9 @@
     "OPAKOWANIE": "10",
     "CENA": "4.09",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "50",
+    "Producent": "EURENI"
   },
   {
     "INDEKS": "56120",
@@ -405,7 +505,9 @@
     "OPAKOWANIE": "12",
     "CENA": "1.8",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "51",
+    "Producent": "KARMELLA"
   },
   {
     "INDEKS": "45810",
@@ -413,7 +515,9 @@
     "OPAKOWANIE": "12",
     "CENA": "1.37",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "52",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55554",
@@ -421,7 +525,9 @@
     "OPAKOWANIE": "15",
     "CENA": "0.57",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "53",
+    "Producent": "KUBETI"
   },
   {
     "INDEKS": "55555",
@@ -429,7 +535,9 @@
     "OPAKOWANIE": "15",
     "CENA": "0.57",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "54",
+    "Producent": "KUBETI"
   },
   {
     "INDEKS": "55553",
@@ -437,7 +545,9 @@
     "OPAKOWANIE": "15",
     "CENA": "0.57",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "55",
+    "Producent": "KUBETI"
   },
   {
     "INDEKS": "56122",
@@ -445,7 +555,9 @@
     "OPAKOWANIE": "16",
     "CENA": "0.3",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "56",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "55556",
@@ -453,7 +565,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.29",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "57",
+    "Producent": "MEDOVINA"
   },
   {
     "INDEKS": "55557",
@@ -461,7 +575,9 @@
     "OPAKOWANIE": "20",
     "CENA": "0.28",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "58",
+    "Producent": "MEDOVINA"
   },
   {
     "INDEKS": "55558",
@@ -469,7 +585,9 @@
     "OPAKOWANIE": "16",
     "CENA": "0.34",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "59",
+    "Producent": "MEDOVINA"
   },
   {
     "INDEKS": "56311",
@@ -477,7 +595,9 @@
     "OPAKOWANIE": "17",
     "CENA": "1.16",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "60",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "56310",
@@ -485,7 +605,9 @@
     "OPAKOWANIE": "25",
     "CENA": "1.16",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "61",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "56312",
@@ -493,7 +615,9 @@
     "OPAKOWANIE": "25",
     "CENA": "1.16",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "62",
+    "Producent": "MONDELEZ BG"
   },
   {
     "INDEKS": "55564",
@@ -501,7 +625,9 @@
     "OPAKOWANIE": "60",
     "CENA": "0.18",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "63",
+    "Producent": "MLIN"
   },
   {
     "INDEKS": "55671",
@@ -509,7 +635,9 @@
     "OPAKOWANIE": "10",
     "CENA": "0.52",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "64",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55670",
@@ -517,7 +645,9 @@
     "OPAKOWANIE": "10",
     "CENA": "0.52",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "65",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55669",
@@ -525,7 +655,9 @@
     "OPAKOWANIE": "10",
     "CENA": "0.52",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "66",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55658",
@@ -533,7 +665,9 @@
     "OPAKOWANIE": "24",
     "CENA": "1.15",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "67",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "56056",
@@ -541,7 +675,9 @@
     "OPAKOWANIE": "8",
     "CENA": "1.25",
     "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "68",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56054",
@@ -549,7 +685,9 @@
     "OPAKOWANIE": "6",
     "CENA": "1.89",
     "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "69",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56061",
@@ -557,7 +695,9 @@
     "OPAKOWANIE": "6",
     "CENA": "3.49",
     "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "70",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56062",
@@ -565,7 +705,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.6",
     "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "71",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56063",
@@ -573,7 +715,9 @@
     "OPAKOWANIE": "6",
     "CENA": "1.98",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "72",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56060",
@@ -581,7 +725,9 @@
     "OPAKOWANIE": "6",
     "CENA": "3.6",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "73",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56058",
@@ -589,7 +735,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.83",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "74",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56057",
@@ -597,7 +745,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.09",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "75",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56059",
@@ -605,7 +755,9 @@
     "OPAKOWANIE": "6",
     "CENA": "2.99",
     "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "76",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56065",
@@ -613,7 +765,9 @@
     "OPAKOWANIE": "4",
     "CENA": "2.01",
     "Kategoria": "Przetwory owocowo warzywne",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "77",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56064",
@@ -621,7 +775,9 @@
     "OPAKOWANIE": "4",
     "CENA": "1.36",
     "Kategoria": "Przetwory owocowo warzywne",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "78",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56055",
@@ -629,7 +785,9 @@
     "OPAKOWANIE": "8",
     "CENA": "1.15",
     "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "79",
+    "Producent": "OLINESA"
   },
   {
     "INDEKS": "56969",
@@ -637,7 +795,9 @@
     "OPAKOWANIE": "18",
     "CENA": "3.97",
     "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "80",
+    "Producent": "ONLY"
   },
   {
     "INDEKS": "56974",
@@ -645,7 +805,9 @@
     "OPAKOWANIE": "12",
     "CENA": "6",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "81",
+    "Producent": "BOLCI"
   },
   {
     "INDEKS": "45897",
@@ -653,7 +815,9 @@
     "OPAKOWANIE": "12",
     "CENA": "1.32",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "82",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "45899",
@@ -661,7 +825,9 @@
     "OPAKOWANIE": "12",
     "CENA": "1.32",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "83",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "45898",
@@ -669,7 +835,9 @@
     "OPAKOWANIE": "12",
     "CENA": "1.32",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "84",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55668",
@@ -677,7 +845,9 @@
     "OPAKOWANIE": "12",
     "CENA": "1.32",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "85",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55565",
@@ -685,7 +855,9 @@
     "OPAKOWANIE": "60",
     "CENA": "0.18",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "86",
+    "Producent": "SAVIMEX"
   },
   {
     "INDEKS": "55561",
@@ -693,7 +865,9 @@
     "OPAKOWANIE": "14",
     "CENA": "1.99",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "87",
+    "Producent": "SEZONI"
   },
   {
     "INDEKS": "45939",
@@ -701,7 +875,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.29",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "88",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "55652",
@@ -709,7 +885,9 @@
     "OPAKOWANIE": "24",
     "CENA": "1.44",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "89",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "55566",
@@ -717,7 +895,9 @@
     "OPAKOWANIE": "24",
     "CENA": "1.11",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "90",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "55648",
@@ -725,7 +905,9 @@
     "OPAKOWANIE": "12",
     "CENA": "0.39",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "91",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "55649",
@@ -733,7 +915,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.37",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "92",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "55567",
@@ -741,7 +925,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.42",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "93",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "45954",
@@ -749,7 +935,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.29",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "94",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "45952",
@@ -757,7 +945,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.29",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "95",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "56108",
@@ -765,7 +955,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.96",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "96",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "56119",
@@ -773,7 +965,9 @@
     "OPAKOWANIE": "24",
     "CENA": "0.96",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "97",
+    "Producent": "SWEET +"
   },
   {
     "INDEKS": "55563",
@@ -781,7 +975,9 @@
     "OPAKOWANIE": "24",
     "CENA": "1.14",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "98",
+    "Producent": "ZAKUSKA"
   },
   {
     "INDEKS": "56308",
@@ -789,7 +985,9 @@
     "OPAKOWANIE": "20",
     "CENA": "0.24",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "99",
+    "Producent": "SANI KONS TODOROVI GENERATL PARTNERSHIP"
   },
   {
     "INDEKS": "56306",
@@ -797,7 +995,9 @@
     "OPAKOWANIE": "20",
     "CENA": "0.3",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "100",
+    "Producent": "SANI KONS TODOROVI GENERATL PARTNERSHIP"
   },
   {
     "INDEKS": "56307",
@@ -805,7 +1005,9 @@
     "OPAKOWANIE": "20",
     "CENA": "0.33",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "101",
+    "Producent": "SANI KONS TODOROVI GENERATL PARTNERSHIP"
   },
   {
     "INDEKS": "45887",
@@ -813,7 +1015,9 @@
     "OPAKOWANIE": "12",
     "CENA": "1.46",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "102",
+    "Producent": "SOFIO"
   },
   {
     "INDEKS": "45886",
@@ -821,6 +1025,8 @@
     "OPAKOWANIE": "12",
     "CENA": "1.46",
     "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt."
+    "Stany magazynowe": "1500 szt.",
+    "Ranking": "103",
+    "Producent": "SOFIO"
   }
 ]
