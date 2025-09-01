@@ -229,7 +229,7 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
-// Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtry pod banerem
+// Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtr pod banerem
 function createSearchBar() {
     const searchBarContainer = document.createElement('div');
     searchBarContainer.id = 'search-bar';
@@ -358,7 +358,7 @@ function createSearchBar() {
             const nameWords = productName.split(/\s+/);
             const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
             const normalizedProductCategory = productCategory.replace(/-/g, ' ');
-            if (searchTerm === '' && selectedCategory === '' && !sortOrder) {
+            if (searchTerm === '' && selectedCategory === '') {
                 product.style.visibility = 'visible';
                 product.style.position = 'relative';
             } else {
@@ -673,15 +673,42 @@ function switchTab(country) {
     if (searchBar) {
         const searchInput = searchBar.querySelector('input');
         const categoryFilter = searchBar.querySelector('select');
-        const rankingFilter = searchBar.querySelector('#ranking-filter');
         if (searchInput) searchInput.value = '';
         if (categoryFilter) categoryFilter.value = '';
-        if (rankingFilter) rankingFilter.value = '';
         const productLists = document.querySelectorAll('.product-list.active .product');
         productLists.forEach(product => {
             product.style.visibility = 'visible';
             product.style.position = 'relative';
         });
+        // Wywołanie applyFilters, aby upewnić się, że filtry są zresetowane
+        const applyFilters = () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedCategory = categoryFilter.value;
+            productLists.forEach(product => {
+                const productName = product.querySelector('.product-name').textContent.toLowerCase();
+                const productCode = product.querySelector('.product-code').textContent.toLowerCase();
+                const productCategory = productsData[activeTab][product.dataset.index]?.Kategoria?.toLowerCase() || '';
+                const nameWords = productName.split(/\s+/);
+                const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
+                const normalizedProductCategory = productCategory.replace(/-/g, ' ');
+                if (searchTerm === '' && selectedCategory === '') {
+                    product.style.visibility = 'visible';
+                    product.style.position = 'relative';
+                } else {
+                    const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
+                        nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
+                    );
+                    const categoryMatch = selectedCategory === '' || normalizedProductCategory === normalizedSelectedCategory;
+                    if (searchMatch && categoryMatch) {
+                        product.style.visibility = 'visible';
+                        product.style.position = 'relative';
+                    } else {
+                        product.style.visibility = 'hidden';
+                        product.style.position = 'absolute';
+                    }
+                }
+            });
+        };
         applyFilters();
     }
     if (country === 'cart') {
