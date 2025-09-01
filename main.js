@@ -1,11 +1,9 @@
 var gk_isXlsx = false;
 var gk_xlsxFileLookup = {};
 var gk_fileData = {};
-
 function filledCell(cell) {
     return cell !== '' && cell != null;
 }
-
 function loadFileData(filename) {
     if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
         try {
@@ -30,7 +28,6 @@ function loadFileData(filename) {
     }
     return gk_fileData[filename] || "";
 }
-
 let productsData = {
     lithuania: [],
     bulgaria: [],
@@ -44,13 +41,11 @@ let categoryTotals = {
 };
 let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
-
 // Funkcja obliczająca cenę z rabatem z precyzyjnym zaokrągleniem
 function applyDiscount(price) {
     const parsedPrice = parseFloat(price) || 0;
     return Number((parsedPrice * (1 - discountPercentage / 100)).toFixed(2));
 }
-
 // Funkcja aktualizująca ceny na stronie
 function updatePrices() {
     ['lithuania', 'bulgaria', 'ukraine'].forEach(country => {
@@ -65,7 +60,6 @@ function updatePrices() {
     updateCartInfo();
     updateDiscountInfo();
 }
-
 // Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
     const modal = document.createElement('div');
@@ -167,7 +161,6 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-
 // Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
@@ -227,7 +220,6 @@ function createSidebar() {
     sidebar.appendChild(cashBackInput);
     document.body.appendChild(sidebar);
 }
-
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
     const discountInfo = document.getElementById('discountInfo');
@@ -237,8 +229,7 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
-
-// Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtr pod banerem
+// Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtry pod banerem
 function createSearchBar() {
     const searchBarContainer = document.createElement('div');
     searchBarContainer.id = 'search-bar';
@@ -290,6 +281,27 @@ function createSearchBar() {
         optionElement.text = option.text;
         categoryFilter.appendChild(optionElement);
     });
+    const rankingFilter = document.createElement('select');
+    rankingFilter.id = 'ranking-filter';
+    rankingFilter.style.cssText = `
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        min-width: 150px;
+    `;
+    const rankingOptions = [
+        { value: '', text: 'Sort by Ranking' },
+        { value: 'desc', text: 'Highest to Lowest' },
+        { value: 'asc', text: 'Lowest to Highest' }
+    ];
+    rankingOptions.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.value;
+        optionElement.text = option.text;
+        rankingFilter.appendChild(optionElement);
+    });
     const clearFiltersButton = document.createElement('button');
     clearFiltersButton.innerText = 'Wyczyść filtry';
     clearFiltersButton.style.cssText = `
@@ -308,10 +320,12 @@ function createSearchBar() {
     clearFiltersButton.onclick = () => {
         searchInput.value = '';
         categoryFilter.value = '';
+        rankingFilter.value = '';
         applyFilters();
     };
     searchBarContainer.appendChild(searchInput);
     searchBarContainer.appendChild(categoryFilter);
+    searchBarContainer.appendChild(rankingFilter);
     searchBarContainer.appendChild(clearFiltersButton);
     const bannerContainer = document.querySelector('.banner-container');
     if (bannerContainer) {
@@ -322,7 +336,21 @@ function createSearchBar() {
     function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase().trim();
         const selectedCategory = categoryFilter.value;
+        const sortOrder = rankingFilter.value;
         const productLists = document.querySelectorAll('.product-list.active .product');
+        let products = Array.from(productLists);
+        
+        // Sortowanie według rankingu, jeśli wybrano
+        if (sortOrder) {
+            products.sort((a, b) => {
+                const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
+                const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
+                return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
+            });
+            const productList = document.getElementById(`product-list-${activeTab}`);
+            products.forEach(product => productList.appendChild(product));
+        }
+
         productLists.forEach(product => {
             const productName = product.querySelector('.product-name').textContent.toLowerCase();
             const productCode = product.querySelector('.product-code').textContent.toLowerCase();
@@ -330,7 +358,7 @@ function createSearchBar() {
             const nameWords = productName.split(/\s+/);
             const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
             const normalizedProductCategory = productCategory.replace(/-/g, ' ');
-            if (searchTerm === '' && selectedCategory === '') {
+            if (searchTerm === '' && selectedCategory === '' && !sortOrder) {
                 product.style.visibility = 'visible';
                 product.style.position = 'relative';
             } else {
@@ -350,8 +378,8 @@ function createSearchBar() {
     }
     searchInput.oninput = applyFilters;
     categoryFilter.onchange = applyFilters;
+    rankingFilter.onchange = applyFilters;
 }
-
 // Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
@@ -380,7 +408,6 @@ function updateBanner() {
             bannerImage.style.display = 'block';
     }
 }
-
 function updateCartInfo() {
     let totalItems = 0;
     let totalValue = 0;
@@ -397,16 +424,13 @@ function updateCartInfo() {
     updateCashBackInfo(totalValue);
     saveCartState();
 }
-
 function updateCashBackInfo(totalValue) {
     const cashBack = Number((totalValue * (customCashBackPercentage / 100)).toFixed(2));
     document.getElementById('cash-back-info').innerText = `Cash Back: ${cashBack.toFixed(2)} GBP`;
 }
-
 function saveCartState() {
     localStorage.setItem('productsData', JSON.stringify(productsData));
 }
-
 function loadCartState() {
     const savedData = localStorage.getItem('productsData');
     if (savedData) {
@@ -424,7 +448,6 @@ function loadCartState() {
         updateCartInfo();
     }
 }
-
 function clearCartState() {
     for (let country in productsData) {
         productsData[country].forEach(product => {
@@ -435,7 +458,6 @@ function clearCartState() {
     calculateTotal();
     updateCartInfo();
 }
-
 function loadProducts(country) {
     console.log("Loading data for:", country);
     let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
@@ -629,7 +651,6 @@ function loadProducts(country) {
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
-
 function switchTab(country) {
     activeTab = country;
     console.log("Switching to tab:", country);
@@ -652,42 +673,15 @@ function switchTab(country) {
     if (searchBar) {
         const searchInput = searchBar.querySelector('input');
         const categoryFilter = searchBar.querySelector('select');
+        const rankingFilter = searchBar.querySelector('#ranking-filter');
         if (searchInput) searchInput.value = '';
         if (categoryFilter) categoryFilter.value = '';
+        if (rankingFilter) rankingFilter.value = '';
         const productLists = document.querySelectorAll('.product-list.active .product');
         productLists.forEach(product => {
             product.style.visibility = 'visible';
             product.style.position = 'relative';
         });
-        // Wywołanie applyFilters, aby upewnić się, że filtry są zresetowane
-        const applyFilters = () => {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const selectedCategory = categoryFilter.value;
-            productLists.forEach(product => {
-                const productName = product.querySelector('.product-name').textContent.toLowerCase();
-                const productCode = product.querySelector('.product-code').textContent.toLowerCase();
-                const productCategory = productsData[activeTab][product.dataset.index]?.Kategoria?.toLowerCase() || '';
-                const nameWords = productName.split(/\s+/);
-                const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
-                const normalizedProductCategory = productCategory.replace(/-/g, ' ');
-                if (searchTerm === '' && selectedCategory === '') {
-                    product.style.visibility = 'visible';
-                    product.style.position = 'relative';
-                } else {
-                    const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
-                        nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
-                    );
-                    const categoryMatch = selectedCategory === '' || normalizedProductCategory === normalizedSelectedCategory;
-                    if (searchMatch && categoryMatch) {
-                        product.style.visibility = 'visible';
-                        product.style.position = 'relative';
-                    } else {
-                        product.style.visibility = 'hidden';
-                        product.style.position = 'absolute';
-                    }
-                }
-            });
-        };
         applyFilters();
     }
     if (country === 'cart') {
@@ -700,7 +694,6 @@ function switchTab(country) {
     }
     updateCartInfo();
 }
-
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
@@ -717,7 +710,6 @@ function changeQuantity(country, index, change) {
         saveCartState();
     }
 }
-
 function updateCart() {
     const cartList = document.getElementById('product-list-cart');
     cartList.innerHTML = '';
@@ -756,7 +748,6 @@ function updateCart() {
     document.getElementById("cart-total").innerText = `Cart value: ${totalCartValue.toFixed(2)} GBP`;
     updateCartInfo();
 }
-
 function removeItem(country, index) {
     productsData[country][index].quantity = 0;
     if (activeTab === 'cart') {
@@ -770,7 +761,6 @@ function removeItem(country, index) {
         document.getElementById(`quantity-${country}-${index}`).value = '0';
     }
 }
-
 function calculateTotal() {
     let totalValue = 0;
     let categoryTotalsText = '';
@@ -790,7 +780,6 @@ function calculateTotal() {
     document.getElementById("category-totals").innerText = categoryTotalsText.trim();
     document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
 }
-
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
     const email = document.getElementById('email').value;
@@ -842,7 +831,6 @@ function submitOrder() {
         alert("Error sending order.");
     });
 }
-
 // Wywołanie okna dialogowego, stworzenie paska bocznego i paska wyszukiwania z filtrem po załadowaniu strony
 window.onload = function() {
     showInitialDialog();
