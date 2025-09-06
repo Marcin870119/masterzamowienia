@@ -31,13 +31,15 @@ function loadFileData(filename) {
 let productsData = {
     lithuania: [],
     bulgaria: [],
-    ukraine: []
+    ukraine: [],
+    romania: []
 };
 let activeTab = 'lithuania';
 let categoryTotals = {
     lithuania: 0,
     bulgaria: 0,
-    ukraine: 0
+    ukraine: 0,
+    romania: 0
 };
 let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
@@ -48,7 +50,7 @@ function applyDiscount(price) {
 }
 // Funkcja aktualizująca ceny na stronie
 function updatePrices() {
-    ['lithuania', 'bulgaria', 'ukraine'].forEach(country => {
+    ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
         if (productsData[country].length > 0) {
             loadProducts(country); // Ponowne załadowanie z nowym rabatem
         }
@@ -339,7 +341,7 @@ function createSearchBar() {
         const sortOrder = rankingFilter.value;
         const productLists = document.querySelectorAll('.product-list.active .product');
         let products = Array.from(productLists);
-        
+       
         // Sortowanie według rankingu, jeśli wybrano
         if (sortOrder) {
             products.sort((a, b) => {
@@ -350,7 +352,6 @@ function createSearchBar() {
             const productList = document.getElementById(`product-list-${activeTab}`);
             products.forEach(product => productList.appendChild(product));
         }
-
         productLists.forEach(product => {
             const productName = product.querySelector('.product-name').textContent.toLowerCase();
             const productCode = product.querySelector('.product-code').textContent.toLowerCase();
@@ -398,6 +399,10 @@ function updateBanner() {
             break;
         case 'ukraine':
             bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/ukraina baner.jpg';
+            bannerImage.style.display = 'block';
+            break;
+        case 'romania':
+            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/bulgaria baner.jpg';
             bannerImage.style.display = 'block';
             break;
         case 'cart':
@@ -463,7 +468,7 @@ function loadProducts(country) {
     let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
     if (country === 'lithuania') {
         url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/LITWA.json';
-    } else if (country === 'bulgaria') {
+    } else if (country === 'bulgaria' || country === 'romania') {
         url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BLUGARIA.json';
     } else if (country === 'ukraine') {
         url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json';
@@ -551,7 +556,7 @@ function loadProducts(country) {
                     imgTest.onerror = () => {
                         console.warn(`Skipped index ${product['INDEKS']} due to missing photo: ${imageUrl}`);
                     };
-                } else if (country === 'bulgaria') {
+                } else if (country === 'bulgaria' || country === 'romania') {
                     imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-bulgaria/${product['INDEKS']}.jpg`;
                     const imgTest = new Image();
                     imgTest.src = imageUrl;
@@ -751,7 +756,7 @@ function updateCart() {
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
                 const imageUrl = `${country === 'lithuania' ? 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-litwa/' :
-                    country === 'bulgaria' ? 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-bulgaria/' :
+                    country === 'bulgaria' || country === 'romania' ? 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-bulgaria/' :
                     'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/'}${product['INDEKS']}.jpg`;
                 const productElement = document.createElement("div");
                 productElement.classList.add("product");
@@ -809,7 +814,7 @@ function calculateTotal() {
             categoryTotalsText += `${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n`;
         }
     }
-    totalValue = categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine;
+    totalValue = categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania;
     document.getElementById("category-totals").innerText = categoryTotalsText.trim();
     document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
 }
@@ -839,7 +844,7 @@ function submitOrder() {
             orderMessage += `Total for ${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n\n`;
         }
     }
-    orderMessage += `Total order value: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine).toFixed(2)} GBP`;
+    orderMessage += `Total order value: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania).toFixed(2)} GBP`;
     const formData = new FormData();
     formData.append("email", email);
     formData.append("store-name", storeName);
@@ -869,7 +874,7 @@ window.onload = function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
-    ['lithuania', 'bulgaria', 'ukraine'].forEach(country => loadProducts(country));
+    ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => loadProducts(country));
 };
 loadCartState();
 updateBanner();
