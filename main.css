@@ -7,35 +7,35 @@ body {
     position: relative;
 }
 
-/* Stylizacja panelu koszyka */
+/* 🔹 Powiększony panel koszyka */
 .cart-panel {
     position: fixed;
     top: 15px;
     right: 15px;
     z-index: 1100;
     background-color: #ffffff;
-    padding: 8px 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 120px;
+    padding: 14px 18px;   /* większy padding */
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    width: 200px;        /* zwiększona szerokość */
     text-align: right;
 }
 
 .cart-icon {
-    font-size: 20px;
+    font-size: 24px;      /* większa ikona */
     cursor: pointer;
-    margin-bottom: 3px;
+    margin-bottom: 6px;
     color: #444;
 }
 
 .cart-info, .cash-back-info {
-    font-size: 12px;
+    font-size: 14px;      /* większa czcionka */
     color: #333;
-    line-height: 1.2;
-    margin: 2px 0;
+    line-height: 1.4;
+    margin: 4px 0;
 }
 
-/* 🔹 Ultra lekki navbar z reakcją hover i szerokością jak baner */
+/* 🔹 Ultra lekki navbar */
 .navbar {
     background-color: #ffffff;
     border-bottom: 1px solid #eaeaea;
@@ -96,7 +96,7 @@ body {
     justify-content: center;
     margin-bottom: 20px;
     max-width: 80vw;   /* ta sama szerokość co navbar */
-    margin: 0 auto;    /* centrowanie */
+    margin: 0 auto;
 }
 
 .banner-container img {
@@ -317,7 +317,7 @@ button:hover {
 
     .navbar {
         padding: 10px 0;
-        max-width: 95vw; /* na małych ekranach lekko szersze */
+        max-width: 95vw;
     }
 
     .banner-container {
@@ -327,18 +327,16 @@ button:hover {
     .cart-panel {
         top: 5px;
         right: 10px;
-        padding: 6px 8px;
-        width: 100px;
+        padding: 10px 14px;
+        width: 160px; /* trochę mniejsze na mobile */
     }
 
     .cart-icon {
-        font-size: 18px;
-        margin-bottom: 2px;
+        font-size: 20px;
     }
 
     .cart-info, .cash-back-info {
-        font-size: 10px;
-        margin: 1px 0;
+        font-size: 12px;
     }
 
     .nav-list {
@@ -451,15 +449,16 @@ button:hover {
     }
 
     .cart-panel {
-        width: 90px;
+        width: 140px;
+        padding: 8px 10px;
     }
 
     .cart-icon {
-        font-size: 16px;
+        font-size: 18px;
     }
 
     .cart-info, .cash-back-info {
-        font-size: 9px;
+        font-size: 11px;
     }
 
     .product img {
@@ -532,6 +531,3 @@ button:hover {
         background-color: rgba(0, 0, 0, 0.8);
     }
 }
-
-
-
