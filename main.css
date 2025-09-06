@@ -35,7 +35,7 @@ body {
     margin: 2px 0;
 }
 
-/* 🔹 Ultra lekki navbar z reakcją hover */
+/* 🔹 Ultra lekki navbar z reakcją hover i szerokością jak baner */
 .navbar {
     background-color: #ffffff;
     border-bottom: 1px solid #eaeaea;
@@ -43,6 +43,9 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
+    max-width: 80vw;   /* dopasowanie do banera */
+    margin: 0 auto;    /* centrowanie */
+    border-radius: 8px;
 }
 
 .nav-list {
@@ -92,16 +95,12 @@ body {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
-    width: 80vw;
-    position: relative;
-    left: 80%;
-    right: 20%;
-    margin-left: -60vw;
-    margin-right: -20vw;
+    max-width: 80vw;   /* ta sama szerokość co navbar */
+    margin: 0 auto;    /* centrowanie */
 }
 
 .banner-container img {
-    width: 80%;
+    width: 100%;
     max-width: 80vw;
     height: auto;
     object-fit: contain;
@@ -318,6 +317,11 @@ button:hover {
 
     .navbar {
         padding: 10px 0;
+        max-width: 95vw; /* na małych ekranach lekko szersze */
+    }
+
+    .banner-container {
+        max-width: 95vw;
     }
 
     .cart-panel {
@@ -528,4 +532,5 @@ button:hover {
         background-color: rgba(0, 0, 0, 0.8);
     }
 }
+
 
