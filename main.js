@@ -394,7 +394,7 @@ function updateBanner() {
             bannerImage.style.display = 'block';
             break;
         case 'bulgaria':
-            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/bulgaria baner.jpg';
+            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BLUGARIA BANER.jpg';
             bannerImage.style.display = 'block';
             break;
         case 'ukraine':
