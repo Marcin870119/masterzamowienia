@@ -9,15 +9,20 @@
     <script src="main.js" onerror="console.error('Failed to load main.js')"></script>
 </head>
 <body>
-<div class="cart-icon" onclick="switchTab('cart')">🛒</div>
-<div class="cart-info" id="cart-info"></div>
-<div class="cash-back-info" id="cash-back-info"></div>
-<div class="tabs">
-    <div class="tab active" onclick="switchTab('lithuania')">Lithuania</div>
-    <div class="tab" onclick="switchTab('bulgaria')">Bulgaria</div>
-    <div class="tab" onclick="switchTab('ukraine')">Ukraine</div>
-    <div class="tab" onclick="switchTab('cart')">Cart</div>
+<div class="cart-panel">
+    <div class="cart-icon" onclick="switchTab('cart')">🛒</div>
+    <div class="cart-info" id="cart-info"></div>
+    <div class="cash-back-info" id="cash-back-info"></div>
 </div>
+<nav class="navbar">
+    <ul class="nav-list">
+        <li class="nav-item"><a class="nav-link active" onclick="switchTab('lithuania')">Lithuania</a></li>
+        <li class="nav-item"><a class="nav-link" onclick="switchTab('bulgaria')">Bulgaria</a></li>
+        <li class="nav-item"><a class="nav-link" onclick="switchTab('ukraine')">Ukraine</a></li>
+        <li class="nav-item"><a class="nav-link" onclick="switchTab('romania')">Romania</a></li>
+        <li class="nav-item"><a class="nav-link" onclick="switchTab('cart')">Cart</a></li>
+    </ul>
+</nav>
 <div class="banner-container" id="banner-container">
     <img src="" alt="Banner" id="banner-image">
 </div>
@@ -25,6 +30,7 @@
 <div id="product-list-lithuania" class="product-list active"></div>
 <div id="product-list-bulgaria" class="product-list"></div>
 <div id="product-list-ukraine" class="product-list"></div>
+<div id="product-list-romania" class="product-list"></div>
 <!-- Cart -->
 <div id="product-list-cart" class="product-list"></div>
 <!-- Formularz z danymi -->
