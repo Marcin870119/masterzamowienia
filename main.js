@@ -390,7 +390,7 @@ function updateBanner() {
     }
     switch (activeTab) {
         case 'lithuania':
-            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/LITWA BANER.jpg';
+            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BANER LITWA.jpg';
             bannerImage.style.display = 'block';
             break;
         case 'bulgaria':
