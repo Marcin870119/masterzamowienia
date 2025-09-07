@@ -102,15 +102,15 @@ button.delete:hover {
   position: absolute;
   top: 10px;
   right: 10px;
-  border: none; /* Usunięto obramowanie */
+  border: 1px solid #333; /* Przywrócono obramowanie */
   object-fit: cover;
 }
 
-.label-preview .icon {
+.pdf-flag {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
-  border: none; /* Usunięto obramowanie */
+  top: 4px;
+  right: 6px;
+  border: 1px solid #000; /* Przywrócono obramowanie w PDF */
   object-fit: cover;
 }
 
