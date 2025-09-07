@@ -1,3 +1,4 @@
+
 let currentData = {};
 let savedLabels = [];
 let editingIndex = -1;
@@ -18,12 +19,10 @@ function updateLabel() {
     priceAlign: document.getElementById('priceAlign').value,
     nameStyle: document.getElementById('nameStyle').value
   };
-
   document.getElementById('labelPrice').innerText = currentData.currency + currentData.price;
   document.getElementById('labelUnit').innerText = currentData.unit;
   document.getElementById('labelName').innerText = currentData.name;
   document.getElementById('labelPromo').innerText = "Special offer: " + currentData.promo;
-
   const flagImg = document.getElementById('labelFlag');
   if (currentData.flag === "") {
     flagImg.style.display = "none";
@@ -34,12 +33,10 @@ function updateLabel() {
     if (currentData.flag === "ua") flagImg.src = "https://flagcdn.com/w80/ua.png";
     if (currentData.flag === "lt") flagImg.src = "https://flagcdn.com/w80/lt.png";
     if (currentData.flag === "bg") flagImg.src = "https://flagcdn.com/w80/bg.png";
-
     if (currentData.flagSize === "small") { flagImg.style.width = "30px"; flagImg.style.height = "18px"; }
     if (currentData.flagSize === "medium") { flagImg.style.width = "40px"; flagImg.style.height = "24px"; }
     if (currentData.flagSize === "large") { flagImg.style.width = "50px"; flagImg.style.height = "30px"; }
   }
-
   if (currentData.barcodeValue) {
     try {
       JsBarcode("#barcode", currentData.barcodeValue, {
@@ -58,7 +55,6 @@ function updateLabel() {
     document.getElementById("barcode").innerHTML = "";
   }
 }
-
 function saveLabel() {
   updateLabel(); // Ensure currentData is up-to-date with form values
   if (editingIndex === -1) {
@@ -77,14 +73,12 @@ function saveLabel() {
   renderSavedLabels();
   clearForm();
 }
-
 function addNewLabel() {
   clearForm();
   editingIndex = -1;
   document.getElementById('saveButton').innerText = 'Save Label';
   toggleButtons(false);
 }
-
 function editLabel(index) {
   currentData = { ...savedLabels[index] }; // Create a fresh copy of the saved label
   loadForm(currentData);
@@ -93,7 +87,6 @@ function editLabel(index) {
   document.getElementById('saveButton').innerText = 'Save Label';
   toggleButtons(true);
 }
-
 function deleteLabel(index) {
   if (confirm("Are you sure you want to delete this label?")) {
     savedLabels.splice(index, 1);
@@ -108,7 +101,6 @@ function deleteLabel(index) {
     }
   }
 }
-
 function clearForm() {
   document.getElementById('productSearch').value = '';
   document.getElementById('productName').value = '';
@@ -127,7 +119,6 @@ function clearForm() {
   updateLabel(); // Reset preview
   filterProducts(); // Reset suggestions
 }
-
 function loadForm(data) {
   document.getElementById('productSearch').value = '';
   document.getElementById('productName').value = data.name || '';
@@ -143,14 +134,12 @@ function loadForm(data) {
   document.getElementById('flagSize').value = data.flagSize || 'medium';
   document.getElementById('barcodeInput').value = data.barcodeValue || '';
 }
-
 function toggleButtons(isEditing) {
   const buttons = document.querySelectorAll('.form-container .button-group button');
   buttons.forEach(button => {
     button.style.display = ['Update Label', 'Save Label', 'Add New Label'].includes(button.innerText) ? 'block' : 'none';
   });
 }
-
 function renderSavedLabels() {
   const list = document.getElementById('labelsList');
   list.innerHTML = '';
@@ -172,11 +161,9 @@ function renderSavedLabels() {
     list.appendChild(div);
   });
 }
-
 function generatePDFContent() {
   const pdfPage = document.createElement("div");
   pdfPage.id = "pdfPage";
-
   const flagUrls = {
     pl: "https://flagcdn.com/w40/pl.png",
     ro: "https://flagcdn.com/w40/ro.png",
@@ -184,7 +171,6 @@ function generatePDFContent() {
     lt: "https://flagcdn.com/w40/lt.png",
     bg: "https://flagcdn.com/w40/bg.png"
   };
-
   for (let i = 0; i < 6; i++) {
     const data = savedLabels[i] || null;
     const label = document.createElement("div");
@@ -192,62 +178,48 @@ function generatePDFContent() {
     if (data) {
       label.style.background = data.color;
     }
-
     const fold = document.createElement("div");
     fold.className = "label-fold";
     fold.innerHTML = "▼ ZEGNIJ TUTAJ";
     label.appendChild(fold);
-
     const content = document.createElement("div");
     content.className = "label-content";
-
     if (data) {
       const promoBox = document.createElement("div");
       promoBox.style.position = "absolute";
       promoBox.style.top = "4px";
       promoBox.style.left = "6px";
       promoBox.style.textAlign = "left";
-
       const promoTitle = document.createElement("div");
       promoTitle.style.fontWeight = "bold";
       promoTitle.style.fontSize = "12px";
       promoTitle.innerText = "Special Offer";
-
       const promoDate = document.createElement("div");
       promoDate.style.fontSize = "11px";
       promoDate.innerText = data.promo;
-
       promoBox.appendChild(promoTitle);
       promoBox.appendChild(promoDate);
       content.appendChild(promoBox);
-
       if (data.flag && flagUrls[data.flag]) {
         const flagImg = document.createElement("img");
         flagImg.src = flagUrls[data.flag];
         flagImg.className = "pdf-flag";
-
         if (data.flagSize === "small") { flagImg.style.width = "20px"; flagImg.style.height = "12px"; }
         if (data.flagSize === "medium") { flagImg.style.width = "30px"; flagImg.style.height = "18px"; }
         if (data.flagSize === "large") { flagImg.style.width = "40px"; flagImg.style.height = "24px"; }
-
         content.appendChild(flagImg);
       }
-
       const priceContainer = document.createElement("div");
       priceContainer.className = (data.priceAlign === "right") ? "price-right" : "price-center";
-
       const price = document.createElement("div");
       price.className = (data.priceSize === "small" ? "price-small" : data.priceSize === "large" ? "price-large" : "price-medium");
       price.innerText = data.currency + data.price;
-
       const unit = document.createElement("div");
       unit.className = "pdf-unit";
       unit.innerText = data.unit;
-
       priceContainer.appendChild(price);
       priceContainer.appendChild(unit);
       content.appendChild(priceContainer);
-
       const name = document.createElement("div");
       const nameParts = data.nameStyle.split("-");
       const sizeClass = "name-" + nameParts[0];
@@ -255,7 +227,6 @@ function generatePDFContent() {
       name.className = sizeClass + " " + alignClass;
       name.innerText = data.name;
       content.appendChild(name);
-
       if (data.barcodeValue) {
         try {
           const barcodeSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -275,14 +246,11 @@ function generatePDFContent() {
         }
       }
     }
-
     label.appendChild(content);
     pdfPage.appendChild(label);
   }
-
   return pdfPage;
 }
-
 function exportPDF() {
   if (savedLabels.length === 0) {
     alert("No labels to export.");
@@ -296,7 +264,6 @@ function exportPDF() {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
   }).from(pdfPage).save();
 }
-
 function fetchProducts() {
   fetch('https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/ean%20MM.json')
     .then(response => response.json())
@@ -306,7 +273,6 @@ function fetchProducts() {
     })
     .catch(error => console.error('Error fetching products:', error));
 }
-
 function populateProductSelect(productsToDisplay) {
   const productSuggestions = document.getElementById('productSuggestions');
   productSuggestions.innerHTML = '';
@@ -317,7 +283,6 @@ function populateProductSelect(productsToDisplay) {
     productSuggestions.appendChild(option);
   });
 }
-
 function filterProducts() {
   const searchInput = document.getElementById('productSearch').value.toLowerCase();
   const words = searchInput.split(/\s+/).filter(word => word.length > 0);
@@ -332,9 +297,8 @@ function filterProducts() {
     if (!aIndex.startsWith(searchInput) && bIndex.startsWith(searchInput)) return 1;
     return 0;
   });
-  populateProductSelect(filteredProducts.slice(0, 10)); // Limit to top 10 suggestions
+  populateProductSelect(filteredProducts); // Remove limit to show all matches
 }
-
 function handleProductSelection() {
   const productSearch = document.getElementById('productSearch');
   const selectedIndex = productSearch.value;
@@ -350,7 +314,6 @@ function handleProductSelection() {
     }
   }
 }
-
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
   clearForm(); // Reset form and preview on page load
