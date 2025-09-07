@@ -48,9 +48,9 @@ function updateLabel() {
     iconImg.style.display = "block";
     const iconBaseUrl = "https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia%20wektorowe/";
     iconImg.src = `${iconBaseUrl}${currentData.iconCategory}.png`;
-    if (currentData.iconSize === "small") { iconImg.style.width = "50px"; iconImg.style.height = "50px"; }
-    if (currentData.iconSize === "medium") { iconImg.style.width = "60px"; iconImg.style.height = "60px"; }
-    if (currentData.iconSize === "large") { iconImg.style.width = "70px"; iconImg.style.height = "70px"; }
+    if (currentData.iconSize === "small") { iconImg.style.width = "30px"; iconImg.style.height = "30px"; }
+    if (currentData.iconSize === "medium") { iconImg.style.width = "40px"; iconImg.style.height = "40px"; }
+    if (currentData.iconSize === "large") { iconImg.style.width = "50px"; iconImg.style.height = "50px"; }
   }
 
   if (currentData.barcodeValue) {
@@ -237,6 +237,7 @@ function generatePDFContent() {
         if (data.flagSize === "small") { flagImg.style.width = "20px"; flagImg.style.height = "12px"; }
         if (data.flagSize === "medium") { flagImg.style.width = "30px"; flagImg.style.height = "18px"; }
         if (data.flagSize === "large") { flagImg.style.width = "40px"; flagImg.style.height = "24px"; }
+        flagImg.style.border = "1px solid #000"; // Obramowanie dodane bezpośrednio do elementu
         content.appendChild(flagImg);
       }
       if (data.iconCategory) {
@@ -244,9 +245,9 @@ function generatePDFContent() {
         const iconBaseUrl = "https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia%20wektorowe/";
         iconImg.src = `${iconBaseUrl}${data.iconCategory}.png`;
         iconImg.className = "pdf-icon";
-        if (data.iconSize === "small") { iconImg.style.width = "30px"; iconImg.style.height = "20px"; }
-        if (data.iconSize === "medium") { iconImg.style.width = "40px"; iconImg.style.height = "30px"; }
-        if (data.iconSize === "large") { iconImg.style.width = "60px"; iconImg.style.height = "40px"; }
+        if (data.iconSize === "small") { iconImg.style.width = "20px"; iconImg.style.height = "20px"; }
+        if (data.iconSize === "medium") { iconImg.style.width = "30px"; iconImg.style.height = "30px"; }
+        if (data.iconSize === "large") { iconImg.style.width = "40px"; iconImg.style.height = "40px"; }
         content.appendChild(iconImg);
       }
       const priceContainer = document.createElement("div");
