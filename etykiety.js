@@ -244,9 +244,9 @@ function generatePDFContent() {
         const iconBaseUrl = "https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia%20wektorowe/";
         iconImg.src = `${iconBaseUrl}${data.iconCategory}.png`;
         iconImg.className = "pdf-icon";
-        if (data.iconSize === "small") { iconImg.style.width = "20px"; iconImg.style.height = "20px"; }
-        if (data.iconSize === "medium") { iconImg.style.width = "30px"; iconImg.style.height = "30px"; }
-        if (data.iconSize === "large") { iconImg.style.width = "40px"; iconImg.style.height = "40px"; }
+        if (data.iconSize === "small") { iconImg.style.width = "30px"; iconImg.style.height = "20px"; }
+        if (data.iconSize === "medium") { iconImg.style.width = "40px"; iconImg.style.height = "30px"; }
+        if (data.iconSize === "large") { iconImg.style.width = "60px"; iconImg.style.height = "40px"; }
         content.appendChild(iconImg);
       }
       const priceContainer = document.createElement("div");
