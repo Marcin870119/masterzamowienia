@@ -1,4 +1,3 @@
-
 let currentData = {};
 let savedLabels = [];
 let editingIndex = -1;
@@ -19,10 +18,12 @@ function updateLabel() {
     priceAlign: document.getElementById('priceAlign').value,
     nameStyle: document.getElementById('nameStyle').value
   };
+
   document.getElementById('labelPrice').innerText = currentData.currency + currentData.price;
   document.getElementById('labelUnit').innerText = currentData.unit;
   document.getElementById('labelName').innerText = currentData.name;
   document.getElementById('labelPromo').innerText = "Special offer: " + currentData.promo;
+
   const flagImg = document.getElementById('labelFlag');
   if (currentData.flag === "") {
     flagImg.style.display = "none";
@@ -37,6 +38,7 @@ function updateLabel() {
     if (currentData.flagSize === "medium") { flagImg.style.width = "40px"; flagImg.style.height = "24px"; }
     if (currentData.flagSize === "large") { flagImg.style.width = "50px"; flagImg.style.height = "30px"; }
   }
+
   if (currentData.barcodeValue) {
     try {
       JsBarcode("#barcode", currentData.barcodeValue, {
@@ -55,6 +57,7 @@ function updateLabel() {
     document.getElementById("barcode").innerHTML = "";
   }
 }
+
 function saveLabel() {
   updateLabel(); // Ensure currentData is up-to-date with form values
   if (editingIndex === -1) {
@@ -73,12 +76,14 @@ function saveLabel() {
   renderSavedLabels();
   clearForm();
 }
+
 function addNewLabel() {
   clearForm();
   editingIndex = -1;
   document.getElementById('saveButton').innerText = 'Save Label';
   toggleButtons(false);
 }
+
 function editLabel(index) {
   currentData = { ...savedLabels[index] }; // Create a fresh copy of the saved label
   loadForm(currentData);
@@ -87,6 +92,7 @@ function editLabel(index) {
   document.getElementById('saveButton').innerText = 'Save Label';
   toggleButtons(true);
 }
+
 function deleteLabel(index) {
   if (confirm("Are you sure you want to delete this label?")) {
     savedLabels.splice(index, 1);
@@ -101,6 +107,7 @@ function deleteLabel(index) {
     }
   }
 }
+
 function clearForm() {
   document.getElementById('productSearch').value = '';
   document.getElementById('productName').value = '';
@@ -119,6 +126,7 @@ function clearForm() {
   updateLabel(); // Reset preview
   filterProducts(); // Reset suggestions
 }
+
 function loadForm(data) {
   document.getElementById('productSearch').value = '';
   document.getElementById('productName').value = data.name || '';
@@ -134,12 +142,14 @@ function loadForm(data) {
   document.getElementById('flagSize').value = data.flagSize || 'medium';
   document.getElementById('barcodeInput').value = data.barcodeValue || '';
 }
+
 function toggleButtons(isEditing) {
   const buttons = document.querySelectorAll('.form-container .button-group button');
   buttons.forEach(button => {
     button.style.display = ['Update Label', 'Save Label', 'Add New Label'].includes(button.innerText) ? 'block' : 'none';
   });
 }
+
 function renderSavedLabels() {
   const list = document.getElementById('labelsList');
   list.innerHTML = '';
@@ -148,6 +158,7 @@ function renderSavedLabels() {
     div.className = 'saved-label';
     div.innerHTML = `Etykieta nr ${index + 1}: ${label.name} - ${label.currency}${label.price} ${label.unit}`;
     const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'button-container';
     const editBtn = document.createElement('button');
     editBtn.innerText = 'Edytuj';
     editBtn.onclick = () => editLabel(index);
@@ -161,6 +172,7 @@ function renderSavedLabels() {
     list.appendChild(div);
   });
 }
+
 function generatePDFContent() {
   const pdfPage = document.createElement("div");
   pdfPage.id = "pdfPage";
@@ -251,6 +263,7 @@ function generatePDFContent() {
   }
   return pdfPage;
 }
+
 function exportPDF() {
   if (savedLabels.length === 0) {
     alert("No labels to export.");
@@ -264,6 +277,7 @@ function exportPDF() {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
   }).from(pdfPage).save();
 }
+
 function fetchProducts() {
   fetch('https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/ean%20MM.json')
     .then(response => response.json())
@@ -273,6 +287,7 @@ function fetchProducts() {
     })
     .catch(error => console.error('Error fetching products:', error));
 }
+
 function populateProductSelect(productsToDisplay) {
   const productSuggestions = document.getElementById('productSuggestions');
   productSuggestions.innerHTML = '';
@@ -283,6 +298,7 @@ function populateProductSelect(productsToDisplay) {
     productSuggestions.appendChild(option);
   });
 }
+
 function filterProducts() {
   const searchInput = document.getElementById('productSearch').value.toLowerCase();
   const words = searchInput.split(/\s+/).filter(word => word.length > 0);
@@ -297,8 +313,9 @@ function filterProducts() {
     if (!aIndex.startsWith(searchInput) && bIndex.startsWith(searchInput)) return 1;
     return 0;
   });
-  populateProductSelect(filteredProducts); // Remove limit to show all matches
+  populateProductSelect(filteredProducts); // Show all matches without limit
 }
+
 function handleProductSelection() {
   const productSearch = document.getElementById('productSearch');
   const selectedIndex = productSearch.value;
@@ -314,6 +331,7 @@ function handleProductSelection() {
     }
   }
 }
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
   clearForm(); // Reset form and preview on page load
