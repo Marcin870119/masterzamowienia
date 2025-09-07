@@ -97,6 +97,28 @@
       </select>
     </label>
 
+    <label>Icon Category:
+      <select id="iconCategory">
+        <option value="">None</option>
+        <option value="dairy">nabial</option>
+        <option value="jars">sloiki</option>
+        <option value="maka-makarony">maka makarony</option>
+        <option value="meat">wedliny mieso</option>
+        <option value="przyprawy">przyprawy</option>
+        <option value="soft-drinks">soft drinks</option>
+        <option value="sweets">slodycze</option>
+        <option value="warzywa-i-owoce">warzywa i owoce</option>
+      </select>
+    </label>
+
+    <label>Icon Size:
+      <select id="iconSize">
+        <option value="small">Small</option>
+        <option value="medium" selected>Medium</option>
+        <option value="large">Large</option>
+      </select>
+    </label>
+
     <label>Barcode:
       <input type="text" id="barcodeInput" placeholder="Enter barcode number">
     </label>
@@ -110,6 +132,7 @@
 
   <div id="label" class="label-preview">
     <img id="labelFlag" class="flag" style="display:none;" alt="flag">
+    <img id="labelIcon" class="icon" style="display:none;" alt="icon">
     <div class="price-container">
       <div class="price" id="labelPrice">£0.00</div>
       <div class="unit" id="labelUnit">each</div>
