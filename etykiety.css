@@ -98,6 +98,22 @@ button.delete:hover {
   background: white;
 }
 
+.label-preview .flag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none; /* Usunięto obramowanie */
+  object-fit: cover;
+}
+
+.label-preview .icon {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  border: none; /* Usunięto obramowanie */
+  object-fit: cover;
+}
+
 .price-container {
   display: flex;
   align-items: baseline;
@@ -127,16 +143,6 @@ button.delete:hover {
   font-weight: bold;
   margin-top: 10px;
   font-size: 18px;
-}
-
-.flag {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 60px;
-  height: 40px;
-  border: 1px solid #333;
-  object-fit: cover;
 }
 
 .barcode {
@@ -226,7 +232,15 @@ button.delete:hover {
   position: absolute;
   top: 4px;
   right: 6px;
-  border: 1px solid #000;
+  border: none; /* Usunięto obramowanie w PDF */
+  object-fit: cover;
+}
+
+.pdf-icon {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  border: none; /* Usunięto obramowanie w PDF */
   object-fit: cover;
 }
 
@@ -248,50 +262,50 @@ button.delete:hover {
 }
 
 .saved-label .button-container {
-  display: flex; /* Ensure horizontal layout */
-  flex-direction: row; /* Explicitly set to row */
-  gap: 8px; /* Space between buttons */
-  align-items: center; /* Vertical alignment */
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
 }
 
 .saved-label button {
-  padding: 6px 12px; /* Compact size */
-  font-size: 13px; /* Readable but compact */
-  border: none; /* Flat design */
-  border-radius: 4px; /* Soft corners */
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.1s;
 }
 
 /* Edit button style */
 .saved-label button:nth-child(1) {
-  background-color: #2196F3; /* Blue for Edit */
+  background-color: #2196F3;
   color: white;
 }
 
 .saved-label button:nth-child(1):hover {
-  background-color: #1976D2; /* Darker blue on hover */
-  transform: translateY(-1px); /* Slight lift */
+  background-color: #1976D2;
+  transform: translateY(-1px);
 }
 
 .saved-label button:nth-child(1):active {
-  transform: translateY(0); /* Reset on click */
+  transform: translateY(0);
 }
 
 /* Delete button style */
 .saved-label button.delete {
-  background-color: #F44336; /* Red for Delete */
+  background-color: #F44336;
   color: white;
-  margin-left: 5px; /* Small separation */
+  margin-left: 5px;
 }
 
 .saved-label button.delete:hover {
-  background-color: #D32F2F; /* Darker red on hover */
-  transform: translateY(-1px); /* Slight lift */
+  background-color: #D32F2F;
+  transform: translateY(-1px);
 }
 
 .saved-label button.delete:active {
-  transform: translateY(0); /* Reset on click */
+  transform: translateY(0);
 }
 
 .pdf-buttons {
