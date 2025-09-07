@@ -24,6 +24,7 @@ h1 {
   padding: 20px 25px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
 }
 
 label {
@@ -243,10 +244,76 @@ button.delete:hover {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ddd;
+}
+
+.saved-label .button-container {
+  display: flex; /* Ensure horizontal layout */
+  flex-direction: row; /* Explicitly set to row */
+  gap: 8px; /* Space between buttons */
+  align-items: center; /* Vertical alignment */
+}
+
+.saved-label button {
+  padding: 6px 12px; /* Compact size */
+  font-size: 13px; /* Readable but compact */
+  border: none; /* Flat design */
+  border-radius: 4px; /* Soft corners */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s;
+}
+
+/* Edit button style */
+.saved-label button:nth-child(1) {
+  background-color: #2196F3; /* Blue for Edit */
+  color: white;
+}
+
+.saved-label button:nth-child(1):hover {
+  background-color: #1976D2; /* Darker blue on hover */
+  transform: translateY(-1px); /* Slight lift */
+}
+
+.saved-label button:nth-child(1):active {
+  transform: translateY(0); /* Reset on click */
+}
+
+/* Delete button style */
+.saved-label button.delete {
+  background-color: #F44336; /* Red for Delete */
+  color: white;
+  margin-left: 5px; /* Small separation */
+}
+
+.saved-label button.delete:hover {
+  background-color: #D32F2F; /* Darker red on hover */
+  transform: translateY(-1px); /* Slight lift */
+}
+
+.saved-label button.delete:active {
+  transform: translateY(0); /* Reset on click */
 }
 
 .pdf-buttons {
   margin-top: 20px;
   justify-content: center;
+}
+
+#productSuggestions {
+  max-height: 150px;
+  overflow-y: auto;
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+#productSuggestions option {
+  padding: 5px;
+  cursor: pointer;
+}
+
+#productSuggestions option:hover {
+  background-color: #f0f0f0;
 }
