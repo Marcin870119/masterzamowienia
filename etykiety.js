@@ -16,7 +16,9 @@ function updateLabel() {
     barcodeValue: document.getElementById('barcodeInput').value,
     priceSize: document.getElementById('priceSize').value,
     priceAlign: document.getElementById('priceAlign').value,
-    nameStyle: document.getElementById('nameStyle').value
+    nameStyle: document.getElementById('nameStyle').value,
+    iconCategory: document.getElementById('iconCategory').value,
+    iconSize: document.getElementById('iconSize').value
   };
 
   document.getElementById('labelPrice').innerText = currentData.currency + currentData.price;
@@ -37,6 +39,18 @@ function updateLabel() {
     if (currentData.flagSize === "small") { flagImg.style.width = "30px"; flagImg.style.height = "18px"; }
     if (currentData.flagSize === "medium") { flagImg.style.width = "40px"; flagImg.style.height = "24px"; }
     if (currentData.flagSize === "large") { flagImg.style.width = "50px"; flagImg.style.height = "30px"; }
+  }
+
+  const iconImg = document.getElementById('labelIcon');
+  if (currentData.iconCategory === "") {
+    iconImg.style.display = "none";
+  } else {
+    iconImg.style.display = "block";
+    const iconBaseUrl = "https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia%20wektorowe/";
+    iconImg.src = `${iconBaseUrl}${currentData.iconCategory}.png`;
+    if (currentData.iconSize === "small") { iconImg.style.width = "30px"; iconImg.style.height = "30px"; }
+    if (currentData.iconSize === "medium") { iconImg.style.width = "40px"; iconImg.style.height = "40px"; }
+    if (currentData.iconSize === "large") { iconImg.style.width = "50px"; iconImg.style.height = "50px"; }
   }
 
   if (currentData.barcodeValue) {
@@ -121,6 +135,8 @@ function clearForm() {
   document.getElementById('color').value = 'white';
   document.getElementById('flag').value = '';
   document.getElementById('flagSize').value = 'medium';
+  document.getElementById('iconCategory').value = '';
+  document.getElementById('iconSize').value = 'medium';
   document.getElementById('barcodeInput').value = '';
   currentData = {}; // Clear currentData to prevent stale data
   updateLabel(); // Reset preview
@@ -140,6 +156,8 @@ function loadForm(data) {
   document.getElementById('color').value = data.color || 'white';
   document.getElementById('flag').value = data.flag || '';
   document.getElementById('flagSize').value = data.flagSize || 'medium';
+  document.getElementById('iconCategory').value = data.iconCategory || '';
+  document.getElementById('iconSize').value = data.iconSize || 'medium';
   document.getElementById('barcodeInput').value = data.barcodeValue || '';
 }
 
@@ -220,6 +238,16 @@ function generatePDFContent() {
         if (data.flagSize === "medium") { flagImg.style.width = "30px"; flagImg.style.height = "18px"; }
         if (data.flagSize === "large") { flagImg.style.width = "40px"; flagImg.style.height = "24px"; }
         content.appendChild(flagImg);
+      }
+      if (data.iconCategory) {
+        const iconImg = document.createElement("img");
+        const iconBaseUrl = "https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia%20wektorowe/";
+        iconImg.src = `${iconBaseUrl}${data.iconCategory}.png`;
+        iconImg.className = "pdf-icon";
+        if (data.iconSize === "small") { iconImg.style.width = "20px"; iconImg.style.height = "20px"; }
+        if (data.iconSize === "medium") { iconImg.style.width = "30px"; iconImg.style.height = "30px"; }
+        if (data.iconSize === "large") { iconImg.style.width = "40px"; iconImg.style.height = "40px"; }
+        content.appendChild(iconImg);
       }
       const priceContainer = document.createElement("div");
       priceContainer.className = (data.priceAlign === "right") ? "price-right" : "price-center";
