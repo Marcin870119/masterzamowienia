@@ -1,6 +1,7 @@
 let currentData = {};
 let savedLabels = [];
 let editingIndex = -1;
+let products = [];
 
 function updateLabel() {
   currentData = {
@@ -109,6 +110,7 @@ function deleteLabel(index) {
 }
 
 function clearForm() {
+  document.getElementById('productSearch').value = '';
   document.getElementById('productName').value = '';
   document.getElementById('nameStyle').value = 'medium-center';
   document.getElementById('price').value = '';
@@ -123,9 +125,11 @@ function clearForm() {
   document.getElementById('barcodeInput').value = '';
   currentData = {}; // Clear currentData to prevent stale data
   updateLabel(); // Reset preview
+  filterProducts(); // Reset suggestions
 }
 
 function loadForm(data) {
+  document.getElementById('productSearch').value = '';
   document.getElementById('productName').value = data.name || '';
   document.getElementById('nameStyle').value = data.nameStyle || 'medium-center';
   document.getElementById('price').value = data.price || '';
@@ -293,8 +297,65 @@ function exportPDF() {
   }).from(pdfPage).save();
 }
 
+function fetchProducts() {
+  fetch('https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/ean%20MM.json')
+    .then(response => response.json())
+    .then(data => {
+      products = data;
+      filterProducts(); // Initial population and filtering
+    })
+    .catch(error => console.error('Error fetching products:', error));
+}
+
+function populateProductSelect(productsToDisplay) {
+  const productSuggestions = document.getElementById('productSuggestions');
+  productSuggestions.innerHTML = '';
+  productsToDisplay.forEach(product => {
+    const option = document.createElement('option');
+    option.value = product.INDEKS;
+    option.textContent = `${product.NAZWA} (Index: ${product.INDEKS})`; // Label shown in suggestions
+    productSuggestions.appendChild(option);
+  });
+}
+
+function filterProducts() {
+  const searchInput = document.getElementById('productSearch').value.toLowerCase();
+  const words = searchInput.split(/\s+/).filter(word => word.length > 0);
+  const filteredProducts = products.filter(product => {
+    const nameLower = product.NAZWA.toLowerCase();
+    const indexStr = product.INDEKS.toString();
+    return words.every(word => nameLower.includes(word) || indexStr.includes(word));
+  }).sort((a, b) => {
+    const aIndex = a.INDEKS.toString();
+    const bIndex = b.INDEKS.toString();
+    if (aIndex.startsWith(searchInput) && !bIndex.startsWith(searchInput)) return -1;
+    if (!aIndex.startsWith(searchInput) && bIndex.startsWith(searchInput)) return 1;
+    return 0;
+  });
+  populateProductSelect(filteredProducts.slice(0, 10)); // Limit to top 10 suggestions
+}
+
+function handleProductSelection() {
+  const productSearch = document.getElementById('productSearch');
+  const selectedIndex = productSearch.value;
+  if (selectedIndex) {
+    const selectedProduct = products.find(product => product.INDEKS === selectedIndex);
+    if (selectedProduct) {
+      console.log('Selected product:', selectedProduct); // Debug log
+      document.getElementById('productName').value = selectedProduct.NAZWA || '';
+      document.getElementById('barcodeInput').value = selectedProduct['unit barcode '] || '';
+      updateLabel();
+    } else {
+      console.error('Product not found for index:', selectedIndex);
+    }
+  }
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
   clearForm(); // Reset form and preview on page load
   toggleButtons(false); // Ensure correct buttons are shown
+  fetchProducts(); // Fetch products on page load
+  document.getElementById('productSearch').addEventListener('input', filterProducts);
+  document.getElementById('productSearch').addEventListener('change', handleProductSelection);
 });
