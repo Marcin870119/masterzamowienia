@@ -1,0 +1,252 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin: 20px;
+  background: #f4f6f9;
+}
+
+h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+  width: 100%;
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+label {
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+input, select {
+  padding: 10px;
+  font-size: 14px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0,123,255,0.4);
+}
+
+button {
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.1s;
+  margin-right: 8px;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button.delete {
+  background: #dc3545;
+}
+
+button.delete:hover {
+  background: #b02a37;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.label-preview {
+  width: 600px;
+  height: 350px;
+  border: 2px solid black;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  background: white;
+}
+
+.price-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.price {
+  font-size: 120px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.unit {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.details {
+  font-size: 28px;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.promo {
+  font-weight: bold;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.flag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 60px;
+  height: 40px;
+  border: 1px solid #333;
+  object-fit: cover;
+}
+
+.barcode {
+  margin-top: auto;
+}
+
+/* --- Układ do PDF --- */
+.label-small {
+  width: 148.5mm;
+  height: 70mm;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  box-sizing: border-box;
+  background: white;
+  position: relative;
+}
+
+.label-fold {
+  height: 25mm;
+  border-bottom: 1px dashed #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+}
+
+.label-content {
+  height: 45mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  padding: 4px;
+  position: relative;
+}
+
+/* Cena */
+.price-small { font-size: 28px; }
+.price-medium { font-size: 46px; }
+.price-large { font-size: 64px; }
+
+.price-center {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.price-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 20px;
+  margin-right: 20px;
+}
+
+/* Nazwa produktu */
+.name-small { font-size: 12px; }
+.name-medium { font-size: 16px; }
+.name-large { font-size: 22px; font-weight: bold; }
+
+.name-left { text-align: left; }
+.name-center { text-align: center; }
+.name-right { text-align: right; }
+
+.label-content .barcode { margin-top: auto; align-self: center; }
+
+#pdfPage {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 297mm;
+  height: 210mm;
+  margin: 0;
+  padding: 0;
+}
+
+/* Flagi różne rozmiary */
+.flag-small { width: 20px; height: 12px; }
+.flag-medium { width: 30px; height: 18px; }
+.flag-large { width: 40px; height: 24px; }
+
+.pdf-flag {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  border: 1px solid #000;
+  object-fit: cover;
+}
+
+.saved-labels-container {
+  max-width: 600px;
+  width: 100%;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.saved-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.pdf-buttons {
+  margin-top: 20px;
+  justify-content: center;
+}
