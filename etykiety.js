@@ -48,9 +48,9 @@ function updateLabel() {
     iconImg.style.display = "block";
     const iconBaseUrl = "https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia%20wektorowe/";
     iconImg.src = `${iconBaseUrl}${currentData.iconCategory}.png`;
-    if (currentData.iconSize === "small") { iconImg.style.width = "30px"; iconImg.style.height = "30px"; }
-    if (currentData.iconSize === "medium") { iconImg.style.width = "40px"; iconImg.style.height = "40px"; }
-    if (currentData.iconSize === "large") { iconImg.style.width = "50px"; iconImg.style.height = "50px"; }
+    if (currentData.iconSize === "small") { iconImg.style.width = "50px"; iconImg.style.height = "50px"; }
+    if (currentData.iconSize === "medium") { iconImg.style.width = "60px"; iconImg.style.height = "60px"; }
+    if (currentData.iconSize === "large") { iconImg.style.width = "70px"; iconImg.style.height = "70px"; }
   }
 
   if (currentData.barcodeValue) {
