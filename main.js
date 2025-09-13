@@ -43,11 +43,18 @@ let categoryTotals = {
 };
 let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
-// Funkcja obliczająca cenę z rabatem z precyzyjnym zaokrągleniem
-function applyDiscount(price) {
+let customPrices = {}; // Obiekt przechowujący niestandardowe ceny
+
+// Funkcja obliczająca cenę z rabatem lub niestandardową ceną
+function applyDiscount(price, productIndex, country) {
     const parsedPrice = parseFloat(price) || 0;
+    const customPrice = customPrices[`${country}-${productIndex}`];
+    if (customPrice !== undefined && customPrice !== null && !isNaN(customPrice)) {
+        return Number(parseFloat(customPrice).toFixed(2));
+    }
     return Number((parsedPrice * (1 - discountPercentage / 100)).toFixed(2));
 }
+
 // Funkcja aktualizująca ceny na stronie
 function updatePrices() {
     ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -62,6 +69,7 @@ function updatePrices() {
     updateCartInfo();
     updateDiscountInfo();
 }
+
 // Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
     const modal = document.createElement('div');
@@ -163,6 +171,60 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
+
+// Funkcja wyświetlająca okno dialogowe do zmiany ceny produktu (styl jak sidebar)
+function showPriceDialog(country, index, originalPrice) {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100px;
+        height: 100%;
+        background-color: #f8f8f8;
+        padding: 15px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        z-index: 1001;
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+    `;
+    const priceLabel = document.createElement('label');
+    priceLabel.innerText = 'Custom Price (GBP):';
+    priceLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
+    const priceInput = document.createElement('input');
+    priceInput.type = 'number';
+    priceInput.step = '0.01';
+    priceInput.value = customPrices[`${country}-${index}`] || originalPrice;
+    priceInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
+    priceInput.min = 0;
+    const saveButton = document.createElement('button');
+    saveButton.innerText = 'Save';
+    saveButton.style.cssText = `width: 100%; padding: 6px; margin-top: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;`;
+    saveButton.onmouseover = () => saveButton.style.backgroundColor = '#0056b3';
+    saveButton.onmouseout = () => saveButton.style.backgroundColor = '#007bff';
+    saveButton.onclick = () => {
+        const newPrice = parseFloat(priceInput.value);
+        if (newPrice >= 0 && !isNaN(newPrice)) {
+            customPrices[`${country}-${index}`] = newPrice;
+        } else {
+            delete customPrices[`${country}-${index}`]; // Usunięcie ceny, jeśli jest nieprawidłowa
+        }
+        updatePrices();
+        document.body.removeChild(modal);
+    };
+    const cancelButton = document.createElement('button');
+    cancelButton.innerText = 'Cancel';
+    cancelButton.style.cssText = `width: 100%; padding: 6px; margin-top: 5px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;`;
+    cancelButton.onmouseover = () => cancelButton.style.backgroundColor = '#5a6268';
+    cancelButton.onmouseout = () => cancelButton.style.backgroundColor = '#6c757d';
+    cancelButton.onclick = () => document.body.removeChild(modal);
+    modal.appendChild(priceLabel);
+    modal.appendChild(priceInput);
+    modal.appendChild(saveButton);
+    modal.appendChild(cancelButton);
+    document.body.appendChild(modal);
+}
+
 // Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
@@ -222,6 +284,7 @@ function createSidebar() {
     sidebar.appendChild(cashBackInput);
     document.body.appendChild(sidebar);
 }
+
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
     const discountInfo = document.getElementById('discountInfo');
@@ -231,6 +294,7 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
+
 // Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtr pod banerem
 function createSearchBar() {
     const searchBarContainer = document.createElement('div');
@@ -341,7 +405,7 @@ function createSearchBar() {
         const sortOrder = rankingFilter.value;
         const productLists = document.querySelectorAll('.product-list.active .product');
         let products = Array.from(productLists);
-       
+      
         // Sortowanie według rankingu, jeśli wybrano
         if (sortOrder) {
             products.sort((a, b) => {
@@ -381,6 +445,7 @@ function createSearchBar() {
     categoryFilter.onchange = applyFilters;
     rankingFilter.onchange = applyFilters;
 }
+
 // Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
@@ -413,14 +478,15 @@ function updateBanner() {
             bannerImage.style.display = 'block';
     }
 }
+
 function updateCartInfo() {
     let totalItems = 0;
     let totalValue = 0;
     for (let country in productsData) {
-        productsData[country].forEach(product => {
+        productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
                 totalItems += product.quantity;
-                totalValue += applyDiscount(parseFloat(product['CENA']) || 0) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
+                totalValue += applyDiscount(parseFloat(product['CENA']) || 0, index, country) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
             }
         });
     }
@@ -429,40 +495,51 @@ function updateCartInfo() {
     updateCashBackInfo(totalValue);
     saveCartState();
 }
+
 function updateCashBackInfo(totalValue) {
     const cashBack = Number((totalValue * (customCashBackPercentage / 100)).toFixed(2));
     document.getElementById('cash-back-info').innerText = `Cash Back: ${cashBack.toFixed(2)} GBP`;
 }
+
 function saveCartState() {
-    localStorage.setItem('productsData', JSON.stringify(productsData));
+    const cartState = {
+        productsData,
+        customPrices
+    };
+    localStorage.setItem('cartState', JSON.stringify(cartState));
 }
+
 function loadCartState() {
-    const savedData = localStorage.getItem('productsData');
+    const savedData = localStorage.getItem('cartState');
     if (savedData) {
         const loadedData = JSON.parse(savedData);
-        for (let country in loadedData) {
+        for (let country in loadedData.productsData) {
             if (productsData[country]) {
-                loadedData[country].forEach((product, index) => {
+                loadedData.productsData[country].forEach((product, index) => {
                     if (productsData[country][index]) {
                         productsData[country][index].quantity = product.quantity || 0;
                     }
                 });
             }
         }
+        customPrices = loadedData.customPrices || {};
         calculateTotal();
         updateCartInfo();
     }
 }
+
 function clearCartState() {
     for (let country in productsData) {
         productsData[country].forEach(product => {
             product.quantity = 0;
         });
     }
-    localStorage.removeItem('productsData');
+    customPrices = {};
+    localStorage.removeItem('cartState');
     calculateTotal();
     updateCartInfo();
 }
+
 function loadProducts(country) {
     console.log("Loading data for:", country);
     let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
@@ -500,7 +577,7 @@ function loadProducts(country) {
                 productElement.classList.add("product");
                 productElement.dataset.index = index;
                 const originalPrice = parseFloat(product['CENA']) || 0;
-                const discountedPrice = applyDiscount(originalPrice);
+                const discountedPrice = applyDiscount(originalPrice, index, country);
                 let imageUrl = '';
                 if (country === 'lithuania') {
                     imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-litwa/${product['INDEKS']}.jpg`;
@@ -534,12 +611,17 @@ function loadProducts(country) {
                         productElement.appendChild(img);
                         const details = document.createElement('div');
                         details.classList.add('product-details');
+                        const customPrice = customPrices[`${country}-${index}`];
+                        const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
+                            ? `${discountedPrice.toFixed(2)} GBP (Custom)`
+                            : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
                         details.innerHTML = `
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)</div>
+                            <div class="price">${priceDisplay}</div>
                             <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
+                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
@@ -580,11 +662,16 @@ function loadProducts(country) {
                         productElement.appendChild(img);
                         const details = document.createElement('div');
                         details.classList.add('product-details');
+                        const customPrice = customPrices[`${country}-${index}`];
+                        const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
+                            ? `${discountedPrice.toFixed(2)} GBP (Custom)`
+                            : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
                         details.innerHTML = `
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)</div>
+                            <div class="price">${priceDisplay}</div>
+                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
@@ -625,11 +712,16 @@ function loadProducts(country) {
                         productElement.appendChild(img);
                         const details = document.createElement('div');
                         details.classList.add('product-details');
+                        const customPrice = customPrices[`${country}-${index}`];
+                        const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
+                            ? `${discountedPrice.toFixed(2)} GBP (Custom)`
+                            : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
                         details.innerHTML = `
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)</div>
+                            <div class="price">${priceDisplay}</div>
+                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
@@ -656,6 +748,7 @@ function loadProducts(country) {
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
+
 function switchTab(country) {
     activeTab = country;
     console.log("Switching to tab:", country);
@@ -730,6 +823,7 @@ function switchTab(country) {
     }
     updateCartInfo();
 }
+
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
@@ -744,6 +838,7 @@ function changeQuantity(country, index, change) {
         saveCartState();
     }
 }
+
 function updateCart() {
     const cartList = document.getElementById('product-list-cart');
     if (!cartList) {
@@ -761,15 +856,19 @@ function updateCart() {
                 const productElement = document.createElement("div");
                 productElement.classList.add("product");
                 const originalPrice = parseFloat(product['CENA']) || 0;
-                const discountedPrice = applyDiscount(originalPrice);
+                const discountedPrice = applyDiscount(originalPrice, index, country);
                 const itemValue = discountedPrice * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
+                const customPrice = customPrices[`${country}-${index}`];
+                const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
+                    ? `${discountedPrice.toFixed(2)} GBP (Custom)`
+                    : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
                 productElement.innerHTML = `
                     <img src="${imageUrl}" alt="Photo" style="position: relative; z-index: 0;">
                     <div class="product-details">
                         <div class="product-code">Index: ${product['INDEKS']}</div>
                         <div class="product-name">${product['NAZWA']} (${country.charAt(0).toUpperCase() + country.slice(1)})</div>
                         <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                        <div class="price">${itemValue.toFixed(2)} GBP (Unit: ${discountedPrice.toFixed(2)} GBP)</div>
+                        <div class="price">${itemValue.toFixed(2)} GBP (Unit: ${priceDisplay})</div>
                     </div>
                     <div class="quantity-controls cart">
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
@@ -786,6 +885,7 @@ function updateCart() {
     document.getElementById("cart-total").innerText = `Cart value: ${totalCartValue.toFixed(2)} GBP`;
     updateCartInfo();
 }
+
 function removeItem(country, index) {
     productsData[country][index].quantity = 0;
     if (activeTab === 'cart') {
@@ -799,14 +899,15 @@ function removeItem(country, index) {
         document.getElementById(`quantity-${country}-${index}`).value = '0';
     }
 }
+
 function calculateTotal() {
     let totalValue = 0;
     let categoryTotalsText = '';
     for (let country in productsData) {
         let countryTotal = 0;
-        productsData[country].forEach(product => {
+        productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
-                countryTotal += applyDiscount(parseFloat(product['CENA']) || 0) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
+                countryTotal += applyDiscount(parseFloat(product['CENA']) || 0, index, country) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
             }
         });
         categoryTotals[country] = Number(countryTotal.toFixed(2));
@@ -818,6 +919,7 @@ function calculateTotal() {
     document.getElementById("category-totals").innerText = categoryTotalsText.trim();
     document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
 }
+
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
     const email = document.getElementById('email').value;
@@ -830,12 +932,13 @@ function submitOrder() {
         let countryTotal = 0;
         let hasItems = false;
         orderMessage += `${country.charAt(0).toUpperCase() + country.slice(1)}:\n`;
-        orderMessage += "Index\tName\tQuantity\n";
-        productsData[country].forEach(product => {
+        orderMessage += "Index\tName\tQuantity\tPrice\n";
+        productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
                 hasItems = true;
-                orderMessage += `${product.INDEKS}\t${product['NAZWA']}\t${product.quantity}\n`;
-                countryTotal += applyDiscount(parseFloat(product['CENA']) || 0) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
+                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
+                orderMessage += `${product.INDEKS}\t${product['NAZWA']}\t${product.quantity}\t${price.toFixed(2)} GBP\n`;
+                countryTotal += price * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
             }
         });
         if (!hasItems) {
@@ -844,7 +947,9 @@ function submitOrder() {
             orderMessage += `Total for ${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n\n`;
         }
     }
-    orderMessage += `Total order value: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania).toFixed(2)} GBP`;
+    orderMessage += `Total order value: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania).toFixed(2)} GBP\n`;
+    orderMessage += `Discount: ${discountPercentage}%\n`;
+    orderMessage += `Cash Back: ${customCashBackPercentage}%`;
     const formData = new FormData();
     formData.append("email", email);
     formData.append("store-name", storeName);
@@ -869,6 +974,7 @@ function submitOrder() {
         alert("Error sending order.");
     });
 }
+
 // Wywołanie okna dialogowego, stworzenie paska bocznego i paska wyszukiwania z filtrem po załadowaniu strony
 window.onload = function() {
     showInitialDialog();
