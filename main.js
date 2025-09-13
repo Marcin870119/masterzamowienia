@@ -55,6 +55,13 @@ function applyDiscount(price, productIndex, country) {
     return Number((parsedPrice * (1 - discountPercentage / 100)).toFixed(2));
 }
 
+// Funkcja resetująca niestandardową cenę
+function resetCustomPrice(country, index) {
+    delete customPrices[`${country}-${index}`];
+    updatePrices();
+    saveCartState();
+}
+
 // Funkcja aktualizująca ceny na stronie
 function updatePrices() {
     ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -621,7 +628,8 @@ function loadProducts(country) {
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
                             <div class="price">${priceDisplay}</div>
                             <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
-                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
+                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
+                            <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
@@ -671,7 +679,8 @@ function loadProducts(country) {
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
                             <div class="price">${priceDisplay}</div>
-                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
+                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
+                            <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
@@ -721,7 +730,8 @@ function loadProducts(country) {
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
                             <div class="price">${priceDisplay}</div>
-                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
+                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
+                            <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
                         `;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
