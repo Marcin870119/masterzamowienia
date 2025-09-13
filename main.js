@@ -371,111 +371,6 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
-// Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtr pod banerem
-function createSearchBar() {
-    const searchBarContainer = document.createElement('div');
-    searchBarContainer.id = 'search-bar';
-    searchBarContainer.style.cssText = `
-        width: 100%;
-        max-width: 900px;
-        margin: 10px auto 0;
-        padding: 10px;
-        background-color: #f1f1f1;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        z-index: 900;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-    `;
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.placeholder = 'Search products...';
-    searchInput.style.cssText = `
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        box-sizing: border-box;
-        min-width: 150px;
-    `;
-    const categoryFilter = document.createElement('select');
-    categoryFilter.style.cssText = `
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        box-sizing: border-box;
-        min-width: 120px;
-    `;
-    const filterOptions = [
-        { value: '', text: 'All Categories' },
-        { value: 'Słodycze', text: 'Słodycze' },
-        { value: 'Kuchnia dania gotowe', text: 'Kuchnia dania gotowe' },
-        { value: 'Dodatki do potraw', text: 'Dodatki do potraw' },
-        { value: 'Przetwory owocowo-warzywne', text: 'Przetwory owocowo-warzywne' }
-    ];
-    filterOptions.forEach(option => {
-        const optionElement = document.createElement('option');
-        optionElement.value = option.value;
-        optionElement.text = option.text;
-        categoryFilter.appendChild(optionElement);
-    });
-    const rankingFilter = document.createElement('select');
-    rankingFilter.id = 'ranking-filter';
-    rankingFilter.style.cssText = `
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        box-sizing: border-box;
-        min-width: 150px;
-    `;
-    const rankingOptions = [
-        { value: '', text: 'Sort by Ranking' },
-        { value: 'desc', text: 'Highest to Lowest' },
-        { value: 'asc', text: 'Lowest to Highest' }
-    ];
-    rankingOptions.forEach(option => {
-        const optionElement = document.createElement('option');
-        optionElement.value = option.value;
-        optionElement.text = option.text;
-        rankingFilter.appendChild(optionElement);
-    });
-    const clearFiltersButton = document.createElement('button');
-    clearFiltersButton.innerText = 'Wyczyść filtry';
-    clearFiltersButton.style.cssText = `
-        padding: 8px 15px;
-        background-color: #6c757d;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        min-width: 100px;
-    `;
-    clearFiltersButton.onmouseover = () => clearFiltersButton.style.backgroundColor = '#5a6268';
-    clearFiltersButton.onmouseout = () => clearFiltersButton.style.backgroundColor = '#6c757d';
-    clearFiltersButton.onclick = () => {
-        searchInput.value = '';
-        categoryFilter.value = '';
-        rankingFilter.value = '';
-        applyFilters();
-    };
-    searchBarContainer.appendChild(searchInput);
-    searchBarContainer.appendChild(categoryFilter);
-    searchBarContainer.appendChild(rankingFilter);
-    searchBarContainer.appendChild(clearFiltersButton);
-    const bannerContainer = document.querySelector('.banner-container');
-    if (bannerContainer) {
-        bannerContainer.parentNode.insertBefore(searchBarContainer, bannerContainer.nextSibling);
-    } else {
-        console.error("Banner container element not found for search bar placement!");
-    }
-}
 // Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
@@ -598,36 +493,10 @@ function switchTab(country) {
             product.style.visibility = 'visible';
             product.style.position = 'relative';
         });
-        // Wywołanie applyFilters, aby upewnić się, że filtry są zresetowane
-        const applyFilters = () => {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const selectedCategory = categoryFilter.value;
-            productLists.forEach(product => {
-                const productName = product.querySelector('.product-name').textContent.toLowerCase();
-                const productCode = product.querySelector('.product-code').textContent.toLowerCase();
-                const productCategory = productsData[activeTab][product.dataset.index]?.Kategoria?.toLowerCase() || '';
-                const nameWords = productName.split(/\s+/);
-                const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
-                const normalizedProductCategory = productCategory.replace(/-/g, ' ');
-                if (searchTerm === '' && selectedCategory === '') {
-                    product.style.visibility = 'visible';
-                    product.style.position = 'relative';
-                } else {
-                    const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
-                        nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
-                    );
-                    const categoryMatch = selectedCategory === '' || normalizedProductCategory === normalizedSelectedCategory;
-                    if (searchMatch && categoryMatch) {
-                        product.style.visibility = 'visible';
-                        product.style.position = 'relative';
-                    } else {
-                        product.style.visibility = 'hidden';
-                        product.style.position = 'absolute';
-                    }
-                }
-            });
-        };
-        applyFilters();
+        // Wywołanie applyFilters z main1.js
+        if (typeof applyFilters === 'function') {
+            applyFilters();
+        }
     }
     if (country === 'cart') {
         updateCart();
