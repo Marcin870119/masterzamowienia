@@ -63,7 +63,7 @@ function resetCustomPrice(country, index) {
 function updatePrices() {
     ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
         if (productsData[country].length > 0) {
-            loadProducts(color); // Ponowne załadowanie z nowym rabatem
+            loadProducts(country); // Ponowne załadowanie z nowym rabatem
         }
     });
     if (activeTab === 'cart') {
@@ -113,7 +113,7 @@ function saveCartToCSV() {
     link.click();
     document.body.removeChild(link);
 }
-// Funkcja zapisująca koszyk do pliku XLS (tylko indeks, nazwa, ilosci, cena)
+// Funkcja zapisująca koszyk do pliku XLS (indeks, nazwa, ilosci, cena)
 function saveCartToXLS() {
     const storeName = document.getElementById('store-name').value || 'Unknown_Store';
     const workbook = XLSX.utils.book_new();
