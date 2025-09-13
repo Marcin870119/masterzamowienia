@@ -194,6 +194,9 @@ function loadProducts(country) {
                     if (showCompetitorPrice) {
                         detailsHTML += `<div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>`;
                     }
+                    if (showStockInfo) {
+                        detailsHTML += `<div class="stock-info-display" style="margin-top: 5px; font-size: 12px; color: #666;">Stock: ${product['Stany magazynowe'] || 'N/A'}</div>`;
+                    }
                     details.innerHTML = detailsHTML;
                     productElement.appendChild(details);
                     const controls = document.createElement('div');
