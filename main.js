@@ -61,19 +61,29 @@ function resetCustomPrice(country, index) {
     updatePrices();
     saveCartState();
 }
-// Funkcja aktualizująca ceny na stronie
+// Funkcja aktualizująca ceny na stronie - bez przeskakiwania
 function updatePrices() {
-    ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
-        if (productsData[country].length > 0) {
-            loadProducts(country); // Ponowne załadowanie z nowym rabatem
-        }
-    });
+    // Zapisz aktualną pozycję scrolla przed aktualizacją
+    const activeList = document.querySelector('.product-list.active');
+    const scrollPosition = activeList ? activeList.scrollTop : 0;
+
+    // Aktualizuj tylko produkty w aktywnej zakładce, aby uniknąć pełnego przeładowania
+    if (productsData[activeTab].length > 0) {
+        loadProducts(activeTab);
+    }
     if (activeTab === 'cart') {
         updateCart();
     }
     calculateTotal();
     updateCartInfo();
     updateDiscountInfo();
+
+    // Przywróć pozycję scrolla po aktualizacji
+    setTimeout(() => {
+        if (activeList) {
+            activeList.scrollTop = scrollPosition;
+        }
+    }, 50); // Krótki delay na aktualizację DOM
 }
 // Funkcja zapisująca koszyk do pliku CSV
 function saveCartToCSV() {
@@ -275,7 +285,7 @@ function showPriceDialog(country, index, originalPrice) {
         } else {
             delete customPrices[`${country}-${index}`]; // Usunięcie ceny, jeśli jest nieprawidłowa
         }
-        updatePrices();
+        updatePrices(); // Aktualizacja cen bez przeskakiwania
         document.body.removeChild(modal);
     };
     const cancelButton = document.createElement('button');
