@@ -345,7 +345,6 @@ function createSidebar() {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         updatePrices();
     };
-
     // Dodanie nowej opcji do wyświetlania stanów magazynowych
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
@@ -358,7 +357,6 @@ function createSidebar() {
         showStockInfo = stockInfoCheckbox.checked;
         updatePrices();
     };
-
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
     sidebar.appendChild(discountInput);
