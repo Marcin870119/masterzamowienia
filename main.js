@@ -85,36 +85,19 @@ function updatePrices() {
         }
     }, 50); // Krótki delay na aktualizację DOM
 }
-// Funkcja zapisująca koszyk do pliku CSV
+// Funkcja zapisująca koszyk do pliku CSV w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToCSV() {
-    const storeName = document.getElementById('store-name').value || 'Unknown_Store';
-    let csvContent = 'data:text/csv;charset=utf-8,';
-    csvContent += 'Store Name,' + storeName + '\n\n';
-   
+    let csvContent = 'indeks,nazwa,ilosc,cena\n'; // Nagłówek w żądanym formacie
+
     for (let country in productsData) {
-        let countryTotal = 0;
-        let hasItems = false;
-        csvContent += `${country.charAt(0).toUpperCase() + country.slice(1)},\n`;
-        csvContent += 'Index,Name,Quantity,Unit Price (GBP),Total (GBP)\n';
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
-                hasItems = true;
-                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
-                const total = price * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
-                csvContent += `${product.INDEKS},${product['NAZWA'].replace(/,/g, '')},${product.quantity},${price.toFixed(2)},${total.toFixed(2)}\n`;
-                countryTotal += total;
+                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country).toFixed(2);
+                csvContent += `${product.INDEKS},${product['NAZWA'].replace(/,/g, '')},${product.quantity},${price}\n`;
             }
         });
-        if (hasItems) {
-            csvContent += `Total for ${country.charAt(0).toUpperCase() + country.slice(1)},${countryTotal.toFixed(2)} GBP\n\n`;
-        } else {
-            csvContent += 'No items in cart for this category,\n\n';
-        }
     }
-    const totalValue = (categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania).toFixed(2);
-    csvContent += `Total Order Value,${totalValue} GBP\n`;
-    csvContent += `Discount,${discountPercentage}%\n`;
-    csvContent += `Cash Back,${customCashBackPercentage}%\n`;
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -125,22 +108,20 @@ function saveCartToCSV() {
     link.click();
     document.body.removeChild(link);
 }
-// Funkcja zapisująca koszyk do pliku XLS (indeks, nazwa, ilosci, cena)
+// Funkcja zapisująca koszyk do pliku XLS w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToXLS() {
-    const storeName = document.getElementById('store-name').value || 'Unknown_Store';
     const workbook = XLSX.utils.book_new();
-    const ws_data = [['Store Name', storeName], ['']];
-    // Nagłówki dla produktów
-    ws_data.push(['Index', 'Name', 'Quantity', 'Unit Price (GBP)']);
-    // Dodaj dane tylko dla produktów w koszyku
+    const ws_data = [['indeks', 'nazwa', 'ilosc', 'cena']]; // Nagłówek w żądanym formacie
+
     for (let country in productsData) {
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
-                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
-                ws_data.push([product.INDEKS, product['NAZWA'], product.quantity, price.toFixed(2)]);
+                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country).toFixed(2);
+                ws_data.push([product.INDEKS, product['NAZWA'], product.quantity, price]);
             }
         });
     }
+
     const ws = XLSX.utils.aoa_to_sheet(ws_data);
     XLSX.utils.book_append_sheet(workbook, ws, 'Order');
     const now = new Date();
@@ -338,7 +319,7 @@ function createSidebar() {
     };
     const cashBackLabel = document.createElement('label');
     cashBackLabel.innerText = 'Cash Back (%): ';
-    cashBackLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
+    cashBackLabel.style.cssText = `display: block; margin: 10px 0 5px; font-weight: normal;`;
     const cashBackInput = document.createElement('input');
     cashBackInput.type = 'number';
     cashBackInput.value = customCashBackPercentage;
