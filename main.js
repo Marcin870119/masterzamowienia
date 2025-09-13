@@ -1,6 +1,24 @@
-var gk_isXlsx = false;
-var gk_xlsxFileLookup = {};
-var gk_fileData = {};
+let productsData = {
+    lithuania: [],
+    bulgaria: [],
+    ukraine: [],
+    romania: []
+};
+let activeTab = 'lithuania';
+let categoryTotals = {
+    lithuania: 0,
+    bulgaria: 0,
+    ukraine: 0,
+    romania: 0
+};
+let discountPercentage = 0; // Domyślnie 0%
+let customCashBackPercentage = 0; // Domyślnie 0%
+let customPrices = {}; // Obiekt przechowujący niestandardowe ceny
+let showCompetitorPrice = false; // Domyślnie cena konkurencji ukryta
+let gk_isXlsx = false;
+let gk_xlsxFileLookup = {};
+let gk_fileData = {};
+
 function filledCell(cell) {
     return cell !== '' && cell != null;
 }
@@ -28,23 +46,6 @@ function loadFileData(filename) {
     }
     return gk_fileData[filename] || "";
 }
-let productsData = {
-    lithuania: [],
-    bulgaria: [],
-    ukraine: [],
-    romania: []
-};
-let activeTab = 'lithuania';
-let categoryTotals = {
-    lithuania: 0,
-    bulgaria: 0,
-    ukraine: 0,
-    romania: 0
-};
-let discountPercentage = 0; // Domyślnie 0%
-let customCashBackPercentage = 0; // Domyślnie 0%
-let customPrices = {}; // Obiekt przechowujący niestandardowe ceny
-let showCompetitorPrice = false; // Domyślnie cena konkurencji ukryta
 // Funkcja obliczająca cenę z rabatem lub niestandardową ceną
 function applyDiscount(price, productIndex, country) {
     const parsedPrice = parseFloat(price) || 0;
@@ -343,11 +344,11 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Dodano margines z lewej dla labela
+    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 2px; font-weight: normal;`; // Bliżej lewej krawędzi
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-left: 5px;`; // Dodano margines z lewej dla checkboxa
+    competitorPriceCheckbox.style.cssText = `margin-left: 2px;`; // Bliżej lewej krawędzi
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         updatePrices();
@@ -474,51 +475,6 @@ function createSearchBar() {
     } else {
         console.error("Banner container element not found for search bar placement!");
     }
-    function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const selectedCategory = categoryFilter.value;
-        const sortOrder = rankingFilter.value;
-        const productLists = document.querySelectorAll('.product-list.active .product');
-        let products = Array.from(productLists);
-     
-        // Sortowanie według rankingu, jeśli wybrano
-        if (sortOrder) {
-            products.sort((a, b) => {
-                const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
-                const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
-                return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
-            });
-            const productList = document.getElementById(`product-list-${activeTab}`);
-            products.forEach(product => productList.appendChild(product));
-        }
-        productLists.forEach(product => {
-            const productName = product.querySelector('.product-name').textContent.toLowerCase();
-            const productCode = product.querySelector('.product-code').textContent.toLowerCase();
-            const productCategory = productsData[activeTab][product.dataset.index]?.Kategoria?.toLowerCase() || '';
-            const nameWords = productName.split(/\s+/);
-            const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
-            const normalizedProductCategory = productCategory.replace(/-/g, ' ');
-            if (searchTerm === '' && selectedCategory === '') {
-                product.style.visibility = 'visible';
-                product.style.position = 'relative';
-            } else {
-                const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
-                    nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
-                );
-                const categoryMatch = selectedCategory === '' || normalizedProductCategory === normalizedSelectedCategory;
-                if (searchMatch && categoryMatch) {
-                    product.style.visibility = 'visible';
-                    product.style.position = 'relative';
-                } else {
-                    product.style.visibility = 'hidden';
-                    product.style.position = 'absolute';
-                }
-            }
-        });
-    }
-    searchInput.oninput = applyFilters;
-    categoryFilter.onchange = applyFilters;
-    rankingFilter.onchange = applyFilters;
 }
 // Funkcja aktualizująca baner
 function updateBanner() {
@@ -607,220 +563,6 @@ function clearCartState() {
     localStorage.removeItem('cartState');
     calculateTotal();
     updateCartInfo();
-}
-function loadProducts(country) {
-    console.log("Loading data for:", country);
-    let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
-    if (country === 'lithuania') {
-        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/LITWA.json';
-    } else if (country === 'bulgaria' || country === 'romania') {
-        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BLUGARIA.json';
-    } else if (country === 'ukraine') {
-        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json';
-    }
-    return fetch(url)
-        .then(response => {
-            console.log("Fetch response for", country, ":", response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP Error: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Data loaded for", country, ":", data);
-            if (productsData[country].length > 0) {
-                data = data.map((product, index) => {
-                    if (productsData[country][index] && productsData[country][index].quantity) {
-                        return { ...product, quantity: productsData[country][index].quantity, dataset: { index } };
-                    }
-                    return { ...product, quantity: 0, dataset: { index } };
-                });
-            } else {
-                productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
-            }
-            const productList = document.getElementById(`product-list-${country}`);
-            productList.innerHTML = '';
-            data.forEach((product, index) => {
-                const productElement = document.createElement("div");
-                productElement.classList.add("product");
-                productElement.dataset.index = index;
-                const originalPrice = parseFloat(product['CENA']) || 0;
-                const discountedPrice = applyDiscount(originalPrice, index, country);
-                let imageUrl = '';
-                if (country === 'lithuania') {
-                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-litwa/${product['INDEKS']}.jpg`;
-                    const imgTest = new Image();
-                    imgTest.src = imageUrl;
-                    imgTest.onload = () => {
-                        let competitorPriceColor = '';
-                        if (product['Cena konkurencji'] && originalPrice) {
-                            if (parseFloat(product['Cena konkurencji']) < originalPrice) {
-                                competitorPriceColor = 'color: red;';
-                            } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
-                                competitorPriceColor = 'color: green;';
-                            }
-                        }
-                        const img = document.createElement('img');
-                        img.src = imageUrl;
-                        img.alt = "Photo";
-                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative; z-index: 0;';
-                        if (window.innerWidth <= 600) {
-                            img.onclick = function() {
-                                this.classList.toggle('enlarged');
-                            };
-                        } else {
-                            productElement.style.minWidth = '350px';
-                            productElement.style.padding = '10px';
-                            const details = productElement.querySelector('.product-details');
-                            if (details) {
-                                details.style.fontSize = '14px';
-                            }
-                        }
-                        productElement.appendChild(img);
-                        const details = document.createElement('div');
-                        details.classList.add('product-details');
-                        const customPrice = customPrices[`${country}-${index}`];
-                        const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
-                            ? `${discountedPrice.toFixed(2)} GBP (Custom)`
-                            : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
-                        let detailsHTML = `
-                            <div class="product-code">Index: ${product['INDEKS']}</div>
-                            <div class="product-name">${product['NAZWA']}</div>
-                            <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${priceDisplay}</div>
-                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
-                            <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
-                        `;
-                        if (showCompetitorPrice) {
-                            detailsHTML += `<div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>`;
-                        }
-                        details.innerHTML = detailsHTML;
-                        productElement.appendChild(details);
-                        const controls = document.createElement('div');
-                        controls.classList.add('quantity-controls');
-                        controls.innerHTML = `
-                            <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
-                            <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                            <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
-                        `;
-                        productElement.appendChild(controls);
-                        productList.appendChild(productElement);
-                    };
-                    imgTest.onerror = () => {
-                        console.warn(`Skipped index ${product['INDEKS']} due to missing photo: ${imageUrl}`);
-                    };
-                } else if (country === 'bulgaria' || country === 'romania') {
-                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-bulgaria/${product['INDEKS']}.jpg`;
-                    const imgTest = new Image();
-                    imgTest.src = imageUrl;
-                    imgTest.onload = () => {
-                        const img = document.createElement('img');
-                        img.src = imageUrl;
-                        img.alt = "Photo";
-                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative;';
-                        if (window.innerWidth <= 600) {
-                            img.onclick = function() {
-                                this.classList.toggle('enlarged');
-                            };
-                        } else {
-                            productElement.style.minWidth = '350px';
-                            productElement.style.padding = '10px';
-                            const details = productElement.querySelector('.product-details');
-                            if (details) {
-                                details.style.fontSize = '14px';
-                            }
-                        }
-                        productElement.appendChild(img);
-                        const details = document.createElement('div');
-                        details.classList.add('product-details');
-                        const customPrice = customPrices[`${country}-${index}`];
-                        const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
-                            ? `${discountedPrice.toFixed(2)} GBP (Custom)`
-                            : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
-                        details.innerHTML = `
-                            <div class="product-code">Index: ${product['INDEKS']}</div>
-                            <div class="product-name">${product['NAZWA']}</div>
-                            <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${priceDisplay}</div>
-                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
-                            <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
-                        `;
-                        productElement.appendChild(details);
-                        const controls = document.createElement('div');
-                        controls.classList.add('quantity-controls');
-                        controls.innerHTML = `
-                            <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
-                            <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                            <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
-                        `;
-                        productElement.appendChild(controls);
-                        productList.appendChild(productElement);
-                    };
-                    imgTest.onerror = () => {
-                        console.warn(`Skipped index ${product['INDEKS']} due to missing photo: ${imageUrl}`);
-                    };
-                } else if (country === 'ukraine') {
-                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${product['INDEKS']}.jpg`;
-                    const imgTest = new Image();
-                    imgTest.src = imageUrl;
-                    imgTest.onload = () => {
-                        const img = document.createElement('img');
-                        img.src = imageUrl;
-                        img.alt = "Photo";
-                        img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative;';
-                        if (window.innerWidth <= 600) {
-                            img.onclick = function() {
-                                this.classList.toggle('enlarged');
-                            };
-                        } else {
-                            productElement.style.minWidth = '350px';
-                            productElement.style.padding = '10px';
-                            const details = productElement.querySelector('.product-details');
-                            if (details) {
-                                details.style.fontSize = '14px';
-                            }
-                        }
-                        productElement.appendChild(img);
-                        const details = document.createElement('div');
-                        details.classList.add('product-details');
-                        const customPrice = customPrices[`${country}-${index}`];
-                        const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
-                            ? `${discountedPrice.toFixed(2)} GBP (Custom)`
-                            : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
-                        details.innerHTML = `
-                            <div class="product-code">Index: ${product['INDEKS']}</div>
-                            <div class="product-name">${product['NAZWA']}</div>
-                            <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
-                            <div class="price">${priceDisplay}</div>
-                            <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
-                            <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
-                        `;
-                        productElement.appendChild(details);
-                        const controls = document.createElement('div');
-                        controls.classList.add('quantity-controls');
-                        controls.innerHTML = `
-                            <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
-                            <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
-                            <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                            <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
-                        `;
-                        productElement.appendChild(controls);
-                        productList.appendChild(productElement);
-                    };
-                    imgTest.onerror = () => {
-                        console.warn(`Skipped index ${product['INDEKS']} due to missing photo: ${imageUrl}`);
-                    };
-                }
-            });
-            calculateTotal();
-            updateCartInfo();
-            if (country === activeTab) {
-                switchTab(activeTab);
-            }
-        })
-        .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
 function switchTab(country) {
     activeTab = country;
