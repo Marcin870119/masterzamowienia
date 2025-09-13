@@ -286,6 +286,7 @@ function showPriceDialog(country, index, originalPrice) {
 // Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
+    sidebar.id = 'sidebar'; // Dodanie ID dla precyzyjnego targetowania w CSS
     sidebar.style.cssText = `
         position: fixed;
         left: 0;
@@ -337,11 +338,11 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 2px; font-weight: normal;`; // Bliżej lewej krawędzi
+    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-left: 2px;`; // Bliżej lewej krawędzi
+    competitorPriceCheckbox.style.cssText = `margin-right: 5px;`;
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         // Aktualizacja dla wszystkich krajów
@@ -355,11 +356,11 @@ function createSidebar() {
     // Dodanie nowej opcji do wyświetlania stanów magazynowych
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 2px; font-weight: normal;`; // Bliżej lewej krawędzi
+    stockInfoLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
-    stockInfoCheckbox.style.cssText = `margin-left: 2px;`; // Bliżej lewej krawędzi
+    stockInfoCheckbox.style.cssText = `margin-right: 5px;`;
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
         // Aktualizacja dla wszystkich krajów
@@ -375,10 +376,10 @@ function createSidebar() {
     sidebar.appendChild(discountInput);
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
+    competitorPriceLabel.appendChild(competitorPriceCheckbox);
     sidebar.appendChild(competitorPriceLabel);
-    sidebar.appendChild(competitorPriceCheckbox);
+    stockInfoLabel.appendChild(stockInfoCheckbox);
     sidebar.appendChild(stockInfoLabel);
-    sidebar.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
