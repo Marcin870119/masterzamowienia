@@ -19,7 +19,6 @@ let showStockInfo = false; // Domyślnie stany magazynowe ukryte
 let gk_isXlsx = false;
 let gk_xlsxFileLookup = {};
 let gk_fileData = {};
-
 function filledCell(cell) {
     return cell !== '' && cell != null;
 }
@@ -67,7 +66,6 @@ function updatePrices() {
     // Zapisz aktualną pozycję scrolla przed aktualizacją
     const activeList = document.querySelector('.product-list.active');
     const scrollPosition = activeList ? activeList.scrollTop : 0;
-
     // Aktualizuj tylko produkty w aktywnej zakładce, aby uniknąć pełnego przeładowania
     if (productsData[activeTab].length > 0) {
         loadProducts(activeTab);
@@ -78,7 +76,6 @@ function updatePrices() {
     calculateTotal();
     updateCartInfo();
     updateDiscountInfo();
-
     // Przywróć pozycję scrolla po aktualizacji
     setTimeout(() => {
         if (activeList) {
@@ -89,7 +86,6 @@ function updatePrices() {
 // Funkcja zapisująca koszyk do pliku CSV w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToCSV() {
     let csvContent = 'indeks,nazwa,ilosc,cena\n'; // Nagłówek w żądanym formacie
-
     for (let country in productsData) {
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
@@ -98,7 +94,6 @@ function saveCartToCSV() {
             }
         });
     }
-
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -113,7 +108,6 @@ function saveCartToCSV() {
 function saveCartToXLS() {
     const workbook = XLSX.utils.book_new();
     const ws_data = [['indeks', 'nazwa', 'ilosc', 'cena']]; // Nagłówek w żądanym formacie
-
     for (let country in productsData) {
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
@@ -122,7 +116,6 @@ function saveCartToXLS() {
             }
         });
     }
-
     const ws = XLSX.utils.aoa_to_sheet(ws_data);
     XLSX.utils.book_append_sheet(workbook, ws, 'Order');
     const now = new Date();
@@ -338,11 +331,11 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
+    competitorPriceLabel.style.cssText = `display: block; margin: 10px 0 5px; font-weight: normal;`;
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-right: 5px;`;
+    competitorPriceCheckbox.style.cssText = `margin-right: 10px;`;
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         // Aktualizacja dla wszystkich krajów
@@ -356,11 +349,11 @@ function createSidebar() {
     // Dodanie nowej opcji do wyświetlania stanów magazynowych
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
+    stockInfoLabel.style.cssText = `display: block; margin: 10px 0 5px; font-weight: normal;`;
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
-    stockInfoCheckbox.style.cssText = `margin-right: 5px;`;
+    stockInfoCheckbox.style.cssText = `margin-right: 10px;`;
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
         // Aktualizacja dla wszystkich krajów
@@ -376,10 +369,10 @@ function createSidebar() {
     sidebar.appendChild(discountInput);
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
-    competitorPriceLabel.appendChild(competitorPriceCheckbox);
     sidebar.appendChild(competitorPriceLabel);
-    stockInfoLabel.appendChild(stockInfoCheckbox);
+    competitorPriceLabel.appendChild(competitorPriceCheckbox);
     sidebar.appendChild(stockInfoLabel);
+    stockInfoLabel.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
