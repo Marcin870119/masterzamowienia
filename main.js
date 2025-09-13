@@ -44,6 +44,7 @@ let categoryTotals = {
 let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
 let customPrices = {}; // Obiekt przechowujący niestandardowe ceny
+let showCompetitorPrice = false; // Domyślnie cena konkurencji ukryta
 // Funkcja obliczająca cenę z rabatem lub niestandardową ceną
 function applyDiscount(price, productIndex, country) {
     const parsedPrice = parseFloat(price) || 0;
@@ -340,11 +341,24 @@ function createSidebar() {
         updatePrices();
         updateDiscountInfo();
     };
+    const competitorPriceLabel = document.createElement('label');
+    competitorPriceLabel.innerText = 'Show Competitor Price:';
+    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Dodano margines z lewej dla labela
+    const competitorPriceCheckbox = document.createElement('input');
+    competitorPriceCheckbox.type = 'checkbox';
+    competitorPriceCheckbox.checked = showCompetitorPrice;
+    competitorPriceCheckbox.style.cssText = `margin-left: 5px;`; // Dodano margines z lewej dla checkboxa
+    competitorPriceCheckbox.onchange = () => {
+        showCompetitorPrice = competitorPriceCheckbox.checked;
+        updatePrices();
+    };
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
     sidebar.appendChild(discountInput);
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
+    sidebar.appendChild(competitorPriceLabel);
+    sidebar.appendChild(competitorPriceCheckbox);
     document.body.appendChild(sidebar);
 }
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
@@ -669,15 +683,18 @@ function loadProducts(country) {
                         const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
                             ? `${discountedPrice.toFixed(2)} GBP (Custom)`
                             : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
-                        details.innerHTML = `
+                        let detailsHTML = `
                             <div class="product-code">Index: ${product['INDEKS']}</div>
                             <div class="product-name">${product['NAZWA']}</div>
                             <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
                             <div class="price">${priceDisplay}</div>
-                            <div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>
                             <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
                             <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
                         `;
+                        if (showCompetitorPrice) {
+                            detailsHTML += `<div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>`;
+                        }
+                        details.innerHTML = detailsHTML;
                         productElement.appendChild(details);
                         const controls = document.createElement('div');
                         controls.classList.add('quantity-controls');
@@ -1035,8 +1052,10 @@ window.onload = async function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
-    // Ładowanie wszystkich danych asynchronicznie i czekanie na zakończenie
-    await Promise.all(['lithuania', 'bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
+    // Ładowanie danych dla Litwy jako pierwszej
+    await loadProducts('lithuania');
+    // Ładowanie pozostałych krajów w tle
+    await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
     switchTab('lithuania'); // Wyraźnie przełącz na Litwę po załadowaniu
     loadCartState();
     updateBanner();
