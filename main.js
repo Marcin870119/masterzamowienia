@@ -344,7 +344,13 @@ function createSidebar() {
     competitorPriceCheckbox.style.cssText = `margin-left: 2px;`; // Bliżej lewej krawędzi
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
-        updatePrices();
+        // Aktualizacja dla wszystkich krajów
+        ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
+            if (productsData[country].length > 0) {
+                loadProducts(country);
+            }
+        });
+        if (activeTab !== 'cart') updatePrices();
     };
     // Dodanie nowej opcji do wyświetlania stanów magazynowych
     const stockInfoLabel = document.createElement('label');
@@ -568,7 +574,6 @@ function updateCart() {
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                         <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
                     </div>
                 `;
                 cartList.appendChild(productElement);
