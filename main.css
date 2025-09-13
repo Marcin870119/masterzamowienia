@@ -487,14 +487,13 @@ div[id="sidebar"] label {
     display: flex !important;
     align-items: center; /* Wyrównanie pionowe */
     justify-content: flex-start; /* Wyrównanie poziome do lewej */
-    margin: 5px 0 5px 0px; /* Brak marginesu z lewej */
+    margin: 10px 0; /* Większy odstęp między elementami */
     text-align: left; /* Wymuś lewy tekst */
     width: 100%; /* Upewnij się, że label zajmuje całą szerokość */
     box-sizing: border-box; /* Uwzględnia padding i border w szerokości */
 }
-
 div[id="sidebar"] input[type="checkbox"] {
-    margin-right: 5px; /* Odstęp między checkbox a tekstem */
+    margin-right: 10px; /* Większy odstęp między checkbox a tekstem */
     margin-left: 0 !important; /* Usuń domyślny margines */
     flex-shrink: 0; /* Nie zmniejszaj checkboxa */
     vertical-align: middle; /* Dodatkowe wyrównanie pionowe */
