@@ -483,31 +483,17 @@ button:active {
     }
 }
 /* Poprawka dla konsystencji checkboxów w sidebarze */
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100px;
-    height: 100%;
-    background-color: #f8f8f8;
-    padding: 15px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    font-family: Arial, sans-serif;
-    font-size: 12px;
-}
-
-.sidebar label {
+div[id="sidebar"] label {
     display: flex !important;
     align-items: center; /* Wyrównanie pionowe */
     justify-content: flex-start; /* Wyrównanie poziome do lewej */
-    margin: 5px 0 5px 0px; /* Zmiana marginesu z 2px na 0px */
+    margin: 5px 0 5px 0px; /* Brak marginesu z lewej */
     text-align: left; /* Wymuś lewy tekst */
     width: 100%; /* Upewnij się, że label zajmuje całą szerokość */
     box-sizing: border-box; /* Uwzględnia padding i border w szerokości */
 }
 
-.sidebar input[type="checkbox"] {
+div[id="sidebar"] input[type="checkbox"] {
     margin-right: 5px; /* Odstęp między checkbox a tekstem */
     margin-left: 0 !important; /* Usuń domyślny margines */
     flex-shrink: 0; /* Nie zmniejszaj checkboxa */
