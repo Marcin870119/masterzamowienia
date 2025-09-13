@@ -482,3 +482,17 @@ button:active {
         background-color: rgba(0, 0, 0, 0.8);
     }
 }
+/* Poprawka dla konsystencji checkboxów w sidebarze */
+.sidebar label {
+    display: flex !important;
+    align-items: center; /* Wyrównanie pionowe */
+    justify-content: flex-start; /* Wyrównanie poziome do lewej */
+    margin: 5px 0 5px 2px;
+    text-align: left; /* Wymuś lewy tekst */
+}
+
+.sidebar input[type="checkbox"] {
+    margin-right: 5px; /* Odstęp między checkbox a tekstem */
+    margin-left: 0 !important; /* Usuń domyślny margines */
+    flex-shrink: 0; /* Nie zmniejszaj checkboxa */
+}
