@@ -15,6 +15,7 @@ let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
 let customPrices = {}; // Obiekt przechowujący niestandardowe ceny
 let showCompetitorPrice = false; // Domyślnie cena konkurencji ukryta
+let showStockInfo = false; // Domyślnie stany magazynowe ukryte
 let gk_isXlsx = false;
 let gk_xlsxFileLookup = {};
 let gk_fileData = {};
@@ -344,6 +345,20 @@ function createSidebar() {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         updatePrices();
     };
+
+    // Dodanie nowej opcji do wyświetlania stanów magazynowych
+    const stockInfoLabel = document.createElement('label');
+    stockInfoLabel.innerText = 'Show Stock Info:';
+    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 2px; font-weight: normal;`; // Bliżej lewej krawędzi
+    const stockInfoCheckbox = document.createElement('input');
+    stockInfoCheckbox.type = 'checkbox';
+    stockInfoCheckbox.checked = showStockInfo;
+    stockInfoCheckbox.style.cssText = `margin-left: 2px;`; // Bliżej lewej krawędzi
+    stockInfoCheckbox.onchange = () => {
+        showStockInfo = stockInfoCheckbox.checked;
+        updatePrices();
+    };
+
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
     sidebar.appendChild(discountInput);
@@ -351,6 +366,8 @@ function createSidebar() {
     sidebar.appendChild(cashBackInput);
     sidebar.appendChild(competitorPriceLabel);
     sidebar.appendChild(competitorPriceCheckbox);
+    sidebar.appendChild(stockInfoLabel);
+    sidebar.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
