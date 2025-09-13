@@ -362,7 +362,13 @@ function createSidebar() {
     stockInfoCheckbox.style.cssText = `margin-left: 2px;`; // Bliżej lewej krawędzi
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
-        updatePrices();
+        // Aktualizacja dla wszystkich krajów
+        ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
+            if (productsData[country].length > 0) {
+                loadProducts(country);
+            }
+        });
+        if (activeTab !== 'cart') updatePrices();
     };
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
