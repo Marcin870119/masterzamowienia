@@ -45,6 +45,10 @@
     </label>
     <button type="button" onclick="submitOrder()">Send order</button>
 </form>
+<div id="save-buttons" style="display: none; margin-top: 20px; text-align: center;">
+    <button type="button" onclick="saveCartToCSV()" style="margin-right: 10px;">Save as CSV</button>
+    <button type="button" onclick="saveCartToXLS()">Save as XLS</button>
+</div>
 <div id="category-totals" class="category-totals"></div>
 <div id="total-value" class="total-box">Total order value: 0 GBP</div>
 <div id="cart-total" class="cart-total">Cart value: 0 GBP</div>
