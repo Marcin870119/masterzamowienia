@@ -44,7 +44,6 @@ let categoryTotals = {
 let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
 let customPrices = {}; // Obiekt przechowujący niestandardowe ceny
-
 // Funkcja obliczająca cenę z rabatem lub niestandardową ceną
 function applyDiscount(price, productIndex, country) {
     const parsedPrice = parseFloat(price) || 0;
@@ -54,19 +53,17 @@ function applyDiscount(price, productIndex, country) {
     }
     return Number((parsedPrice * (1 - discountPercentage / 100)).toFixed(2));
 }
-
 // Funkcja resetująca niestandardową cenę
 function resetCustomPrice(country, index) {
     delete customPrices[`${country}-${index}`];
     updatePrices();
     saveCartState();
 }
-
 // Funkcja aktualizująca ceny na stronie
 function updatePrices() {
     ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
         if (productsData[country].length > 0) {
-            loadProducts(country); // Ponowne załadowanie z nowym rabatem
+            loadProducts(color); // Ponowne załadowanie z nowym rabatem
         }
     });
     if (activeTab === 'cart') {
@@ -76,7 +73,68 @@ function updatePrices() {
     updateCartInfo();
     updateDiscountInfo();
 }
-
+// Funkcja zapisująca koszyk do pliku CSV
+function saveCartToCSV() {
+    const storeName = document.getElementById('store-name').value || 'Unknown_Store';
+    let csvContent = 'data:text/csv;charset=utf-8,';
+    csvContent += 'Store Name,' + storeName + '\n\n';
+   
+    for (let country in productsData) {
+        let countryTotal = 0;
+        let hasItems = false;
+        csvContent += `${country.charAt(0).toUpperCase() + country.slice(1)},\n`;
+        csvContent += 'Index,Name,Quantity,Unit Price (GBP),Total (GBP)\n';
+        productsData[country].forEach((product, index) => {
+            if (product.quantity > 0) {
+                hasItems = true;
+                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
+                const total = price * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
+                csvContent += `${product.INDEKS},${product['NAZWA'].replace(/,/g, '')},${product.quantity},${price.toFixed(2)},${total.toFixed(2)}\n`;
+                countryTotal += total;
+            }
+        });
+        if (hasItems) {
+            csvContent += `Total for ${country.charAt(0).toUpperCase() + country.slice(1)},${countryTotal.toFixed(2)} GBP\n\n`;
+        } else {
+            csvContent += 'No items in cart for this category,\n\n';
+        }
+    }
+    const totalValue = (categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania).toFixed(2);
+    csvContent += `Total Order Value,${totalValue} GBP\n`;
+    csvContent += `Discount,${discountPercentage}%\n`;
+    csvContent += `Cash Back,${customCashBackPercentage}%\n`;
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
+    link.setAttribute('download', `order_${timestamp}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+// Funkcja zapisująca koszyk do pliku XLS (tylko indeks, nazwa, ilosci, cena)
+function saveCartToXLS() {
+    const storeName = document.getElementById('store-name').value || 'Unknown_Store';
+    const workbook = XLSX.utils.book_new();
+    const ws_data = [['Store Name', storeName], ['']];
+    // Nagłówki dla produktów
+    ws_data.push(['Index', 'Name', 'Quantity', 'Unit Price (GBP)']);
+    // Dodaj dane tylko dla produktów w koszyku
+    for (let country in productsData) {
+        productsData[country].forEach((product, index) => {
+            if (product.quantity > 0) {
+                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
+                ws_data.push([product.INDEKS, product['NAZWA'], product.quantity, price.toFixed(2)]);
+            }
+        });
+    }
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    XLSX.utils.book_append_sheet(workbook, ws, 'Order');
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
+    XLSX.writeFile(workbook, `order_${timestamp}.xlsx`);
+}
 // Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
     const modal = document.createElement('div');
@@ -178,7 +236,6 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-
 // Funkcja wyświetlająca okno dialogowe do zmiany ceny produktu (styl jak sidebar)
 function showPriceDialog(country, index, originalPrice) {
     const modal = document.createElement('div');
@@ -231,7 +288,6 @@ function showPriceDialog(country, index, originalPrice) {
     modal.appendChild(cancelButton);
     document.body.appendChild(modal);
 }
-
 // Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
@@ -291,7 +347,6 @@ function createSidebar() {
     sidebar.appendChild(cashBackInput);
     document.body.appendChild(sidebar);
 }
-
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
     const discountInfo = document.getElementById('discountInfo');
@@ -301,7 +356,6 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
-
 // Funkcja tworząca i obsługująca pasek wyszukiwania oraz filtr pod banerem
 function createSearchBar() {
     const searchBarContainer = document.createElement('div');
@@ -412,7 +466,7 @@ function createSearchBar() {
         const sortOrder = rankingFilter.value;
         const productLists = document.querySelectorAll('.product-list.active .product');
         let products = Array.from(productLists);
-      
+     
         // Sortowanie według rankingu, jeśli wybrano
         if (sortOrder) {
             products.sort((a, b) => {
@@ -452,7 +506,6 @@ function createSearchBar() {
     categoryFilter.onchange = applyFilters;
     rankingFilter.onchange = applyFilters;
 }
-
 // Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
@@ -485,7 +538,6 @@ function updateBanner() {
             bannerImage.style.display = 'block';
     }
 }
-
 function updateCartInfo() {
     let totalItems = 0;
     let totalValue = 0;
@@ -502,12 +554,10 @@ function updateCartInfo() {
     updateCashBackInfo(totalValue);
     saveCartState();
 }
-
 function updateCashBackInfo(totalValue) {
     const cashBack = Number((totalValue * (customCashBackPercentage / 100)).toFixed(2));
     document.getElementById('cash-back-info').innerText = `Cash Back: ${cashBack.toFixed(2)} GBP`;
 }
-
 function saveCartState() {
     const cartState = {
         productsData,
@@ -515,7 +565,6 @@ function saveCartState() {
     };
     localStorage.setItem('cartState', JSON.stringify(cartState));
 }
-
 function loadCartState() {
     const savedData = localStorage.getItem('cartState');
     if (savedData) {
@@ -534,7 +583,6 @@ function loadCartState() {
         updateCartInfo();
     }
 }
-
 function clearCartState() {
     for (let country in productsData) {
         productsData[country].forEach(product => {
@@ -546,7 +594,6 @@ function clearCartState() {
     calculateTotal();
     updateCartInfo();
 }
-
 function loadProducts(country) {
     console.log("Loading data for:", country);
     let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
@@ -557,7 +604,7 @@ function loadProducts(country) {
     } else if (country === 'ukraine') {
         url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json';
     }
-    fetch(url)
+    return fetch(url)
         .then(response => {
             console.log("Fetch response for", country, ":", response.status);
             if (!response.ok) {
@@ -758,7 +805,6 @@ function loadProducts(country) {
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
-
 function switchTab(country) {
     activeTab = country;
     console.log("Switching to tab:", country);
@@ -775,6 +821,11 @@ function switchTab(country) {
         selectedList.classList.add('active');
     } else {
         console.error("Product list not found for:", country);
+    }
+    // Zarządzanie widocznością przycisków zapisu
+    const saveButtons = document.getElementById('save-buttons');
+    if (saveButtons) {
+        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
     }
     updateBanner();
     const searchBar = document.getElementById('search-bar');
@@ -833,7 +884,6 @@ function switchTab(country) {
     }
     updateCartInfo();
 }
-
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
@@ -848,7 +898,6 @@ function changeQuantity(country, index, change) {
         saveCartState();
     }
 }
-
 function updateCart() {
     const cartList = document.getElementById('product-list-cart');
     if (!cartList) {
@@ -895,7 +944,6 @@ function updateCart() {
     document.getElementById("cart-total").innerText = `Cart value: ${totalCartValue.toFixed(2)} GBP`;
     updateCartInfo();
 }
-
 function removeItem(country, index) {
     productsData[country][index].quantity = 0;
     if (activeTab === 'cart') {
@@ -909,7 +957,6 @@ function removeItem(country, index) {
         document.getElementById(`quantity-${country}-${index}`).value = '0';
     }
 }
-
 function calculateTotal() {
     let totalValue = 0;
     let categoryTotalsText = '';
@@ -929,7 +976,6 @@ function calculateTotal() {
     document.getElementById("category-totals").innerText = categoryTotalsText.trim();
     document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
 }
-
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
     const email = document.getElementById('email').value;
@@ -984,14 +1030,15 @@ function submitOrder() {
         alert("Error sending order.");
     });
 }
-
 // Wywołanie okna dialogowego, stworzenie paska bocznego i paska wyszukiwania z filtrem po załadowaniu strony
-window.onload = function() {
+window.onload = async function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
-    ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => loadProducts(country));
+    // Ładowanie wszystkich danych asynchronicznie i czekanie na zakończenie
+    await Promise.all(['lithuania', 'bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
+    switchTab('lithuania'); // Wyraźnie przełącz na Litwę po załadowaniu
+    loadCartState();
+    updateBanner();
+    updateCartInfo();
 };
-loadCartState();
-updateBanner();
-updateCartInfo();
