@@ -194,9 +194,6 @@ function loadProducts(country) {
                     if (showCompetitorPrice) {
                         detailsHTML += `<div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>`;
                     }
-                    if (showStockInfo) {
-                        detailsHTML += `<div class="stock-info-display" style="margin-top: 5px; font-size: 12px; color: #666;">Stock: ${product['Stany magazynowe'] || 'N/A'}</div>`;
-                    }
                     details.innerHTML = detailsHTML;
                     productElement.appendChild(details);
                     const controls = document.createElement('div');
@@ -205,7 +202,6 @@ function loadProducts(country) {
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                         <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
                     `;
                     productElement.appendChild(controls);
                     productList.appendChild(productElement);
