@@ -13,20 +13,20 @@ body {
     right: 15px;
     z-index: 1100;
     background-color: #ffffff;
-    padding: 14px 18px; /* większy padding */
+    padding: 14px 18px;
     border-radius: 10px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    width: 200px; /* zwiększona szerokość */
+    width: 200px;
     text-align: right;
 }
 .cart-icon {
-    font-size: 24px; /* większa ikona */
+    font-size: 24px;
     cursor: pointer;
     margin-bottom: 6px;
     color: #444;
 }
 .cart-info, .cash-back-info {
-    font-size: 14px; /* większa czcionka */
+    font-size: 14px;
     color: #333;
     line-height: 1.4;
     margin: 4px 0;
@@ -39,8 +39,8 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
-    max-width: 80vw; /* dopasowanie do banera */
-    margin: 0 auto; /* centrowanie */
+    max-width: 80vw;
+    margin: 0 auto;
     border-radius: 8px;
 }
 .nav-list {
@@ -85,7 +85,7 @@ body {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
-    max-width: 80vw; /* ta sama szerokość co navbar */
+    max-width: 80vw;
     margin: 0 auto;
 }
 .banner-container img {
@@ -318,7 +318,7 @@ button:active {
         top: 5px;
         right: 10px;
         padding: 10px 14px;
-        width: 160px; /* trochę mniejsze na mobile */
+        width: 160px;
     }
     .cart-icon {
         font-size: 20px;
@@ -484,17 +484,26 @@ button:active {
 }
 /* Poprawka dla konsystencji checkboxów w sidebarze */
 div[id="sidebar"] label {
-    display: flex !important;
-    align-items: center; /* Wyrównanie pionowe */
-    justify-content: flex-start; /* Wyrównanie poziome do lewej */
-    margin: 10px 0; /* Większy odstęp między elementami */
-    text-align: left; /* Wymuś lewy tekst */
-    width: 100%; /* Upewnij się, że label zajmuje całą szerokość */
-    box-sizing: border-box; /* Uwzględnia padding i border w szerokości */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 15px 0 5px; /* Większy odstęp między elementami */
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+}
+div[id="sidebar"] input[type="text"],
+div[id="sidebar"] input[type="number"] {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 10px;
 }
 div[id="sidebar"] input[type="checkbox"] {
-    margin-right: 10px; /* Większy odstęp między checkbox a tekstem */
-    margin-left: 0 !important; /* Usuń domyślny margines */
-    flex-shrink: 0; /* Nie zmniejszaj checkboxa */
-    vertical-align: middle; /* Dodatkowe wyrównanie pionowe */
+    margin-right: 10px;
+    margin-left: 0;
+    flex-shrink: 0;
+    vertical-align: middle;
 }
