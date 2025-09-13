@@ -264,10 +264,11 @@ function showPriceDialog(country, index, originalPrice) {
         const newPrice = parseFloat(priceInput.value);
         if (newPrice >= 0 && !isNaN(newPrice)) {
             customPrices[`${country}-${index}`] = newPrice;
+            updatePrices(); // Aktualizacja cen po zapisaniu nowej ceny
         } else {
             delete customPrices[`${country}-${index}`]; // Usunięcie ceny, jeśli jest nieprawidłowa
+            updatePrices();
         }
-        updatePrices(); // Aktualizacja cen bez przeskakiwania
         document.body.removeChild(modal);
     };
     const cancelButton = document.createElement('button');
