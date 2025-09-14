@@ -101,6 +101,62 @@ function createSearchBar() {
     } else {
         console.error("Banner container element not found for search bar placement!");
     }
+
+    // Definicja applyFilters w kontekście createSearchBar
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const selectedCategory = categoryFilter.value;
+        const sortOrder = rankingFilter.value;
+        const productLists = document.querySelectorAll('.product-list.active .product');
+        let products = Array.from(productLists);
+
+        console.log("Applying filters for", activeTab, "Products:", products.length, "Data:", productsData[activeTab].length); // Debug
+
+        // Sortowanie według rankingu, jeśli wybrano
+        if (sortOrder && productsData[activeTab].length > 0) {
+            products.sort((a, b) => {
+                const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
+                const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
+                console.log("Sorting:", a.dataset.index, rankA, b.dataset.index, rankB); // Debug
+                return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
+            });
+            const productList = document.getElementById(`product-list-${activeTab}`);
+            products.forEach(product => productList.appendChild(product));
+        }
+
+        productLists.forEach(product => {
+            const productName = product.querySelector('.product-name')?.textContent.toLowerCase() || '';
+            const productCode = product.querySelector('.product-code')?.textContent.toLowerCase() || '';
+            const productIndex = product.dataset.index;
+            const productCategory = productsData[activeTab][productIndex]?.Kategoria?.toLowerCase() || '';
+            const nameWords = productName.split(/\s+/);
+            const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
+            const normalizedProductCategory = productCategory.replace(/-/g, ' ');
+
+            console.log("Filter Debug - Index:", productIndex, "Category:", productCategory, "Selected:", selectedCategory); // Debug
+
+            const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
+                nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
+            );
+            const categoryMatch = selectedCategory === '' || normalizedProductCategory === normalizedSelectedCategory;
+
+            if (searchMatch && categoryMatch) {
+                product.style.visibility = 'visible';
+                product.style.position = 'relative';
+            } else {
+                product.style.visibility = 'hidden';
+                product.style.position = 'absolute';
+            }
+        });
+    }
+
+    // Rejestracja zdarzeń
+    searchInput.oninput = applyFilters;
+    categoryFilter.onchange = applyFilters;
+    rankingFilter.onchange = applyFilters;
+
+    // Przechowanie funkcji applyFilters w searchBar dla dostępu z switchTab
+    searchBarContainer.applyFilters = applyFilters;
 }
 
 function loadProducts(country) {
@@ -131,16 +187,7 @@ function loadProducts(country) {
                     return { ...product, quantity: 0, dataset: { index } };
                 });
             } else {
-                productsData[country] = data.map((product, index) => {
-                    // Ustaw domyślne wartości, jeśli brak kluczy
-                    return {
-                        ...product,
-                        quantity: 0,
-                        dataset: { index },
-                        Kategoria: product.Kategoria || '', // Domyślnie pusty ciąg, jeśli brak
-                        Ranking: product.Ranking || '0'     // Domyślnie '0', jeśli brak
-                    };
-                });
+                productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
             }
             const productList = document.getElementById(`product-list-${country}`);
             if (!productList) {
@@ -207,9 +254,6 @@ function loadProducts(country) {
                     if (showCompetitorPrice) {
                         detailsHTML += `<div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>`;
                     }
-                    if (showStockInfo) {
-                        detailsHTML += `<div class="stock-info-display" style="margin-top: 5px; font-size: 12px; color: #666;">Stock: ${product['Stany magazynowe'] || 'N/A'}</div>`;
-                    }
                     details.innerHTML = detailsHTML;
                     productElement.appendChild(details);
                     const controls = document.createElement('div');
@@ -218,6 +262,7 @@ function loadProducts(country) {
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                         <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
                     `;
                     productElement.appendChild(controls);
                     productList.appendChild(productElement);
@@ -226,70 +271,240 @@ function loadProducts(country) {
                     console.warn(`Skipped index ${product['INDEKS']} due to missing photo: ${imageUrl}`);
                 };
             });
+            calculateTotal();
+            updateCartInfo();
             if (country === activeTab) {
-                if (typeof applyFilters === 'function') {
-                    applyFilters(); // Wywołanie filtrów po załadowaniu
+                const searchBar = document.getElementById('search-bar');
+                if (searchBar) {
+                    const applyFiltersFunc = searchBar.applyFilters;
+                    if (typeof applyFiltersFunc === 'function') {
+                        applyFiltersFunc(); // Wywołanie filtrów po załadowaniu
+                    }
                 }
             }
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
 
-function applyFilters() {
+function switchTab(country) {
+    activeTab = country;
+    console.log("Switching to tab:", country);
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.product-list').forEach(list => list.classList.remove('active'));
+    const selectedTab = document.querySelector(`[onclick="switchTab('${country}')"]`);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    } else {
+        console.error("Tab not found:", country);
+    }
+    const selectedList = document.getElementById(`product-list-${country}`);
+    if (selectedList) {
+        selectedList.classList.add('active');
+    } else {
+        console.error("Product list not found for:", country);
+    }
+    // Zarządzanie widocznością przycisków zapisu
+    const saveButtons = document.getElementById('save-buttons');
+    if (saveButtons) {
+        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
+    }
+    updateBanner();
     const searchBar = document.getElementById('search-bar');
-    if (!searchBar) {
-        console.error("Search bar not found!");
-        return;
-    }
-    const searchInput = searchBar.querySelector('input');
-    const categoryFilter = searchBar.querySelector('select');
-    const rankingFilter = searchBar.querySelector('#ranking-filter');
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    const selectedCategory = categoryFilter.value;
-    const sortOrder = rankingFilter.value;
-    const productList = document.getElementById(`product-list-${activeTab}`);
-    if (!productList) {
-        console.error("Active product list not found!");
-        return;
-    }
-    let products = Array.from(productList.querySelectorAll('.product'));
-
-    console.log("Applying filters for", activeTab, "Products:", products.length, "Data:", productsData[activeTab].length); // Debug
-
-    // Sortowanie według rankingu
-    if (sortOrder && productsData[activeTab].length > 0) {
-        products.sort((a, b) => {
-            const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0; // Domyślnie 0, jeśli brak
-            const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0; // Domyślnie 0, jeśli brak
-            console.log("Sorting:", a.dataset.index, rankA, b.dataset.index, rankB); // Debug
-            return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
-        });
-        products.forEach(product => productList.appendChild(product)); // Ponowne renderowanie po sortowaniu
-    }
-
-    // Filtrowanie
-    products.forEach(product => {
-        const productName = product.querySelector('.product-name')?.textContent.toLowerCase() || '';
-        const productCode = product.querySelector('.product-code')?.textContent.toLowerCase() || '';
-        const productIndex = product.dataset.index;
-        const productCategory = productsData[activeTab][productIndex]?.Kategoria?.toLowerCase() || ''; // Domyślnie pusty ciąg, jeśli brak
-        const nameWords = productName.split(/\s+/);
-        const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
-        const normalizedProductCategory = productCategory.replace(/-/g, ' ');
-
-        console.log("Filter Debug - Index:", productIndex, "Category:", productCategory, "Selected:", selectedCategory); // Debug
-
-        const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
-            nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
-        );
-        const categoryMatch = selectedCategory === '' || normalizedProductCategory === normalizedSelectedCategory;
-
-        if (searchMatch && categoryMatch) {
+    if (searchBar) {
+        const searchInput = searchBar.querySelector('input');
+        const categoryFilter = searchBar.querySelector('select');
+        const rankingFilter = searchBar.querySelector('#ranking-filter');
+        if (searchInput) searchInput.value = '';
+        if (categoryFilter) categoryFilter.value = '';
+        if (rankingFilter) rankingFilter.value = '';
+        const productLists = document.querySelectorAll('.product-list.active .product');
+        productLists.forEach(product => {
             product.style.visibility = 'visible';
             product.style.position = 'relative';
-        } else {
-            product.style.visibility = 'hidden';
-            product.style.position = 'absolute';
+        });
+        // Wywołanie applyFilters z createSearchBar
+        const applyFiltersFunc = searchBar.applyFilters;
+        if (typeof applyFiltersFunc === 'function') {
+            applyFiltersFunc();
         }
+    }
+    if (country === 'cart') {
+        updateCart();
+    } else if (productsData[country].length === 0) {
+        loadProducts(country);
+    } else {
+        calculateTotal();
+        updateCartInfo();
+    }
+    // Upewnienie się, że koszyk jest aktualizowany po przełączeniu
+    if (document.getElementById('product-list-cart')) {
+        updateCart();
+    }
+    updateCartInfo();
+}
+
+function changeQuantity(country, index, change) {
+    const input = document.getElementById(`quantity-${country}-${index}`);
+    let currentQuantity = parseInt(input.value) || 0;
+    if (currentQuantity + change >= 0) {
+        currentQuantity += change;
+        input.value = currentQuantity;
+        productsData[country][index].quantity = currentQuantity;
+        // Aktualizacja koszyka za każdym razem, gdy zmienia się ilość
+        updateCart();
+        calculateTotal();
+        updateCartInfo();
+        saveCartState();
+    }
+}
+
+function updateCart() {
+    const cartList = document.getElementById('product-list-cart');
+    if (!cartList) {
+        console.error("Cart list element not found!");
+        return;
+    }
+    cartList.innerHTML = '';
+    let totalCartValue = 0;
+    for (let country in productsData) {
+        productsData[country].forEach((product, index) => {
+            if (product.quantity > 0) {
+                const imageUrl = `${country === 'lithuania' ? 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-litwa/' :
+                    country === 'bulgaria' || country === 'romania' ? 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-bulgaria/' :
+                    'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/'}${product['INDEKS']}.jpg`;
+                const productElement = document.createElement("div");
+                productElement.classList.add("product");
+                const originalPrice = parseFloat(product['CENA']) || 0;
+                const discountedPrice = applyDiscount(originalPrice, index, country);
+                const itemValue = discountedPrice * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
+                const customPrice = customPrices[`${country}-${index}`];
+                const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
+                    ? `${discountedPrice.toFixed(2)} GBP (Custom)`
+                    : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
+                productElement.innerHTML = `
+                    <img src="${imageUrl}" alt="Photo" style="position: relative; z-index: 0;">
+                    <div class="product-details">
+                        <div class="product-code">Index: ${product['INDEKS']}</div>
+                        <div class="product-name">${product['NAZWA']} (${country.charAt(0).toUpperCase() + country.slice(1)})</div>
+                        <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
+                        <div class="price">${itemValue.toFixed(2)} GBP (Unit: ${priceDisplay})</div>
+                    </div>
+                    <div class="quantity-controls cart">
+                        <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
+                        <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
+                        <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
+                    </div>
+                `;
+                cartList.appendChild(productElement);
+                totalCartValue += itemValue;
+            }
+        });
+    }
+    document.getElementById("cart-total").innerText = `Cart value: ${totalCartValue.toFixed(2)} GBP`;
+    updateCartInfo();
+}
+
+function removeItem(country, index) {
+    productsData[country][index].quantity = 0;
+    if (activeTab === 'cart') {
+        updateCart();
+    } else {
+        calculateTotal();
+        updateCartInfo();
+    }
+    saveCartState();
+    if (document.getElementById(`quantity-${country}-${index}`)) {
+        document.getElementById(`quantity-${country}-${index}`).value = '0';
+    }
+}
+
+function calculateTotal() {
+    let totalValue = 0;
+    let categoryTotalsText = '';
+    for (let country in productsData) {
+        let countryTotal = 0;
+        productsData[country].forEach((product, index) => {
+            if (product.quantity > 0) {
+                countryTotal += applyDiscount(parseFloat(product['CENA']) || 0, index, country) * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
+            }
+        });
+        categoryTotals[country] = Number(countryTotal.toFixed(2));
+        if (countryTotal > 0) {
+            categoryTotalsText += `${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n`;
+        }
+    }
+    totalValue = categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania;
+    document.getElementById("category-totals").innerText = categoryTotalsText.trim();
+    document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
+}
+
+function submitOrder() {
+    const storeName = document.getElementById('store-name').value;
+    const email = document.getElementById('email').value;
+    if (!email || !storeName) {
+        alert("Please fill in all fields.");
+        return;
+    }
+    let orderMessage = `Order for store: ${storeName}\n\n`;
+    for (let country in productsData) {
+        let countryTotal = 0;
+        let hasItems = false;
+        orderMessage += `${country.charAt(0).toUpperCase() + country.slice(1)}:\n`;
+        orderMessage += "Index\tName\tQuantity\tPrice\n";
+        productsData[country].forEach((product, index) => {
+            if (product.quantity > 0) {
+                hasItems = true;
+                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
+                orderMessage += `${product.INDEKS}\t${product['NAZWA']}\t${product.quantity}\t${price.toFixed(2)} GBP\n`;
+                countryTotal += price * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
+            }
+        });
+        if (!hasItems) {
+            orderMessage += "No items in cart for this category.\n\n";
+        } else {
+            orderMessage += `Total for ${country.charAt(0).toUpperCase() + country.slice(1)}: ${countryTotal.toFixed(2)} GBP\n\n`;
+        }
+    }
+    orderMessage += `Total order value: ${(categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania).toFixed(2)} GBP\n`;
+    orderMessage += `Discount: ${discountPercentage}%\n`;
+    orderMessage += `Cash Back: ${customCashBackPercentage}%`;
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("store-name", storeName);
+    formData.append("message", orderMessage);
+    console.log("Sending order:", { email, storeName, orderMessage });
+    fetch("https://formspree.io/f/xanwzpgj", {
+        method: "POST",
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        console.log("Server response:", response.status, response.statusText);
+        if (response.ok) {
+            alert("Order sent!");
+            clearCartState();
+        } else {
+            throw new Error("Server response error");
+        }
+    }).catch(error => {
+        console.error("Error sending order:", error);
+        alert("Error sending order.");
     });
 }
+
+// Wywołanie okna dialogowego, stworzenie paska bocznego i paska wyszukiwania z filtrem po załadowaniu strony
+window.onload = async function() {
+    showInitialDialog();
+    createSidebar();
+    createSearchBar();
+    // Ładowanie danych dla Litwy jako pierwszej
+    await loadProducts('lithuania');
+    // Ładowanie pozostałych krajów w tle
+    await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
+    switchTab('lithuania'); // Wyraźnie przełącz na Litwę po załadowaniu
+    loadCartState();
+    updateBanner();
+    updateCartInfo();
+};
