@@ -15,6 +15,7 @@ let discountPercentage = 0; // Domyślnie 0%
 let customCashBackPercentage = 0; // Domyślnie 0%
 let customPrices = {}; // Obiekt przechowujący niestandardowe ceny
 let showCompetitorPrice = false; // Domyślnie cena konkurencji ukryta
+let showStockInfo = false; // Domyślnie stany magazynowe ukryte
 let gk_isXlsx = false;
 let gk_xlsxFileLookup = {};
 let gk_fileData = {};
@@ -362,6 +363,18 @@ function createSidebar() {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         updatePrices();
     };
+    // Przywrócenie opcji "Show Stock Info"
+    const stockInfoLabel = document.createElement('label');
+    stockInfoLabel.innerText = 'Show Stock Info:';
+    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Dodano margines z lewej dla labela
+    const stockInfoCheckbox = document.createElement('input');
+    stockInfoCheckbox.type = 'checkbox';
+    stockInfoCheckbox.checked = showStockInfo;
+    stockInfoCheckbox.style.cssText = `margin-left: 5px;`; // Dodano margines z lewej dla checkboxa
+    stockInfoCheckbox.onchange = () => {
+        showStockInfo = stockInfoCheckbox.checked;
+        updatePrices();
+    };
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
     sidebar.appendChild(discountInput);
@@ -369,6 +382,8 @@ function createSidebar() {
     sidebar.appendChild(cashBackInput);
     sidebar.appendChild(competitorPriceLabel);
     sidebar.appendChild(competitorPriceCheckbox);
+    sidebar.appendChild(stockInfoLabel);
+    sidebar.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
 
@@ -583,7 +598,7 @@ function updateCart() {
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                         <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe'] || 'N/A'}</span>
+                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${showStockInfo ? (product['Stany magazynowe'] || 'N/A') : ''}</span>
                     </div>
                 `;
                 cartList.appendChild(productElement);
