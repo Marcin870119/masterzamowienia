@@ -107,28 +107,31 @@ function createSearchBar() {
         const searchTerm = searchInput.value.toLowerCase().trim();
         const selectedCategory = categoryFilter.value;
         const sortOrder = rankingFilter.value;
-        const productLists = document.querySelectorAll('.product-list.active .product');
-        let products = Array.from(productLists);
+        const productList = document.getElementById(`product-list-${activeTab}`);
+        if (!productList) {
+            console.error("Active product list not found!");
+            return;
+        }
+        let products = Array.from(productList.querySelectorAll('.product'));
 
-        console.log("Applying filters for", activeTab, "Products:", products.length, "Data:", productsData[activeTab].length); // Debug
+        console.log("Applying filters for", activeTab, "Products:", products.length, "Data:", productsData[activeTab] ? productsData[activeTab].length : 'undefined'); // Debug
 
-        // Sortowanie według rankingu, jeśli wybrano
-        if (sortOrder && productsData[activeTab].length > 0) {
+        // Sortowanie według rankingu, jeśli wybrano i dane są dostępne
+        if (sortOrder && productsData[activeTab] && productsData[activeTab].length > 0) {
             products.sort((a, b) => {
                 const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
                 const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
                 console.log("Sorting:", a.dataset.index, rankA, b.dataset.index, rankB); // Debug
                 return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
             });
-            const productList = document.getElementById(`product-list-${activeTab}`);
             products.forEach(product => productList.appendChild(product));
         }
 
-        productLists.forEach(product => {
+        products.forEach(product => {
             const productName = product.querySelector('.product-name')?.textContent.toLowerCase() || '';
             const productCode = product.querySelector('.product-code')?.textContent.toLowerCase() || '';
             const productIndex = product.dataset.index;
-            const productCategory = productsData[activeTab][productIndex]?.Kategoria?.toLowerCase() || '';
+            const productCategory = productsData[activeTab] && productsData[activeTab][productIndex]?.Kategoria?.toLowerCase() || '';
             const nameWords = productName.split(/\s+/);
             const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
             const normalizedProductCategory = productCategory.replace(/-/g, ' ');
@@ -335,20 +338,17 @@ function switchTab(country) {
     const saveButtons = document.getElementById('save-buttons');
     if (saveButtons) {
         saveButtons.style.display = country === 'cart' ? 'block' : 'none';
-        if (country === 'cart') {
-            // Dodanie przycisków, jeśli nie istnieją
-            if (saveButtons.innerHTML === '') {
-                saveButtons.innerHTML = `
-                    <button onclick="saveCartToCSV()" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">Zapisz do CSV</button>
-                    <button onclick="saveCartToXLS()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Zapisz do XLS</button>
-                `;
-            }
+        if (country === 'cart' && saveButtons.innerHTML === '') {
+            saveButtons.innerHTML = `
+                <button onclick="saveCartToCSV()" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">Zapisz do CSV</button>
+                <button onclick="saveCartToXLS()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Zapisz do XLS</button>
+            `;
         }
     }
     updateBanner();
     if (country === 'cart') {
         updateCart();
-    } else if (productsData[country].length === 0) {
+    } else if (productsData[country] && productsData[country].length === 0) {
         loadProducts(country);
     } else {
         calculateTotal();
