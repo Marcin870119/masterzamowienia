@@ -327,12 +327,15 @@ function createSidebar() {
         updateDiscountInfo();
     };
     const competitorPriceLabel = document.createElement('label');
-    competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold;`;
+    const competitorPriceText = document.createElement('span');
+    competitorPriceText.innerText = 'Show Competitor Price:';
+    competitorPriceLabel.appendChild(competitorPriceText);
+    competitorPriceLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; position: relative;`;
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-right: 10px; vertical-align: middle;`;
+    competitorPriceCheckbox.style.cssText = `margin-right: 10px; vertical-align: middle; position: absolute; left: 0;`;
+    competitorPriceLabel.appendChild(competitorPriceCheckbox);
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -343,12 +346,15 @@ function createSidebar() {
         if (activeTab !== 'cart') updatePrices();
     };
     const stockInfoLabel = document.createElement('label');
-    stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold;`;
+    const stockInfoText = document.createElement('span');
+    stockInfoText.innerText = 'Show Stock Info:';
+    stockInfoLabel.appendChild(stockInfoText);
+    stockInfoLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; position: relative;`;
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
-    stockInfoCheckbox.style.cssText = `margin-right: 10px; vertical-align: middle;`;
+    stockInfoCheckbox.style.cssText = `margin-right: 10px; vertical-align: middle; position: absolute; left: 0;`;
+    stockInfoLabel.appendChild(stockInfoCheckbox);
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -364,9 +370,7 @@ function createSidebar() {
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
     sidebar.appendChild(competitorPriceLabel);
-    competitorPriceLabel.appendChild(competitorPriceCheckbox);
     sidebar.appendChild(stockInfoLabel);
-    stockInfoLabel.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
