@@ -401,7 +401,7 @@ function updateBanner() {
             bannerImage.style.display = 'block';
             break;
         case 'romania':
-            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/RUMUNIA BANER.jpg';
+            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA BANER 2.jpg'; // Tymczasowo używamy UKRAINA
             bannerImage.style.display = 'block';
             break;
         case 'cart':
