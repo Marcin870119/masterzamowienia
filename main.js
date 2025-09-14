@@ -49,6 +49,7 @@ function loadFileData(filename) {
     return gk_fileData[filename] || "";
 }
 
+// Funkcja obliczająca cenę z rabatem lub niestandardową ceną
 function applyDiscount(price, productIndex, country) {
     const parsedPrice = parseFloat(price) || 0;
     const customPrice = customPrices[`${country}-${productIndex}`];
@@ -58,15 +59,19 @@ function applyDiscount(price, productIndex, country) {
     return Number((parsedPrice * (1 - discountPercentage / 100)).toFixed(2));
 }
 
+// Funkcja resetująca niestandardową cenę
 function resetCustomPrice(country, index) {
     delete customPrices[`${country}-${index}`];
     updatePrices();
     saveCartState();
 }
 
+// Funkcja aktualizująca ceny na stronie - bez przeskakiwania
 function updatePrices() {
+    // Zapisz aktualną pozycję scrolla przed aktualizacją
     const activeList = document.querySelector('.product-list.active');
     const scrollPosition = activeList ? activeList.scrollTop : 0;
+    // Aktualizuj tylko produkty w aktywnej zakładce, aby uniknąć pełnego przeładowania
     if (productsData[activeTab].length > 0) {
         loadProducts(activeTab);
     }
@@ -76,15 +81,17 @@ function updatePrices() {
     calculateTotal();
     updateCartInfo();
     updateDiscountInfo();
+    // Przywróć pozycję scrolla po aktualizacji
     setTimeout(() => {
         if (activeList) {
             activeList.scrollTop = scrollPosition;
         }
-    }, 50);
+    }, 50); // Krótki delay na aktualizację DOM
 }
 
+// Funkcja zapisująca koszyk do pliku CSV w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToCSV() {
-    let csvContent = 'indeks,nazwa,ilosc,cena\n';
+    let csvContent = 'indeks,nazwa,ilosc,cena\n'; // Nagłówek w żądanym formacie
     for (let country in productsData) {
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
@@ -104,9 +111,10 @@ function saveCartToCSV() {
     document.body.removeChild(link);
 }
 
+// Funkcja zapisująca koszyk do pliku XLS w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToXLS() {
     const workbook = XLSX.utils.book_new();
-    const ws_data = [['indeks', 'nazwa', 'ilosc', 'cena']];
+    const ws_data = [['indeks', 'nazwa', 'ilosc', 'cena']]; // Nagłówek w żądanym formacie
     for (let country in productsData) {
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
@@ -122,6 +130,7 @@ function saveCartToXLS() {
     XLSX.writeFile(workbook, `order_${timestamp}.xlsx`);
 }
 
+// Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -223,6 +232,7 @@ function showInitialDialog() {
     document.body.appendChild(modal);
 }
 
+// Funkcja wyświetlająca okno dialogowe do zmiany ceny produktu (styl jak sidebar)
 function showPriceDialog(country, index, originalPrice) {
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -256,9 +266,9 @@ function showPriceDialog(country, index, originalPrice) {
         const newPrice = parseFloat(priceInput.value);
         if (newPrice >= 0 && !isNaN(newPrice)) {
             customPrices[`${country}-${index}`] = newPrice;
-            updatePrices();
+            updatePrices(); // Aktualizacja cen po zapisaniu nowej ceny
         } else {
-            delete customPrices[`${country}-${index}`];
+            delete customPrices[`${country}-${index}`]; // Usunięcie ceny, jeśli jest nieprawidłowa
             updatePrices();
         }
         document.body.removeChild(modal);
@@ -276,33 +286,33 @@ function showPriceDialog(country, index, originalPrice) {
     document.body.appendChild(modal);
 }
 
+// Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
-    sidebar.id = 'sidebar';
     sidebar.style.cssText = `
         position: fixed;
         left: 0;
         top: 0;
-        width: 200px;
+        width: 100px;
         height: 100%;
         background-color: #f8f8f8;
         padding: 15px;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         z-index: 1000;
         font-family: Arial, sans-serif;
-        font-size: 14px;
+        font-size: 12px;
     `;
     const discountInfo = document.createElement('div');
     discountInfo.id = 'discountInfo';
-    discountInfo.style.cssText = `margin-bottom: 15px; font-weight: bold; color: #333;`;
+    discountInfo.style.cssText = `margin-bottom: 10px; font-weight: bold; color: #333;`;
     updateDiscountInfo();
     const discountLabel = document.createElement('label');
-    discountLabel.innerText = 'Discount (%):';
-    discountLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold;`;
+    discountLabel.innerText = 'Discount (%): ';
+    discountLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
     const discountInput = document.createElement('input');
     discountInput.type = 'number';
     discountInput.value = discountPercentage;
-    discountInput.style.cssText = `width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; margin-bottom: 15px;`;
+    discountInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
     discountInput.min = 0;
     discountInput.max = 100;
     discountInput.onchange = () => {
@@ -313,12 +323,12 @@ function createSidebar() {
         updateDiscountInfo();
     };
     const cashBackLabel = document.createElement('label');
-    cashBackLabel.innerText = 'Cash Back (%):';
-    cashBackLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold;`;
+    cashBackLabel.innerText = 'Cash Back (%): ';
+    cashBackLabel.style.cssText = `display: block; margin: 10px 0 5px; font-weight: normal;`;
     const cashBackInput = document.createElement('input');
     cashBackInput.type = 'number';
     cashBackInput.value = customCashBackPercentage;
-    cashBackInput.style.cssText = `width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; margin-bottom: 15px;`;
+    cashBackInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
     cashBackInput.min = 0;
     cashBackInput.max = 100;
     cashBackInput.onchange = () => {
@@ -330,13 +340,14 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left;`;
+    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 2px; font-weight: normal;`; // Bliżej lewej krawędzi
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-right: 10px; vertical-align: middle;`;
+    competitorPriceCheckbox.style.cssText = `margin-left: 2px;`; // Bliżej lewej krawędzi
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
+        // Aktualizacja dla wszystkich krajów
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
             if (productsData[country].length > 0) {
                 loadProducts(country);
@@ -344,16 +355,17 @@ function createSidebar() {
         });
         if (activeTab !== 'cart') updatePrices();
     };
-    competitorPriceLabel.appendChild(competitorPriceCheckbox);
+    // Dodanie nowej opcji do wyświetlania stanów magazynowych
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left;`;
+    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 2px; font-weight: normal;`; // Bliżej lewej krawędzi
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
-    stockInfoCheckbox.style.cssText = `margin-right: 10px; vertical-align: middle;`;
+    stockInfoCheckbox.style.cssText = `margin-left: 2px;`; // Bliżej lewej krawędzi
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
+        // Aktualizacja dla wszystkich krajów
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
             if (productsData[country].length > 0) {
                 loadProducts(country);
@@ -361,17 +373,19 @@ function createSidebar() {
         });
         if (activeTab !== 'cart') updatePrices();
     };
-    stockInfoLabel.appendChild(stockInfoCheckbox);
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
     sidebar.appendChild(discountInput);
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
     sidebar.appendChild(competitorPriceLabel);
+    sidebar.appendChild(competitorPriceCheckbox);
     sidebar.appendChild(stockInfoLabel);
+    sidebar.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
 
+// Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
     const discountInfo = document.getElementById('discountInfo');
     if (discountInfo) {
@@ -381,6 +395,7 @@ function updateDiscountInfo() {
     }
 }
 
+// Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
     if (!bannerImage) {
@@ -401,7 +416,7 @@ function updateBanner() {
             bannerImage.style.display = 'block';
             break;
         case 'romania':
-            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA BANER 2.jpg'; // Tymczasowo używamy UKRAINA
+            bannerImage.src = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/RUMUNIA BANER.jpg';
             bannerImage.style.display = 'block';
             break;
         case 'cart':
@@ -411,67 +426,6 @@ function updateBanner() {
             bannerImage.src = 'https://i.postimg.cc/SNYKPTtw/Tekst-akapitu.jpg';
             bannerImage.style.display = 'block';
     }
-}
-
-function switchTab(country) {
-    activeTab = country;
-    console.log("Switching to tab:", country);
-    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.product-list').forEach(list => list.classList.remove('active'));
-    const selectedTab = document.querySelector(`[onclick="switchTab('${country}')"]`);
-    if (selectedTab) {
-        selectedTab.classList.add('active');
-    } else {
-        console.error("Tab not found:", country);
-    }
-    const selectedList = document.getElementById(`product-list-${country}`);
-    if (selectedList) {
-        selectedList.classList.add('active');
-    } else {
-        console.error("Product list not found for:", country);
-    }
-    window.scrollTo(0, 0);
-    const searchBar = document.getElementById('search-bar');
-    if (searchBar) {
-        const searchInput = searchBar.querySelector('input');
-        const categoryFilter = searchBar.querySelector('select');
-        const rankingFilter = searchBar.querySelector('#ranking-filter');
-        if (searchInput) searchInput.value = '';
-        if (categoryFilter) categoryFilter.value = '';
-        if (rankingFilter) rankingFilter.value = '';
-        const productLists = document.querySelectorAll('.product-list.active .product');
-        productLists.forEach(product => {
-            product.style.visibility = 'visible';
-            product.style.position = 'relative';
-        });
-        if (typeof applyFilters === 'function') {
-            setTimeout(() => applyFilters(), 100); // Opóźnienie dla synchronizacji z DOM
-        }
-    }
-    const saveButtons = document.getElementById('save-buttons');
-    if (saveButtons) {
-        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
-    }
-    updateBanner();
-    if (country === 'cart') {
-        updateCart();
-    } else if (productsData[country].length === 0) {
-        loadProducts(country).then(() => {
-            if (typeof applyFilters === 'function') {
-                applyFilters(); // Filtrowanie po załadowaniu danych
-            }
-        }).catch(error => console.error("Error loading products for", country, ":", error));
-    } else {
-        calculateTotal();
-        updateCartInfo();
-        if (typeof applyFilters === 'function') {
-            applyFilters(); // Filtrowanie dla istniejących danych
-        }
-    }
-    if (document.getElementById('product-list-cart')) {
-        updateCart();
-    }
-    updateCartInfo();
 }
 
 function updateCartInfo() {
@@ -535,6 +489,60 @@ function clearCartState() {
     updateCartInfo();
 }
 
+function switchTab(country) {
+    activeTab = country;
+    console.log("Switching to tab:", country);
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.product-list').forEach(list => list.classList.remove('active'));
+    const selectedTab = document.querySelector(`[onclick="switchTab('${country}')"]`);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    } else {
+        console.error("Tab not found:", country);
+    }
+    const selectedList = document.getElementById(`product-list-${country}`);
+    if (selectedList) {
+        selectedList.classList.add('active');
+    } else {
+        console.error("Product list not found for:", country);
+    }
+    // Zarządzanie widocznością przycisków zapisu
+    const saveButtons = document.getElementById('save-buttons');
+    if (saveButtons) {
+        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
+    }
+    updateBanner();
+    const searchBar = document.getElementById('search-bar');
+    if (searchBar) {
+        const searchInput = searchBar.querySelector('input');
+        const categoryFilter = searchBar.querySelector('select');
+        if (searchInput) searchInput.value = '';
+        if (categoryFilter) categoryFilter.value = '';
+        const productLists = document.querySelectorAll('.product-list.active .product');
+        productLists.forEach(product => {
+            product.style.visibility = 'visible';
+            product.style.position = 'relative';
+        });
+        // Wywołanie applyFilters z main1.js
+        if (typeof applyFilters === 'function') {
+            applyFilters();
+        }
+    }
+    if (country === 'cart') {
+        updateCart();
+    } else if (productsData[country].length === 0) {
+        loadProducts(country);
+    } else {
+        calculateTotal();
+        updateCartInfo();
+    }
+    // Upewnienie się, że koszyk jest aktualizowany po przełączeniu
+    if (document.getElementById('product-list-cart')) {
+        updateCart();
+    }
+    updateCartInfo();
+}
+
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
@@ -542,6 +550,7 @@ function changeQuantity(country, index, change) {
         currentQuantity += change;
         input.value = currentQuantity;
         productsData[country][index].quantity = currentQuantity;
+        // Aktualizacja koszyka za każdym razem, gdy zmienia się ilość
         updateCart();
         calculateTotal();
         updateCartInfo();
@@ -684,21 +693,17 @@ function submitOrder() {
     });
 }
 
+// Wywołanie okna dialogowego, stworzenie paska bocznego i paska wyszukiwania z filtrem po załadowaniu strony
 window.onload = async function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
-    try {
-        await loadProducts('lithuania');
-        await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
-        switchTab('lithuania');
-        loadCartState();
-        updateBanner();
-        updateCartInfo();
-        if (typeof applyFilters === 'function') {
-            applyFilters(); // Początkowe zastosowanie filtrów
-        }
-    } catch (error) {
-        console.error("Error during page load:", error);
-    }
+    // Ładowanie danych dla Litwy jako pierwszej
+    await loadProducts('lithuania');
+    // Ładowanie pozostałych krajów w tle
+    await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
+    switchTab('lithuania'); // Wyraźnie przełącz na Litwę po załadowaniu
+    loadCartState();
+    updateBanner();
+    updateCartInfo();
 };
