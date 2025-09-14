@@ -131,7 +131,16 @@ function loadProducts(country) {
                     return { ...product, quantity: 0, dataset: { index } };
                 });
             } else {
-                productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
+                productsData[country] = data.map((product, index) => {
+                    // Ustaw domyślne wartości, jeśli brak kluczy
+                    return {
+                        ...product,
+                        quantity: 0,
+                        dataset: { index },
+                        Kategoria: product.Kategoria || '', // Domyślnie pusty ciąg, jeśli brak
+                        Ranking: product.Ranking || '0'     // Domyślnie '0', jeśli brak
+                    };
+                });
             }
             const productList = document.getElementById(`product-list-${country}`);
             if (!productList) {
@@ -250,8 +259,9 @@ function applyFilters() {
     // Sortowanie według rankingu
     if (sortOrder && productsData[activeTab].length > 0) {
         products.sort((a, b) => {
-            const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
-            const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
+            const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0; // Domyślnie 0, jeśli brak
+            const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0; // Domyślnie 0, jeśli brak
+            console.log("Sorting:", a.dataset.index, rankA, b.dataset.index, rankB); // Debug
             return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
         });
         products.forEach(product => productList.appendChild(product)); // Ponowne renderowanie po sortowaniu
@@ -262,7 +272,7 @@ function applyFilters() {
         const productName = product.querySelector('.product-name')?.textContent.toLowerCase() || '';
         const productCode = product.querySelector('.product-code')?.textContent.toLowerCase() || '';
         const productIndex = product.dataset.index;
-        const productCategory = productsData[activeTab][productIndex]?.Kategoria?.toLowerCase() || '';
+        const productCategory = productsData[activeTab][productIndex]?.Kategoria?.toLowerCase() || ''; // Domyślnie pusty ciąg, jeśli brak
         const nameWords = productName.split(/\s+/);
         const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
         const normalizedProductCategory = productCategory.replace(/-/g, ' ');
