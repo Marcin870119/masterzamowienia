@@ -4,20 +4,23 @@
   <meta charset="UTF-8">
   <title>Label Maker</title>
   <link rel="stylesheet" href="etykiety.css">
+  <!-- Parser CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- Parser XLS/XLSX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Generator kodów kreskowych -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
   <h1>Shop Label Creator</h1>
-
   <div class="form-container">
     <label>Search Product:
       <input type="text" id="productSearch" list="productSuggestions" placeholder="Search by name or index">
       <datalist id="productSuggestions"></datalist>
     </label>
-
     <label>Product Name:
       <input type="text" id="productName" placeholder="Enter product name">
     </label>
-
     <label>Product Name Style:
       <select id="nameStyle">
         <option value="small-left">Small - Left</option>
@@ -31,11 +34,9 @@
         <option value="large-right">Large - Right</option>
       </select>
     </label>
-
     <label>Price:
       <input type="number" id="price" step="0.01" placeholder="0.00">
     </label>
-
     <label>Price Size:
       <select id="priceSize">
         <option value="small">Small</option>
@@ -43,21 +44,18 @@
         <option value="large">Large</option>
       </select>
     </label>
-
     <label>Price Alignment:
       <select id="priceAlign">
         <option value="center" selected>Center</option>
         <option value="right">Right</option>
       </select>
     </label>
-
     <label>Currency:
       <select id="currency">
         <option value="£">£ (GBP)</option>
         <option value="€">€ (EUR)</option>
       </select>
     </label>
-
     <label>Unit:
       <select id="unit">
         <option value="each">each</option>
@@ -65,11 +63,9 @@
         <option value="kg">kg</option>
       </select>
     </label>
-
     <label>Promotion Period:
       <input type="text" id="promotion" placeholder="e.g. 11.05-14.06">
     </label>
-
     <label>Label Color:
       <select id="color">
         <option value="white">White</option>
@@ -77,7 +73,6 @@
         <option value="yellow">Yellow</option>
       </select>
     </label>
-
     <label>Flag:
       <select id="flag">
         <option value="">None</option>
@@ -88,7 +83,6 @@
         <option value="bg">Bulgaria</option>
       </select>
     </label>
-
     <label>Flag Size:
       <select id="flagSize">
         <option value="small">Small</option>
@@ -96,22 +90,20 @@
         <option value="large">Large</option>
       </select>
     </label>
-
     <label>Icon Category:
       <select id="iconCategory">
         <option value="">None</option>
         <option value="dairy">nabial</option>
         <option value="jars">sloiki</option>
-        <option value="maka-makarony">maka makarony</option>
+        <option value="m prawn-makarony">maka makarony</option>
         <option value="meat">wedliny mieso</option>
         <option value="przyprawy">przyprawy</option>
         <option value="soft-drinks">soft drinks</option>
         <option value="sweets">slodycze</option>
         <option value="warzywa-i-owoce">warzywa i owoce</option>
-         <option value="konserwy">konserwy</option>
+        <option value="konserwy">konserwy</option>
       </select>
     </label>
-
     <label>Icon Size:
       <select id="iconSize">
         <option value="small">Small</option>
@@ -119,18 +111,22 @@
         <option value="large">Large</option>
       </select>
     </label>
-
     <label>Barcode:
       <input type="text" id="barcodeInput" placeholder="Enter barcode number">
     </label>
-
+    <label>Import Data File (CSV/XLS):
+      <input type="file" id="importFile" accept=".csv,.xls,.xlsx" onchange="handleImport(event)">
+    </label>
+    <label>EAN Database (JSON):
+      <input type="file" id="eanFile" accept=".json" onchange="loadEANDatabase(event)">
+    </label>
     <div class="button-group">
       <button onclick="updateLabel()">Update Label</button>
       <button onclick="saveLabel()" id="saveButton">Save Label</button>
       <button onclick="addNewLabel()">Add New Label</button>
+      <button onclick="importAndGenerate()">Import and Generate Labels</button>
     </div>
   </div>
-
   <div id="label" class="label-preview">
     <img id="labelFlag" class="flag" style="display:none;" alt="flag">
     <img id="labelIcon" class="icon" style="display:none;" alt="icon">
@@ -140,9 +136,8 @@
     </div>
     <div class="details" id="labelName">Product Name</div>
     <div class="promo" id="labelPromo">Special offer: --</div>
-    <svg id="barcode" class="barcode"></svg>
+    <canvas id="barcode"></canvas>
   </div>
-
   <div id="savedLabels" class="saved-labels-container">
     <h2>Saved Labels (up to 6)</h2>
     <div id="labelsList"></div>
@@ -150,9 +145,6 @@
       <button onclick="exportPDF()">Export PDF</button>
     </div>
   </div>
-
-  <!-- biblioteki -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
   <script src="etykiety.js"></script>
 </body>
