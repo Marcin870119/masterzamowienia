@@ -68,49 +68,35 @@ function resetCustomPrice(country, index) {
 
 // Funkcja aktualizująca ceny na stronie
 function updatePrices() {
-    ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
-        if (productsData[country].length > 0) {
-            loadProducts(country); // Ponowne załadowanie z nowym rabatem
-        }
-    });
+    const activeList = document.querySelector('.product-list.active');
+    const scrollPosition = activeList ? activeList.scrollTop : 0;
+    if (productsData[activeTab].length > 0) {
+        loadProducts(activeTab);
+    }
     if (activeTab === 'cart') {
         updateCart();
     }
     calculateTotal();
     updateCartInfo();
     updateDiscountInfo();
+    setTimeout(() => {
+        if (activeList) {
+            activeList.scrollTop = scrollPosition;
+        }
+    }, 50);
 }
 
 // Funkcja zapisująca koszyk do pliku CSV
 function saveCartToCSV() {
-    const storeName = document.getElementById('store-name').value || 'Unknown_Store';
-    let csvContent = 'data:text/csv;charset=utf-8,';
-    csvContent += 'Store Name,' + storeName + '\n\n';
-
+    let csvContent = 'indeks,nazwa,ilosc,cena\n';
     for (let country in productsData) {
-        let countryTotal = 0;
-        let hasItems = false;
-        csvContent += `${country.charAt(0).toUpperCase() + country.slice(1)},\n`;
-        csvContent += 'Index,Name,Quantity,Unit Price (GBP),Total (GBP)\n';
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
-                hasItems = true;
-                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
-                const total = price * parseFloat(product['OPAKOWANIE'] || 1) * product.quantity;
-                csvContent += `${product.INDEKS},${product['NAZWA'].replace(/,/g, '')},${product.quantity},${price.toFixed(2)},${total.toFixed(2)}\n`;
-                countryTotal += total;
+                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country).toFixed(2);
+                csvContent += `${product.INDEKS},${product['NAZWA'].replace(/,/g, '')},${product.quantity},${price}\n`;
             }
         });
-        if (hasItems) {
-            csvContent += `Total for ${country.charAt(0).toUpperCase() + country.slice(1)},${countryTotal.toFixed(2)} GBP\n\n`;
-        } else {
-            csvContent += 'No items in cart for this category,\n\n';
-        }
     }
-    const totalValue = (categoryTotals.lithuania + categoryTotals.bulgaria + categoryTotals.ukraine + categoryTotals.romania).toFixed(2);
-    csvContent += `Total Order Value,${totalValue} GBP\n`;
-    csvContent += `Discount,${discountPercentage}%\n`;
-    csvContent += `Cash Back,${customCashBackPercentage}%\n`;
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -122,19 +108,15 @@ function saveCartToCSV() {
     document.body.removeChild(link);
 }
 
-// Funkcja zapisująca koszyk do pliku XLS (indeks, nazwa, ilosc, cena)
+// Funkcja zapisująca koszyk do pliku XLS
 function saveCartToXLS() {
-    const storeName = document.getElementById('store-name').value || 'Unknown_Store';
     const workbook = XLSX.utils.book_new();
-    const ws_data = [['Store Name', storeName], ['']];
-    // Nagłówki dla produktów
-    ws_data.push(['Index', 'Name', 'Quantity', 'Unit Price (GBP)']);
-    // Dodaj dane tylko dla produktów w koszyku
+    const ws_data = [['indeks', 'nazwa', 'ilosc', 'cena']];
     for (let country in productsData) {
         productsData[country].forEach((product, index) => {
             if (product.quantity > 0) {
-                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
-                ws_data.push([product.INDEKS, product['NAZWA'], product.quantity, price.toFixed(2)]);
+                const price = applyDiscount(parseFloat(product['CENA']) || 0, index, country).toFixed(2);
+                ws_data.push([product.INDEKS, product['NAZWA'], product.quantity, price]);
             }
         });
     }
@@ -281,10 +263,11 @@ function showPriceDialog(country, index, originalPrice) {
         const newPrice = parseFloat(priceInput.value);
         if (newPrice >= 0 && !isNaN(newPrice)) {
             customPrices[`${country}-${index}`] = newPrice;
+            updatePrices();
         } else {
-            delete customPrices[`${country}-${index}`]; // Usunięcie ceny, jeśli jest nieprawidłowa
+            delete customPrices[`${country}-${index}`];
+            updatePrices();
         }
-        updatePrices();
         document.body.removeChild(modal);
     };
     const cancelButton = document.createElement('button');
@@ -303,30 +286,31 @@ function showPriceDialog(country, index, originalPrice) {
 // Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
+    sidebar.id = 'sidebar';
     sidebar.style.cssText = `
         position: fixed;
         left: 0;
         top: 0;
-        width: 100px;
+        width: 200px;
         height: 100%;
         background-color: #f8f8f8;
         padding: 15px;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         z-index: 1000;
         font-family: Arial, sans-serif;
-        font-size: 12px;
+        font-size: 14px;
     `;
     const discountInfo = document.createElement('div');
     discountInfo.id = 'discountInfo';
-    discountInfo.style.cssText = `margin-bottom: 10px; font-weight: bold; color: #333;`;
+    discountInfo.style.cssText = `margin-bottom: 15px; font-weight: bold; color: #333;`;
     updateDiscountInfo();
     const discountLabel = document.createElement('label');
-    discountLabel.innerText = 'Discount (%): ';
-    discountLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
+    discountLabel.innerText = 'Discount (%):';
+    discountLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold;`;
     const discountInput = document.createElement('input');
     discountInput.type = 'number';
     discountInput.value = discountPercentage;
-    discountInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
+    discountInput.style.cssText = `width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; margin-bottom: 15px;`;
     discountInput.min = 0;
     discountInput.max = 100;
     discountInput.onchange = () => {
@@ -337,12 +321,12 @@ function createSidebar() {
         updateDiscountInfo();
     };
     const cashBackLabel = document.createElement('label');
-    cashBackLabel.innerText = 'Cash Back (%): ';
-    cashBackLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
+    cashBackLabel.innerText = 'Cash Back (%):';
+    cashBackLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold;`;
     const cashBackInput = document.createElement('input');
     cashBackInput.type = 'number';
     cashBackInput.value = customCashBackPercentage;
-    cashBackInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
+    cashBackInput.style.cssText = `width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; margin-bottom: 15px;`;
     cashBackInput.min = 0;
     cashBackInput.max = 100;
     cashBackInput.onchange = () => {
@@ -354,36 +338,45 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Dodano margines z lewej dla labela
+    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Zachowany styl z poprzedniej wersji
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-left: 5px;`; // Dodano margines z lewej dla checkboxa
+    competitorPriceCheckbox.style.cssText = `margin-left: 5px;`; // Zachowany styl z poprzedniej wersji
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
-        updatePrices();
+        ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
+            if (productsData[country].length > 0) {
+                loadProducts(country);
+            }
+        });
+        if (activeTab !== 'cart') updatePrices();
     };
-    // Przywrócenie opcji "Show Stock Info" z poprawną pozycją
+    competitorPriceLabel.appendChild(competitorPriceCheckbox);
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Dodano margines z lewej dla labela
+    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Zachowany styl z poprzedniej wersji
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
-    stockInfoCheckbox.style.cssText = `margin-left: 5px;`; // Dodano margines z lewej dla checkboxa
+    stockInfoCheckbox.style.cssText = `margin-left: 5px;`; // Zachowany styl z poprzedniej wersji
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
-        updatePrices();
+        ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
+            if (productsData[country].length > 0) {
+                loadProducts(country);
+            }
+        });
+        if (activeTab !== 'cart') updatePrices();
     };
+    stockInfoLabel.appendChild(stockInfoCheckbox);
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
     sidebar.appendChild(discountInput);
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
     sidebar.appendChild(competitorPriceLabel);
-    sidebar.appendChild(competitorPriceCheckbox);
     sidebar.appendChild(stockInfoLabel);
-    sidebar.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
 
@@ -430,6 +423,62 @@ function updateBanner() {
     }
 }
 
+// Funkcja przełączania zakładek
+function switchTab(country) {
+    activeTab = country;
+    console.log("Switching to tab:", country);
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.product-list').forEach(list => list.classList.remove('active'));
+    const selectedTab = document.querySelector(`[onclick="switchTab('${country}')"]`);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    } else {
+        console.error("Tab not found:", country);
+    }
+    const selectedList = document.getElementById(`product-list-${country}`);
+    if (selectedList) {
+        selectedList.classList.add('active');
+    } else {
+        console.error("Product list not found for:", country);
+    }
+    window.scrollTo(0, 0);
+    const searchBar = document.getElementById('search-bar');
+    if (searchBar) {
+        const searchInput = searchBar.querySelector('input');
+        const categoryFilter = searchBar.querySelector('select');
+        const rankingFilter = searchBar.querySelector('#ranking-filter');
+        if (searchInput) searchInput.value = '';
+        if (categoryFilter) categoryFilter.value = '';
+        if (rankingFilter) rankingFilter.value = '';
+        const productLists = document.querySelectorAll('.product-list.active .product');
+        productLists.forEach(product => {
+            product.style.visibility = 'visible';
+            product.style.position = 'relative';
+        });
+        if (typeof applyFilters === 'function') {
+            setTimeout(() => applyFilters(), 100); // Opóźnienie, aby upewnić się, że DOM jest gotowy
+        }
+    }
+    const saveButtons = document.getElementById('save-buttons');
+    if (saveButtons) {
+        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
+    }
+    updateBanner();
+    if (country === 'cart') {
+        updateCart();
+    } else if (productsData[country].length === 0) {
+        loadProducts(country);
+    } else {
+        calculateTotal();
+        updateCartInfo();
+    }
+    if (document.getElementById('product-list-cart')) {
+        updateCart();
+    }
+    updateCartInfo();
+}
+
+// Funkcja aktualizowania informacji o koszyku
 function updateCartInfo() {
     let totalItems = 0;
     let totalValue = 0;
@@ -447,11 +496,13 @@ function updateCartInfo() {
     saveCartState();
 }
 
+// Funkcja aktualizowania informacji o cashbacku
 function updateCashBackInfo(totalValue) {
     const cashBack = Number((totalValue * (customCashBackPercentage / 100)).toFixed(2));
     document.getElementById('cash-back-info').innerText = `Cash Back: ${cashBack.toFixed(2)} GBP`;
 }
 
+// Funkcja zapisywania stanu koszyka
 function saveCartState() {
     const cartState = {
         productsData,
@@ -460,6 +511,7 @@ function saveCartState() {
     localStorage.setItem('cartState', JSON.stringify(cartState));
 }
 
+// Funkcja wczytywania stanu koszyka
 function loadCartState() {
     const savedData = localStorage.getItem('cartState');
     if (savedData) {
@@ -479,6 +531,7 @@ function loadCartState() {
     }
 }
 
+// Funkcja czyszczenia stanu koszyka
 function clearCartState() {
     for (let country in productsData) {
         productsData[country].forEach(product => {
@@ -491,63 +544,7 @@ function clearCartState() {
     updateCartInfo();
 }
 
-function switchTab(country) {
-    activeTab = country;
-    console.log("Switching to tab:", country);
-    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.product-list').forEach(list => list.classList.remove('active'));
-    const selectedTab = document.querySelector(`[onclick="switchTab('${country}')"]`);
-    if (selectedTab) {
-        selectedTab.classList.add('active');
-    } else {
-        console.error("Tab not found:", country);
-    }
-    const selectedList = document.getElementById(`product-list-${country}`);
-    if (selectedList) {
-        selectedList.classList.add('active');
-    } else {
-        console.error("Product list not found for:", country);
-    }
-    // Zarządzanie widocznością przycisków zapisu
-    const saveButtons = document.getElementById('save-buttons');
-    if (saveButtons) {
-        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
-    }
-    updateBanner();
-    const searchBar = document.getElementById('search-bar');
-    if (searchBar) {
-        const searchInput = searchBar.querySelector('input');
-        const categoryFilter = searchBar.querySelector('select');
-        const rankingFilter = searchBar.querySelector('#ranking-filter');
-        if (searchInput) searchInput.value = '';
-        if (categoryFilter) categoryFilter.value = '';
-        if (rankingFilter) rankingFilter.value = '';
-        const productLists = document.querySelectorAll('.product-list.active .product');
-        productLists.forEach(product => {
-            product.style.visibility = 'visible';
-            product.style.position = 'relative';
-        });
-        // Wywołanie applyFilters z createSearchBar
-        const applyFiltersFunc = searchBar.applyFilters;
-        if (typeof applyFiltersFunc === 'function') {
-            applyFiltersFunc();
-        }
-    }
-    if (country === 'cart') {
-        updateCart();
-    } else if (productsData[country].length === 0) {
-        loadProducts(country);
-    } else {
-        calculateTotal();
-        updateCartInfo();
-    }
-    // Upewnienie się, że koszyk jest aktualizowany po przełączeniu
-    if (document.getElementById('product-list-cart')) {
-        updateCart();
-    }
-    updateCartInfo();
-}
-
+// Funkcja zmiany ilości produktu
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
     let currentQuantity = parseInt(input.value) || 0;
@@ -555,7 +552,6 @@ function changeQuantity(country, index, change) {
         currentQuantity += change;
         input.value = currentQuantity;
         productsData[country][index].quantity = currentQuantity;
-        // Aktualizacja koszyka za każdym razem, gdy zmienia się ilość
         updateCart();
         calculateTotal();
         updateCartInfo();
@@ -563,6 +559,7 @@ function changeQuantity(country, index, change) {
     }
 }
 
+// Funkcja aktualizowania koszyka
 function updateCart() {
     const cartList = document.getElementById('product-list-cart');
     if (!cartList) {
@@ -626,6 +623,7 @@ function updateCart() {
     updateCartInfo();
 }
 
+// Funkcja usuwania produktu z koszyka
 function removeItem(country, index) {
     productsData[country][index].quantity = 0;
     if (activeTab === 'cart') {
@@ -640,6 +638,7 @@ function removeItem(country, index) {
     }
 }
 
+// Funkcja obliczania całkowitej wartości
 function calculateTotal() {
     let totalValue = 0;
     let categoryTotalsText = '';
@@ -660,6 +659,7 @@ function calculateTotal() {
     document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
 }
 
+// Funkcja wysyłki zamówienia
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
     const email = document.getElementById('email').value;
@@ -715,17 +715,18 @@ function submitOrder() {
     });
 }
 
-// Wywołanie okna dialogowego, stworzenie paska bocznego i paska wyszukiwania z filtrem po załadowaniu strony
+// Funkcja ładowania strony
 window.onload = async function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
-    // Ładowanie danych dla Litwy jako pierwszej
     await loadProducts('lithuania');
-    // Ładowanie pozostałych krajów w tle
     await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
-    switchTab('lithuania'); // Wyraźnie przełącz na Litwę po załadowaniu
+    switchTab('lithuania');
     loadCartState();
     updateBanner();
     updateCartInfo();
+    if (typeof applyFilters === 'function') {
+        applyFilters(); // Początkowe zastosowanie filtrów
+    }
 };
