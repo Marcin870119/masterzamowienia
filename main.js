@@ -1,4 +1,3 @@
-
 let productsData = {
     lithuania: [],
     bulgaria: [],
@@ -329,7 +328,7 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left;`;
+    competitorPriceLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left; padding-left: 0;`;
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
@@ -346,7 +345,7 @@ function createSidebar() {
     competitorPriceLabel.appendChild(competitorPriceCheckbox);
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left;`;
+    stockInfoLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left; padding-left: 0;`;
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
@@ -411,6 +410,60 @@ function updateBanner() {
             bannerImage.style.display = 'block';
     }
 }
+// Funkcja przełączania zakładki z przewinięciem na górę
+function switchTab(country) {
+    activeTab = country;
+    console.log("Switching to tab:", country);
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.product-list').forEach(list => list.classList.remove('active'));
+    const selectedTab = document.querySelector(`[onclick="switchTab('${country}')"]`);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    } else {
+        console.error("Tab not found:", country);
+    }
+    const selectedList = document.getElementById(`product-list-${country}`);
+    if (selectedList) {
+        selectedList.classList.add('active');
+    } else {
+        console.error("Product list not found for:", country);
+    }
+    // Przewinięcie strony na samą górę
+    window.scrollTo(0, 0);
+    // Zarządzanie widocznością przycisków zapisu
+    const saveButtons = document.getElementById('save-buttons');
+    if (saveButtons) {
+        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
+    }
+    updateBanner();
+    const searchBar = document.getElementById('search-bar');
+    if (searchBar) {
+        const searchInput = searchBar.querySelector('input');
+        const categoryFilter = searchBar.querySelector('select');
+        if (searchInput) searchInput.value = '';
+        if (categoryFilter) categoryFilter.value = '';
+        const productLists = document.querySelectorAll('.product-list.active .product');
+        productLists.forEach(product => {
+            product.style.visibility = 'visible';
+            product.style.position = 'relative';
+        });
+        if (typeof applyFilters === 'function') {
+            applyFilters();
+        }
+    }
+    if (country === 'cart') {
+        updateCart();
+    } else if (productsData[country].length === 0) {
+        loadProducts(country);
+    } else {
+        calculateTotal();
+        updateCartInfo();
+    }
+    if (document.getElementById('product-list-cart')) {
+        updateCart();
+    }
+    updateCartInfo();
+}
 function updateCartInfo() {
     let totalItems = 0;
     let totalValue = 0;
@@ -465,56 +518,6 @@ function clearCartState() {
     customPrices = {};
     localStorage.removeItem('cartState');
     calculateTotal();
-    updateCartInfo();
-}
-function switchTab(country) {
-    activeTab = country;
-    console.log("Switching to tab:", country);
-    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.product-list').forEach(list => list.classList.remove('active'));
-    const selectedTab = document.querySelector(`[onclick="switchTab('${country}')"]`);
-    if (selectedTab) {
-        selectedTab.classList.add('active');
-    } else {
-        console.error("Tab not found:", country);
-    }
-    const selectedList = document.getElementById(`product-list-${country}`);
-    if (selectedList) {
-        selectedList.classList.add('active');
-    } else {
-        console.error("Product list not found for:", country);
-    }
-    const saveButtons = document.getElementById('save-buttons');
-    if (saveButtons) {
-        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
-    }
-    updateBanner();
-    const searchBar = document.getElementById('search-bar');
-    if (searchBar) {
-        const searchInput = searchBar.querySelector('input');
-        const categoryFilter = searchBar.querySelector('select');
-        if (searchInput) searchInput.value = '';
-        if (categoryFilter) categoryFilter.value = '';
-        const productLists = document.querySelectorAll('.product-list.active .product');
-        productLists.forEach(product => {
-            product.style.visibility = 'visible';
-            product.style.position = 'relative';
-        });
-        if (typeof applyFilters === 'function') {
-            applyFilters();
-        }
-    }
-    if (country === 'cart') {
-        updateCart();
-    } else if (productsData[country].length === 0) {
-        loadProducts(country);
-    } else {
-        calculateTotal();
-        updateCartInfo();
-    }
-    if (document.getElementById('product-list-cart')) {
-        updateCart();
-    }
     updateCartInfo();
 }
 function changeQuantity(country, index, change) {
