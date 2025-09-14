@@ -117,7 +117,7 @@ function loadProducts(country) {
         .then(response => {
             console.log("Fetch response for", country, ":", response.status);
             if (!response.ok) {
-                throw new Error(`HTTP Error: ${response.status}`);
+                throw new Error(`HTTP Error: ${response.status} - ${url}`);
             }
             return response.json();
         })
@@ -134,6 +134,10 @@ function loadProducts(country) {
                 productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
             }
             const productList = document.getElementById(`product-list-${country}`);
+            if (!productList) {
+                console.error(`Product list not found for ${country}`);
+                return;
+            }
             productList.innerHTML = '';
             data.forEach((product, index) => {
                 const productElement = document.createElement("div");
@@ -262,6 +266,8 @@ function applyFilters() {
         const nameWords = productName.split(/\s+/);
         const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
         const normalizedProductCategory = productCategory.replace(/-/g, ' ');
+
+        console.log('Debug - Product:', productIndex, 'Category:', productCategory, 'Selected:', selectedCategory); // Debug
 
         const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
             nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
