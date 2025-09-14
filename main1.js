@@ -218,11 +218,9 @@ function loadProducts(country) {
                 };
             });
             if (country === activeTab) {
-                setTimeout(() => {
-                    if (typeof applyFilters === 'function') {
-                        applyFilters();
-                    }
-                }, 100); // Opóźnienie dla synchronizacji z DOM
+                if (typeof applyFilters === 'function') {
+                    applyFilters(); // Wywołanie filtrów po załadowaniu
+                }
             }
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
@@ -247,15 +245,13 @@ function applyFilters() {
     }
     let products = Array.from(productList.querySelectorAll('.product'));
 
-    // Debugowanie danych
-    console.log("Applying filters for", activeTab, "Products length:", products.length, "Data length:", productsData[activeTab].length);
+    console.log("Applying filters for", activeTab, "Products:", products.length, "Data:", productsData[activeTab].length); // Debug
 
     // Sortowanie według rankingu
     if (sortOrder && productsData[activeTab].length > 0) {
         products.sort((a, b) => {
             const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
             const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
-            console.log("Sorting:", a.dataset.index, rankA, b.dataset.index, rankB); // Debug
             return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
         });
         products.forEach(product => productList.appendChild(product)); // Ponowne renderowanie po sortowaniu
