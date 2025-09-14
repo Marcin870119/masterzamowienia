@@ -338,11 +338,11 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Zachowany styl z poprzedniej wersji
+    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`;
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-left: 5px;`; // Zachowany styl z poprzedniej wersji
+    competitorPriceCheckbox.style.cssText = `margin-left: 5px;`;
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -355,11 +355,11 @@ function createSidebar() {
     competitorPriceLabel.appendChild(competitorPriceCheckbox);
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`; // Zachowany styl z poprzedniej wersji
+    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`;
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
-    stockInfoCheckbox.style.cssText = `margin-left: 5px;`; // Zachowany styl z poprzedniej wersji
+    stockInfoCheckbox.style.cssText = `margin-left: 5px;`;
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -597,22 +597,19 @@ function updateCart() {
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                     </div>
                 `;
-                // Dodanie ceny konkurencji i stanów magazynowych
-                if (showCompetitorPrice || showStockInfo) {
-                    const competitorStockDiv = document.createElement('div');
-                    if (showCompetitorPrice && product['Cena konkurencji']) {
-                        let competitorPriceColor = '';
-                        if (parseFloat(product['Cena konkurencji']) < originalPrice) {
-                            competitorPriceColor = 'color: red;';
-                        } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
-                            competitorPriceColor = 'color: green;';
-                        }
-                        competitorStockDiv.innerHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 12px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                // Wyświetlanie ceny konkurencji i stanów magazynowych pod nazwą produktu
+                const details = productElement.querySelector('.product-details');
+                if (showCompetitorPrice && product['Cena konkurencji']) {
+                    let competitorPriceColor = '';
+                    if (parseFloat(product['Cena konkurencji']) < originalPrice) {
+                        competitorPriceColor = 'color: red;';
+                    } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
+                        competitorPriceColor = 'color: green;';
                     }
-                    if (showStockInfo && product['Stany magazynowe']) {
-                        competitorStockDiv.innerHTML += `<div class="stock-info" style="margin-top: 5px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
-                    }
-                    productElement.appendChild(competitorStockDiv);
+                    details.innerHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 16px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                }
+                if (showStockInfo && product['Stany magazynowe']) {
+                    details.innerHTML += `<div class="stock-info" style="margin-top: 5px; font-size: 16px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
                 }
                 cartList.appendChild(productElement);
                 totalCartValue += itemValue;
