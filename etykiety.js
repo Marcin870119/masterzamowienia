@@ -5,7 +5,6 @@ let products = [];
 let eanDatabase = {};
 let currentPage = 0;
 let labelsPerPage = 6;
-
 const countryToFlag = {
   'rumunia': 'ro',
   'ukraina': 'ua',
@@ -13,6 +12,26 @@ const countryToFlag = {
   'litwa': 'lt',
   'polska': 'pl'
 };
+
+// Normalizacja nazw kolumn
+function normalizeKeys(row) {
+  const newRow = {};
+  for (let key in row) {
+    if (!key) continue;
+    newRow[key.trim().toLowerCase()] = row[key];
+  }
+  return newRow;
+}
+
+// Pobieranie wartości z różnych wariantów kolumn
+function getValue(row, possibleKeys) {
+  for (let key of possibleKeys) {
+    if (row[key.toLowerCase()] !== undefined && row[key.toLowerCase()] !== "") {
+      return row[key.toLowerCase()];
+    }
+  }
+  return "";
+}
 
 function updateLabel() {
   currentData = {
@@ -31,12 +50,10 @@ function updateLabel() {
     iconCategory: document.getElementById('iconCategory').value,
     iconSize: document.getElementById('iconSize').value
   };
-
   document.getElementById('labelPrice').innerText = currentData.currency + currentData.price;
   document.getElementById('labelUnit').innerText = currentData.unit;
   document.getElementById('labelName').innerText = currentData.name;
   document.getElementById('labelPromo').innerText = "Special offer: " + currentData.promo;
-
   // Flaga
   const flagImg = document.getElementById('labelFlag');
   if (!currentData.flag) {
@@ -48,7 +65,6 @@ function updateLabel() {
     if (currentData.flagSize === "medium") { flagImg.style.width = "40px"; flagImg.style.height = "24px"; }
     if (currentData.flagSize === "large") { flagImg.style.width = "50px"; flagImg.style.height = "30px"; }
   }
-
   // Ikona
   const iconImg = document.getElementById('labelIcon');
   if (!currentData.iconCategory) {
@@ -61,12 +77,12 @@ function updateLabel() {
     if (currentData.iconSize === "medium") { iconImg.style.width = "40px"; iconImg.style.height = "40px"; }
     if (currentData.iconSize === "large") { iconImg.style.width = "50px"; iconImg.style.height = "50px"; }
   }
-
   // Kod kreskowy
   if (currentData.barcodeValue) {
     try {
+      const barcodeFormat = currentData.barcodeValue.length === 8 ? "EAN8" : "EAN13";
       JsBarcode("#barcode", currentData.barcodeValue, {
-        format: "EAN13",
+        format: barcodeFormat,
         lineColor: "#000",
         background: currentData.color,
         width: 2,
@@ -81,7 +97,6 @@ function updateLabel() {
     document.getElementById("barcode").innerHTML = "";
   }
 }
-
 function saveLabel(silent = false) {
   updateLabel();
   if (editingIndex === -1) {
@@ -97,14 +112,12 @@ function saveLabel(silent = false) {
     clearForm();
   }
 }
-
 function addNewLabel() {
   clearForm();
   editingIndex = -1;
   document.getElementById('saveButton').innerText = 'Save Label';
   toggleButtons(false);
 }
-
 function editLabel(globalIndex) {
   currentData = { ...savedLabels[globalIndex] };
   loadForm(currentData);
@@ -113,11 +126,9 @@ function editLabel(globalIndex) {
   document.getElementById('saveButton').innerText = 'Save Changes';
   toggleButtons(true);
 }
-
 function deleteLabel(globalIndex) {
   if (confirm("Are you sure you want to delete this label?")) {
     savedLabels.splice(globalIndex, 1);
-    renderSavedLabels();
     if (editingIndex === globalIndex) {
       clearForm();
       editingIndex = -1;
@@ -133,7 +144,6 @@ function deleteLabel(globalIndex) {
     renderSavedLabels();
   }
 }
-
 function clearForm() {
   document.getElementById('productSearch').value = '';
   document.getElementById('productName').value = '';
@@ -154,7 +164,6 @@ function clearForm() {
   updateLabel();
   filterProducts();
 }
-
 function loadForm(data) {
   document.getElementById('productSearch').value = '';
   document.getElementById('productName').value = data.name || '';
@@ -172,28 +181,31 @@ function loadForm(data) {
   document.getElementById('iconSize').value = data.iconSize || 'medium';
   document.getElementById('barcodeInput').value = data.barcodeValue || '';
 }
-
 function toggleButtons(isEditing) {
   const buttons = document.querySelectorAll('.form-container .button-group button');
   buttons.forEach(button => {
-    button.style.display = ['Update Label', 'Save Label', 'Add New Label', 'Import and Generate Labels'].includes(button.innerText) ? 'block' : 'none';
+    const text = button.innerText;
+    if (text === 'Update Label' || text === 'Save Label') {
+      button.style.display = 'block';
+    } else if (isEditing) {
+      button.style.display = (text === 'Save Changes' || text === 'Add New Label' || text === 'Import and Generate Labels') ? 'block' : 'none';
+    } else {
+      button.style.display = (text === 'Add New Label' || text === 'Import and Generate Labels') ? 'block' : 'none';
+    }
   });
 }
-
 function renderSavedLabels() {
   const list = document.getElementById('labelsList');
   list.innerHTML = '';
   const totalPages = Math.ceil(savedLabels.length / labelsPerPage);
   const startIndex = currentPage * labelsPerPage;
   const pageLabels = savedLabels.slice(startIndex, startIndex + labelsPerPage);
-
   const h2 = document.querySelector('#savedLabels h2');
   if (totalPages <= 1) {
     h2.innerText = 'Saved Labels';
   } else {
     h2.innerText = `Saved Labels - Page ${currentPage + 1} of ${totalPages}`;
   }
-
   pageLabels.forEach((label, pageIndex) => {
     const globalIndex = startIndex + pageIndex;
     const div = document.createElement('div');
@@ -213,7 +225,6 @@ function renderSavedLabels() {
     div.appendChild(buttonContainer);
     list.appendChild(div);
   });
-
   let pagination = document.getElementById('pagination');
   if (!pagination) {
     pagination = document.createElement('div');
@@ -247,7 +258,7 @@ function renderSavedLabels() {
     }
   }
 }
-
+/* --- Funkcje PDF --- */
 function generatePDFContent(labels) {
   const numLabels = labels.length;
   const pdfPage = document.createElement("div");
@@ -260,7 +271,6 @@ function generatePDFContent(labels) {
   pdfPage.style.margin = "0";
   pdfPage.style.padding = "0";
   pdfPage.style.pageBreakInside = "avoid";
-
   const flagUrls = {
     pl: "https://flagcdn.com/w40/pl.png",
     ro: "https://flagcdn.com/w40/ro.png",
@@ -268,7 +278,6 @@ function generatePDFContent(labels) {
     lt: "https://flagcdn.com/w40/lt.png",
     bg: "https://flagcdn.com/w40/bg.png"
   };
-
   for (let i = 0; i < 6; i++) {
     const data = (i < numLabels) ? labels[i] : null;
     const label = document.createElement("div");
@@ -283,10 +292,8 @@ function generatePDFContent(labels) {
     fold.innerHTML = "▼ ZEGNIJ TUTAJ";
     if (!data) fold.style.display = "none";
     label.appendChild(fold);
-
     const content = document.createElement("div");
     content.className = "label-content";
-
     if (data) {
       const promoBox = document.createElement("div");
       promoBox.style.position = "absolute";
@@ -303,7 +310,6 @@ function generatePDFContent(labels) {
       promoBox.appendChild(promoTitle);
       promoBox.appendChild(promoDate);
       content.appendChild(promoBox);
-
       if (data.flag && flagUrls[data.flag]) {
         const flagImg = document.createElement("img");
         flagImg.src = flagUrls[data.flag];
@@ -313,7 +319,6 @@ function generatePDFContent(labels) {
         flagImg.style.border = "1px solid #000";
         content.appendChild(flagImg);
       }
-
       if (data.iconCategory) {
         const iconImg = document.createElement("img");
         const iconBaseUrl = "https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia%20wektorowe/";
@@ -323,7 +328,6 @@ function generatePDFContent(labels) {
         iconImg.style.height = data.iconSize === "small" ? "20px" : data.iconSize === "medium" ? "30px" : "40px";
         content.appendChild(iconImg);
       }
-
       const priceContainer = document.createElement("div");
       priceContainer.className = (data.priceAlign === "right") ? "price-right" : "price-center";
       const price = document.createElement("div");
@@ -335,7 +339,6 @@ function generatePDFContent(labels) {
       priceContainer.appendChild(price);
       priceContainer.appendChild(unit);
       content.appendChild(priceContainer);
-
       const name = document.createElement("div");
       const nameParts = data.nameStyle.split("-");
       const sizeClass = "name-" + nameParts[0];
@@ -343,13 +346,13 @@ function generatePDFContent(labels) {
       name.className = sizeClass + " " + alignClass;
       name.innerText = data.name || 'Product Name';
       content.appendChild(name);
-
       if (data.barcodeValue) {
         try {
           const barcodeSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
           barcodeSvg.classList.add("barcode");
+          const barcodeFormat = data.barcodeValue.length === 8 ? "EAN8" : "EAN13";
           JsBarcode(barcodeSvg, data.barcodeValue, {
-            format: "EAN13",
+            format: barcodeFormat,
             lineColor: "#000",
             background: data.color,
             width: 2,
@@ -365,20 +368,17 @@ function generatePDFContent(labels) {
     } else {
       content.style.display = "none";
     }
-
     label.appendChild(content);
     pdfPage.appendChild(label);
   }
   return pdfPage;
 }
-
 function generateMultiPagePDF() {
   const totalPages = Math.ceil(savedLabels.length / labelsPerPage);
   const multiPageContainer = document.createElement("div");
   multiPageContainer.style.width = "100%";
   multiPageContainer.style.margin = "0";
   multiPageContainer.style.padding = "0";
-
   for (let page = 0; page < totalPages; page++) {
     const pageLabels = savedLabels.slice(page * labelsPerPage, (page + 1) * labelsPerPage);
     if (pageLabels.length > 0) {
@@ -391,19 +391,16 @@ function generateMultiPagePDF() {
   }
   return multiPageContainer;
 }
-
 function exportPDF() {
   if (savedLabels.length === 0) {
     alert("No labels to export.");
     return;
   }
-
   const multiPageElement = generateMultiPagePDF();
   if (multiPageElement.children.length === 0) {
     alert("No valid pages to export.");
     return;
   }
-
   html2pdf().set({
     margin: 0,
     filename: 'labels.pdf',
@@ -412,7 +409,7 @@ function exportPDF() {
     pagebreak: { mode: ['css'] }
   }).from(multiPageElement).save();
 }
-
+/* --- Import i produkty --- */
 function loadEANDatabase(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -431,7 +428,6 @@ function loadEANDatabase(event) {
   };
   reader.readAsText(file);
 }
-
 function fetchEANDatabase() {
   fetch('https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/ean%20MM.json')
     .then(response => response.json())
@@ -444,55 +440,33 @@ function fetchEANDatabase() {
     })
     .catch(error => console.error('Error fetching EAN database:', error));
 }
-
 function handleImport(event) {
   const file = event.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    let data;
-    if (file.name.endsWith('.csv')) {
-      data = parseCSV(e.target.result);
-    } else {
-      const workbook = XLSX.read(e.target.result, { type: 'binary' });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-      data = parseExcelData(data);
-    }
-    sessionStorage.setItem('importedData', JSON.stringify(data));
-    console.log('Data imported:', data);
-  };
-  if (file.name.endsWith('.csv')) {
-    reader.readAsText(file);
-  } else {
-    reader.readAsBinaryString(file);
+  const fileName = file.name.toLowerCase();
+  if (fileName.endsWith('.csv')) {
+    Papa.parse(file, {
+      header: true,
+      complete: function(results) {
+        const data = results.data.map(normalizeKeys);
+        sessionStorage.setItem('importedData', JSON.stringify(data));
+        console.log('Data imported:', data);
+      }
+    });
+  } else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const firstSheet = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheet];
+      const excelData = XLSX.utils.sheet_to_json(worksheet, { defval: "" }).map(normalizeKeys);
+      sessionStorage.setItem('importedData', JSON.stringify(excelData));
+      console.log('Data imported:', excelData);
+    };
+    reader.readAsArrayBuffer(file);
   }
 }
-
-function parseCSV(text) {
-  const lines = text.split('\n').map(line => line.split(',').map(cell => cell.trim().replace(/"/g, '')));
-  const headers = lines[0].map(header => header.toLowerCase());
-  return lines.slice(1).filter(row => row.length >= 4).map(row => {
-    let obj = {};
-    headers.forEach((header, i) => {
-      obj[header] = row[i] || '';
-    });
-    return obj;
-  });
-}
-
-function parseExcelData(data) {
-  const headers = data[0].map(header => header.toLowerCase().replace(/\s+/g, ' '));
-  return data.slice(1).filter(row => row.length >= 4).map(row => {
-    let obj = {};
-    headers.forEach((header, i) => {
-      obj[header] = row[i] || '';
-    });
-    return obj;
-  });
-}
-
 function importAndGenerate() {
   const importedDataStr = sessionStorage.getItem('importedData');
   if (!importedDataStr) {
@@ -506,14 +480,16 @@ function importAndGenerate() {
   const data = JSON.parse(importedDataStr);
   savedLabels = [];
   const totalPages = Math.ceil(data.length / labelsPerPage);
-
   data.forEach(record => {
-    const index = record.indeks || record.INDEKS || '';
-    const country = (record['kraj pochodzenia'] || record['Kraj pochodzenia'] || '').toLowerCase().trim();
-    const flagCode = countryToFlag[country] || '';
-    document.getElementById('productName').value = record.nazwa || record.NAZWA || 'Product Name';
+    const index = getValue(record, ["indeks", "index", "INDEKS"]);
+    const name = getValue(record, ["nazwa", "name", "NAZWA"]);
+    const cena = getValue(record, ["cena", "price", "CENA"]);
+    const country = getValue(record, ["kraj pochodzenia", "Kraj pochodzenia", "kraj pochodzenia "]);
+    const flagCode = countryToFlag[country.toLowerCase().trim()] || '';
+    const barcodeValue = eanDatabase[index] ? String(eanDatabase[index]).replace(/\D/g, "") : '';
+    document.getElementById('productName').value = name || 'Product Name';
     document.getElementById('nameStyle').value = 'medium-center';
-    document.getElementById('price').value = record.cena || record.Cena || '0.00';
+    document.getElementById('price').value = cena || '0.00';
     document.getElementById('priceSize').value = 'large';
     document.getElementById('priceAlign').value = 'center';
     document.getElementById('currency').value = '£';
@@ -524,16 +500,14 @@ function importAndGenerate() {
     document.getElementById('flagSize').value = 'large';
     document.getElementById('iconCategory').value = '';
     document.getElementById('iconSize').value = 'medium';
-    document.getElementById('barcodeInput').value = eanDatabase[index] || '';
+    document.getElementById('barcodeInput').value = barcodeValue;
     updateLabel();
     saveLabel(true);
   });
-
   currentPage = 0;
   renderSavedLabels();
   alert(`Generated ${data.length} labels across ${totalPages} pages. Ready to export as PDF.`);
 }
-
 function fetchProducts() {
   fetch('https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/ean%20MM.json')
     .then(response => response.json())
@@ -543,7 +517,6 @@ function fetchProducts() {
     })
     .catch(error => console.error('Error fetching products:', error));
 }
-
 function populateProductSelect(productsToDisplay) {
   const productSuggestions = document.getElementById('productSuggestions');
   productSuggestions.innerHTML = '';
@@ -554,7 +527,6 @@ function populateProductSelect(productsToDisplay) {
     productSuggestions.appendChild(option);
   });
 }
-
 function filterProducts() {
   const searchInput = document.getElementById('productSearch').value.toLowerCase();
   const words = searchInput.split(/\s+/).filter(word => word.length > 0);
@@ -571,7 +543,6 @@ function filterProducts() {
   });
   populateProductSelect(filteredProducts);
 }
-
 function handleProductSelection() {
   const productSearch = document.getElementById('productSearch');
   const selectedIndex = productSearch.value;
@@ -579,15 +550,15 @@ function handleProductSelection() {
     const selectedProduct = products.find(product => product.INDEKS === selectedIndex);
     if (selectedProduct) {
       console.log('Selected product:', selectedProduct);
+      const barcodeValue = selectedProduct['unit barcode '] ? String(selectedProduct['unit barcode ']).replace(/\D/g, "") : '';
       document.getElementById('productName').value = selectedProduct.NAZWA || '';
-      document.getElementById('barcodeInput').value = selectedProduct['unit barcode '] || '';
+      document.getElementById('barcodeInput').value = barcodeValue;
       updateLabel();
     } else {
       console.error('Product not found for index:', selectedIndex);
     }
   }
 }
-
 document.addEventListener('DOMContentLoaded', () => {
   clearForm();
   toggleButtons(false);
