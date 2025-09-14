@@ -19,11 +19,9 @@ let showStockInfo = false; // Domyślnie stany magazynowe ukryte
 let gk_isXlsx = false;
 let gk_xlsxFileLookup = {};
 let gk_fileData = {};
-
 function filledCell(cell) {
     return cell !== '' && cell != null;
 }
-
 function loadFileData(filename) {
     if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
         try {
@@ -48,7 +46,6 @@ function loadFileData(filename) {
     }
     return gk_fileData[filename] || "";
 }
-
 // Funkcja obliczająca cenę z rabatem lub niestandardową ceną
 function applyDiscount(price, productIndex, country) {
     const parsedPrice = parseFloat(price) || 0;
@@ -58,14 +55,12 @@ function applyDiscount(price, productIndex, country) {
     }
     return Number((parsedPrice * (1 - discountPercentage / 100)).toFixed(2));
 }
-
 // Funkcja resetująca niestandardową cenę
 function resetCustomPrice(country, index) {
     delete customPrices[`${country}-${index}`];
     updatePrices();
     saveCartState();
 }
-
 // Funkcja aktualizująca ceny na stronie - bez przeskakiwania
 function updatePrices() {
     const activeList = document.querySelector('.product-list.active');
@@ -85,7 +80,6 @@ function updatePrices() {
         }
     }, 50);
 }
-
 // Funkcja zapisująca koszyk do pliku CSV w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToCSV() {
     let csvContent = 'indeks,nazwa,ilosc,cena\n';
@@ -107,7 +101,6 @@ function saveCartToCSV() {
     link.click();
     document.body.removeChild(link);
 }
-
 // Funkcja zapisująca koszyk do pliku XLS w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToXLS() {
     const workbook = XLSX.utils.book_new();
@@ -126,7 +119,121 @@ function saveCartToXLS() {
     const timestamp = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
     XLSX.writeFile(workbook, `order_${timestamp}.xlsx`);
 }
-
+// Nowa funkcja wyświetlająca modal z marżą dla zapisu per kraj
+function showMarginDialog(country) {
+    const countryPolish = {
+        lithuania: 'Litwa',
+        bulgaria: 'Bułgaria',
+        ukraine: 'Ukraina',
+        romania: 'Rumunia'
+    };
+    const polishName = countryPolish[country] || country;
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1002;
+        overflow: auto;
+    `;
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        width: 300px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        color: #333;
+    `;
+    const closeButton = document.createElement('button');
+    closeButton.innerText = '×';
+    closeButton.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 20px;
+        height: 20px;
+        border: none;
+        background-color: #ccc;
+        color: #fff;
+        border-radius: 50%;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    `;
+    closeButton.onmouseover = () => closeButton.style.backgroundColor = '#999';
+    closeButton.onmouseout = () => closeButton.style.backgroundColor = '#ccc';
+    closeButton.onclick = () => document.body.removeChild(modal);
+    const marginLabel = document.createElement('label');
+    marginLabel.innerText = `Marża dla ${polishName} (%): `;
+    marginLabel.style.cssText = `display: block; margin: 10px 0 5px; font-weight: normal;`;
+    const marginInput = document.createElement('input');
+    marginInput.type = 'number';
+    marginInput.value = 0;
+    marginInput.step = '0.01';
+    marginInput.min = 0;
+    marginInput.style.cssText = `width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;`;
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `margin-top: 15px; text-align: right;`;
+    const saveButton = document.createElement('button');
+    saveButton.innerText = 'Zapisz';
+    saveButton.style.cssText = `padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; font-size: 14px;`;
+    saveButton.onmouseover = () => saveButton.style.backgroundColor = '#0056b3';
+    saveButton.onmouseout = () => saveButton.style.backgroundColor = '#007bff';
+    saveButton.onclick = () => {
+        const marginPercentage = parseFloat(marginInput.value) || 0;
+        saveCountryToXLS(country, marginPercentage);
+        document.body.removeChild(modal);
+    };
+    const cancelButton = document.createElement('button');
+    cancelButton.innerText = 'Anuluj';
+    cancelButton.style.cssText = `padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;`;
+    cancelButton.onmouseover = () => cancelButton.style.backgroundColor = '#5a6268';
+    cancelButton.onmouseout = () => cancelButton.style.backgroundColor = '#6c757d';
+    cancelButton.onclick = () => document.body.removeChild(modal);
+    buttonContainer.appendChild(saveButton);
+    buttonContainer.appendChild(cancelButton);
+    modalContent.appendChild(closeButton);
+    modalContent.appendChild(marginLabel);
+    modalContent.appendChild(marginInput);
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+}
+// Nowa funkcja zapisująca per kraj do XLSX z marżą
+function saveCountryToXLS(country, marginPercentage) {
+    const countryPolish = {
+        lithuania: 'Litwa',
+        bulgaria: 'Bułgaria',
+        ukraine: 'Ukraina',
+        romania: 'Rumunia'
+    };
+    const polishName = countryPolish[country] || country;
+    const workbook = XLSX.utils.book_new();
+    const ws_data = [['INDEKS', 'NAZWA', 'CENA', 'KRAJ POCHODZENIA']];
+    productsData[country].forEach((product, index) => {
+        if (product.quantity > 0) {
+            const basePrice = applyDiscount(parseFloat(product['CENA']) || 0, index, country);
+            const finalPrice = Number((basePrice * (1 + marginPercentage / 100)).toFixed(2));
+            ws_data.push([product.INDEKS, product['NAZWA'], finalPrice, polishName]);
+        }
+    });
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    XLSX.utils.book_append_sheet(workbook, ws, 'Order');
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
+    XLSX.writeFile(workbook, `order_${polishName.toLowerCase()}_${timestamp}.xlsx`);
+}
 // Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
     const modal = document.createElement('div');
@@ -228,7 +335,6 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
-
 // Funkcja wyświetlająca okno dialogowe do zmiany ceny produktu (styl jak sidebar)
 function showPriceDialog(country, index, originalPrice) {
     const modal = document.createElement('div');
@@ -282,7 +388,6 @@ function showPriceDialog(country, index, originalPrice) {
     modal.appendChild(cancelButton);
     document.body.appendChild(modal);
 }
-
 // Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
@@ -381,7 +486,6 @@ function createSidebar() {
     sidebar.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
-
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
     const discountInfo = document.getElementById('discountInfo');
@@ -391,7 +495,6 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
-
 // Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
@@ -424,7 +527,6 @@ function updateBanner() {
             bannerImage.style.display = 'block';
     }
 }
-
 // Funkcja przełączania zakładek
 function switchTab(country) {
     activeTab = country;
@@ -471,9 +573,21 @@ function switchTab(country) {
     }
     saveButtons.style.display = country === 'cart' ? 'block' : 'none';
     if (country === 'cart' && saveButtons.innerHTML === '') {
+        const countryPolish = {
+            lithuania: 'Litwa',
+            bulgaria: 'Bułgaria',
+            ukraine: 'Ukraina',
+            romania: 'Rumunia'
+        };
         saveButtons.innerHTML = `
             <button onclick="saveCartToCSV()" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">Zapisz do CSV</button>
-            <button onclick="saveCartToXLS()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Zapisz do XLS</button>
+            <button onclick="saveCartToXLS()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">Zapisz do XLS</button>
+            <div style="margin-top: 10px;">
+                <button onclick="showMarginDialog('lithuania')" style="padding: 8px 15px; background-color: #17a2b8; color: white; border: none; border-radius: 4px; margin-right: 5px; cursor: pointer;">Zapisz ${countryPolish.lithuania}</button>
+                <button onclick="showMarginDialog('bulgaria')" style="padding: 8px 15px; background-color: #17a2b8; color: white; border: none; border-radius: 4px; margin-right: 5px; cursor: pointer;">Zapisz ${countryPolish.bulgaria}</button>
+                <button onclick="showMarginDialog('ukraine')" style="padding: 8px 15px; background-color: #17a2b8; color: white; border: none; border-radius: 4px; margin-right: 5px; cursor: pointer;">Zapisz ${countryPolish.ukraine}</button>
+                <button onclick="showMarginDialog('romania')" style="padding: 8px 15px; background-color: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer;">Zapisz ${countryPolish.romania}</button>
+            </div>
         `;
     }
     updateBanner();
@@ -490,7 +604,6 @@ function switchTab(country) {
     }
     updateCartInfo();
 }
-
 // Funkcja aktualizowania informacji o koszyku
 function updateCartInfo() {
     let totalItems = 0;
@@ -508,13 +621,11 @@ function updateCartInfo() {
     updateCashBackInfo(totalValue);
     saveCartState();
 }
-
 // Funkcja aktualizowania informacji o cashbacku
 function updateCashBackInfo(totalValue) {
     const cashBack = Number((totalValue * (customCashBackPercentage / 100)).toFixed(2));
     document.getElementById('cash-back-info').innerText = `Cash Back: ${cashBack.toFixed(2)} GBP`;
 }
-
 // Funkcja zapisywania stanu koszyka
 function saveCartState() {
     const cartState = {
@@ -523,7 +634,6 @@ function saveCartState() {
     };
     localStorage.setItem('cartState', JSON.stringify(cartState));
 }
-
 // Funkcja wczytywania stanu koszyka
 function loadCartState() {
     const savedData = localStorage.getItem('cartState');
@@ -543,7 +653,6 @@ function loadCartState() {
         updateCartInfo();
     }
 }
-
 // Funkcja czyszczenia stanu koszyka
 function clearCartState() {
     for (let country in productsData) {
@@ -556,7 +665,6 @@ function clearCartState() {
     calculateTotal();
     updateCartInfo();
 }
-
 // Funkcja zmiany ilości produktu
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
@@ -571,7 +679,6 @@ function changeQuantity(country, index, change) {
         saveCartState();
     }
 }
-
 // Funkcja aktualizowania koszyka
 function updateCart() {
     const cartList = document.getElementById('product-list-cart');
@@ -636,7 +743,6 @@ function updateCart() {
     document.getElementById("cart-total").innerText = `Cart value: ${totalCartValue.toFixed(2)} GBP`;
     updateCartInfo();
 }
-
 // Funkcja usuwania produktu z koszyka
 function removeItem(country, index) {
     productsData[country][index].quantity = 0;
@@ -651,7 +757,6 @@ function removeItem(country, index) {
         document.getElementById(`quantity-${country}-${index}`).value = '0';
     }
 }
-
 // Funkcja obliczania całkowitej wartości
 function calculateTotal() {
     let totalValue = 0;
@@ -672,7 +777,6 @@ function calculateTotal() {
     document.getElementById("category-totals").innerText = categoryTotalsText.trim();
     document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
 }
-
 // Funkcja wysyłki zamówienia
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
@@ -728,7 +832,6 @@ function submitOrder() {
         alert("Error sending order.");
     });
 }
-
 // Funkcja ładowania strony
 window.onload = async function() {
     showInitialDialog();
@@ -744,3 +847,292 @@ window.onload = async function() {
         applyFilters(); // Początkowe zastosowanie filtrów
     }
 };
+function createSearchBar() {
+    const searchBarContainer = document.createElement('div');
+    searchBarContainer.id = 'search-bar';
+    searchBarContainer.style.cssText = `
+        width: 100%;
+        max-width: 900px;
+        margin: 10px auto 0;
+        padding: 10px;
+        background-color: #f1f1f1;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        z-index: 900;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    `;
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search products...';
+    searchInput.style.cssText = `
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        min-width: 150px;
+    `;
+    const categoryFilter = document.createElement('select');
+    categoryFilter.style.cssText = `
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        min-width: 120px;
+    `;
+    const filterOptions = [
+        { value: '', text: 'All Categories' },
+        { value: 'Słodycze', text: 'Słodycze' },
+        { value: 'Kuchnia dania gotowe', text: 'Kuchnia dania gotowe' },
+        { value: 'Dodatki do potraw', text: 'Dodatki do potraw' },
+        { value: 'Przetwory owocowo-warzywne', text: 'Przetwory owocowo-warzywne' }
+    ];
+    filterOptions.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.value;
+        optionElement.text = option.text;
+        categoryFilter.appendChild(optionElement);
+    });
+    const rankingFilter = document.createElement('select');
+    rankingFilter.id = 'ranking-filter';
+    rankingFilter.style.cssText = `
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        min-width: 150px;
+    `;
+    const rankingOptions = [
+        { value: '', text: 'Sort by Ranking' },
+        { value: 'desc', text: 'Highest to Lowest' },
+        { value: 'asc', text: 'Lowest to Highest' }
+    ];
+    rankingOptions.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.value;
+        optionElement.text = option.text;
+        rankingFilter.appendChild(optionElement);
+    });
+    const clearFiltersButton = document.createElement('button');
+    clearFiltersButton.innerText = 'Wyczyść filtry';
+    clearFiltersButton.style.cssText = `
+        padding: 8px 15px;
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        min-width: 100px;
+    `;
+    clearFiltersButton.onmouseover = () => clearFiltersButton.style.backgroundColor = '#5a6268';
+    clearFiltersButton.onmouseout = () => clearFiltersButton.style.backgroundColor = '#6c757d';
+    clearFiltersButton.onclick = () => {
+        searchInput.value = '';
+        categoryFilter.value = '';
+        rankingFilter.value = '';
+        applyFilters();
+    };
+    searchBarContainer.appendChild(searchInput);
+    searchBarContainer.appendChild(categoryFilter);
+    searchBarContainer.appendChild(rankingFilter);
+    searchBarContainer.appendChild(clearFiltersButton);
+    const bannerContainer = document.querySelector('.banner-container');
+    if (bannerContainer) {
+        bannerContainer.parentNode.insertBefore(searchBarContainer, bannerContainer.nextSibling);
+    } else {
+        console.error("Banner container element not found for search bar placement!");
+    }
+    // Definicja applyFilters w kontekście createSearchBar
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const selectedCategory = categoryFilter.value;
+        const sortOrder = rankingFilter.value;
+        const productList = document.getElementById(`product-list-${activeTab}`);
+        if (!productList) {
+            console.error("Active product list not found!");
+            return;
+        }
+        let products = Array.from(productList.querySelectorAll('.product'));
+        console.log("Applying filters for", activeTab, "Products:", products.length, "Data:", productsData[activeTab] ? productsData[activeTab].length : 'undefined'); // Debug
+        // Sortowanie według rankingu, jeśli wybrano i dane są dostępne
+        if (sortOrder && productsData[activeTab] && productsData[activeTab].length > 0) {
+            products.sort((a, b) => {
+                const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
+                const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
+                console.log("Sorting:", a.dataset.index, rankA, b.dataset.index, rankB); // Debug
+                return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
+            });
+            products.forEach(product => productList.appendChild(product));
+        }
+        products.forEach(product => {
+            const productName = product.querySelector('.product-name')?.textContent.toLowerCase() || '';
+            const productCode = product.querySelector('.product-code')?.textContent.toLowerCase() || '';
+            const productIndex = product.dataset.index;
+            const productCategory = productsData[activeTab] && productsData[activeTab][productIndex]?.Kategoria?.toLowerCase() || '';
+            const nameWords = productName.split(/\s+/);
+            const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
+            const normalizedProductCategory = productCategory.replace(/-/g, ' ');
+            console.log("Filter Debug - Index:", productIndex, "Category:", productCategory, "Selected:", selectedCategory); // Debug
+            const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
+                nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
+            );
+            const categoryMatch = selectedCategory === '' || normalizedProductCategory === normalizedSelectedCategory;
+            if (searchMatch && categoryMatch) {
+                product.style.visibility = 'visible';
+                product.style.position = 'relative';
+            } else {
+                product.style.visibility = 'hidden';
+                product.style.position = 'absolute';
+            }
+        });
+    }
+    // Rejestracja zdarzeń
+    searchInput.oninput = applyFilters;
+    categoryFilter.onchange = applyFilters;
+    rankingFilter.onchange = applyFilters;
+    // Przechowanie funkcji applyFilters w searchBar dla dostępu z switchTab
+    searchBarContainer.applyFilters = applyFilters;
+}
+function loadProducts(country) {
+    console.log("Loading data for:", country);
+    let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
+    if (country === 'lithuania') {
+        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/LITWA.json';
+    } else if (country === 'bulgaria' || country === 'romania') {
+        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BLUGARIA.json';
+    } else if (country === 'ukraine') {
+        url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json';
+    }
+    return fetch(url)
+        .then(response => {
+            console.log("Fetch response for", country, ":", response.status, "URL:", url);
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status} - ${url}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Data loaded for", country, ":", data);
+            if (productsData[country].length > 0) {
+                data = data.map((product, index) => {
+                    if (productsData[country][index] && productsData[country][index].quantity) {
+                        return { ...product, quantity: productsData[country][index].quantity, dataset: { index } };
+                    }
+                    return { ...product, quantity: 0, dataset: { index } };
+                });
+            } else {
+                productsData[country] = data.map((product, index) => ({ ...product, quantity: 0, dataset: { index } }));
+            }
+            const productList = document.getElementById(`product-list-${country}`);
+            if (!productList) {
+                console.error(`Product list not found for ${country}`);
+                return;
+            }
+            productList.innerHTML = '';
+            data.forEach((product, index) => {
+                const productElement = document.createElement("div");
+                productElement.classList.add("product");
+                productElement.dataset.index = index;
+                const originalPrice = parseFloat(product['CENA']) || 0;
+                const discountedPrice = applyDiscount(originalPrice, index, country);
+                let imageUrl = '';
+                if (country === 'lithuania') {
+                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-litwa/${product['INDEKS']}.jpg`;
+                } else if (country === 'bulgaria' || country === 'romania') {
+                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-bulgaria/${product['INDEKS']}.jpg`;
+                } else if (country === 'ukraine') {
+                    imageUrl = `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${product['INDEKS']}.jpg`;
+                }
+                const imgTest = new Image();
+                imgTest.src = imageUrl;
+                imgTest.onload = () => {
+                    let competitorPriceColor = '';
+                    if (product['Cena konkurencji'] && originalPrice) {
+                        if (parseFloat(product['Cena konkurencji']) < originalPrice) {
+                            competitorPriceColor = 'color: red;';
+                        } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
+                            competitorPriceColor = 'color: green;';
+                        }
+                    }
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = "Photo";
+                    img.style.cssText = 'max-width: 100px; width: 100%; height: auto; position: relative; z-index: 0;';
+                    if (window.innerWidth <= 600) {
+                        img.onclick = function() {
+                            this.classList.toggle('enlarged');
+                        };
+                    } else {
+                        productElement.style.minWidth = '350px';
+                        productElement.style.padding = '10px';
+                        const details = productElement.querySelector('.product-details');
+                        if (details) {
+                            details.style.fontSize = '14px';
+                        }
+                    }
+                    productElement.appendChild(img);
+                    const details = document.createElement('div');
+                    details.classList.add('product-details');
+                    const customPrice = customPrices[`${country}-${index}`];
+                    const priceDisplay = customPrice !== undefined && customPrice !== null && !isNaN(customPrice)
+                        ? `${discountedPrice.toFixed(2)} GBP (Custom)`
+                        : `${discountedPrice.toFixed(2)} GBP (Original: ${originalPrice.toFixed(2)} GBP)`;
+                    let detailsHTML = `
+                        <div class="product-code">Index: ${product['INDEKS']}</div>
+                        <div class="product-name">${product['NAZWA']}</div>
+                        <div class="pack-info">Pack: ${product['OPAKOWANIE']}</div>
+                        <div class="price">${priceDisplay}</div>
+                        <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
+                        <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
+                    `;
+                    // Wyświetlanie ceny konkurencji i stanów magazynowych w jednym miejscu pod nazwą
+                    let additionalInfo = '';
+                    if (showCompetitorPrice && product['Cena konkurencji']) {
+                        let competitorPriceColor = '';
+                        if (parseFloat(product['Cena konkurencji']) < originalPrice) {
+                            competitorPriceColor = 'color: red;';
+                        } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
+                            competitorPriceColor = 'color: green;';
+                        }
+                        additionalInfo += `<div class="competitor-price" style="margin-top: 5px; font-size: 16px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                    }
+                    if (showStockInfo && product['Stany magazynowe']) {
+                        additionalInfo += `<div class="stock-info" style="margin-top: 5px; font-size: 16px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
+                    }
+                    if (additionalInfo) {
+                        detailsHTML += `<div class="additional-info" style="margin-top: 5px;">${additionalInfo}</div>`;
+                    }
+                    details.innerHTML = detailsHTML;
+                    productElement.appendChild(details);
+                    const controls = document.createElement('div');
+                    controls.classList.add('quantity-controls');
+                    controls.innerHTML = `
+                        <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
+                        <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
+                        <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
+                    `;
+                    productElement.appendChild(controls);
+                    productList.appendChild(productElement);
+                };
+                imgTest.onerror = () => {
+                    console.warn(`Skipped index ${product['INDEKS']} due to missing photo: ${imageUrl}`);
+                };
+            });
+            calculateTotal();
+            updateCartInfo();
+            if (country === activeTab) {
+                if (typeof applyFilters === 'function') {
+                    setTimeout(() => applyFilters(), 100);
+                }
+            }
+        })
+        .catch(error => console.error(`Error loading data for ${country}:`, error));
+}
