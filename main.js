@@ -460,10 +460,13 @@ function switchTab(country) {
             if (typeof applyFilters === 'function') {
                 applyFilters(); // Filtrowanie po załadowaniu danych
             }
-        });
+        }).catch(error => console.error("Error loading products for", country, ":", error));
     } else {
         calculateTotal();
         updateCartInfo();
+        if (typeof applyFilters === 'function') {
+            applyFilters(); // Filtrowanie dla istniejących danych
+        }
     }
     if (document.getElementById('product-list-cart')) {
         updateCart();
@@ -685,14 +688,17 @@ window.onload = async function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
-    await loadProducts('lithuania');
-    await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
-    switchTab('lithuania');
-    loadCartState();
-    updateBanner();
-    updateCartInfo();
-    if (typeof applyFilters === 'function') {
-        applyFilters(); // Początkowe zastosowanie filtrów
+    try {
+        await loadProducts('lithuania');
+        await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
+        switchTab('lithuania');
+        loadCartState();
+        updateBanner();
+        updateCartInfo();
+        if (typeof applyFilters === 'function') {
+            applyFilters(); // Początkowe zastosowanie filtrów
+        }
+    } catch (error) {
+        console.error("Error during page load:", error);
     }
-};  updateCartInfo();
 };
