@@ -484,12 +484,12 @@ button:active {
 }
 /* Poprawka dla konsystencji checkboxów w sidebarze */
 div[id="sidebar"] label {
-    display: block; /* Utrzymanie pionowego układu */
-    margin: 15px 0 5px; /* Odstęp między elementami */
+    display: block;
+    margin: 15px 0 5px;
     text-align: left;
     width: 100%;
     box-sizing: border-box;
-    padding-left: 5px; /* Dodanie paddingu z lewej, aby przesunąć bliżej krawędzi */
+    padding-left: 10px; /* Zwiększony padding z lewej dla lepszego wyrównania */
 }
 div[id="sidebar"] input[type="text"],
 div[id="sidebar"] input[type="number"] {
@@ -501,9 +501,13 @@ div[id="sidebar"] input[type="number"] {
     margin-bottom: 10px;
 }
 div[id="sidebar"] input[type="checkbox"] {
-    margin-right: 10px; /* Odstęp między checkboxem a tekstem */
+    margin-right: 10px;
     margin-left: 0;
-    vertical-align: middle; /* Wyrównanie pionowe checkboxa */
-    position: relative; /* Ustalenie pozycji względem label */
-    left: 0; /* Przesunięcie checkboxa do lewej krawędzi */
+    vertical-align: middle;
+    position: absolute; /* Absolutne pozycjonowanie dla precyzji */
+    left: 10px; /* Przesunięcie checkboxa do lewej krawędzi z paddingiem */
+}
+div[id="sidebar"] label span {
+    display: inline-block; /* Tekst jako oddzielny element */
+    margin-left: 25px; /* Odstęp tekstu od checkboxa */
 }
