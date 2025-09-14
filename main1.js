@@ -1,3 +1,4 @@
+
 function createSearchBar() {
     const searchBarContainer = document.createElement('div');
     searchBarContainer.id = 'search-bar';
@@ -115,7 +116,7 @@ function loadProducts(country) {
     }
     return fetch(url)
         .then(response => {
-            console.log("Fetch response for", country, ":", response.status);
+            console.log("Fetch response for", country, ":", response.status, "URL:", url);
             if (!response.ok) {
                 throw new Error(`HTTP Error: ${response.status} - ${url}`);
             }
