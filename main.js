@@ -1,3 +1,4 @@
+
 let productsData = {
     lithuania: [],
     bulgaria: [],
@@ -328,11 +329,11 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: flex; align-items: center; margin-bottom: 5px; font-weight: bold;`;
+    competitorPriceLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left;`;
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-right: 10px;`;
+    competitorPriceCheckbox.style.cssText = `margin-right: 10px; vertical-align: middle;`;
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -342,13 +343,14 @@ function createSidebar() {
         });
         if (activeTab !== 'cart') updatePrices();
     };
+    competitorPriceLabel.appendChild(competitorPriceCheckbox);
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: flex; align-items: center; margin-bottom: 5px; font-weight: bold;`;
+    stockInfoLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left;`;
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
-    stockInfoCheckbox.style.cssText = `margin-right: 10px;`;
+    stockInfoCheckbox.style.cssText = `margin-right: 10px; vertical-align: middle;`;
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -358,7 +360,6 @@ function createSidebar() {
         });
         if (activeTab !== 'cart') updatePrices();
     };
-    competitorPriceLabel.appendChild(competitorPriceCheckbox);
     stockInfoLabel.appendChild(stockInfoCheckbox);
     sidebar.appendChild(discountInfo);
     sidebar.appendChild(discountLabel);
