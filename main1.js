@@ -335,6 +335,15 @@ function switchTab(country) {
     const saveButtons = document.getElementById('save-buttons');
     if (saveButtons) {
         saveButtons.style.display = country === 'cart' ? 'block' : 'none';
+        if (country === 'cart') {
+            // Dodanie przycisków, jeśli nie istnieją
+            if (saveButtons.innerHTML === '') {
+                saveButtons.innerHTML = `
+                    <button onclick="saveCartToCSV()" style="padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">Zapisz do CSV</button>
+                    <button onclick="saveCartToXLS()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Zapisz do XLS</button>
+                `;
+            }
+        }
     }
     updateBanner();
     if (country === 'cart') {
