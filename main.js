@@ -328,7 +328,7 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left; padding-left: 0;`;
+    competitorPriceLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left;`;
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
@@ -345,7 +345,7 @@ function createSidebar() {
     competitorPriceLabel.appendChild(competitorPriceCheckbox);
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left; padding-left: 0;`;
+    stockInfoLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold; text-align: left;`;
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
@@ -410,7 +410,7 @@ function updateBanner() {
             bannerImage.style.display = 'block';
     }
 }
-// Funkcja przełączania zakładki z przewinięciem na górę
+// Funkcja przełączania zakładki z przewinięciem na górę i resetem filtrów
 function switchTab(country) {
     activeTab = country;
     console.log("Switching to tab:", country);
@@ -430,12 +430,7 @@ function switchTab(country) {
     }
     // Przewinięcie strony na samą górę
     window.scrollTo(0, 0);
-    // Zarządzanie widocznością przycisków zapisu
-    const saveButtons = document.getElementById('save-buttons');
-    if (saveButtons) {
-        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
-    }
-    updateBanner();
+    // Reset filtrów po przełączeniu zakładki
     const searchBar = document.getElementById('search-bar');
     if (searchBar) {
         const searchInput = searchBar.querySelector('input');
@@ -448,9 +443,15 @@ function switchTab(country) {
             product.style.position = 'relative';
         });
         if (typeof applyFilters === 'function') {
-            applyFilters();
+            applyFilters(); // Ponowne zastosowanie filtrów po zresetowaniu
         }
     }
+    // Zarządzanie widocznością przycisków zapisu
+    const saveButtons = document.getElementById('save-buttons');
+    if (saveButtons) {
+        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
+    }
+    updateBanner();
     if (country === 'cart') {
         updateCart();
     } else if (productsData[country].length === 0) {
