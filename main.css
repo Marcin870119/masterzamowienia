@@ -484,8 +484,7 @@ button:active {
 }
 /* Poprawka dla konsystencji checkboxów w sidebarze */
 div[id="sidebar"] label {
-    display: flex; /* Użycie flexbox dla lepszej kontroli */
-    align-items: center; /* Wyrównanie pionowe */
+    display: block; /* Użycie block dla ścisłego ułożenia w pionie */
     margin: 15px 0 5px; /* Odstęp między elementami */
     text-align: left;
     width: 100%;
