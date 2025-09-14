@@ -213,7 +213,7 @@ function showInitialDialog() {
     };
     const cancelButton = document.createElement('button');
     cancelButton.innerText = 'Cancel';
-    cancelButton.style.cssText = `padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;`;
+    cancelButton.style.cssText = `padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;`;
     cancelButton.onmouseover = () => cancelButton.style.backgroundColor = '#5a6268';
     cancelButton.onmouseout = () => cancelButton.style.backgroundColor = '#6c757d';
     cancelButton.onclick = () => document.body.removeChild(modal);
@@ -597,8 +597,9 @@ function updateCart() {
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                     </div>
                 `;
-                // Wyświetlanie ceny konkurencji i stanów magazynowych pod nazwą produktu
+                // Wyświetlanie ceny konkurencji i stanów magazynowych w jednym miejscu pod nazwą
                 const details = productElement.querySelector('.product-details');
+                let additionalInfo = '';
                 if (showCompetitorPrice && product['Cena konkurencji']) {
                     let competitorPriceColor = '';
                     if (parseFloat(product['Cena konkurencji']) < originalPrice) {
@@ -606,10 +607,13 @@ function updateCart() {
                     } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
                         competitorPriceColor = 'color: green;';
                     }
-                    details.innerHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 16px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                    additionalInfo += `<div class="competitor-price" style="margin-top: 5px; font-size: 16px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
                 }
                 if (showStockInfo && product['Stany magazynowe']) {
-                    details.innerHTML += `<div class="stock-info" style="margin-top: 5px; font-size: 16px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
+                    additionalInfo += `<div class="stock-info" style="margin-top: 5px; font-size: 16px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
+                }
+                if (additionalInfo) {
+                    details.innerHTML += `<div class="additional-info" style="margin-top: 5px;">${additionalInfo}</div>`;
                 }
                 cartList.appendChild(productElement);
                 totalCartValue += itemValue;
