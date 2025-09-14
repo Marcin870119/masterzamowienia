@@ -7,13 +7,11 @@ body {
   margin: 20px;
   background: #f4f6f9;
 }
-
 h1 {
   font-size: 28px;
   color: #333;
   margin-bottom: 10px;
 }
-
 .form-container {
   display: flex;
   flex-direction: column;
@@ -26,7 +24,6 @@ h1 {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   position: relative;
 }
-
 label {
   font-weight: 600;
   color: #333;
@@ -34,7 +31,6 @@ label {
   flex-direction: column;
   font-size: 14px;
 }
-
 input, select {
   padding: 10px;
   font-size: 14px;
@@ -44,12 +40,10 @@ input, select {
   outline: none;
   transition: border 0.2s, box-shadow 0.2s;
 }
-
 input:focus, select:focus {
   border-color: #007bff;
   box-shadow: 0 0 4px rgba(0,123,255,0.4);
 }
-
 button {
   padding: 12px;
   font-size: 16px;
@@ -62,28 +56,22 @@ button {
   transition: background 0.3s, transform 0.1s;
   margin-right: 8px;
 }
-
 button:hover {
   background: #0056b3;
 }
-
 button:active {
   transform: scale(0.98);
 }
-
 button.delete {
   background: #dc3545;
 }
-
 button.delete:hover {
   background: #b02a37;
 }
-
 .button-group {
   display: flex;
   justify-content: space-between;
 }
-
 .label-preview {
   width: 600px;
   height: 350px;
@@ -97,7 +85,6 @@ button.delete:hover {
   position: relative;
   background: white;
 }
-
 .label-preview .flag {
   position: absolute;
   top: 10px;
@@ -105,7 +92,6 @@ button.delete:hover {
   border: 1px solid #333; /* Przywrócono obramowanie */
   object-fit: cover;
 }
-
 .pdf-flag {
   position: absolute;
   top: 4px;
@@ -113,7 +99,6 @@ button.delete:hover {
   border: 1px solid #000; /* Przywrócono obramowanie w PDF */
   object-fit: cover;
 }
-
 .price-container {
   display: flex;
   align-items: baseline;
@@ -121,34 +106,31 @@ button.delete:hover {
   gap: 10px;
   margin-top: 30px;
 }
-
 .price {
   font-size: 120px;
   font-weight: bold;
   line-height: 1;
 }
-
 .unit {
   font-size: 32px;
   font-weight: bold;
 }
-
 .details {
   font-size: 28px;
   margin-top: 20px;
   font-weight: 600;
 }
-
 .promo {
   font-weight: bold;
   margin-top: 10px;
   font-size: 18px;
 }
-
-.barcode {
-  margin-top: auto;
+#barcode canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 60px !important;
+  visibility: visible !important;
 }
-
 /* --- Układ do PDF --- */
 .label-small {
   width: 148.5mm;
@@ -160,7 +142,6 @@ button.delete:hover {
   background: white;
   position: relative;
 }
-
 .label-fold {
   height: 25mm;
   border-bottom: 1px dashed #000;
@@ -169,7 +150,6 @@ button.delete:hover {
   align-items: center;
   font-size: 10px;
 }
-
 .label-content {
   height: 45mm;
   display: flex;
@@ -179,12 +159,10 @@ button.delete:hover {
   padding: 4px;
   position: relative;
 }
-
 /* Cena */
 .price-small { font-size: 28px; }
 .price-medium { font-size: 46px; }
 .price-large { font-size: 64px; }
-
 .price-center {
   display: flex;
   justify-content: center;
@@ -192,7 +170,6 @@ button.delete:hover {
   gap: 6px;
   margin-top: 20px;
 }
-
 .price-right {
   display: flex;
   justify-content: flex-end;
@@ -201,18 +178,17 @@ button.delete:hover {
   margin-top: 20px;
   margin-right: 20px;
 }
-
 /* Nazwa produktu */
 .name-small { font-size: 12px; }
 .name-medium { font-size: 16px; }
 .name-large { font-size: 22px; font-weight: bold; }
-
 .name-left { text-align: left; }
 .name-center { text-align: center; }
 .name-right { text-align: right; }
-
-.label-content .barcode { margin-top: auto; align-self: center; }
-
+.label-content .barcode {
+  margin-top: auto;
+  align-self: center;
+}
 #pdfPage {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -222,12 +198,10 @@ button.delete:hover {
   margin: 0;
   padding: 0;
 }
-
 /* Flagi różne rozmiary */
 .flag-small { width: 20px; height: 12px; }
 .flag-medium { width: 30px; height: 18px; }
 .flag-large { width: 40px; height: 24px; }
-
 .pdf-flag {
   position: absolute;
   top: 4px;
@@ -235,7 +209,6 @@ button.delete:hover {
   border: none; /* Usunięto obramowanie w PDF */
   object-fit: cover;
 }
-
 .pdf-icon {
   position: absolute;
   bottom: 4px;
@@ -243,7 +216,6 @@ button.delete:hover {
   border: none; /* Usunięto obramowanie w PDF */
   object-fit: cover;
 }
-
 .saved-labels-container {
   max-width: 600px;
   width: 100%;
@@ -252,7 +224,6 @@ button.delete:hover {
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-
 .saved-label {
   display: flex;
   justify-content: space-between;
@@ -260,14 +231,12 @@ button.delete:hover {
   padding: 10px;
   border-bottom: 1px solid #ddd;
 }
-
 .saved-label .button-container {
   display: flex;
   flex-direction: row;
   gap: 8px;
   align-items: center;
 }
-
 .saved-label button {
   padding: 6px 12px;
   font-size: 13px;
@@ -276,43 +245,35 @@ button.delete:hover {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.1s;
 }
-
 /* Edit button style */
 .saved-label button:nth-child(1) {
   background-color: #2196F3;
   color: white;
 }
-
 .saved-label button:nth-child(1):hover {
   background-color: #1976D2;
   transform: translateY(-1px);
 }
-
 .saved-label button:nth-child(1):active {
   transform: translateY(0);
 }
-
 /* Delete button style */
 .saved-label button.delete {
   background-color: #F44336;
   color: white;
   margin-left: 5px;
 }
-
 .saved-label button.delete:hover {
   background-color: #D32F2F;
   transform: translateY(-1px);
 }
-
 .saved-label button.delete:active {
   transform: translateY(0);
 }
-
 .pdf-buttons {
   margin-top: 20px;
   justify-content: center;
 }
-
 #productSuggestions {
   max-height: 150px;
   overflow-y: auto;
@@ -322,12 +283,10 @@ button.delete:hover {
   border-radius: 4px;
   z-index: 10;
 }
-
 #productSuggestions option {
   padding: 5px;
   cursor: pointer;
 }
-
 #productSuggestions option:hover {
   background-color: #f0f0f0;
 }
