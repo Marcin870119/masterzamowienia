@@ -66,7 +66,7 @@ function resetCustomPrice(country, index) {
     saveCartState();
 }
 
-// Funkcja aktualizująca ceny na stronie
+// Funkcja aktualizująca ceny na stronie - bez przeskakiwania
 function updatePrices() {
     const activeList = document.querySelector('.product-list.active');
     const scrollPosition = activeList ? activeList.scrollTop : 0;
@@ -86,7 +86,7 @@ function updatePrices() {
     }, 50);
 }
 
-// Funkcja zapisująca koszyk do pliku CSV
+// Funkcja zapisująca koszyk do pliku CSV w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToCSV() {
     let csvContent = 'indeks,nazwa,ilosc,cena\n';
     for (let country in productsData) {
@@ -108,7 +108,7 @@ function saveCartToCSV() {
     document.body.removeChild(link);
 }
 
-// Funkcja zapisująca koszyk do pliku XLS
+// Funkcja zapisująca koszyk do pliku XLS w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToXLS() {
     const workbook = XLSX.utils.book_new();
     const ws_data = [['indeks', 'nazwa', 'ilosc', 'cena']];
@@ -213,7 +213,7 @@ function showInitialDialog() {
     };
     const cancelButton = document.createElement('button');
     cancelButton.innerText = 'Cancel';
-    cancelButton.style.cssText = `padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;`;
+    cancelButton.style.cssText = `padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;`;
     cancelButton.onmouseover = () => cancelButton.style.backgroundColor = '#5a6268';
     cancelButton.onmouseout = () => cancelButton.style.backgroundColor = '#6c757d';
     cancelButton.onclick = () => document.body.removeChild(modal);
@@ -286,31 +286,31 @@ function showPriceDialog(country, index, originalPrice) {
 // Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
-    sidebar.id = 'sidebar';
+    sidebar.id = 'sidebar'; // Zachowuję ID dla spójności
     sidebar.style.cssText = `
         position: fixed;
         left: 0;
         top: 0;
-        width: 200px;
+        width: 100px;
         height: 100%;
         background-color: #f8f8f8;
         padding: 15px;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         z-index: 1000;
         font-family: Arial, sans-serif;
-        font-size: 14px;
+        font-size: 12px;
     `;
     const discountInfo = document.createElement('div');
     discountInfo.id = 'discountInfo';
-    discountInfo.style.cssText = `margin-bottom: 15px; font-weight: bold; color: #333;`;
+    discountInfo.style.cssText = `margin-bottom: 10px; font-weight: bold; color: #333;`;
     updateDiscountInfo();
     const discountLabel = document.createElement('label');
-    discountLabel.innerText = 'Discount (%):';
-    discountLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold;`;
+    discountLabel.innerText = 'Discount (%): ';
+    discountLabel.style.cssText = `display: block; margin: 5px 0; font-weight: normal;`;
     const discountInput = document.createElement('input');
     discountInput.type = 'number';
     discountInput.value = discountPercentage;
-    discountInput.style.cssText = `width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; margin-bottom: 15px;`;
+    discountInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
     discountInput.min = 0;
     discountInput.max = 100;
     discountInput.onchange = () => {
@@ -321,12 +321,12 @@ function createSidebar() {
         updateDiscountInfo();
     };
     const cashBackLabel = document.createElement('label');
-    cashBackLabel.innerText = 'Cash Back (%):';
-    cashBackLabel.style.cssText = `display: block; margin-bottom: 5px; font-weight: bold;`;
+    cashBackLabel.innerText = 'Cash Back (%): ';
+    cashBackLabel.style.cssText = `display: block; margin: 10px 0 5px; font-weight: normal;`;
     const cashBackInput = document.createElement('input');
     cashBackInput.type = 'number';
     cashBackInput.value = customCashBackPercentage;
-    cashBackInput.style.cssText = `width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; margin-bottom: 15px;`;
+    cashBackInput.style.cssText = `width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;`;
     cashBackInput.min = 0;
     cashBackInput.max = 100;
     cashBackInput.onchange = () => {
@@ -338,11 +338,11 @@ function createSidebar() {
     };
     const competitorPriceLabel = document.createElement('label');
     competitorPriceLabel.innerText = 'Show Competitor Price:';
-    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`;
+    competitorPriceLabel.style.cssText = `display: block; margin: 5px 0 5px 2px; font-weight: normal;`;
     const competitorPriceCheckbox = document.createElement('input');
     competitorPriceCheckbox.type = 'checkbox';
     competitorPriceCheckbox.checked = showCompetitorPrice;
-    competitorPriceCheckbox.style.cssText = `margin-left: 5px;`;
+    competitorPriceCheckbox.style.cssText = `margin-left: 2px;`;
     competitorPriceCheckbox.onchange = () => {
         showCompetitorPrice = competitorPriceCheckbox.checked;
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -355,11 +355,11 @@ function createSidebar() {
     competitorPriceLabel.appendChild(competitorPriceCheckbox);
     const stockInfoLabel = document.createElement('label');
     stockInfoLabel.innerText = 'Show Stock Info:';
-    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 5px; font-weight: normal;`;
+    stockInfoLabel.style.cssText = `display: block; margin: 5px 0 5px 2px; font-weight: normal;`;
     const stockInfoCheckbox = document.createElement('input');
     stockInfoCheckbox.type = 'checkbox';
     stockInfoCheckbox.checked = showStockInfo;
-    stockInfoCheckbox.style.cssText = `margin-left: 5px;`;
+    stockInfoCheckbox.style.cssText = `margin-left: 2px;`;
     stockInfoCheckbox.onchange = () => {
         showStockInfo = stockInfoCheckbox.checked;
         ['lithuania', 'bulgaria', 'ukraine', 'romania'].forEach(country => {
@@ -376,7 +376,9 @@ function createSidebar() {
     sidebar.appendChild(cashBackLabel);
     sidebar.appendChild(cashBackInput);
     sidebar.appendChild(competitorPriceLabel);
+    sidebar.appendChild(competitorPriceCheckbox);
     sidebar.appendChild(stockInfoLabel);
+    sidebar.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
 
