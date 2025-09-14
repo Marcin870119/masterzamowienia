@@ -218,7 +218,7 @@ function loadProducts(country) {
                     if (typeof applyFilters === 'function') {
                         applyFilters();
                     }
-                }, 100); // Opóźnienie dla zapewnienia załadowania DOM
+                }, 100); // Opóźnienie dla synchronizacji z DOM
             }
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
@@ -244,7 +244,7 @@ function applyFilters() {
     let products = Array.from(productList.querySelectorAll('.product'));
 
     // Sortowanie według rankingu
-    if (sortOrder) {
+    if (sortOrder && productsData[activeTab].length > 0) {
         products.sort((a, b) => {
             const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
             const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
