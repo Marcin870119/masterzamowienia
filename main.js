@@ -19,9 +19,11 @@ let showStockInfo = false; // Domyślnie stany magazynowe ukryte
 let gk_isXlsx = false;
 let gk_xlsxFileLookup = {};
 let gk_fileData = {};
+
 function filledCell(cell) {
     return cell !== '' && cell != null;
 }
+
 function loadFileData(filename) {
     if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
         try {
@@ -46,6 +48,7 @@ function loadFileData(filename) {
     }
     return gk_fileData[filename] || "";
 }
+
 // Funkcja obliczająca cenę z rabatem lub niestandardową ceną
 function applyDiscount(price, productIndex, country) {
     const parsedPrice = parseFloat(price) || 0;
@@ -55,12 +58,14 @@ function applyDiscount(price, productIndex, country) {
     }
     return Number((parsedPrice * (1 - discountPercentage / 100)).toFixed(2));
 }
+
 // Funkcja resetująca niestandardową cenę
 function resetCustomPrice(country, index) {
     delete customPrices[`${country}-${index}`];
     updatePrices();
     saveCartState();
 }
+
 // Funkcja aktualizująca ceny na stronie - bez przeskakiwania
 function updatePrices() {
     const activeList = document.querySelector('.product-list.active');
@@ -80,6 +85,7 @@ function updatePrices() {
         }
     }, 50);
 }
+
 // Funkcja zapisująca koszyk do pliku CSV w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToCSV() {
     let csvContent = 'indeks,nazwa,ilosc,cena\n';
@@ -93,7 +99,7 @@ function saveCartToCSV() {
     }
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodedUri);
     const now = new Date();
     const timestamp = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
     link.setAttribute('download', `order_${timestamp}.csv`);
@@ -101,6 +107,7 @@ function saveCartToCSV() {
     link.click();
     document.body.removeChild(link);
 }
+
 // Funkcja zapisująca koszyk do pliku XLS w formacie "indeks,nazwa,ilosc,cena"
 function saveCartToXLS() {
     const workbook = XLSX.utils.book_new();
@@ -119,6 +126,7 @@ function saveCartToXLS() {
     const timestamp = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
     XLSX.writeFile(workbook, `order_${timestamp}.xlsx`);
 }
+
 // Nowa funkcja wyświetlająca modal z marżą dla zapisu per kraj
 function showMarginDialog(country) {
     const countryPolish = {
@@ -210,6 +218,7 @@ function showMarginDialog(country) {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
+
 // Nowa funkcja zapisująca per kraj do XLSX z marżą
 function saveCountryToXLS(country, marginPercentage) {
     const countryPolish = {
@@ -234,6 +243,7 @@ function saveCountryToXLS(country, marginPercentage) {
     const timestamp = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
     XLSX.writeFile(workbook, `order_${polishName.toLowerCase()}_${timestamp}.xlsx`);
 }
+
 // Funkcja wyświetlająca modalne okno początkowe
 function showInitialDialog() {
     const modal = document.createElement('div');
@@ -335,6 +345,7 @@ function showInitialDialog() {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 }
+
 // Funkcja wyświetlająca okno dialogowe do zmiany ceny produktu (styl jak sidebar)
 function showPriceDialog(country, index, originalPrice) {
     const modal = document.createElement('div');
@@ -388,10 +399,11 @@ function showPriceDialog(country, index, originalPrice) {
     modal.appendChild(cancelButton);
     document.body.appendChild(modal);
 }
+
 // Tworzenie stałego panelu po lewej stronie
 function createSidebar() {
     const sidebar = document.createElement('div');
-    sidebar.id = 'sidebar'; // Zachowuję ID dla spójności
+    sidebar.id = 'sidebar';
     sidebar.style.cssText = `
         position: fixed;
         left: 0;
@@ -486,6 +498,7 @@ function createSidebar() {
     sidebar.appendChild(stockInfoCheckbox);
     document.body.appendChild(sidebar);
 }
+
 // Funkcja aktualizująca informację o rabatach w pasku bocznym
 function updateDiscountInfo() {
     const discountInfo = document.getElementById('discountInfo');
@@ -495,6 +508,7 @@ function updateDiscountInfo() {
         console.error("Element discountInfo not found!");
     }
 }
+
 // Funkcja aktualizująca baner
 function updateBanner() {
     const bannerImage = document.getElementById('banner-image');
@@ -527,6 +541,7 @@ function updateBanner() {
             bannerImage.style.display = 'block';
     }
 }
+
 // Funkcja przełączania zakładek
 function switchTab(country) {
     activeTab = country;
@@ -559,8 +574,9 @@ function switchTab(country) {
             product.style.visibility = 'visible';
             product.style.position = 'relative';
         });
-        if (typeof applyFilters === 'function') {
-            setTimeout(() => applyFilters(), 100); // Opóźnienie, aby upewnić się, że DOM jest gotowy
+        const applyFiltersFunc = searchBar.applyFilters;
+        if (typeof applyFiltersFunc === 'function') {
+            applyFiltersFunc();
         }
     }
     // Wyświetlanie przycisków zapisu tylko w zakładce "cart"
@@ -568,7 +584,7 @@ function switchTab(country) {
     if (!saveButtons) {
         saveButtons = document.createElement('div');
         saveButtons.id = 'save-buttons';
-        saveButtons.style.cssText = 'display: none; margin-top: 10px;';
+        saveButtons.style.cssText = 'display: none; margin-top: 10px; text-align: center;';
         document.body.appendChild(saveButtons);
     }
     saveButtons.style.display = country === 'cart' ? 'block' : 'none';
@@ -604,6 +620,7 @@ function switchTab(country) {
     }
     updateCartInfo();
 }
+
 // Funkcja aktualizowania informacji o koszyku
 function updateCartInfo() {
     let totalItems = 0;
@@ -621,11 +638,13 @@ function updateCartInfo() {
     updateCashBackInfo(totalValue);
     saveCartState();
 }
+
 // Funkcja aktualizowania informacji o cashbacku
 function updateCashBackInfo(totalValue) {
     const cashBack = Number((totalValue * (customCashBackPercentage / 100)).toFixed(2));
     document.getElementById('cash-back-info').innerText = `Cash Back: ${cashBack.toFixed(2)} GBP`;
 }
+
 // Funkcja zapisywania stanu koszyka
 function saveCartState() {
     const cartState = {
@@ -634,6 +653,7 @@ function saveCartState() {
     };
     localStorage.setItem('cartState', JSON.stringify(cartState));
 }
+
 // Funkcja wczytywania stanu koszyka
 function loadCartState() {
     const savedData = localStorage.getItem('cartState');
@@ -653,6 +673,7 @@ function loadCartState() {
         updateCartInfo();
     }
 }
+
 // Funkcja czyszczenia stanu koszyka
 function clearCartState() {
     for (let country in productsData) {
@@ -665,6 +686,7 @@ function clearCartState() {
     calculateTotal();
     updateCartInfo();
 }
+
 // Funkcja zmiany ilości produktu
 function changeQuantity(country, index, change) {
     const input = document.getElementById(`quantity-${country}-${index}`);
@@ -679,6 +701,7 @@ function changeQuantity(country, index, change) {
         saveCartState();
     }
 }
+
 // Funkcja aktualizowania koszyka
 function updateCart() {
     const cartList = document.getElementById('product-list-cart');
@@ -717,7 +740,6 @@ function updateCart() {
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                     </div>
                 `;
-                // Wyświetlanie ceny konkurencji i stanów magazynowych w jednym miejscu pod nazwą
                 const details = productElement.querySelector('.product-details');
                 let additionalInfo = '';
                 if (showCompetitorPrice && product['Cena konkurencji']) {
@@ -743,6 +765,7 @@ function updateCart() {
     document.getElementById("cart-total").innerText = `Cart value: ${totalCartValue.toFixed(2)} GBP`;
     updateCartInfo();
 }
+
 // Funkcja usuwania produktu z koszyka
 function removeItem(country, index) {
     productsData[country][index].quantity = 0;
@@ -757,6 +780,7 @@ function removeItem(country, index) {
         document.getElementById(`quantity-${country}-${index}`).value = '0';
     }
 }
+
 // Funkcja obliczania całkowitej wartości
 function calculateTotal() {
     let totalValue = 0;
@@ -777,6 +801,7 @@ function calculateTotal() {
     document.getElementById("category-totals").innerText = categoryTotalsText.trim();
     document.getElementById("total-value").innerText = `Total order value: ${totalValue.toFixed(2)} GBP`;
 }
+
 // Funkcja wysyłki zamówienia
 function submitOrder() {
     const storeName = document.getElementById('store-name').value;
@@ -832,21 +857,8 @@ function submitOrder() {
         alert("Error sending order.");
     });
 }
-// Funkcja ładowania strony
-window.onload = async function() {
-    showInitialDialog();
-    createSidebar();
-    createSearchBar();
-    await loadProducts('lithuania');
-    await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
-    switchTab('lithuania');
-    loadCartState();
-    updateBanner();
-    updateCartInfo();
-    if (typeof applyFilters === 'function') {
-        applyFilters(); // Początkowe zastosowanie filtrów
-    }
-};
+
+// Funkcja tworzenia paska wyszukiwania
 function createSearchBar() {
     const searchBarContainer = document.createElement('div');
     searchBarContainer.id = 'search-bar';
@@ -961,13 +973,12 @@ function createSearchBar() {
             return;
         }
         let products = Array.from(productList.querySelectorAll('.product'));
-        console.log("Applying filters for", activeTab, "Products:", products.length, "Data:", productsData[activeTab] ? productsData[activeTab].length : 'undefined'); // Debug
-        // Sortowanie według rankingu, jeśli wybrano i dane są dostępne
+        console.log("Applying filters for", activeTab, "Products:", products.length, "Data:", productsData[activeTab] ? productsData[activeTab].length : 'undefined');
         if (sortOrder && productsData[activeTab] && productsData[activeTab].length > 0) {
             products.sort((a, b) => {
                 const rankA = parseInt(productsData[activeTab][a.dataset.index]?.Ranking) || 0;
                 const rankB = parseInt(productsData[activeTab][b.dataset.index]?.Ranking) || 0;
-                console.log("Sorting:", a.dataset.index, rankA, b.dataset.index, rankB); // Debug
+                console.log("Sorting:", a.dataset.index, rankA, b.dataset.index, rankB);
                 return sortOrder === 'desc' ? rankB - rankA : rankA - rankB;
             });
             products.forEach(product => productList.appendChild(product));
@@ -980,7 +991,7 @@ function createSearchBar() {
             const nameWords = productName.split(/\s+/);
             const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ');
             const normalizedProductCategory = productCategory.replace(/-/g, ' ');
-            console.log("Filter Debug - Index:", productIndex, "Category:", productCategory, "Selected:", selectedCategory); // Debug
+            console.log("Filter Debug - Index:", productIndex, "Category:", productCategory, "Selected:", selectedCategory);
             const searchMatch = searchTerm === '' || searchTerm.split(/\s+/).every(term =>
                 nameWords.some(word => word.startsWith(term)) || productCode.includes(term)
             );
@@ -994,13 +1005,13 @@ function createSearchBar() {
             }
         });
     }
-    // Rejestracja zdarzeń
     searchInput.oninput = applyFilters;
     categoryFilter.onchange = applyFilters;
     rankingFilter.onchange = applyFilters;
-    // Przechowanie funkcji applyFilters w searchBar dla dostępu z switchTab
     searchBarContainer.applyFilters = applyFilters;
 }
+
+// Funkcja ładowania produktów
 function loadProducts(country) {
     console.log("Loading data for:", country);
     let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
@@ -1093,7 +1104,6 @@ function loadProducts(country) {
                         <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
                         <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
                     `;
-                    // Wyświetlanie ceny konkurencji i stanów magazynowych w jednym miejscu pod nazwą
                     let additionalInfo = '';
                     if (showCompetitorPrice && product['Cena konkurencji']) {
                         let competitorPriceColor = '';
@@ -1136,3 +1146,19 @@ function loadProducts(country) {
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
+
+// Funkcja ładowania strony
+window.onload = async function() {
+    showInitialDialog();
+    createSidebar();
+    createSearchBar();
+    await loadProducts('lithuania');
+    await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
+    switchTab('lithuania');
+    loadCartState();
+    updateBanner();
+    updateCartInfo();
+    if (typeof applyFilters === 'function') {
+        applyFilters();
+    }
+};
