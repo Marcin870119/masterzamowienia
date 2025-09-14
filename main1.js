@@ -251,8 +251,22 @@ function loadProducts(country) {
                         <button onclick="showPriceDialog('${country}', ${index}, ${originalPrice})" style="margin-top: 5px; margin-right: 5px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Set Custom Price</button>
                         <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
                     `;
-                    if (showCompetitorPrice) {
-                        detailsHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 12px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>`;
+                    // Wyświetlanie ceny konkurencji i stanów magazynowych w jednym miejscu pod nazwą
+                    let additionalInfo = '';
+                    if (showCompetitorPrice && product['Cena konkurencji']) {
+                        let competitorPriceColor = '';
+                        if (parseFloat(product['Cena konkurencji']) < originalPrice) {
+                            competitorPriceColor = 'color: red;';
+                        } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
+                            competitorPriceColor = 'color: green;';
+                        }
+                        additionalInfo += `<div class="competitor-price" style="margin-top: 5px; font-size: 16px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                    }
+                    if (showStockInfo && product['Stany magazynowe']) {
+                        additionalInfo += `<div class="stock-info" style="margin-top: 5px; font-size: 16px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
+                    }
+                    if (additionalInfo) {
+                        detailsHTML += `<div class="additional-info" style="margin-top: 5px;">${additionalInfo}</div>`;
                     }
                     details.innerHTML = detailsHTML;
                     productElement.appendChild(details);
@@ -264,16 +278,6 @@ function loadProducts(country) {
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                     `;
                     productElement.appendChild(controls);
-                    if (showCompetitorPrice || showStockInfo) {
-                        const competitorStockDiv = document.createElement('div');
-                        if (showCompetitorPrice && product['Cena konkurencji']) {
-                            competitorStockDiv.innerHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 12px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
-                        }
-                        if (showStockInfo && product['Stany magazynowe']) {
-                            competitorStockDiv.innerHTML += `<div class="stock-info" style="margin-top: 5px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
-                        }
-                        productElement.appendChild(competitorStockDiv);
-                    }
                     productList.appendChild(productElement);
                 };
                 imgTest.onerror = () => {
@@ -283,12 +287,8 @@ function loadProducts(country) {
             calculateTotal();
             updateCartInfo();
             if (country === activeTab) {
-                const searchBar = document.getElementById('search-bar');
-                if (searchBar) {
-                    const applyFiltersFunc = searchBar.applyFilters;
-                    if (typeof applyFiltersFunc === 'function') {
-                        applyFiltersFunc(); // Wywołanie filtrów po załadowaniu
-                    }
+                if (typeof applyFilters === 'function') {
+                    setTimeout(() => applyFilters(), 100);
                 }
             }
         })
@@ -312,12 +312,7 @@ function switchTab(country) {
     } else {
         console.error("Product list not found for:", country);
     }
-    // Zarządzanie widocznością przycisków zapisu
-    const saveButtons = document.getElementById('save-buttons');
-    if (saveButtons) {
-        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
-    }
-    updateBanner();
+    window.scrollTo(0, 0);
     const searchBar = document.getElementById('search-bar');
     if (searchBar) {
         const searchInput = searchBar.querySelector('input');
@@ -337,6 +332,11 @@ function switchTab(country) {
             applyFiltersFunc();
         }
     }
+    const saveButtons = document.getElementById('save-buttons');
+    if (saveButtons) {
+        saveButtons.style.display = country === 'cart' ? 'block' : 'none';
+    }
+    updateBanner();
     if (country === 'cart') {
         updateCart();
     } else if (productsData[country].length === 0) {
@@ -404,22 +404,23 @@ function updateCart() {
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
                     </div>
                 `;
-                // Dodanie ceny konkurencji i stanów magazynowych pod ceną konkurencji
-                if (showCompetitorPrice || showStockInfo) {
-                    const competitorStockDiv = document.createElement('div');
-                    if (showCompetitorPrice && product['Cena konkurencji']) {
-                        let competitorPriceColor = '';
-                        if (parseFloat(product['Cena konkurencji']) < originalPrice) {
-                            competitorPriceColor = 'color: red;';
-                        } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
-                            competitorPriceColor = 'color: green;';
-                        }
-                        competitorStockDiv.innerHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 12px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                // Wyświetlanie ceny konkurencji i stanów magazynowych w jednym miejscu pod nazwą
+                const details = productElement.querySelector('.product-details');
+                let additionalInfo = '';
+                if (showCompetitorPrice && product['Cena konkurencji']) {
+                    let competitorPriceColor = '';
+                    if (parseFloat(product['Cena konkurencji']) < originalPrice) {
+                        competitorPriceColor = 'color: red;';
+                    } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
+                        competitorPriceColor = 'color: green;';
                     }
-                    if (showStockInfo && product['Stany magazynowe']) {
-                        competitorStockDiv.innerHTML += `<div class="stock-info" style="margin-top: 5px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
-                    }
-                    productElement.appendChild(competitorStockDiv);
+                    additionalInfo += `<div class="competitor-price" style="margin-top: 5px; font-size: 16px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                }
+                if (showStockInfo && product['Stany magazynowe']) {
+                    additionalInfo += `<div class="stock-info" style="margin-top: 5px; font-size: 16px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
+                }
+                if (additionalInfo) {
+                    details.innerHTML += `<div class="additional-info" style="margin-top: 5px;">${additionalInfo}</div>`;
                 }
                 cartList.appendChild(productElement);
                 totalCartValue += itemValue;
@@ -519,17 +520,18 @@ function submitOrder() {
     });
 }
 
-// Wywołanie okna dialogowego, stworzenie paska bocznego i paska wyszukiwania z filtrem po załadowaniu strony
+// Funkcja ładowania strony
 window.onload = async function() {
     showInitialDialog();
     createSidebar();
     createSearchBar();
-    // Ładowanie danych dla Litwy jako pierwszej
     await loadProducts('lithuania');
-    // Ładowanie pozostałych krajów w tle
     await Promise.all(['bulgaria', 'ukraine', 'romania'].map(country => loadProducts(country)));
-    switchTab('lithuania'); // Wyraźnie przełącz na Litwę po załadowaniu
+    switchTab('lithuania');
     loadCartState();
     updateBanner();
     updateCartInfo();
+    if (typeof applyFilters === 'function') {
+        applyFilters(); // Początkowe zastosowanie filtrów
+    }
 };
