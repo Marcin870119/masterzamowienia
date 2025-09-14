@@ -252,7 +252,7 @@ function loadProducts(country) {
                         <button onclick="resetCustomPrice('${country}', ${index})" style="margin-top: 5px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Reset Custom Price</button>
                     `;
                     if (showCompetitorPrice) {
-                        detailsHTML += `<div class="competitor-price" style="${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>`;
+                        detailsHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 12px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji'] || 'N/A'} GBP</div>`;
                     }
                     details.innerHTML = detailsHTML;
                     productElement.appendChild(details);
@@ -262,9 +262,18 @@ function loadProducts(country) {
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                         <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${showStockInfo ? (product['Stany magazynowe'] || 'N/A') : ''}</span>
                     `;
                     productElement.appendChild(controls);
+                    if (showCompetitorPrice || showStockInfo) {
+                        const competitorStockDiv = document.createElement('div');
+                        if (showCompetitorPrice && product['Cena konkurencji']) {
+                            competitorStockDiv.innerHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 12px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                        }
+                        if (showStockInfo && product['Stany magazynowe']) {
+                            competitorStockDiv.innerHTML += `<div class="stock-info" style="margin-top: 5px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
+                        }
+                        productElement.appendChild(competitorStockDiv);
+                    }
                     productList.appendChild(productElement);
                 };
                 imgTest.onerror = () => {
@@ -393,9 +402,25 @@ function updateCart() {
                         <button onclick="changeQuantity('${country}', ${index}, -1)">-</button>
                         <input type="number" id="quantity-${country}-${index}" value="${product.quantity || 0}" readonly>
                         <button onclick="changeQuantity('${country}', ${index}, 1)">+</button>
-                        <span class="stock-info" style="margin-left: 10px; font-size: 12px; color: #666;">Stany magazynowe: ${showStockInfo ? (product['Stany magazynowe'] || 'N/A') : ''}</span>
                     </div>
                 `;
+                // Dodanie ceny konkurencji i stanów magazynowych pod ceną konkurencji
+                if (showCompetitorPrice || showStockInfo) {
+                    const competitorStockDiv = document.createElement('div');
+                    if (showCompetitorPrice && product['Cena konkurencji']) {
+                        let competitorPriceColor = '';
+                        if (parseFloat(product['Cena konkurencji']) < originalPrice) {
+                            competitorPriceColor = 'color: red;';
+                        } else if (parseFloat(product['Cena konkurencji']) > originalPrice) {
+                            competitorPriceColor = 'color: green;';
+                        }
+                        competitorStockDiv.innerHTML += `<div class="competitor-price" style="margin-top: 5px; font-size: 12px; ${competitorPriceColor}">Competitor Price: ${product['Cena konkurencji']} GBP</div>`;
+                    }
+                    if (showStockInfo && product['Stany magazynowe']) {
+                        competitorStockDiv.innerHTML += `<div class="stock-info" style="margin-top: 5px; font-size: 12px; color: #666;">Stany magazynowe: ${product['Stany magazynowe']}</div>`;
+                    }
+                    productElement.appendChild(competitorStockDiv);
+                }
                 cartList.appendChild(productElement);
                 totalCartValue += itemValue;
             }
