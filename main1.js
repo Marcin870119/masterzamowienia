@@ -102,7 +102,6 @@ function createSearchBar() {
         console.error("Banner container element not found for search bar placement!");
     }
 }
-
 function loadProducts(country) {
     console.log("Loading data for:", country);
     let url = 'https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/produktyjson.json';
@@ -208,18 +207,31 @@ function loadProducts(country) {
                     `;
                     productElement.appendChild(controls);
                     productList.appendChild(productElement);
+                    // Wywołanie applyFilters po dodaniu wszystkich produktów, jeśli to aktywna zakładka
+                    if (country === activeTab) {
+                        setTimeout(() => {
+                            if (typeof applyFilters === 'function') {
+                                applyFilters();
+                            }
+                        }, 100);
+                    }
                 };
                 imgTest.onerror = () => {
                     console.warn(`Skipped index ${product['INDEKS']} due to missing photo: ${imageUrl}`);
                 };
             });
             if (country === activeTab) {
-                switchTab(activeTab);
+                // Usunięcie rekurencyjnego wywołania switchTab, aby uniknąć pętli
+                // Zamiast tego, po załadowaniu, zastosuj filtry
+                setTimeout(() => {
+                    if (typeof applyFilters === 'function') {
+                        applyFilters();
+                    }
+                }, 100);
             }
         })
         .catch(error => console.error(`Error loading data for ${country}:`, error));
 }
-
 function applyFilters() {
     const searchBar = document.getElementById('search-bar');
     if (!searchBar) {
@@ -234,7 +246,6 @@ function applyFilters() {
     const sortOrder = rankingFilter.value;
     const productLists = document.querySelectorAll('.product-list.active .product');
     let products = Array.from(productLists);
-
     // Sortowanie według rankingu, jeśli wybrano
     if (sortOrder) {
         products.sort((a, b) => {
