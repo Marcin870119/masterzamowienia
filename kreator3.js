@@ -390,8 +390,8 @@ function showVirtualEditModal(productIndex) {
       <div class="modal-content">
         <span class="close" onclick="window.hideEditModal()">&times;</span>
         <h3>Edytuj produkt wizualnie</h3>
-        <div style="position: relative; width: 280px; height: 350px; margin: 20px auto;">
-          <canvas id="virtualEditCanvas" width="280" height="350"></canvas>
+        <div style="position: relative; width: 560px; height: 700px; margin: 20px auto;">
+          <canvas id="virtualEditCanvas" width="560" height="700"></canvas>
           <div id="editPanel" style="position: absolute; top: 10px; right: -200px; background: white; padding: 10px; border: 1px solid #ccc; display: none;">
             <select id="fontSelect">
               <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
@@ -421,9 +421,9 @@ function showVirtualEditModal(productIndex) {
     `;
     modal.style.display = 'block';
     const canvas = new fabric.Canvas('virtualEditCanvas');
-    const canvasWidth = 280;
-    const canvasHeight = 350;
-    const borderMargin = 20; // Margines ramki (odpowiada 40/2 w PDF dla isLarge)
+    const canvasWidth = 560;
+    const canvasHeight = 700;
+    const borderMargin = 40; // Skalowany margines ramki (2x 20 pt w PDF)
 
     if (edit.backgroundTexture) {
       try {
@@ -482,10 +482,10 @@ function showVirtualEditModal(productIndex) {
       height: canvasHeight - borderMargin * 2,
       fill: 'transparent',
       stroke: edit.borderColor || '#000000',
-      strokeWidth: 2,
-      strokeDashArray: edit.borderStyle === 'dashed' ? [5, 5] : edit.borderStyle === 'dotted' ? [2, 2] : null,
-      rx: 5,
-      ry: 5,
+      strokeWidth: 4,
+      strokeDashArray: edit.borderStyle === 'dashed' ? [10, 10] : edit.borderStyle === 'dotted' ? [4, 4] : null,
+      rx: 10,
+      ry: 10,
       selectable: false
     });
     canvas.add(borderRect);
@@ -494,7 +494,7 @@ function showVirtualEditModal(productIndex) {
     const nazwaText = new fabric.Text(product.nazwa || 'Brak nazwy', {
       left: borderMargin + layoutName.x * (canvasWidth - borderMargin * 2),
       top: borderMargin + layoutName.y * (canvasHeight - borderMargin * 2),
-      fontSize: 11,
+      fontSize: 22,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
       selectable: true,
@@ -507,7 +507,7 @@ function showVirtualEditModal(productIndex) {
     const indeksText = new fabric.Text(`Indeks: ${product.indeks || '-'}`, {
       left: borderMargin + layoutIndex.x * (canvasWidth - borderMargin * 2),
       top: borderMargin + layoutIndex.y * (canvasHeight - borderMargin * 2),
-      fontSize: 9,
+      fontSize: 18,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
       selectable: true,
@@ -522,7 +522,7 @@ function showVirtualEditModal(productIndex) {
       rankingText = new fabric.Text(`RANKING: ${product.ranking}`, {
         left: borderMargin + layoutRanking.x * (canvasWidth - borderMargin * 2),
         top: borderMargin + layoutRanking.y * (canvasHeight - borderMargin * 2),
-        fontSize: 9,
+        fontSize: 18,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
         selectable: true,
@@ -538,7 +538,7 @@ function showVirtualEditModal(productIndex) {
       cenaText = new fabric.Text(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, {
         left: borderMargin + layoutPrice.x * (canvasWidth - borderMargin * 2),
         top: borderMargin + layoutPrice.y * (canvasHeight - borderMargin * 2),
-        fontSize: edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16,
+        fontSize: edit.priceFontSize === 'small' ? 24 : edit.priceFontSize === 'medium' ? 28 : 32,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
         selectable: true,
@@ -587,7 +587,7 @@ function showVirtualEditModal(productIndex) {
       document.getElementById('editPanel').style.display = 'block';
       document.getElementById('fontSelect').value = obj.fontFamily || 'Arial';
       document.getElementById('colorSelect').value = obj.fill || '#000000';
-      document.getElementById('sizeSelect').value = obj.fontSize === 12 ? 'small' : obj.fontSize === 14 ? 'medium' : 'large';
+      document.getElementById('sizeSelect').value = obj.fontSize === 24 ? 'small' : obj.fontSize === 28 ? 'medium' : 'large';
       document.getElementById('borderStyleSelect').value = edit.borderStyle || 'solid';
       document.getElementById('borderColorSelect').value = edit.borderColor || '#000000';
       document.getElementById('backgroundOpacitySelect').value = edit.backgroundOpacity || 1.0;
@@ -597,7 +597,7 @@ function showVirtualEditModal(productIndex) {
             obj.set({
               fontFamily: document.getElementById('fontSelect').value,
               fill: document.getElementById('colorSelect').value,
-              fontSize: document.getElementById('sizeSelect').value === 'small' ? 12 : document.getElementById('sizeSelect').value === 'medium' ? 14 : 16
+              fontSize: document.getElementById('sizeSelect').value === 'small' ? 24 : document.getElementById('sizeSelect').value === 'medium' ? 28 : 32
             });
           }
           const borderStyle = document.getElementById('borderStyleSelect').value;
@@ -619,7 +619,7 @@ function showVirtualEditModal(productIndex) {
           }
           borderRect.set({
             stroke: borderColor,
-            strokeDashArray: borderStyle === 'dashed' ? [5, 5] : borderStyle === 'dotted' ? [2, 2] : null
+            strokeDashArray: borderStyle === 'dashed' ? [10, 10] : borderStyle === 'dotted' ? [4, 4] : null
           });
           edit.borderStyle = borderStyle;
           edit.borderColor = borderColor;
@@ -663,7 +663,7 @@ function showVirtualEditModal(productIndex) {
           rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
           cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
           cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
-          priceFontSize: cenaText ? (cenaText.fontSize === 12 ? 'small' : cenaText.fontSize === 14 ? 'medium' : 'large') : edit.priceFontSize,
+          priceFontSize: cenaText ? (cenaText.fontSize === 24 ? 'small' : cenaText.fontSize === 28 ? 'medium' : 'large') : edit.priceFontSize,
           borderStyle: edit.borderStyle || 'solid',
           borderColor: edit.borderColor || '#000000',
           backgroundTexture: edit.backgroundTexture || null,
