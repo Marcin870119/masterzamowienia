@@ -279,9 +279,21 @@ function renderCatalog() {
       editButton.className = 'btn-primary edit-button';
       editButton.innerHTML = '<i class="fas fa-edit"></i> Edytuj';
       editButton.onclick = () => window.showEditModal(i);
+      const layoutButton = document.createElement('button');
+      layoutButton.className = 'btn-primary layout-button';
+      layoutButton.innerHTML = '<i class="fas fa-object-group"></i> Edytuj układ';
+      layoutButton.onclick = () => {
+        if (typeof window.showVirtualEditModal === 'function') {
+          window.showVirtualEditModal(i);
+        } else {
+          console.error('Funkcja showVirtualEditModal nie jest zdefiniowana');
+          document.getElementById('debug').innerText = "Błąd: Funkcja edycji układu nie jest dostępna";
+        }
+      };
       item.appendChild(img);
       item.appendChild(details);
       item.appendChild(editButton);
+      item.appendChild(layoutButton);
       pageDiv.appendChild(item);
     });
   } catch (e) {
