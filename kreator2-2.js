@@ -21,26 +21,33 @@ function drawBox(doc, x, y, w, h, borderStyle, borderColor) {
 
 function showProgressModal() {
   try {
-    document.getElementById('progressModal').style.display = 'block';
+    const progressModal = document.getElementById('progressModal');
+    if (!progressModal) throw new Error("Nie znaleziono elementu progressModal");
+    progressModal.style.display = 'block';
     document.getElementById('progressBar').style.width = '0%';
     document.getElementById('progressText').textContent = '0%';
   } catch (e) {
     console.error('Błąd pokazywania modalu postępu:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu postępu";
+    document.getElementById('debug').innerText = "Błąd pokazywania modalu postępu: " + e.message;
   }
 }
 
 function hideProgressModal() {
   try {
-    document.getElementById('progressModal').style.display = 'none';
+    const progressModal = document.getElementById('progressModal');
+    if (!progressModal) throw new Error("Nie znaleziono elementu progressModal");
+    progressModal.style.display = 'none';
   } catch (e) {
     console.error('Błąd ukrywania modalu postępu:', e);
-    document.getElementById('debug').innerText = "Błąd ukrywania modalu postępu";
+    document.getElementById('debug').innerText = "Błąd ukrywania modalu postępu: " + e.message;
   }
 }
 
 async function buildPDF(jsPDF, save = true) {
   try {
+    if (!window.products || window.products.length === 0) {
+      throw new Error("Brak produktów do generowania PDF");
+    }
     showProgressModal();
     const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4", compress: true });
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -58,7 +65,7 @@ async function buildPDF(jsPDF, save = true) {
         }
       } catch (e) {
         console.error('Błąd dodawania okładki:', e);
-        document.getElementById('debug').innerText = "Błąd dodawania okładki";
+        document.getElementById('debug').innerText = "Błąd dodawania okładki: " + e.message;
       }
     }
 
@@ -110,14 +117,14 @@ async function buildPDF(jsPDF, save = true) {
           applyGradient(pageEdit.pageBackgroundGradient, pageEdit.pageBackgroundOpacity);
         } catch (e) {
           console.error('Błąd dodawania gradientu tła:', e);
-          document.getElementById('debug').innerText = "Błąd dodawania gradientu tła";
+          document.getElementById('debug').innerText = "Błąd dodawania gradientu tła: " + e.message;
         }
       } else if (backgroundImg) {
         try {
           doc.addImage(backgroundImg, backgroundImg.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, pageHeight, undefined, "FAST");
         } catch (e) {
           console.error('Błąd dodawania tła:', e);
-          document.getElementById('debug').innerText = "Błąd dodawania tła";
+          document.getElementById('debug').innerText = "Błąd dodawania tła: " + e.message;
         }
       }
       if (bannerImg) {
@@ -125,7 +132,7 @@ async function buildPDF(jsPDF, save = true) {
           doc.addImage(bannerImg, bannerImg.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, bannerHeight, undefined, "FAST");
         } catch (e) {
           console.error('Błąd dodawania banera:', e);
-          document.getElementById('debug').innerText = "Błąd dodawania banera";
+          document.getElementById('debug').innerText = "Błąd dodawania banera: " + e.message;
         }
       }
       doc.setFont("Arial", "bold");
@@ -198,7 +205,7 @@ async function buildPDF(jsPDF, save = true) {
               doc.restoreGraphicsState();
             } catch (e) {
               console.error('Błąd dodawania tekstury tła:', e);
-              document.getElementById('debug').innerText = "Błąd dodawania tekstury tła";
+              document.getElementById('debug').innerText = "Błąd dodawania tekstury tła: " + e.message;
             }
           }
 
@@ -232,7 +239,7 @@ async function buildPDF(jsPDF, save = true) {
                 doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
-                document.getElementById('debug').innerText = "Błąd dodawania obrazka";
+                document.getElementById('debug').innerText = "Błąd dodawania obrazka: " + e.message;
               }
             }
             let textY = y + 5 + (boxHeight * 0.4) + 10;
@@ -288,7 +295,7 @@ async function buildPDF(jsPDF, save = true) {
                 const logoImg = new Image();
                 logoImg.src = logoSrc;
                 await Promise.race([
-                  new Promise((res, rej) => { img.onload = res; img.onerror = rej; }),
+                  new Promise((res, rej) => { logoImg.onload = res; logoImg.onerror = rej; }),
                   new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania loga')), 5000))
                 ]);
                 const logoW = 120;
@@ -299,7 +306,7 @@ async function buildPDF(jsPDF, save = true) {
                 textY += logoH + 5;
               } catch (e) {
                 console.error('Błąd dodawania loga:', e);
-                document.getElementById('debug').innerText = "Błąd dodawania loga";
+                document.getElementById('debug').innerText = "Błąd dodawania loga: " + e.message;
               }
             }
 
@@ -320,7 +327,7 @@ async function buildPDF(jsPDF, save = true) {
                 }
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
-                document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
+                document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego: " + e.message;
               }
             }
           } else {
@@ -332,55 +339,43 @@ async function buildPDF(jsPDF, save = true) {
                   new Promise((res, rej) => { img.onload = res; img.onerror = rej; }),
                   new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania obrazu')), 5000))
                 ]);
-                const maxW = 90;
-                const maxH = 60;
-                let scale = Math.min(maxW / img.width, maxH / img.height);
-                let w = img.width * scale;
-                let h = img.height * scale;
-                let imgX = x + 5 + (maxW - w) / 2;
-                let imgY = y + 8 + (maxH - h) / 2;
-                if (itemLayout.image) {
-                  imgX = x + (boxWidth * itemLayout.image.x);
-                  imgY = y + (boxHeight * itemLayout.image.y);
-                  w = boxWidth * itemLayout.image.w;
-                  h = boxHeight * itemLayout.image.h;
-                }
+                let w = boxWidth * itemLayout.image.w;
+                let h = boxHeight * itemLayout.image.h;
+                let imgX = x + (boxWidth * itemLayout.image.x);
+                let imgY = y + (boxHeight * itemLayout.image.y);
                 doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
-                document.getElementById('debug').innerText = "Błąd dodawania obrazka";
+                document.getElementById('debug').innerText = "Błąd dodawania obrazka: " + e.message;
               }
             }
-            let textY = y + 20;
+            let textY = y + (boxHeight * itemLayout.name.y);
             doc.setFont(finalEdit.nazwaFont || 'Arial', "bold");
             doc.setFontSize(8);
             const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
-            const nameX = itemLayout.name ? x + (boxWidth * itemLayout.name.x) : x + 105;
-            const nameWidth = itemLayout.name ? boxWidth * itemLayout.name.w : boxWidth - 110;
-            if (itemLayout.name) textY = y + (boxHeight * itemLayout.name.y);
+            const nameX = x + (boxWidth * itemLayout.name.x);
+            const nameWidth = boxWidth * itemLayout.name.w;
             doc.text(p.nazwa || "Brak nazwy", nameX, textY, { maxWidth: nameWidth });
-            textY += 25;
+            textY = y + (boxHeight * itemLayout.index.y);
 
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
             doc.setFontSize(7);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
-            const indexX = itemLayout.index ? x + (boxWidth * itemLayout.index.x) : x + 105;
-            const indexWidth = itemLayout.index ? boxWidth * itemLayout.index.w : 150;
-            if (itemLayout.index) textY = y + (boxHeight * itemLayout.index.y);
+            const indexX = x + (boxWidth * itemLayout.index.x);
+            const indexWidth = boxWidth * itemLayout.index.w;
             doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, indexX, textY, { maxWidth: indexWidth });
-            textY += 12;
+            textY = y + (boxHeight * itemLayout.ranking?.y || (itemLayout.index.y + 0.1));
 
             if (showRanking && p.ranking) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
               doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
-              const rankingX = itemLayout.ranking ? x + (boxWidth * itemLayout.ranking.x) : x + 105;
-              const rankingWidth = itemLayout.ranking ? boxWidth * itemLayout.ranking.w : 150;
-              if (itemLayout.ranking) textY = y + (boxHeight * itemLayout.ranking.y);
+              const rankingX = x + (boxWidth * itemLayout.ranking.x);
+              const rankingWidth = boxWidth * itemLayout.ranking.w;
               doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { maxWidth: rankingWidth });
-              textY += 12;
+              textY = y + (boxHeight * itemLayout.price?.y || (itemLayout.ranking.y + 0.1));
             }
 
             if (showCena && p.cena) {
@@ -391,31 +386,22 @@ async function buildPDF(jsPDF, save = true) {
               doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
               const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
               const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-              const priceX = itemLayout.price ? x + (boxWidth * itemLayout.price.x) : x + 105;
-              const priceWidth = itemLayout.price ? boxWidth * itemLayout.price.w : 150;
-              if (itemLayout.price) textY = y + (boxHeight * itemLayout.price.y);
+              const priceX = x + (boxWidth * itemLayout.price.x);
+              const priceWidth = boxWidth * itemLayout.price.w;
               doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { maxWidth: priceWidth });
-              textY += 16;
+              textY = y + (boxHeight * itemLayout.barcode?.y || (itemLayout.price.y + 0.1));
             }
 
             if (showEan && p.ean && p.barcode) {
               try {
-                const bw = 85;
-                const bh = 32;
-                const bx = x + boxWidth - bw - 10;
-                const by = y + boxHeight - bh - 5;
-                if (itemLayout.barcode) {
-                  const barcodeX = x + (boxWidth * itemLayout.barcode.x);
-                  const barcodeY = y + (boxHeight * itemLayout.barcode.y);
-                  const barcodeW = boxWidth * itemLayout.barcode.w;
-                  const barcodeH = boxHeight * itemLayout.barcode.h;
-                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
-                } else {
-                  doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
-                }
+                const barcodeX = x + (boxWidth * itemLayout.barcode.x);
+                const barcodeY = y + (boxHeight * itemLayout.barcode.y);
+                const barcodeW = boxWidth * itemLayout.barcode.w;
+                const barcodeH = boxHeight * itemLayout.barcode.h;
+                doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
-                document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
+                document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego: " + e.message;
               }
             }
           }
@@ -499,14 +485,14 @@ async function buildPDF(jsPDF, save = true) {
             applyGradient(pageEdit.pageBackgroundGradient, pageEdit.pageBackgroundOpacity);
           } catch (e) {
             console.error('Błąd dodawania gradientu tła:', e);
-            document.getElementById('debug').innerText = "Błąd dodawania gradientu tła";
+            document.getElementById('debug').innerText = "Błąd dodawania gradientu tła: " + e.message;
           }
         } else if (backgroundImg) {
           try {
             doc.addImage(backgroundImg, backgroundImg.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, pageHeight, undefined, "FAST");
           } catch (e) {
             console.error('Błąd dodawania tła:', e);
-            document.getElementById('debug').innerText = "Błąd dodawania tła";
+            document.getElementById('debug').innerText = "Błąd dodawania tła: " + e.message;
           }
         }
         if (bannerImg) {
@@ -514,7 +500,7 @@ async function buildPDF(jsPDF, save = true) {
             doc.addImage(bannerImg, bannerImg.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, bannerHeight, undefined, "FAST");
           } catch (e) {
             console.error('Błąd dodawania banera:', e);
-            document.getElementById('debug').innerText = "Błąd dodawania banera";
+            document.getElementById('debug').innerText = "Błąd dodawania banera: " + e.message;
           }
         }
         doc.setFont("Arial", "bold");
@@ -530,15 +516,15 @@ async function buildPDF(jsPDF, save = true) {
     if (save) {
       try {
         doc.save("katalog.pdf");
-      } cashier (e) {
+      } catch (e) {
         console.error('Błąd zapisywania PDF:', e);
-        document.getElementById('debug').innerText = "Błąd zapisywania PDF";
+        document.getElementById('debug').innerText = "Błąd zapisywania PDF: " + e.message;
       }
     }
     return doc;
   } catch (e) {
     console.error('Błąd generowania PDF:', e);
-    document.getElementById('debug').innerText = "Błąd generowania PDF";
+    document.getElementById('debug').innerText = "Błąd generowania PDF: " + e.message;
     hideProgressModal();
     throw e;
   }
@@ -547,10 +533,13 @@ async function buildPDF(jsPDF, save = true) {
 async function generatePDF() {
   try {
     const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+      throw new Error("Biblioteka jsPDF nie jest załadowana");
+    }
     await buildPDF(jsPDF, true);
   } catch (e) {
     console.error('Błąd generowania PDF:', e);
-    document.getElementById('debug').innerText = "Błąd generowania PDF";
+    document.getElementById('debug').innerText = "Błąd generowania PDF: " + e.message;
     hideProgressModal();
   }
 }
