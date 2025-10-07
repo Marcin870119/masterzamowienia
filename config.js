@@ -1,0 +1,11 @@
+window.products = [];
+window.jsonProducts = [];
+window.selectedBanner = null;
+window.selectedCover = null;
+window.selectedBackground = null;
+window.uploadedImages = {};
+window.productEdits = {};
+window.pageEdits = {};
+window.globalCurrency = 'EUR';
+window.globalLanguage = 'pl';
+window.manufacturerLogos = {};
