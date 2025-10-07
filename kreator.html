@@ -55,12 +55,12 @@ Język:
 </label>
 <input type="file" id="excelFile" accept=".xls,.xlsx,.csv" style="display:none;">
 </div>
-<button class="btn-primary" onclick="importExcel()"><i class="fas fa-file-import"></i> Importuj Excel</button>
+<button class="btn-primary" onclick="window.importExcel()"><i class="fas fa-file-import"></i> Importuj Excel</button>
 </div>
 <!-- Wybór banera -->
 <div class="upload-block">
 <div class="banner-wrapper">
-<button id="chooseBannerBtn" onclick="showBannerModal()" class="btn-banner">
+<button id="chooseBannerBtn" onclick="window.showBannerModal()" class="btn-banner">
 <i class="fas fa-image"></i> Wybierz baner
 </button>
 <div id="bannerUpload" class="upload-zone">
@@ -92,10 +92,10 @@ Język:
 </div>
 <!-- Generowanie PDF -->
 <div class="pdf-buttons">
-<button onclick="generatePDF()" disabled id="pdfButton" class="btn-primary">
+<button id="pdfButton" class="btn-primary" disabled>
 <i class="fas fa-file-pdf"></i> Generuj PDF
 </button>
-<button onclick="previewPDF()" disabled id="previewButton" class="btn-secondary">
+<button id="previewButton" class="btn-secondary" disabled>
 <i class="fas fa-eye"></i> Podgląd PDF
 </button>
 </div>
@@ -112,7 +112,7 @@ Język:
 <!-- Modal wyboru banera -->
 <div id="bannerModal" class="modal">
 <div class="modal-content">
-<span class="close" onclick="hideBannerModal()">&times;</span>
+<span class="close" onclick="window.hideBannerModal()">&times;</span>
 <h3>Wybierz baner</h3>
 <div class="banner-options" id="bannerOptions"></div>
 </div>
@@ -120,7 +120,7 @@ Język:
 <!-- Modal edycji produktu -->
 <div id="editModal" class="modal">
 <div class="modal-content">
-<span class="close" onclick="hideEditModal()">&times;</span>
+<span class="close" onclick="window.hideEditModal()">&times;</span>
 <h3>Edytuj produkt</h3>
 <div id="editForm"></div>
 </div>
@@ -128,7 +128,7 @@ Język:
 <!-- Modal paska postępu -->
 <div id="progressModal" class="modal" style="display:none;">
 <div class="modal-content" style="text-align:center;">
-<span class="close" onclick="hideProgressModal()" style="display:none;">&times;</span>
+<span class="close" onclick="window.hideProgressModal()" style="display:none;">&times;</span>
 <h3>Generowanie podglądu...</h3>
 <div id="progressBarContainer" style="width:80%; margin:20px auto;">
 <div id="progressBar" style="height:20px; background:#3182ce; width:0%; transition:width 0.1s;"></div>
@@ -139,7 +139,7 @@ Język:
 <!-- Modal edycji wirtualnej -->
 <div id="virtualEditModal" class="modal" style="display:none;">
 <div class="modal-content">
-<span class="close" onclick="hideEditModal()">&times;</span>
+<span class="close" onclick="window.hideEditModal()">&times;</span>
 <h3>Edytuj produkt wizualnie</h3>
 </div>
 </div>
