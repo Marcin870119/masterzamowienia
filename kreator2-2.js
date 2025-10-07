@@ -194,7 +194,7 @@ async function buildPDF(jsPDF, save = true) {
             try {
               doc.saveGraphicsState();
               doc.setGState(new doc.GState({ opacity: finalEdit.backgroundOpacity || 1.0 }));
-              doc.addImage(finalEdit.backgroundTexture, finalEdit.backgroundTexture.includes('image/png') ? "PNG" : "JPEG", x, y, boxWidth, boxHeight);
+              doc.addImage(finalEdit.backgroundTexture, finalEdit.backgroundTexture.includes('image/png') ? "PNG" : "JPEG", x, y, boxWidth, boxHeight, undefined, "SLOW");
               doc.restoreGraphicsState();
             } catch (e) {
               console.error('Błąd dodawania tekstury tła:', e);
@@ -216,46 +216,67 @@ async function buildPDF(jsPDF, save = true) {
                   new Promise((res, rej) => { img.onload = res; img.onerror = rej; }),
                   new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania obrazu')), 5000))
                 ]);
-                const imgX = x + (boxWidth * itemLayout.image.x);
-                const imgY = y + (boxHeight * itemLayout.image.y);
-                const imgW = boxWidth * itemLayout.image.w;
-                const imgH = boxHeight * itemLayout.image.h;
-                doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, imgW, imgH, undefined, save ? "SLOW" : "FAST");
+                const maxW = boxWidth - (sectionCols === 1 ? 80 : 40);
+                const maxH = boxHeight * 0.4;
+                let scale = Math.min(maxW / img.width, maxH / img.height);
+                let w = img.width * scale;
+                let h = img.height * scale;
+                let imgX = x + (boxWidth - w) / 2;
+                let imgY = y + 5;
+                if (itemLayout.image) {
+                  imgX = x + (boxWidth * itemLayout.image.x);
+                  imgY = y + (boxHeight * itemLayout.image.y);
+                  w = boxWidth * itemLayout.image.w;
+                  h = boxHeight * itemLayout.image.h;
+                }
+                doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania obrazka";
               }
             }
+            let textY = y + 5 + (boxHeight * 0.4) + 10;
             doc.setFont(finalEdit.nazwaFont || 'Arial', "bold");
             doc.setFontSize(sectionCols === 1 ? 14 : 11);
             const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
-            const nameX = x + (boxWidth * itemLayout.name.x);
-            const nameY = y + (boxHeight * itemLayout.name.y);
-            const nameWidth = boxWidth * itemLayout.name.w;
+            let nameX = x + boxWidth / 2;
+            let nameWidth = boxWidth - (sectionCols === 1 ? 80 : 40);
+            if (itemLayout.name) {
+              nameX = x + (boxWidth * itemLayout.name.x);
+              nameWidth = boxWidth * itemLayout.name.w;
+              textY = y + (boxHeight * itemLayout.name.y);
+            }
             const lines = doc.splitTextToSize(p.nazwa || "Brak nazwy", nameWidth);
             const maxLines = 3;
             lines.slice(0, maxLines).forEach((line, index) => {
-              doc.text(line, nameX, nameY + (index * 18), { align: "center" });
+              doc.text(line, nameX, textY + (index * 18), { align: "center" });
             });
+            textY += Math.min(lines.length, maxLines) * 18 + 10;
 
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
             doc.setFontSize(sectionCols === 1 ? 11 : 9);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
-            const indexX = x + (boxWidth * itemLayout.index.x);
-            const indexY = y + (boxHeight * itemLayout.index.y);
-            const indexWidth = boxWidth * itemLayout.index.w;
-            doc.text(`Indeks: ${p.indeks || '-'}`, indexX, indexY, { align: "center", maxWidth: indexWidth });
+            let indexX = x + boxWidth / 2;
+            if (itemLayout.index) {
+              indexX = x + (boxWidth * itemLayout.index.x);
+              textY = y + (boxHeight * itemLayout.index.y);
+            }
+            doc.text(`Indeks: ${p.indeks || '-'}`, indexX, textY, { align: "center" });
+            textY += sectionCols === 1 ? 22 : 18;
 
             if (showRanking && p.ranking) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
               doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
-              const rankingX = x + (boxWidth * itemLayout.ranking.x);
-              const rankingY = y + (boxHeight * itemLayout.ranking.y);
-              const rankingWidth = boxWidth * itemLayout.ranking.w;
-              doc.text(`RANKING: ${p.ranking}`, rankingX, rankingY, { align: "center", maxWidth: rankingWidth });
+              let rankingX = x + boxWidth / 2;
+              if (itemLayout.ranking) {
+                rankingX = x + (boxWidth * itemLayout.ranking.x);
+                textY = y + (boxHeight * itemLayout.ranking.y);
+              }
+              doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { align: "center" });
+              textY += sectionCols === 1 ? 22 : 18;
             }
 
             if (showCena && p.cena) {
@@ -266,10 +287,13 @@ async function buildPDF(jsPDF, save = true) {
               doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
               const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
               const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-              const priceX = x + (boxWidth * itemLayout.price.x);
-              const priceY = y + (boxHeight * itemLayout.price.y);
-              const priceWidth = boxWidth * itemLayout.price.w;
-              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, priceY, { align: "center", maxWidth: priceWidth });
+              let priceX = x + boxWidth / 2;
+              if (itemLayout.price) {
+                priceX = x + (boxWidth * itemLayout.price.x);
+                textY = y + (boxHeight * itemLayout.price.y);
+              }
+              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { align: "center" });
+              textY += sectionCols === 1 ? 22 : 18;
             }
 
             if (showLogo && layout === "4" && logoSrc) {
@@ -280,11 +304,12 @@ async function buildPDF(jsPDF, save = true) {
                   new Promise((res, rej) => { logoImg.onload = res; logoImg.onerror = rej; }),
                   new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania loga')), 5000))
                 ]);
-                const logoX = x + (boxWidth * itemLayout.image.x);
-                const logoY = y + (boxHeight * (itemLayout.image.y + itemLayout.image.h + 0.05));
                 const logoW = 120;
                 const logoH = 60;
-                doc.addImage(logoSrc, logoSrc.includes('image/png') ? "PNG" : "JPEG", logoX, logoY, logoW, logoH, undefined, save ? "SLOW" : "FAST");
+                const logoX = x + (boxWidth - logoW) / 2;
+                const logoY = textY;
+                doc.addImage(logoSrc, logoSrc.includes('image/png') ? "PNG" : "JPEG", logoX, logoY, logoW, logoH, undefined, "SLOW");
+                textY += logoH + 5;
               } catch (e) {
                 console.error('Błąd dodawania loga:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania loga";
@@ -293,11 +318,19 @@ async function buildPDF(jsPDF, save = true) {
 
             if (showEan && p.ean && p.barcode) {
               try {
-                const barcodeX = x + (boxWidth * itemLayout.barcode.x);
-                const barcodeY = y + (boxHeight * itemLayout.barcode.y);
-                const barcodeW = boxWidth * itemLayout.barcode.w;
-                const barcodeH = boxHeight * itemLayout.barcode.h;
-                doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, save ? "SLOW" : "FAST");
+                const bw = sectionCols === 1 ? 180 : 140;
+                const bh = sectionCols === 1 ? 50 : 40;
+                const bx = x + (boxWidth - bw) / 2;
+                const by = y + boxHeight - bh - 5;
+                if (itemLayout.barcode) {
+                  const barcodeX = x + (boxWidth * itemLayout.barcode.x);
+                  const barcodeY = y + (boxHeight * itemLayout.barcode.y);
+                  const barcodeW = boxWidth * itemLayout.barcode.w;
+                  const barcodeH = boxHeight * itemLayout.barcode.h;
+                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
+                } else {
+                  doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
+                }
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
@@ -312,42 +345,67 @@ async function buildPDF(jsPDF, save = true) {
                   new Promise((res, rej) => { img.onload = res; img.onerror = rej; }),
                   new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania obrazu')), 5000))
                 ]);
-                const imgX = x + (boxWidth * itemLayout.image.x);
-                const imgY = y + (boxHeight * itemLayout.image.y);
-                const imgW = boxWidth * itemLayout.image.w;
-                const imgH = boxHeight * itemLayout.image.h;
-                doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, imgW, imgH, undefined, save ? "SLOW" : "FAST");
+                const maxW = 90;
+                const maxH = 60;
+                let scale = Math.min(maxW / img.width, maxH / img.height);
+                let w = img.width * scale;
+                let h = img.height * scale;
+                let imgX = x + 5 + (maxW - w) / 2;
+                let imgY = y + 8 + (maxH - h) / 2;
+                if (itemLayout.image) {
+                  imgX = x + (boxWidth * itemLayout.image.x);
+                  imgY = y + (boxHeight * itemLayout.image.y);
+                  w = boxWidth * itemLayout.image.w;
+                  h = boxHeight * itemLayout.image.h;
+                }
+                doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania obrazka";
               }
             }
+            let textY = y + 20;
             doc.setFont(finalEdit.nazwaFont || 'Arial', "bold");
             doc.setFontSize(8);
             const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
-            const nameX = x + (boxWidth * itemLayout.name.x);
-            const nameY = y + (boxHeight * itemLayout.name.y);
-            const nameWidth = boxWidth * itemLayout.name.w;
-            doc.text(p.nazwa || "Brak nazwy", nameX, nameY, { maxWidth: nameWidth });
+            let nameX = x + 105;
+            let nameWidth = boxWidth - 110;
+            if (itemLayout.name) {
+              nameX = x + (boxWidth * itemLayout.name.x);
+              nameWidth = boxWidth * itemLayout.name.w;
+              textY = y + (boxHeight * itemLayout.name.y);
+            }
+            doc.text(p.nazwa || "Brak nazwy", nameX, textY, { maxWidth: nameWidth });
+            textY += 25;
 
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
             doc.setFontSize(7);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
-            const indexX = x + (boxWidth * itemLayout.index.x);
-            const indexY = y + (boxHeight * itemLayout.index.y);
-            const indexWidth = boxWidth * itemLayout.index.w;
-            doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, indexX, indexY, { maxWidth: indexWidth });
+            let indexX = x + 105;
+            let indexWidth = 150;
+            if (itemLayout.index) {
+              indexX = x + (boxWidth * itemLayout.index.x);
+              indexWidth = boxWidth * itemLayout.index.w;
+              textY = y + (boxHeight * itemLayout.index.y);
+            }
+            doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, indexX, textY, { maxWidth: indexWidth });
+            textY += 12;
 
             if (showRanking && p.ranking) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
               doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
-              const rankingX = x + (boxWidth * itemLayout.ranking.x);
-              const rankingY = y + (boxHeight * itemLayout.ranking.y);
-              const rankingWidth = boxWidth * itemLayout.ranking.w;
-              doc.text(`RANKING: ${p.ranking}`, rankingX, rankingY, { maxWidth: rankingWidth });
+              let rankingX = x + 105;
+              let rankingWidth = 150;
+              if (itemLayout.ranking) {
+                rankingX = x + (boxWidth * itemLayout.ranking.x);
+                rankingWidth = boxWidth * itemLayout.ranking.w;
+                textY = y + (boxHeight * itemLayout.ranking.y);
+              }
+              doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { maxWidth: rankingWidth });
+              textY += 12;
             }
 
             if (showCena && p.cena) {
@@ -358,19 +416,32 @@ async function buildPDF(jsPDF, save = true) {
               doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
               const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
               const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-              const priceX = x + (boxWidth * itemLayout.price.x);
-              const priceY = y + (boxHeight * itemLayout.price.y);
-              const priceWidth = boxWidth * itemLayout.price.w;
-              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, priceY, { maxWidth: priceWidth });
+              let priceX = x + 105;
+              let priceWidth = 150;
+              if (itemLayout.price) {
+                priceX = x + (boxWidth * itemLayout.price.x);
+                priceWidth = boxWidth * itemLayout.price.w;
+                textY = y + (boxHeight * itemLayout.price.y);
+              }
+              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { maxWidth: priceWidth });
+              textY += 16;
             }
 
             if (showEan && p.ean && p.barcode) {
               try {
-                const barcodeX = x + (boxWidth * itemLayout.barcode.x);
-                const barcodeY = y + (boxHeight * itemLayout.barcode.y);
-                const barcodeW = boxWidth * itemLayout.barcode.w;
-                const barcodeH = boxHeight * itemLayout.barcode.h;
-                doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, save ? "SLOW" : "FAST");
+                const bw = 85;
+                const bh = 32;
+                const bx = x + boxWidth - bw - 10;
+                const by = y + boxHeight - bh - 5;
+                if (itemLayout.barcode) {
+                  const barcodeX = x + (boxWidth * itemLayout.barcode.x);
+                  const barcodeY = y + (boxHeight * itemLayout.barcode.y);
+                  const barcodeW = boxWidth * itemLayout.barcode.w;
+                  const barcodeH = boxHeight * itemLayout.barcode.h;
+                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
+                } else {
+                  doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
+                }
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
