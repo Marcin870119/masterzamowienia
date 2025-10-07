@@ -1,4 +1,4 @@
-]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
@@ -19,7 +19,7 @@
   display: none !important;
   justify-content: center !important;
   align-items: center !important;
-  z-index: 10000 !important;
+  z-index: 100000 !important;
   visibility: visible !important;
   opacity: 1 !important;
   box-sizing: border-box !important;
@@ -48,6 +48,13 @@
   margin: 20px auto !important;
   border: 1px solid #ccc !important;
   box-sizing: border-box !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+}
+#virtualEditModal canvas {
+  width: 560px !important;
+  height: 700px !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
@@ -204,6 +211,18 @@ console.log('JsBarcode:', typeof window.JsBarcode !== 'undefined' ? 'Załadowany
 console.log('fabric:', typeof window.fabric !== 'undefined' ? 'Załadowany' : 'Niezaładowany');
 console.log('showVirtualEditModal:', typeof window.showVirtualEditModal !== 'undefined' ? 'Zdefiniowany' : 'Niezdefiniowany');
 console.log('virtualEditModal istnieje:', !!document.getElementById('virtualEditModal'));
+function checkModalVisibility() {
+  const modal = document.getElementById('virtualEditModal');
+  if (modal) {
+    const styles = window.getComputedStyle(modal);
+    console.log('virtualEditModal style:', {
+      display: styles.display,
+      visibility: styles.visibility,
+      opacity: styles.opacity,
+      zIndex: styles.zIndex
+    });
+  }
+}
 </script>
 </body>
 </html>
