@@ -480,6 +480,13 @@ function showVirtualEditModal(productIndex) {
     console.log('Modal HTML ustawiony');
     modal.style.display = 'block';
     console.log('Modal ustawiony na display: block');
+    const styles = window.getComputedStyle(modal);
+    console.log('virtualEditModal style po display: block:', {
+      display: styles.display,
+      visibility: styles.visibility,
+      opacity: styles.opacity,
+      zIndex: styles.zIndex
+    });
     const canvasElement = document.getElementById('virtualEditCanvas');
     if (!canvasElement) {
       console.error('Nie znaleziono elementu virtualEditCanvas');
@@ -498,6 +505,14 @@ function showVirtualEditModal(productIndex) {
       height: 700
     });
     console.log('Kanwa Fabric.js zainicjalizowana');
+    const canvasStyles = window.getComputedStyle(canvasElement);
+    console.log('virtualEditCanvas style:', {
+      display: canvasStyles.display,
+      visibility: canvasStyles.visibility,
+      opacity: canvasStyles.opacity,
+      width: canvasStyles.width,
+      height: canvasStyles.height
+    });
     const canvasWidth = 560;
     const canvasHeight = 700;
     const borderMargin = 40; // Skalowany margines ramki (2x 20 pt w PDF)
