@@ -587,6 +587,21 @@ document.addEventListener("DOMContentLoaded", () => {
     pageEditButton.onclick = () => window.showPageEditModal(0);
     document.querySelector('.improved-panel').appendChild(pageEditButton);
 
+    const previewButton = document.getElementById('previewButton');
+    if (previewButton) {
+      previewButton.addEventListener('click', () => {
+        if (typeof window.previewPDF === 'function') {
+          window.previewPDF();
+        } else {
+          console.error('Funkcja previewPDF nie jest zdefiniowana');
+          document.getElementById('debug').innerText = "Błąd: Funkcja podglądu PDF nie jest dostępna";
+        }
+      });
+    } else {
+      console.error("Nie znaleziono elementu previewButton");
+      document.getElementById('debug').innerText = "Błąd: Brak przycisku podglądu PDF";
+    }
+
     window.loadProducts();
   } catch (e) {
     console.error('Błąd inicjalizacji zdarzeń DOM:', e);
