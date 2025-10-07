@@ -339,43 +339,40 @@ async function buildPDF(jsPDF, save = true) {
                   new Promise((res, rej) => { img.onload = res; img.onerror = rej; }),
                   new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania obrazu')), 5000))
                 ]);
-                let w = boxWidth * itemLayout.image.w;
-                let h = boxHeight * itemLayout.image.h;
-                let imgX = x + (boxWidth * itemLayout.image.x);
-                let imgY = y + (boxHeight * itemLayout.image.y);
+                const maxW = 90;
+                const maxH = 60;
+                let scale = Math.min(maxW / img.width, maxH / img.height);
+                let w = img.width * scale;
+                let h = img.height * scale;
+                let imgX = x + 5 + (maxW - w) / 2;
+                let imgY = y + 8 + (maxH - h) / 2;
                 doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania obrazka: " + e.message;
               }
             }
-            let textY = y + (boxHeight * itemLayout.name.y);
+            let textY = y + 20;
             doc.setFont(finalEdit.nazwaFont || 'Arial', "bold");
             doc.setFontSize(8);
             const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
-            const nameX = x + (boxWidth * itemLayout.name.x);
-            const nameWidth = boxWidth * itemLayout.name.w;
-            doc.text(p.nazwa || "Brak nazwy", nameX, textY, { maxWidth: nameWidth });
-            textY = y + (boxHeight * itemLayout.index.y);
+            doc.text(p.nazwa || "Brak nazwy", x + 105, textY, { maxWidth: boxWidth - 110 });
+            textY += 25;
 
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
             doc.setFontSize(7);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
-            const indexX = x + (boxWidth * itemLayout.index.x);
-            const indexWidth = boxWidth * itemLayout.index.w;
-            doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, indexX, textY, { maxWidth: indexWidth });
-            textY = y + (boxHeight * itemLayout.ranking?.y || (itemLayout.index.y + 0.1));
+            doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, x + 105, textY, { maxWidth: 150 });
+            textY += 12;
 
             if (showRanking && p.ranking) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
               doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
-              const rankingX = x + (boxWidth * itemLayout.ranking.x);
-              const rankingWidth = boxWidth * itemLayout.ranking.w;
-              doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { maxWidth: rankingWidth });
-              textY = y + (boxHeight * itemLayout.price?.y || (itemLayout.ranking.y + 0.1));
+              doc.text(`RANKING: ${p.ranking}`, x + 105, textY, { maxWidth: 150 });
+              textY += 12;
             }
 
             if (showCena && p.cena) {
@@ -386,19 +383,17 @@ async function buildPDF(jsPDF, save = true) {
               doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
               const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
               const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-              const priceX = x + (boxWidth * itemLayout.price.x);
-              const priceWidth = boxWidth * itemLayout.price.w;
-              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { maxWidth: priceWidth });
-              textY = y + (boxHeight * itemLayout.barcode?.y || (itemLayout.price.y + 0.1));
+              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, x + 105, textY, { maxWidth: 150 });
+              textY += 16;
             }
 
             if (showEan && p.ean && p.barcode) {
               try {
-                const barcodeX = x + (boxWidth * itemLayout.barcode.x);
-                const barcodeY = y + (boxHeight * itemLayout.barcode.y);
-                const barcodeW = boxWidth * itemLayout.barcode.w;
-                const barcodeH = boxHeight * itemLayout.barcode.h;
-                doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
+                const bw = 85;
+                const bh = 32;
+                const bx = x + boxWidth - bw - 10;
+                const by = y + boxHeight - bh - 5;
+                doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego: " + e.message;
