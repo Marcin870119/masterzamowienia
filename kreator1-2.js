@@ -1,3 +1,5 @@
+console.log('kreator1-2.js załadowany');
+
 async function toBase64(url) {
   try {
     const response = await fetch(url, { cache: 'no-cache' });
