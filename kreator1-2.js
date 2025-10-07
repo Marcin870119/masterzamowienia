@@ -201,6 +201,7 @@ function selectBanner(id, data) {
 
 function renderCatalog() {
   try {
+    console.log('renderCatalog wywołany');
     const container = document.getElementById("catalog");
     if (!container) {
       console.error("Nie znaleziono elementu catalog");
@@ -287,6 +288,7 @@ function renderCatalog() {
       layoutButton.innerHTML = '<i class="fas fa-object-group"></i> Edytuj układ';
       layoutButton.onclick = () => {
         console.log('Kliknięto Edytuj układ dla produktu:', i);
+        console.log('showVirtualEditModal dostępny:', typeof window.showVirtualEditModal);
         if (typeof window.showVirtualEditModal === 'function') {
           window.showVirtualEditModal(i);
         } else {
@@ -429,6 +431,7 @@ function importExcel() {
 
 document.addEventListener("DOMContentLoaded", () => {
   try {
+    console.log('DOMContentLoaded wywołany');
     const imageInput = document.getElementById("imageInput");
     const uploadArea = document.getElementById("uploadArea");
     if (imageInput && uploadArea) {
