@@ -181,6 +181,14 @@ async function buildPDF(jsPDF, save = true) {
             pageBackgroundOpacity: 1.0
           };
           const finalEdit = { ...pageEdit, ...edit };
+          const itemLayout = finalEdit.layout || {
+            image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
+            name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
+            price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
+            index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
+            ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
+            barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
+          };
 
           if (finalEdit.backgroundTexture) {
             try {
@@ -215,6 +223,12 @@ async function buildPDF(jsPDF, save = true) {
                 let h = img.height * scale;
                 let imgX = x + (boxWidth - w) / 2;
                 let imgY = y + 5;
+                if (itemLayout.image) {
+                  imgX = x + (boxWidth * itemLayout.image.x);
+                  imgY = y + (boxHeight * itemLayout.image.y);
+                  w = boxWidth * itemLayout.image.w;
+                  h = boxHeight * itemLayout.image.h;
+                }
                 doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
@@ -226,10 +240,13 @@ async function buildPDF(jsPDF, save = true) {
             doc.setFontSize(sectionCols === 1 ? 14 : 11);
             const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
-            const lines = doc.splitTextToSize(p.nazwa || "Brak nazwy", boxWidth - (sectionCols === 1 ? 80 : 40));
+            const nameX = itemLayout.name ? x + (boxWidth * itemLayout.name.x) : x + boxWidth / 2;
+            const nameWidth = itemLayout.name ? boxWidth * itemLayout.name.w : boxWidth - (sectionCols === 1 ? 80 : 40);
+            if (itemLayout.name) textY = y + (boxHeight * itemLayout.name.y);
+            const lines = doc.splitTextToSize(p.nazwa || "Brak nazwy", nameWidth);
             const maxLines = 3;
             lines.slice(0, maxLines).forEach((line, index) => {
-              doc.text(line, x + boxWidth / 2, textY + (index * 18), { align: "center" });
+              doc.text(line, nameX, textY + (index * 18), { align: "center" });
             });
             textY += Math.min(lines.length, maxLines) * 18 + 10;
 
@@ -237,14 +254,18 @@ async function buildPDF(jsPDF, save = true) {
             doc.setFontSize(sectionCols === 1 ? 11 : 9);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
-            doc.text(`Indeks: ${p.indeks || '-'}`, x + boxWidth / 2, textY, { align: "center" });
+            const indexX = itemLayout.index ? x + (boxWidth * itemLayout.index.x) : x + boxWidth / 2;
+            if (itemLayout.index) textY = y + (boxHeight * itemLayout.index.y);
+            doc.text(`Indeks: ${p.indeks || '-'}`, indexX, textY, { align: "center" });
             textY += sectionCols === 1 ? 22 : 18;
 
             if (showRanking && p.ranking) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
               doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
-              doc.text(`RANKING: ${p.ranking}`, x + boxWidth / 2, textY, { align: "center" });
+              const rankingX = itemLayout.ranking ? x + (boxWidth * itemLayout.ranking.x) : x + boxWidth / 2;
+              if (itemLayout.ranking) textY = y + (boxHeight * itemLayout.ranking.y);
+              doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { align: "center" });
               textY += sectionCols === 1 ? 22 : 18;
             }
 
@@ -256,7 +277,9 @@ async function buildPDF(jsPDF, save = true) {
               doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
               const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
               const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, x + boxWidth / 2, textY, { align: "center" });
+              const priceX = itemLayout.price ? x + (boxWidth * itemLayout.price.x) : x + boxWidth / 2;
+              if (itemLayout.price) textY = y + (boxHeight * itemLayout.price.y);
+              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { align: "center" });
               textY += sectionCols === 1 ? 22 : 18;
             }
 
@@ -265,7 +288,7 @@ async function buildPDF(jsPDF, save = true) {
                 const logoImg = new Image();
                 logoImg.src = logoSrc;
                 await Promise.race([
-                  new Promise((res, rej) => { logoImg.onload = res; logoImg.onerror = rej; }),
+                  new Promise((res, rej) => { img.onload = res; img.onerror = rej; }),
                   new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania loga')), 5000))
                 ]);
                 const logoW = 120;
@@ -286,7 +309,15 @@ async function buildPDF(jsPDF, save = true) {
                 const bh = sectionCols === 1 ? 50 : 40;
                 const bx = x + (boxWidth - bw) / 2;
                 const by = y + boxHeight - bh - 5;
-                doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
+                if (itemLayout.barcode) {
+                  const barcodeX = x + (boxWidth * itemLayout.barcode.x);
+                  const barcodeY = y + (boxHeight * itemLayout.barcode.y);
+                  const barcodeW = boxWidth * itemLayout.barcode.w;
+                  const barcodeH = boxHeight * itemLayout.barcode.h;
+                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
+                } else {
+                  doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
+                }
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
@@ -308,6 +339,12 @@ async function buildPDF(jsPDF, save = true) {
                 let h = img.height * scale;
                 let imgX = x + 5 + (maxW - w) / 2;
                 let imgY = y + 8 + (maxH - h) / 2;
+                if (itemLayout.image) {
+                  imgX = x + (boxWidth * itemLayout.image.x);
+                  imgY = y + (boxHeight * itemLayout.image.y);
+                  w = boxWidth * itemLayout.image.w;
+                  h = boxHeight * itemLayout.image.h;
+                }
                 doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
@@ -319,21 +356,30 @@ async function buildPDF(jsPDF, save = true) {
             doc.setFontSize(8);
             const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
-            doc.text(p.nazwa || "Brak nazwy", x + 105, textY, { maxWidth: boxWidth - 110 });
+            const nameX = itemLayout.name ? x + (boxWidth * itemLayout.name.x) : x + 105;
+            const nameWidth = itemLayout.name ? boxWidth * itemLayout.name.w : boxWidth - 110;
+            if (itemLayout.name) textY = y + (boxHeight * itemLayout.name.y);
+            doc.text(p.nazwa || "Brak nazwy", nameX, textY, { maxWidth: nameWidth });
             textY += 25;
 
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
             doc.setFontSize(7);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
-            doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, x + 105, textY, { maxWidth: 150 });
+            const indexX = itemLayout.index ? x + (boxWidth * itemLayout.index.x) : x + 105;
+            const indexWidth = itemLayout.index ? boxWidth * itemLayout.index.w : 150;
+            if (itemLayout.index) textY = y + (boxHeight * itemLayout.index.y);
+            doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, indexX, textY, { maxWidth: indexWidth });
             textY += 12;
 
             if (showRanking && p.ranking) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
               doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
-              doc.text(`RANKING: ${p.ranking}`, x + 105, textY, { maxWidth: 150 });
+              const rankingX = itemLayout.ranking ? x + (boxWidth * itemLayout.ranking.x) : x + 105;
+              const rankingWidth = itemLayout.ranking ? boxWidth * itemLayout.ranking.w : 150;
+              if (itemLayout.ranking) textY = y + (boxHeight * itemLayout.ranking.y);
+              doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { maxWidth: rankingWidth });
               textY += 12;
             }
 
@@ -345,7 +391,10 @@ async function buildPDF(jsPDF, save = true) {
               doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
               const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
               const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, x + 105, textY, { maxWidth: 150 });
+              const priceX = itemLayout.price ? x + (boxWidth * itemLayout.price.x) : x + 105;
+              const priceWidth = itemLayout.price ? boxWidth * itemLayout.price.w : 150;
+              if (itemLayout.price) textY = y + (boxHeight * itemLayout.price.y);
+              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { maxWidth: priceWidth });
               textY += 16;
             }
 
@@ -355,7 +404,15 @@ async function buildPDF(jsPDF, save = true) {
                 const bh = 32;
                 const bx = x + boxWidth - bw - 10;
                 const by = y + boxHeight - bh - 5;
-                doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
+                if (itemLayout.barcode) {
+                  const barcodeX = x + (boxWidth * itemLayout.barcode.x);
+                  const barcodeY = y + (boxHeight * itemLayout.barcode.y);
+                  const barcodeW = boxWidth * itemLayout.barcode.w;
+                  const barcodeH = boxHeight * itemLayout.barcode.h;
+                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
+                } else {
+                  doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
+                }
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
@@ -473,7 +530,7 @@ async function buildPDF(jsPDF, save = true) {
     if (save) {
       try {
         doc.save("katalog.pdf");
-      } catch (e) {
+      } cashier (e) {
         console.error('Błąd zapisywania PDF:', e);
         document.getElementById('debug').innerText = "Błąd zapisywania PDF";
       }
