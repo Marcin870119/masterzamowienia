@@ -237,79 +237,42 @@ function renderCatalog() {
       }
       const item = document.createElement("div");
       item.className = layout === "1" || layout === "2" ? "item item-large" : "item";
-      item.style.position = "relative";
       const edit = window.productEdits[i] || {};
       const pageEdit = window.pageEdits[Math.floor(i / itemsPerPage)] || {};
       const finalEdit = { ...pageEdit, ...edit };
-      const itemLayout = finalEdit.layout || {
-        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
-        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
-        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
-        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
-        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
-      };
       const img = document.createElement('img');
       img.src = window.uploadedImages[p.indeks] || p.img || "https://dummyimage.com/120x84/eee/000&text=brak";
-      img.style.position = "absolute";
-      img.style.left = `${itemLayout.image.x * 100}%`;
-      img.style.top = `${itemLayout.image.y * 100}%`;
-      img.style.width = `${itemLayout.image.w * 100}%`;
-      img.style.height = `${itemLayout.image.h * 100}%`;
+      img.style.width = layout === "1" || layout === "2" ? '200px' : '120px';
+      img.style.height = layout === "1" || layout === "2" ? '140px' : '84px';
       img.style.objectFit = "contain";
       const details = document.createElement('div');
       details.className = "details";
-      details.style.position = "absolute";
-      details.style.left = `${itemLayout.name.x * 100}%`;
-      details.style.top = `${itemLayout.name.y * 100}%`;
-      details.style.width = `${itemLayout.name.w * 100}%`;
-      details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}">${p.nazwa || 'Brak nazwy'}</b>`;
-      const indexDiv = document.createElement('div');
-      indexDiv.style.position = "absolute";
-      indexDiv.style.left = `${itemLayout.index.x * 100}%`;
-      indexDiv.style.top = `${itemLayout.index.y * 100}%`;
-      indexDiv.style.width = `${itemLayout.index.w * 100}%`;
-      indexDiv.innerHTML = `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
+      details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}">${p.nazwa || 'Brak nazwy'}</b><br>` +
+                         `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
       if (showRanking && p.ranking) {
-        const rankingDiv = document.createElement('div');
-        rankingDiv.style.position = "absolute";
-        rankingDiv.style.left = `${itemLayout.ranking.x * 100}%`;
-        rankingDiv.style.top = `${itemLayout.ranking.y * 100}%`;
-        rankingDiv.style.width = `${itemLayout.ranking.w * 100}%`;
-        rankingDiv.innerHTML = `<span style="font-family: ${finalEdit.rankingFont || 'Arial'}; color: ${finalEdit.rankingFontColor || '#000000'}">RANKING: ${p.ranking}</span>`;
-        details.appendChild(rankingDiv);
+        details.innerHTML += `<br><span style="font-family: ${finalEdit.rankingFont || 'Arial'}; color: ${finalEdit.rankingFontColor || '#000000'}">RANKING: ${p.ranking}</span>`;
       }
       if (showCena && p.cena) {
         const currency = finalEdit.priceCurrency || window.globalCurrency;
         const currencySymbol = currency === 'EUR' ? '€' : '£';
         const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-        const priceDiv = document.createElement('div');
-        priceDiv.style.position = "absolute";
-        priceDiv.style.left = `${itemLayout.price.x * 100}%`;
-        priceDiv.style.top = `${itemLayout.price.y * 100}%`;
-        priceDiv.style.width = `${itemLayout.price.w * 100}%`;
-        priceDiv.innerHTML = `<span style="font-family: ${finalEdit.cenaFont || 'Arial'}; color: ${finalEdit.cenaFontColor || '#000000'}; font-size: ${finalEdit.priceFontSize || 'medium'}">${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}</span>`;
-        details.appendChild(priceDiv);
+        details.innerHTML += `<br><span style="font-family: ${finalEdit.cenaFont || 'Arial'}; color: ${finalEdit.cenaFontColor || '#000000'}; font-size: ${finalEdit.priceFontSize || 'medium'}">${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}</span>`;
       }
       if (showLogo && layout === "4" && (finalEdit.logo || (p.producent && window.manufacturerLogos[p.producent]))) {
         const logoImg = document.createElement('img');
         logoImg.src = finalEdit.logo || window.manufacturerLogos[p.producent];
-        logoImg.style.position = "absolute";
-        logoImg.style.left = `${itemLayout.image.x * 100}%`;
-        logoImg.style.top = `${(itemLayout.image.y + itemLayout.image.h + 0.05) * 100}%`;
         logoImg.style.width = '120px';
         logoImg.style.height = '60px';
         logoImg.style.objectFit = 'contain';
+        logoImg.style.marginTop = '8px';
         details.appendChild(logoImg);
       }
       if (showEan && p.ean && p.barcode) {
         const barcodeImg = document.createElement('img');
         barcodeImg.src = p.barcode;
-        barcodeImg.style.position = "absolute";
-        barcodeImg.style.left = `${itemLayout.barcode.x * 100}%`;
-        barcodeImg.style.top = `${itemLayout.barcode.y * 100}%`;
-        barcodeImg.style.width = `${itemLayout.barcode.w * 100}%`;
-        barcodeImg.style.height = `${itemLayout.barcode.h * 100}%`;
+        barcodeImg.style.width = '85px';
+        barcodeImg.style.height = '32px';
+        barcodeImg.style.marginTop = '8px';
         details.appendChild(barcodeImg);
       }
       const editButton = document.createElement('button');
@@ -318,7 +281,6 @@ function renderCatalog() {
       editButton.onclick = () => window.showEditModal(i);
       item.appendChild(img);
       item.appendChild(details);
-      item.appendChild(indexDiv);
       item.appendChild(editButton);
       pageDiv.appendChild(item);
     });
@@ -339,7 +301,6 @@ function importExcel() {
     const reader = new FileReader();
     reader.onload = async (e) => {
       try {
-        // Czekaj na załadowanie jsonProducts, jeśli jeszcze nie jest załadowane
         if (!window.jsonProducts || window.jsonProducts.length === 0) {
           console.log("jsonProducts niezaładowane, wywołuję loadProducts");
           await window.loadProducts();
@@ -626,7 +587,6 @@ document.addEventListener("DOMContentLoaded", () => {
     pageEditButton.onclick = () => window.showPageEditModal(0);
     document.querySelector('.improved-panel').appendChild(pageEditButton);
 
-    // Inicjalne wczytanie produktów
     window.loadProducts();
   } catch (e) {
     console.error('Błąd inicjalizacji zdarzeń DOM:', e);
