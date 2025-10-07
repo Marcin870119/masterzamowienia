@@ -1,3 +1,5 @@
+console.log('kreator3.js załadowany');
+
 function showEditModal(productIndex) {
   try {
     console.log('showEditModal wywołany dla produktu:', productIndex);
@@ -309,7 +311,7 @@ function showPageEditModal(pageIndex) {
         <select id="editIndeksFont">
           <option value="Arial" ${edit.indeksFont === 'Arial' ? 'selected' : ''}>Arial</option>
           <option value="Helvetica" ${edit.indeksFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
-          <option value="Times" ${edit.indeksFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
+          <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editIndeksColor" value="${edit.indeksFontColor}">
       </div>
@@ -750,32 +752,96 @@ function showVirtualEditModal(productIndex) {
           edit.backgroundOpacity = backgroundOpacity;
           canvas.renderAll();
           console.log('Zastosowano edycję tekstu');
-        }owanymi w `kreator2-2.js` dla dużych układów (1, 2, 4).
-3. **Brak zmian w `kreator1-2.js`**:
-   - Poprzednia wersja `kreator1-2.js` (artifact_id="75a43341-e4ac-4605-846c-f509936d4567", artifact_version_id="3900f7b5-6b6a-496f-905c-de83df1abd20") jest poprawna, z logowaniem potwierdzającym wywołanie `showVirtualEditModal` (`Kliknięto Edytuj układ dla produktu: <index>` i `showVirtualEditModal dostępny: function`).
-4. **Błąd 404 w `toBase64`**:
-   - Błąd 404 w `loadManufacturerLogos` nie wpływa na `showVirtualEditModal`, więc można go zignorować dla tej funkcjonalności. Jeśli logo producenta jest potrzebne, sprawdź poprawność adresów URL w `Producenci.json` lub ścieżek do obrazów.
+        } catch (e) {
+          console.error('Błąd stosowania edycji tekstu:', e);
+          document.getElementById('debug').innerText = "Błąd stosowania edycji tekstu: " + e.message;
+        }
+      };
+    });
 
-### Wskazówki
-- **Podmiana plików**: Zastąp `kreator.html` i `kreator3.js` nowymi wersjami. Użyj poprzednich wersji:
-  - `kreator1-2.js` (artifact_id="75a43341-e4ac-4605-846c-f509936d4567", artifact_version_id="3900f7b5-6b6a-496f-905c-de83df1abd20")
-  - `kreator2-2.js` (artifact_id="a8e04521-35fa-4ded-b42b-46f732d283f9", artifact_version_id="ea94ed97-f699-45da-800a-158b6807e591")
-  bez zmian.
-- **Testowanie**:
-  1. Otwórz stronę – modal `#virtualEditModal` nie powinien się wyświetlać domyślnie.
-  2. Zaimportuj produkty (Excel/CSV) i kliknij "Edytuj układ" w katalogu.
-  3. Sprawdź konsolę (F12):
-     - Przy ładowaniu strony: Potwierdź, że `showVirtualEditModal: Zdefiniowany` i `virtualEditModal istnieje: true`.
-     - Po kliknięciu "Edytuj układ": Sprawdź sekwencję logów, np. `showVirtualEditModal wywołany dla produktu: <index>`, `virtualEditModal znaleziony`, `Modal HTML ustawiony`, `Modal ustawiony na display: block`, `virtualEditCanvas znaleziony`, `Kanwa Fabric.js zainicjalizowana`, itd. Jeśli któryś log się nie pojawia, błąd występuje w tym miejscu (np. brak `virtualEditCanvas` lub wyjątek w Fabric.js).
-     - Jeśli pojawi się błąd w `#debug` (np. "Błąd: Brak elementu canvas" lub "Błąd: Biblioteka Fabric.js nie jest załadowana"), zanotuj komunikat.
-  4. Modal powinien być wycentrowany (max 800x1000 pikseli), z kanwą 560x700 pikseli w środku.
-  5. Przesuń elementy (zdjęcie, tekst, kod kreskowy) – nie powinny wychodzić poza ramkę w kanwie.
-  6. Zapisz i wygeneruj PDF (`layoutSelect` na 4) – układ powinien być identyczny z kanwą, wewnątrz ramki.
-- **Debugowanie**:
-  - Otwórz konsolę (F12) i sprawdź:
-    - Logi z `<script>` w `kreator.html` – potwierdź, że wszystkie biblioteki (`jspdf`, `XLSX`, `Papa`, `JsBarcode`, `fabric`) i `showVirtualEditModal` są załadowane.
-    - Logi z `showVirtualEditModal` – zidentyfikuj, który krok (np. 'Modal ustawiony na display: block', 'Inicjalizacja kanwy Fabric.js') powoduje przerwanie. Jeśli logi zatrzymują się przed `Kanwa Fabric.js zainicjalizowana`, problem może dotyczyć Fabric.js lub elementu `virtualEditCanvas`.
-    - Jeśli brak logów po `Modal ustawiony na display: block`, sprawdź, czy modal jest w DOM (użyj narzędzi deweloperskich do inspekcji `#virtualEditModal`) i czy nie jest ukryty przez CSS (`display`, `visibility`, `opacity`).
-  - Sprawdź `kreator.css` pod kątem stylów nadpisujących `#virtualEditModal`, `.modal-content`, `.canvas-container`, lub `.btn-primary.layout-button` (np. `display`, `visibility`, `opacity`, `pointer-events`). Tymczasowo usuń `<link rel="stylesheet" href="kreator.css">` z `kreator.html`, aby wykluczyć konflikty CSS, i przetestuj ponownie.
-  - Sprawdź, czy Fabric.js ładuje się poprawnie (`console.log('fabric:', typeof window.fabric !== 'undefined' ? 'Załadowany' : 'Niezaładowany')` w `<script>`). Jeśli `fabric: Niezaładowany`, upewnij się, że URL `https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js` jest dostępny.
-  - Prześlij zrzut ekranu strony, pełnych logów konsoli (w tym wszystkie logi z `showVirtualEditModal`), fragmentu `kreator.css` dotyczącego `.modal`, `#virtualEditModal`, `.canvas-container`, lub `.btn-primary`, oraz informację, czy usunięcie `kreator.css` zmienia zachowanie.
+    console.log('Dodawanie zdarzenia dla przycisku saveVirtualEdit');
+    const saveButton = document.getElementById('saveVirtualEdit');
+    if (!saveButton) {
+      console.error('Nie znaleziono elementu saveVirtualEdit');
+      document.getElementById('debug').innerText = "Błąd: Brak przycisku zapisu";
+      return;
+    }
+    saveButton.onclick = () => {
+      try {
+        console.log('saveVirtualEdit wywołany');
+        const objects = canvas.getObjects();
+        const newLayout = {
+          image: edit.layout?.image || { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
+          name: edit.layout?.name || { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
+          price: edit.layout?.price || { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
+          index: edit.layout?.index || { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
+          ranking: edit.layout?.ranking || { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
+          barcode: edit.layout?.barcode || { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 }
+        };
+        objects.forEach(obj => {
+          if (obj.id) {
+            newLayout[obj.id] = {
+              x: Math.max(0, Math.min((obj.left - borderMargin) / (canvasWidth - borderMargin * 2), 0.9286)),
+              y: Math.max(0, Math.min((obj.top - borderMargin) / (canvasHeight - borderMargin * 2), 0.8857)),
+              w: Math.max(0.1, Math.min((obj.width * obj.scaleX) / (canvasWidth - borderMargin * 2), 0.8571)),
+              h: Math.max(0.05, Math.min((obj.height * obj.scaleY) / (canvasHeight - borderMargin * 2), 0.4))
+            };
+          }
+        });
+        window.productEdits[productIndex] = {
+          ...window.productEdits[productIndex],
+          nazwaFont: nazwaText.fontFamily || edit.nazwaFont,
+          nazwaFontColor: nazwaText.fill || edit.nazwaFontColor,
+          indeksFont: indeksText.fontFamily || edit.indeksFont,
+          indeksFontColor: indeksText.fill || edit.indeksFontColor,
+          rankingFont: rankingText ? rankingText.fontFamily || edit.rankingFont : edit.rankingFont,
+          rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
+          cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
+          cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
+          priceFontSize: cenaText ? (cenaText.fontSize === 24 ? 'small' : cenaText.fontSize === 28 ? 'medium' : 'large') : edit.priceFontSize,
+          borderStyle: edit.borderStyle || 'solid',
+          borderColor: edit.borderColor || '#000000',
+          backgroundTexture: edit.backgroundTexture || null,
+          backgroundOpacity: edit.backgroundOpacity || 1.0,
+          layout: newLayout
+        };
+        console.log('Saved Virtual Edit for Product Index:', productIndex, window.productEdits[productIndex]);
+        canvas.dispose();
+        modal.style.display = 'none';
+        window.renderCatalog();
+        window.previewPDF();
+      } catch (e) {
+        console.error('Błąd zapisywania wirtualnej edycji:', e);
+        document.getElementById('debug').innerText = "Błąd zapisywania wirtualnej edycji: " + e.message;
+      }
+    };
+    console.log('showVirtualEditModal zakończony');
+  } catch (e) {
+    console.error('Błąd pokazywania modalu edycji wirtualnej:', e);
+    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji wirtualnej: " + e.message;
+  }
+}
+
+function hideEditModal() {
+  try {
+    console.log('hideEditModal wywołany');
+    const editModal = document.getElementById('editModal');
+    const virtualEditModal = document.getElementById('virtualEditModal');
+    if (editModal) editModal.style.display = 'none';
+    if (virtualEditModal) virtualEditModal.style.display = 'none';
+    console.log('Modale ukryte');
+  } catch (e) {
+    console.error('Błąd ukrywania modalu edycji:', e);
+    document.getElementById('debug').innerText = "Błąd ukrywania modalu edycji: " + e.message;
+  }
+}
+
+window.showEditModal = showEditModal;
+window.saveEdit = saveEdit;
+window.showPageEditModal = showPageEditModal;
+window.savePageEdit = savePageEdit;
+window.showVirtualEditModal = showVirtualEditModal;
+window.hideEditModal = hideEditModal;
+window.applyTextEdit = window.applyTextEdit || function() {};
+
+console.log('kreator3.js funkcje przypisane do window');
