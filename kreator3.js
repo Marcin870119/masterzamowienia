@@ -1,14 +1,6 @@
-console.log('kreator3.js załadowany');
-
 function showEditModal(productIndex) {
   try {
-    console.log('showEditModal wywołany dla produktu:', productIndex);
     const product = window.products[productIndex];
-    if (!product) {
-      console.error('Produkt nie istnieje dla indeksu:', productIndex);
-      document.getElementById('debug').innerText = "Błąd: Produkt nie istnieje";
-      return;
-    }
     const edit = window.productEdits[productIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
@@ -41,11 +33,6 @@ function showEditModal(productIndex) {
     const showLogo = document.getElementById('showLogo')?.checked || false;
     const priceLabel = window.globalLanguage === 'en' ? 'Price' : 'Cena';
     const editForm = document.getElementById('editForm');
-    if (!editForm) {
-      console.error('Nie znaleziono elementu editForm');
-      document.getElementById('debug').innerText = "Błąd: Brak elementu formularza edycji";
-      return;
-    }
     editForm.innerHTML = `
       <div class="edit-field">
         <label>Zdjęcie:</label>
@@ -150,35 +137,21 @@ function showEditModal(productIndex) {
       </div>
       <button onclick="window.saveEdit(${productIndex})" class="btn-primary">Zapisz</button>
     `;
-    const editModal = document.getElementById('editModal');
-    if (!editModal) {
-      console.error('Nie znaleziono elementu editModal');
-      document.getElementById('debug').innerText = "Błąd: Brak modalu edycji";
-      return;
-    }
-    editModal.style.display = 'block';
-    console.log('editModal wyświetlony dla produktu:', productIndex);
+    document.getElementById('editModal').style.display = 'block';
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji: " + e.message;
+    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji";
   }
 }
 
 function saveEdit(productIndex) {
   try {
-    console.log('saveEdit wywołany dla produktu:', productIndex);
     const product = window.products[productIndex];
-    if (!product) {
-      console.error('Produkt nie istnieje dla indeksu:', productIndex);
-      document.getElementById('debug').innerText = "Błąd: Produkt nie istnieje";
-      return;
-    }
     const editImage = document.getElementById('editImage').files[0];
     if (editImage) {
       const reader = new FileReader();
       reader.onload = (e) => {
         window.uploadedImages[product.indeks] = e.target.result;
-        console.log('Załadowano nowe zdjęcie dla produktu:', product.indeks);
         window.renderCatalog();
       };
       reader.readAsDataURL(editImage);
@@ -189,7 +162,6 @@ function saveEdit(productIndex) {
       reader.onload = (e) => {
         window.productEdits[productIndex] = window.productEdits[productIndex] || {};
         window.productEdits[productIndex].logo = e.target.result;
-        console.log('Załadowano nowe logo dla produktu:', productIndex);
         window.renderCatalog();
       };
       reader.readAsDataURL(editLogo);
@@ -198,7 +170,6 @@ function saveEdit(productIndex) {
       window.productEdits[productIndex] = window.productEdits[productIndex] || {};
       window.productEdits[productIndex].logo = selectedLogo ? window.manufacturerLogos[selectedLogo] : null;
       product.producent = selectedLogo || product.producent;
-      console.log('Wybrano logo z listy dla produktu:', productIndex, selectedLogo);
     }
     const editBackgroundTexture = document.getElementById('editBackgroundTexture').files[0];
     if (editBackgroundTexture) {
@@ -206,7 +177,6 @@ function saveEdit(productIndex) {
       reader.onload = (e) => {
         window.productEdits[productIndex] = window.productEdits[productIndex] || {};
         window.productEdits[productIndex].backgroundTexture = e.target.result;
-        console.log('Załadowano nową teksturę tła dla produktu:', productIndex);
         window.renderCatalog();
       };
       reader.readAsDataURL(editBackgroundTexture);
@@ -254,13 +224,12 @@ function saveEdit(productIndex) {
     window.hideEditModal();
   } catch (e) {
     console.error('Błąd zapisywania edycji produktu:', e);
-    document.getElementById('debug').innerText = "Błąd zapisywania edycji produktu: " + e.message;
+    document.getElementById('debug').innerText = "Błąd zapisywania edycji produktu";
   }
 }
 
 function showPageEditModal(pageIndex) {
   try {
-    console.log('showPageEditModal wywołany dla strony:', pageIndex);
     const edit = window.pageEdits[pageIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
@@ -276,11 +245,6 @@ function showPageEditModal(pageIndex) {
       pageBackgroundOpacity: 1.0
     };
     const editForm = document.getElementById('editForm');
-    if (!editForm) {
-      console.error('Nie znaleziono elementu editForm');
-      document.getElementById('debug').innerText = "Błąd: Brak elementu formularza edycji";
-      return;
-    }
     const layout = document.getElementById('layoutSelect').value || "16";
     let itemsPerPage;
     if (layout === "1") itemsPerPage = 1;
@@ -361,23 +325,15 @@ function showPageEditModal(pageIndex) {
       </div>
       <button onclick="window.savePageEdit(${pageIndex})" class="btn-primary">Zapisz</button>
     `;
-    const editModal = document.getElementById('editModal');
-    if (!editModal) {
-      console.error('Nie znaleziono elementu editModal');
-      document.getElementById('debug').innerText = "Błąd: Brak modalu edycji";
-      return;
-    }
-    editModal.style.display = 'block';
-    console.log('editModal wyświetlony dla strony:', pageIndex);
+    document.getElementById('editModal').style.display = 'block';
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji strony:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji strony: " + e.message;
+    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji strony";
   }
 }
 
 function savePageEdit(pageIndex) {
   try {
-    console.log('savePageEdit wywołany dla strony:', pageIndex);
     const newPageIndex = parseInt(document.getElementById('editPageSelect').value);
     window.pageEdits[newPageIndex] = {
       nazwaFont: document.getElementById('editNazwaFont').value,
@@ -398,27 +354,13 @@ function savePageEdit(pageIndex) {
     window.hideEditModal();
   } catch (e) {
     console.error('Błąd zapisywania edycji strony:', e);
-    document.getElementById('debug').innerText = "Błąd zapisywania edycji strony: " + e.message;
+    document.getElementById('debug').innerText = "Błąd zapisywania edycji strony";
   }
 }
 
 function showVirtualEditModal(productIndex) {
   try {
-    console.log('showVirtualEditModal wywołany dla produktu:', productIndex);
-    const modal = document.getElementById('virtualEditModal');
-    if (!modal) {
-      console.error('Nie znaleziono elementu virtualEditModal');
-      document.getElementById('debug').innerText = "Błąd: Brak modalu edycji wirtualnej";
-      return;
-    }
-    console.log('virtualEditModal znaleziony:', modal);
     const product = window.products[productIndex];
-    if (!product) {
-      console.error('Produkt nie istnieje dla indeksu:', productIndex);
-      document.getElementById('debug').innerText = "Błąd: Produkt nie istnieje";
-      return;
-    }
-    console.log('Produkt:', product);
     const edit = window.productEdits[productIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
@@ -443,13 +385,13 @@ function showVirtualEditModal(productIndex) {
         barcode: { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 }
       }
     };
-    console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
+    const modal = document.getElementById('virtualEditModal');
     modal.innerHTML = `
       <div class="modal-content">
         <span class="close" onclick="window.hideEditModal()">&times;</span>
         <h3>Edytuj produkt wizualnie</h3>
-        <div class="canvas-container">
-          <canvas id="virtualEditCanvas" width="560" height="700"></canvas>
+        <div style="position: relative; width: 280px; height: 350px; margin: 20px auto;">
+          <canvas id="virtualEditCanvas" width="280" height="350"></canvas>
           <div id="editPanel" style="position: absolute; top: 10px; right: -200px; background: white; padding: 10px; border: 1px solid #ccc; display: none;">
             <select id="fontSelect">
               <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
@@ -477,55 +419,15 @@ function showVirtualEditModal(productIndex) {
         </div>
       </div>
     `;
-    console.log('Modal HTML ustawiony');
     modal.style.display = 'block';
-    console.log('Modal ustawiony na display: block');
-    const styles = window.getComputedStyle(modal);
-    console.log('virtualEditModal style po display: block:', {
-      display: styles.display,
-      visibility: styles.visibility,
-      opacity: styles.opacity,
-      zIndex: styles.zIndex
-    });
-    const canvasElement = document.getElementById('virtualEditCanvas');
-    if (!canvasElement) {
-      console.error('Nie znaleziono elementu virtualEditCanvas');
-      document.getElementById('debug').innerText = "Błąd: Brak elementu canvas";
-      return;
-    }
-    console.log('virtualEditCanvas znaleziony:', canvasElement);
-    if (!window.fabric) {
-      console.error('Biblioteka Fabric.js nie jest załadowana');
-      document.getElementById('debug').innerText = "Błąd: Biblioteka Fabric.js nie jest załadowana";
-      return;
-    }
-    console.log('Inicjalizacja kanwy Fabric.js');
-    const canvas = new fabric.Canvas('virtualEditCanvas', {
-      width: 560,
-      height: 700
-    });
-    console.log('Kanwa Fabric.js zainicjalizowana');
-    const canvasStyles = window.getComputedStyle(canvasElement);
-    console.log('virtualEditCanvas style:', {
-      display: canvasStyles.display,
-      visibility: canvasStyles.visibility,
-      opacity: canvasStyles.opacity,
-      width: canvasStyles.width,
-      height: canvasStyles.height
-    });
-    const canvasWidth = 560;
-    const canvasHeight = 700;
-    const borderMargin = 40; // Skalowany margines ramki (2x 20 pt w PDF)
+    const canvas = new fabric.Canvas('virtualEditCanvas');
+    const canvasWidth = 280;
+    const canvasHeight = 350;
+    const borderMargin = 20; // Margines ramki (odpowiada 40/2 w PDF dla isLarge)
 
-    console.log('Ładowanie tekstury tła');
     if (edit.backgroundTexture) {
       try {
         fabric.Image.fromURL(edit.backgroundTexture, (bgImg) => {
-          if (!bgImg) {
-            console.error('Nie udało się załadować tekstury tła:', edit.backgroundTexture);
-            document.getElementById('debug').innerText = "Błąd: Nie udało się załadować tekstury tła";
-            return;
-          }
           bgImg.scaleToWidth(canvasWidth - borderMargin * 2);
           bgImg.set({
             left: borderMargin,
@@ -533,11 +435,10 @@ function showVirtualEditModal(productIndex) {
             opacity: edit.backgroundOpacity || 1.0
           });
           canvas.setBackgroundImage(bgImg, canvas.renderAll.bind(canvas));
-          console.log('Tekstura tła załadowana');
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania tekstury tła w podglądzie:', e);
-        document.getElementById('debug').innerText = "Błąd ładowania tekstury tła w podglądzie: " + e.message;
+        document.getElementById('debug').innerText = "Błąd ładowania tekstury tła w podglądzie";
       }
     }
 
@@ -547,15 +448,8 @@ function showVirtualEditModal(productIndex) {
     const showEan = document.getElementById('showEan')?.checked || false;
     const priceLabel = window.globalLanguage === 'en' ? 'PRICE' : 'CENA';
 
-    console.log('Ładowanie obrazu produktu');
-    const imageUrl = window.uploadedImages[product.indeks] || product.img || 'https://dummyimage.com/120x84/eee/000&text=brak';
     try {
-      fabric.Image.fromURL(imageUrl, (img) => {
-        if (!img) {
-          console.error('Nie udało się załadować obrazu produktu:', imageUrl);
-          document.getElementById('debug').innerText = "Błąd: Nie udało się załadować obrazu produktu";
-          return;
-        }
+      fabric.Image.fromURL(window.uploadedImages[product.indeks] || product.img, (img) => {
         const layoutImg = layout.image || { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 };
         const maxW = canvasWidth - borderMargin * 2;
         const maxH = canvasHeight * 0.4;
@@ -575,14 +469,12 @@ function showVirtualEditModal(productIndex) {
           lockRotation: true
         });
         canvas.add(img);
-        console.log('Obraz produktu załadowany:', imageUrl);
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
-      document.getElementById('debug').innerText = "Błąd ładowania obrazu produktu w podglądzie: " + e.message;
+      document.getElementById('debug').innerText = "Błąd ładowania obrazu produktu w podglądzie";
     }
 
-    console.log('Tworzenie ramki');
     const borderRect = new fabric.Rect({
       left: borderMargin,
       top: borderMargin,
@@ -590,21 +482,19 @@ function showVirtualEditModal(productIndex) {
       height: canvasHeight - borderMargin * 2,
       fill: 'transparent',
       stroke: edit.borderColor || '#000000',
-      strokeWidth: 4,
-      strokeDashArray: edit.borderStyle === 'dashed' ? [10, 10] : edit.borderStyle === 'dotted' ? [4, 4] : null,
-      rx: 10,
-      ry: 10,
+      strokeWidth: 2,
+      strokeDashArray: edit.borderStyle === 'dashed' ? [5, 5] : edit.borderStyle === 'dotted' ? [2, 2] : null,
+      rx: 5,
+      ry: 5,
       selectable: false
     });
     canvas.add(borderRect);
-    console.log('Ramka dodana');
 
-    console.log('Tworzenie tekstu nazwy');
     const layoutName = layout.name || { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 };
     const nazwaText = new fabric.Text(product.nazwa || 'Brak nazwy', {
       left: borderMargin + layoutName.x * (canvasWidth - borderMargin * 2),
       top: borderMargin + layoutName.y * (canvasHeight - borderMargin * 2),
-      fontSize: 22,
+      fontSize: 11,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
       selectable: true,
@@ -612,14 +502,12 @@ function showVirtualEditModal(productIndex) {
       hasBorders: true
     });
     canvas.add(nazwaText);
-    console.log('Tekst nazwy dodany');
 
-    console.log('Tworzenie tekstu indeksu');
     const layoutIndex = layout.index || { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 };
     const indeksText = new fabric.Text(`Indeks: ${product.indeks || '-'}`, {
       left: borderMargin + layoutIndex.x * (canvasWidth - borderMargin * 2),
       top: borderMargin + layoutIndex.y * (canvasHeight - borderMargin * 2),
-      fontSize: 18,
+      fontSize: 9,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
       selectable: true,
@@ -627,16 +515,14 @@ function showVirtualEditModal(productIndex) {
       hasBorders: true
     });
     canvas.add(indeksText);
-    console.log('Tekst indeksu dodany');
 
     let rankingText;
     if (showRanking && product.ranking) {
-      console.log('Tworzenie tekstu rankingu');
       const layoutRanking = layout.ranking || { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 };
       rankingText = new fabric.Text(`RANKING: ${product.ranking}`, {
         left: borderMargin + layoutRanking.x * (canvasWidth - borderMargin * 2),
         top: borderMargin + layoutRanking.y * (canvasHeight - borderMargin * 2),
-        fontSize: 18,
+        fontSize: 9,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
         selectable: true,
@@ -644,17 +530,15 @@ function showVirtualEditModal(productIndex) {
         hasBorders: true
       });
       canvas.add(rankingText);
-      console.log('Tekst rankingu dodany');
     }
 
     let cenaText;
     if (showCena && product.cena) {
-      console.log('Tworzenie tekstu ceny');
       const layoutPrice = layout.price || { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 };
       cenaText = new fabric.Text(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, {
         left: borderMargin + layoutPrice.x * (canvasWidth - borderMargin * 2),
         top: borderMargin + layoutPrice.y * (canvasHeight - borderMargin * 2),
-        fontSize: edit.priceFontSize === 'small' ? 24 : edit.priceFontSize === 'medium' ? 28 : 32,
+        fontSize: edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
         selectable: true,
@@ -662,19 +546,12 @@ function showVirtualEditModal(productIndex) {
         hasBorders: true
       });
       canvas.add(cenaText);
-      console.log('Tekst ceny dodany');
     }
 
     if (showEan && product.ean && product.barcode) {
-      console.log('Ładowanie kodu kreskowego');
       try {
+        const layoutBarcode = layout.barcode || { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 };
         fabric.Image.fromURL(product.barcode, (barcodeImg) => {
-          if (!barcodeImg) {
-            console.error('Nie udało się załadować kodu kreskowego:', product.barcode);
-            document.getElementById('debug').innerText = "Błąd: Nie udało się załadować kodu kreskowego";
-            return;
-          }
-          const layoutBarcode = layout.barcode || { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 };
           barcodeImg.scaleToWidth((canvasWidth - borderMargin * 2) * layoutBarcode.w);
           barcodeImg.set({
             left: borderMargin + layoutBarcode.x * (canvasWidth - borderMargin * 2),
@@ -687,15 +564,13 @@ function showVirtualEditModal(productIndex) {
             lockRotation: true
           });
           canvas.add(barcodeImg);
-          console.log('Kod kreskowy dodany');
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania kodu kreskowego w podglądzie:', e);
-        document.getElementById('debug').innerText = "Błąd ładowania kodu kreskowego w podglądzie: " + e.message;
+        document.getElementById('debug').innerText = "Błąd ładowania kodu kreskowego w podglądzie";
       }
     }
 
-    console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
       const objWidth = obj.width * obj.scaleX;
@@ -707,32 +582,22 @@ function showVirtualEditModal(productIndex) {
       console.log('Przesunięto:', obj.id, 'x:', (obj.left - borderMargin) / (canvasWidth - borderMargin * 2), 'y:', (obj.top - borderMargin) / (canvasHeight - borderMargin * 2));
     });
 
-    console.log('Dodawanie zdarzenia object:selected');
     canvas.on('object:selected', (e) => {
       const obj = e.target;
-      const editPanel = document.getElementById('editPanel');
-      if (!editPanel) {
-        console.error('Nie znaleziono elementu editPanel');
-        document.getElementById('debug').innerText = "Błąd: Brak panelu edycji";
-        return;
-      }
-      editPanel.style.display = 'block';
-      console.log('editPanel wyświetlony:', editPanel);
+      document.getElementById('editPanel').style.display = 'block';
       document.getElementById('fontSelect').value = obj.fontFamily || 'Arial';
       document.getElementById('colorSelect').value = obj.fill || '#000000';
-      document.getElementById('sizeSelect').value = obj.fontSize === 24 ? 'small' : obj.fontSize === 28 ? 'medium' : 'large';
+      document.getElementById('sizeSelect').value = obj.fontSize === 12 ? 'small' : obj.fontSize === 14 ? 'medium' : 'large';
       document.getElementById('borderStyleSelect').value = edit.borderStyle || 'solid';
       document.getElementById('borderColorSelect').value = edit.borderColor || '#000000';
       document.getElementById('backgroundOpacitySelect').value = edit.backgroundOpacity || 1.0;
-      console.log('Panel edycji wyświetlony dla obiektu:', obj.id);
       window.applyTextEdit = function() {
         try {
-          console.log('applyTextEdit wywołany');
           if (obj.type === 'text') {
             obj.set({
               fontFamily: document.getElementById('fontSelect').value,
               fill: document.getElementById('colorSelect').value,
-              fontSize: document.getElementById('sizeSelect').value === 'small' ? 24 : document.getElementById('sizeSelect').value === 'medium' ? 28 : 32
+              fontSize: document.getElementById('sizeSelect').value === 'small' ? 12 : document.getElementById('sizeSelect').value === 'medium' ? 14 : 16
             });
           }
           const borderStyle = document.getElementById('borderStyleSelect').value;
@@ -743,47 +608,32 @@ function showVirtualEditModal(productIndex) {
             const reader = new FileReader();
             reader.onload = (e) => {
               fabric.Image.fromURL(e.target.result, (bgImg) => {
-                if (!bgImg) {
-                  console.error('Nie udało się załadować nowej tekstury tła');
-                  document.getElementById('debug').innerText = "Błąd: Nie udało się załadować nowej tekstury tła";
-                  return;
-                }
                 bgImg.scaleToWidth(canvasWidth - borderMargin * 2);
                 bgImg.set({ left: borderMargin, top: borderMargin, opacity: backgroundOpacity });
                 canvas.setBackgroundImage(bgImg, canvas.renderAll.bind(canvas));
                 edit.backgroundTexture = e.target.result;
                 edit.backgroundOpacity = backgroundOpacity;
-                console.log('Nowa tekstura tła załadowana');
               }, { crossOrigin: 'anonymous' });
             };
             reader.readAsDataURL(backgroundTextureInput);
           }
           borderRect.set({
             stroke: borderColor,
-            strokeDashArray: borderStyle === 'dashed' ? [10, 10] : borderStyle === 'dotted' ? [4, 4] : null
+            strokeDashArray: borderStyle === 'dashed' ? [5, 5] : borderStyle === 'dotted' ? [2, 2] : null
           });
           edit.borderStyle = borderStyle;
           edit.borderColor = borderColor;
           edit.backgroundOpacity = backgroundOpacity;
           canvas.renderAll();
-          console.log('Zastosowano edycję tekstu');
         } catch (e) {
           console.error('Błąd stosowania edycji tekstu:', e);
-          document.getElementById('debug').innerText = "Błąd stosowania edycji tekstu: " + e.message;
+          document.getElementById('debug').innerText = "Błąd stosowania edycji tekstu";
         }
       };
     });
 
-    console.log('Dodawanie zdarzenia dla przycisku saveVirtualEdit');
-    const saveButton = document.getElementById('saveVirtualEdit');
-    if (!saveButton) {
-      console.error('Nie znaleziono elementu saveVirtualEdit');
-      document.getElementById('debug').innerText = "Błąd: Brak przycisku zapisu";
-      return;
-    }
-    saveButton.onclick = () => {
+    document.getElementById('saveVirtualEdit').onclick = () => {
       try {
-        console.log('saveVirtualEdit wywołany');
         const objects = canvas.getObjects();
         const newLayout = {
           image: edit.layout?.image || { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
@@ -813,7 +663,7 @@ function showVirtualEditModal(productIndex) {
           rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
           cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
           cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
-          priceFontSize: cenaText ? (cenaText.fontSize === 24 ? 'small' : cenaText.fontSize === 28 ? 'medium' : 'large') : edit.priceFontSize,
+          priceFontSize: cenaText ? (cenaText.fontSize === 12 ? 'small' : cenaText.fontSize === 14 ? 'medium' : 'large') : edit.priceFontSize,
           borderStyle: edit.borderStyle || 'solid',
           borderColor: edit.borderColor || '#000000',
           backgroundTexture: edit.backgroundTexture || null,
@@ -827,27 +677,22 @@ function showVirtualEditModal(productIndex) {
         window.previewPDF();
       } catch (e) {
         console.error('Błąd zapisywania wirtualnej edycji:', e);
-        document.getElementById('debug').innerText = "Błąd zapisywania wirtualnej edycji: " + e.message;
+        document.getElementById('debug').innerText = "Błąd zapisywania wirtualnej edycji";
       }
     };
-    console.log('showVirtualEditModal zakończony');
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji wirtualnej:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji wirtualnej: " + e.message;
+    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji wirtualnej";
   }
 }
 
 function hideEditModal() {
   try {
-    console.log('hideEditModal wywołany');
-    const editModal = document.getElementById('editModal');
-    const virtualEditModal = document.getElementById('virtualEditModal');
-    if (editModal) editModal.style.display = 'none';
-    if (virtualEditModal) virtualEditModal.style.display = 'none';
-    console.log('Modale ukryte');
+    document.getElementById('editModal').style.display = 'none';
+    document.getElementById('virtualEditModal').style.display = 'none';
   } catch (e) {
     console.error('Błąd ukrywania modalu edycji:', e);
-    document.getElementById('debug').innerText = "Błąd ukrywania modalu edycji: " + e.message;
+    document.getElementById('debug').innerText = "Błąd ukrywania modalu edycji";
   }
 }
 
@@ -858,5 +703,3 @@ window.savePageEdit = savePageEdit;
 window.showVirtualEditModal = showVirtualEditModal;
 window.hideEditModal = hideEditModal;
 window.applyTextEdit = window.applyTextEdit || function() {};
-
-console.log('kreator3.js funkcje przypisane do window');
