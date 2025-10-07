@@ -20,12 +20,12 @@ function showEditModal(productIndex) {
       pageBackgroundGradient: 'none',
       pageBackgroundOpacity: 1.0,
       layout: {
-        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
-        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
-        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
-        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
-        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
+        image: { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
+        name: { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
+        price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
+        index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
+        ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
+        barcode: { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 }
       }
     };
     const showRanking = document.getElementById('showRanking')?.checked || false;
@@ -211,12 +211,12 @@ function saveEdit(productIndex) {
       pageBackgroundGradient: document.getElementById('editPageBackgroundGradient').value || 'none',
       pageBackgroundOpacity: parseFloat(document.getElementById('editPageBackgroundOpacity').value) || 1.0,
       layout: window.productEdits[productIndex]?.layout || {
-        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
-        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
-        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
-        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
-        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
+        image: { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
+        name: { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
+        price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
+        index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
+        ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
+        barcode: { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 }
       }
     };
     console.log('Saved Edit for Product Index:', productIndex, window.productEdits[productIndex]);
@@ -377,22 +377,22 @@ function showVirtualEditModal(productIndex) {
       backgroundTexture: null,
       backgroundOpacity: 1.0,
       layout: {
-        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
-        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
-        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
-        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
-        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
+        image: { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
+        name: { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
+        price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
+        index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
+        ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
+        barcode: { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 }
       }
     };
     const modal = document.getElementById('virtualEditModal');
     modal.innerHTML = `
-      <div class="modal-content" style="width: 560px; height: 700px; padding: 20px; display: flex; flex-direction: column; align-items: center;">
+      <div class="modal-content">
         <span class="close" onclick="window.hideEditModal()">&times;</span>
         <h3>Edytuj produkt wizualnie</h3>
-        <div style="position: relative; width: 280px; height: 350px; border: 1px solid #ccc; margin: 20px auto;">
+        <div style="position: relative; width: 280px; height: 350px; margin: 20px auto;">
           <canvas id="virtualEditCanvas" width="280" height="350"></canvas>
-          <div id="editPanel" style="position: absolute; top: 10px; right: 10px; background: white; padding: 10px; border: 1px solid #ccc; display: none;">
+          <div id="editPanel" style="position: absolute; top: 10px; right: -200px; background: white; padding: 10px; border: 1px solid #ccc; display: none;">
             <select id="fontSelect">
               <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
               <option value="Helvetica" ${edit.nazwaFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
@@ -415,7 +415,7 @@ function showVirtualEditModal(productIndex) {
             <input type="range" id="backgroundOpacitySelect" min="0.1" max="1.0" step="0.1" value="${edit.backgroundOpacity || 1.0}">
             <button onclick="window.applyTextEdit()">Zastosuj</button>
           </div>
-          <button id="saveVirtualEdit" style="position: absolute; bottom: 10px; right: 10px;">Zapisz</button>
+          <button id="saveVirtualEdit" style="position: absolute; bottom: -40px; right: 0;">Zapisz</button>
         </div>
       </div>
     `;
@@ -423,12 +423,17 @@ function showVirtualEditModal(productIndex) {
     const canvas = new fabric.Canvas('virtualEditCanvas');
     const canvasWidth = 280;
     const canvasHeight = 350;
+    const borderMargin = 20; // Margines ramki (odpowiada 40/2 w PDF dla isLarge)
 
     if (edit.backgroundTexture) {
       try {
         fabric.Image.fromURL(edit.backgroundTexture, (bgImg) => {
-          bgImg.scaleToWidth(canvasWidth);
-          bgImg.set({ opacity: edit.backgroundOpacity || 1.0 });
+          bgImg.scaleToWidth(canvasWidth - borderMargin * 2);
+          bgImg.set({
+            left: borderMargin,
+            top: borderMargin,
+            opacity: edit.backgroundOpacity || 1.0
+          });
           canvas.setBackgroundImage(bgImg, canvas.renderAll.bind(canvas));
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
@@ -445,19 +450,23 @@ function showVirtualEditModal(productIndex) {
 
     try {
       fabric.Image.fromURL(window.uploadedImages[product.indeks] || product.img, (img) => {
-        const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4 };
-        const maxW = canvasWidth - 40;
+        const layoutImg = layout.image || { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 };
+        const maxW = canvasWidth - borderMargin * 2;
         const maxH = canvasHeight * 0.4;
         let scale = Math.min(maxW / img.width, maxH / img.height);
         let w = img.width * scale;
         let h = img.height * scale;
         img.set({
-          left: layoutImg.x * canvasWidth + (canvasWidth - w) / 2,
-          top: layoutImg.y * canvasHeight,
+          left: borderMargin + layoutImg.x * (canvasWidth - borderMargin * 2),
+          top: borderMargin + layoutImg.y * (canvasHeight - borderMargin * 2),
           scaleX: scale,
           scaleY: scale,
           selectable: true,
-          id: 'image'
+          id: 'image',
+          hasBorders: true,
+          lockScalingX: false,
+          lockScalingY: false,
+          lockRotation: true
         });
         canvas.add(img);
       }, { crossOrigin: 'anonymous' });
@@ -467,10 +476,10 @@ function showVirtualEditModal(productIndex) {
     }
 
     const borderRect = new fabric.Rect({
-      left: 0,
-      top: 0,
-      width: canvasWidth,
-      height: canvasHeight,
+      left: borderMargin,
+      top: borderMargin,
+      width: canvasWidth - borderMargin * 2,
+      height: canvasHeight - borderMargin * 2,
       fill: 'transparent',
       stroke: edit.borderColor || '#000000',
       strokeWidth: 2,
@@ -481,70 +490,78 @@ function showVirtualEditModal(productIndex) {
     });
     canvas.add(borderRect);
 
-    const layoutName = layout.name || { x: 0.05, y: 0.5, w: 0.9, h: 0.1 };
+    const layoutName = layout.name || { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 };
     const nazwaText = new fabric.Text(product.nazwa || 'Brak nazwy', {
-      left: layoutName.x * canvasWidth,
-      top: layoutName.y * canvasHeight,
+      left: borderMargin + layoutName.x * (canvasWidth - borderMargin * 2),
+      top: borderMargin + layoutName.y * (canvasHeight - borderMargin * 2),
       fontSize: 11,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
       selectable: true,
-      id: 'name'
+      id: 'name',
+      hasBorders: true
     });
     canvas.add(nazwaText);
 
-    const layoutIndex = layout.index || { x: 0.05, y: 0.75, w: 0.9, h: 0.1 };
+    const layoutIndex = layout.index || { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 };
     const indeksText = new fabric.Text(`Indeks: ${product.indeks || '-'}`, {
-      left: layoutIndex.x * canvasWidth,
-      top: layoutIndex.y * canvasHeight,
+      left: borderMargin + layoutIndex.x * (canvasWidth - borderMargin * 2),
+      top: borderMargin + layoutIndex.y * (canvasHeight - borderMargin * 2),
       fontSize: 9,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
       selectable: true,
-      id: 'index'
+      id: 'index',
+      hasBorders: true
     });
     canvas.add(indeksText);
 
     let rankingText;
     if (showRanking && product.ranking) {
-      const layoutRanking = layout.ranking || { x: 0.05, y: 0.85, w: 0.9, h: 0.1 };
+      const layoutRanking = layout.ranking || { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 };
       rankingText = new fabric.Text(`RANKING: ${product.ranking}`, {
-        left: layoutRanking.x * canvasWidth,
-        top: layoutRanking.y * canvasHeight,
+        left: borderMargin + layoutRanking.x * (canvasWidth - borderMargin * 2),
+        top: borderMargin + layoutRanking.y * (canvasHeight - borderMargin * 2),
         fontSize: 9,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
         selectable: true,
-        id: 'ranking'
+        id: 'ranking',
+        hasBorders: true
       });
       canvas.add(rankingText);
     }
 
     let cenaText;
     if (showCena && product.cena) {
-      const layoutPrice = layout.price || { x: 0.05, y: 0.65, w: 0.9, h: 0.1 };
+      const layoutPrice = layout.price || { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 };
       cenaText = new fabric.Text(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, {
-        left: layoutPrice.x * canvasWidth,
-        top: layoutPrice.y * canvasHeight,
+        left: borderMargin + layoutPrice.x * (canvasWidth - borderMargin * 2),
+        top: borderMargin + layoutPrice.y * (canvasHeight - borderMargin * 2),
         fontSize: edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
         selectable: true,
-        id: 'price'
+        id: 'price',
+        hasBorders: true
       });
       canvas.add(cenaText);
     }
 
     if (showEan && product.ean && product.barcode) {
       try {
-        const layoutBarcode = layout.barcode || { x: 0.05, y: 0.95, w: 0.9, h: 0.1 };
+        const layoutBarcode = layout.barcode || { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 };
         fabric.Image.fromURL(product.barcode, (barcodeImg) => {
-          barcodeImg.scaleToWidth(canvasWidth * layoutBarcode.w);
+          barcodeImg.scaleToWidth((canvasWidth - borderMargin * 2) * layoutBarcode.w);
           barcodeImg.set({
-            left: layoutBarcode.x * canvasWidth,
-            top: layoutBarcode.y * canvasHeight,
+            left: borderMargin + layoutBarcode.x * (canvasWidth - borderMargin * 2),
+            top: borderMargin + layoutBarcode.y * (canvasHeight - borderMargin * 2),
             selectable: true,
-            id: 'barcode'
+            id: 'barcode',
+            hasBorders: true,
+            lockScalingX: false,
+            lockScalingY: false,
+            lockRotation: true
           });
           canvas.add(barcodeImg);
         }, { crossOrigin: 'anonymous' });
@@ -553,6 +570,17 @@ function showVirtualEditModal(productIndex) {
         document.getElementById('debug').innerText = "Błąd ładowania kodu kreskowego w podglądzie";
       }
     }
+
+    canvas.on('object:moving', (e) => {
+      const obj = e.target;
+      const objWidth = obj.width * obj.scaleX;
+      const objHeight = obj.height * obj.scaleY;
+      obj.set({
+        left: Math.max(borderMargin, Math.min(obj.left, canvasWidth - borderMargin - objWidth)),
+        top: Math.max(borderMargin, Math.min(obj.top, canvasHeight - borderMargin - objHeight))
+      });
+      console.log('Przesunięto:', obj.id, 'x:', (obj.left - borderMargin) / (canvasWidth - borderMargin * 2), 'y:', (obj.top - borderMargin) / (canvasHeight - borderMargin * 2));
+    });
 
     canvas.on('object:selected', (e) => {
       const obj = e.target;
@@ -580,8 +608,8 @@ function showVirtualEditModal(productIndex) {
             const reader = new FileReader();
             reader.onload = (e) => {
               fabric.Image.fromURL(e.target.result, (bgImg) => {
-                bgImg.scaleToWidth(canvasWidth);
-                bgImg.set({ opacity: backgroundOpacity });
+                bgImg.scaleToWidth(canvasWidth - borderMargin * 2);
+                bgImg.set({ left: borderMargin, top: borderMargin, opacity: backgroundOpacity });
                 canvas.setBackgroundImage(bgImg, canvas.renderAll.bind(canvas));
                 edit.backgroundTexture = e.target.result;
                 edit.backgroundOpacity = backgroundOpacity;
@@ -604,29 +632,24 @@ function showVirtualEditModal(productIndex) {
       };
     });
 
-    canvas.on('object:moving', (e) => {
-      const obj = e.target;
-      console.log('Przesunięto:', obj.id, 'x:', obj.left / canvasWidth, 'y:', obj.top / canvasHeight);
-    });
-
     document.getElementById('saveVirtualEdit').onclick = () => {
       try {
         const objects = canvas.getObjects();
         const newLayout = {
-          image: edit.layout?.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
-          name: edit.layout?.name || { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
-          price: edit.layout?.price || { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
-          index: edit.layout?.index || { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
-          ranking: edit.layout?.ranking || { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
-          barcode: edit.layout?.barcode || { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
+          image: edit.layout?.image || { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
+          name: edit.layout?.name || { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
+          price: edit.layout?.price || { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
+          index: edit.layout?.index || { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
+          ranking: edit.layout?.ranking || { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
+          barcode: edit.layout?.barcode || { x: 0.0714, y: 0.9143, w: 0.8571, h: 0.1143 }
         };
         objects.forEach(obj => {
           if (obj.id) {
             newLayout[obj.id] = {
-              x: Math.max(0, Math.min(obj.left / canvasWidth, 0.95)),
-              y: Math.max(0, Math.min(obj.top / canvasHeight, 0.95)),
-              w: Math.max(0.1, Math.min((obj.width * obj.scaleX) / canvasWidth, 0.9)),
-              h: Math.max(0.05, Math.min((obj.height * obj.scaleY) / canvasHeight, 0.4))
+              x: Math.max(0, Math.min((obj.left - borderMargin) / (canvasWidth - borderMargin * 2), 0.9286)),
+              y: Math.max(0, Math.min((obj.top - borderMargin) / (canvasHeight - borderMargin * 2), 0.8857)),
+              w: Math.max(0.1, Math.min((obj.width * obj.scaleX) / (canvasWidth - borderMargin * 2), 0.8571)),
+              h: Math.max(0.05, Math.min((obj.height * obj.scaleY) / (canvasHeight - borderMargin * 2), 0.4))
             };
           }
         });
