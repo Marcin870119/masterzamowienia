@@ -68,7 +68,7 @@ function showEditModal(productIndex) {
         <select id="editIndeksFont">
           <option value="Arial" ${edit.indeksFont === 'Arial' ? 'selected' : ''}>Arial</option>
           <option value="Helvetica" ${edit.indeksFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
-          <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
+          <option value="Times" ${edit.indeksFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editIndeksColor" value="${edit.indeksFontColor}">
       </div>
@@ -311,7 +311,7 @@ function showPageEditModal(pageIndex) {
         <select id="editIndeksFont">
           <option value="Arial" ${edit.indeksFont === 'Arial' ? 'selected' : ''}>Arial</option>
           <option value="Helvetica" ${edit.indeksFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
-          <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
+          <option value="Times" ${edit.indeksFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editIndeksColor" value="${edit.indeksFontColor}">
       </div>
