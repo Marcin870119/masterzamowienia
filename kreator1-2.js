@@ -120,6 +120,34 @@ function loadCustomImages(file, data) {
   renderCatalog();
 }
 
+function showBannerModal() {
+  try {
+    const bannerModal = document.getElementById('bannerModal');
+    if (bannerModal) {
+      bannerModal.style.display = 'block';
+      loadBanners();
+    } else {
+      console.error("Nie znaleziono elementu bannerModal");
+      document.getElementById('debug').innerText = "Błąd: Brak modalu banera";
+    }
+  } catch (e) {
+    console.error('Błąd pokazywania modalu banera:', e);
+    document.getElementById('debug').innerText = "Błąd pokazywania modalu banera";
+  }
+}
+
+function hideBannerModal() {
+  try {
+    const bannerModal = document.getElementById('bannerModal');
+    if (bannerModal) {
+      bannerModal.style.display = 'none';
+    }
+  } catch (e) {
+    console.error('Błąd ukrywania modalu banera:', e);
+    document.getElementById('debug').innerText = "Błąd ukrywania modalu banera";
+  }
+}
+
 async function loadBanners() {
   try {
     const bannerOptions = document.getElementById('bannerOptions');
@@ -159,7 +187,7 @@ function selectBanner(id, data) {
   window.selectedBanner = { id, data };
   document.querySelectorAll('.banner-preview').forEach(p => p.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  window.hideBannerModal();
+  hideBannerModal();
 }
 
 function renderCatalog() {
