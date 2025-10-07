@@ -211,7 +211,7 @@ function renderCatalog() {
       return;
     }
     container.innerHTML = "";
-    if (window.products.length === 0) {
+    if (!window.products || window.products.length === 0) {
       container.innerHTML = "<p>Brak produktów do wyświetlenia. Zaimportuj plik Excel.</p>";
       return;
     }
@@ -283,7 +283,12 @@ function renderCatalog() {
       editButton.innerHTML = '<i class="fas fa-edit"></i> Edytuj';
       editButton.onclick = () => {
         console.log('Kliknięto Edytuj dla produktu:', i);
-        window.showEditModal(i);
+        if (typeof window.showEditModal === 'function') {
+          window.showEditModal(i);
+        } else {
+          console.error('Funkcja showEditModal nie jest zdefiniowana');
+          document.getElementById('debug').innerText = "Błąd: Funkcja edycji produktu nie jest dostępna";
+        }
       };
       const layoutButton = document.createElement('button');
       layoutButton.className = 'btn-primary layout-button';
@@ -292,7 +297,9 @@ function renderCatalog() {
         console.log('Kliknięto Edytuj układ dla produktu:', i);
         console.log('showVirtualEditModal dostępny:', typeof window.showVirtualEditModal);
         if (typeof window.showVirtualEditModal === 'function') {
-          window.showVirtualEditModal(i);
+          setTimeout(() => {
+            window.showVirtualEditModal(i);
+          }, 100); // Opóźnienie 100ms dla zapewnienia załadowania skryptu
         } else {
           console.error('Funkcja showVirtualEditModal nie jest zdefiniowana');
           document.getElementById('debug').innerText = "Błąd: Funkcja edycji układu nie jest dostępna";
@@ -607,7 +614,12 @@ document.addEventListener("DOMContentLoaded", () => {
     pageEditButton.innerHTML = '<i class="fas fa-file-alt"></i> Edytuj stronę PDF';
     pageEditButton.onclick = () => {
       console.log('Kliknięto Edytuj stronę PDF');
-      window.showPageEditModal(0);
+      if (typeof window.showPageEditModal === 'function') {
+        window.showPageEditModal(0);
+      } else {
+        console.error('Funkcja showPageEditModal nie jest zdefiniowana');
+        document.getElementById('debug').innerText = "Błąd: Funkcja edycji strony PDF nie jest dostępna";
+      }
     };
     document.querySelector('.improved-panel').appendChild(pageEditButton);
 
@@ -641,3 +653,5 @@ window.hideBannerModal = hideBannerModal;
 window.loadBanners = loadBanners;
 window.selectBanner = selectBanner;
 window.loadProducts = loadProducts;
+
+console.log('kreator1-2.js funkcje przypisane do window');
