@@ -70,34 +70,34 @@ async function buildPDF(jsPDF, save = true) {
       doc.saveGraphicsState();
       doc.setGState(new doc.GState({ opacity: opacity || 1.0 }));
       if (gradientType === "blue") {
-        doc.setFillColor(240, 248, 255); // AliceBlue
+        doc.setFillColor(240, 248, 255);
         doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
-        doc.setFillColor(0, 105, 192); // DeepSkyBlue
+        doc.setFillColor(0, 105, 192);
         doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
       } else if (gradientType === "green") {
-        doc.setFillColor(245, 255, 245); // Honeydew
+        doc.setFillColor(245, 255, 245);
         doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
-        doc.setFillColor(46, 139, 87); // SeaGreen
+        doc.setFillColor(46, 139, 87);
         doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
       } else if (gradientType === "gray") {
-        doc.setFillColor(245, 245, 245); // WhiteSmoke
+        doc.setFillColor(245, 245, 245);
         doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
-        doc.setFillColor(112, 128, 144); // SlateGray
+        doc.setFillColor(112, 128, 144);
         doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
       } else if (gradientType === "red") {
-        doc.setFillColor(255, 240, 240); // LightPink
+        doc.setFillColor(255, 240, 240);
         doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
-        doc.setFillColor(178, 34, 34); // FireBrick
+        doc.setFillColor(178, 34, 34);
         doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
       } else if (gradientType === "purple") {
-        doc.setFillColor(245, 240, 255); // Lavender
+        doc.setFillColor(245, 240, 255);
         doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
-        doc.setFillColor(106, 90, 205); // SlateBlue
+        doc.setFillColor(106, 90, 205);
         doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
       } else if (gradientType === "orange") {
-        doc.setFillColor(255, 245, 238); // Seashell
+        doc.setFillColor(255, 245, 238);
         doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
-        doc.setFillColor(255, 165, 0); // Orange
+        doc.setFillColor(255, 165, 0);
         doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
       }
       doc.restoreGraphicsState();
@@ -181,14 +181,6 @@ async function buildPDF(jsPDF, save = true) {
             pageBackgroundOpacity: 1.0
           };
           const finalEdit = { ...pageEdit, ...edit };
-          const itemLayout = finalEdit.layout || {
-            image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
-            name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
-            price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
-            index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
-            ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
-            barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
-          };
 
           if (finalEdit.backgroundTexture) {
             try {
@@ -223,13 +215,7 @@ async function buildPDF(jsPDF, save = true) {
                 let h = img.height * scale;
                 let imgX = x + (boxWidth - w) / 2;
                 let imgY = y + 5;
-                if (itemLayout.image && finalEdit.layout) {
-                  imgX = x + (boxWidth * itemLayout.image.x);
-                  imgY = y + (boxHeight * itemLayout.image.y);
-                  w = boxWidth * itemLayout.image.w;
-                  h = boxHeight * itemLayout.image.h;
-                }
-                doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, save ? "SLOW" : "FAST");
+                doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania obrazka";
@@ -286,7 +272,7 @@ async function buildPDF(jsPDF, save = true) {
                 const logoH = 60;
                 const logoX = x + (boxWidth - logoW) / 2;
                 const logoY = textY;
-                doc.addImage(logoSrc, logoSrc.includes('image/png') ? "PNG" : "JPEG", logoX, logoY, logoW, logoH, undefined, save ? "SLOW" : "FAST");
+                doc.addImage(logoSrc, logoSrc.includes('image/png') ? "PNG" : "JPEG", logoX, logoY, logoW, logoH, undefined, "SLOW");
                 textY += logoH + 5;
               } catch (e) {
                 console.error('Błąd dodawania loga:', e);
@@ -300,15 +286,7 @@ async function buildPDF(jsPDF, save = true) {
                 const bh = sectionCols === 1 ? 50 : 40;
                 const bx = x + (boxWidth - bw) / 2;
                 const by = y + boxHeight - bh - 5;
-                if (itemLayout.barcode && finalEdit.layout) {
-                  const barcodeX = x + (boxWidth * itemLayout.barcode.x);
-                  const barcodeY = y + (boxHeight * itemLayout.barcode.y);
-                  const barcodeW = boxWidth * itemLayout.barcode.w;
-                  const barcodeH = boxHeight * itemLayout.barcode.h;
-                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
-                } else {
-                  doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
-                }
+                doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
@@ -330,12 +308,6 @@ async function buildPDF(jsPDF, save = true) {
                 let h = img.height * scale;
                 let imgX = x + 5 + (maxW - w) / 2;
                 let imgY = y + 8 + (maxH - h) / 2;
-                if (itemLayout.image && finalEdit.layout) {
-                  imgX = x + (boxWidth * itemLayout.image.x);
-                  imgY = y + (boxHeight * itemLayout.image.y);
-                  w = boxWidth * itemLayout.image.w;
-                  h = boxHeight * itemLayout.image.h;
-                }
                 doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania obrazka:', e);
@@ -383,15 +355,7 @@ async function buildPDF(jsPDF, save = true) {
                 const bh = 32;
                 const bx = x + boxWidth - bw - 10;
                 const by = y + boxHeight - bh - 5;
-                if (itemLayout.barcode && finalEdit.layout) {
-                  const barcodeX = x + (boxWidth * itemLayout.barcode.x);
-                  const barcodeY = y + (boxHeight * itemLayout.barcode.y);
-                  const barcodeW = boxWidth * itemLayout.barcode.w;
-                  const barcodeH = boxHeight * itemLayout.barcode.h;
-                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
-                } else {
-                  doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
-                }
+                doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
               } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
