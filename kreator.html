@@ -19,7 +19,9 @@
   display: none !important;
   justify-content: center !important;
   align-items: center !important;
-  z-index: 1000 !important;
+  z-index: 10000 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
   box-sizing: border-box !important;
 }
 #virtualEditModal .modal-content {
@@ -37,6 +39,8 @@
   border-radius: 8px !important;
   overflow: auto !important;
   box-sizing: border-box !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 #virtualEditModal .canvas-container {
   width: 560px !important;
@@ -44,6 +48,8 @@
   margin: 20px auto !important;
   border: 1px solid #ccc !important;
   box-sizing: border-box !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 </style>
 </head>
@@ -197,6 +203,7 @@ console.log('Papa:', typeof window.Papa !== 'undefined' ? 'Załadowany' : 'Nieza
 console.log('JsBarcode:', typeof window.JsBarcode !== 'undefined' ? 'Załadowany' : 'Niezaładowany');
 console.log('fabric:', typeof window.fabric !== 'undefined' ? 'Załadowany' : 'Niezaładowany');
 console.log('showVirtualEditModal:', typeof window.showVirtualEditModal !== 'undefined' ? 'Zdefiniowany' : 'Niezdefiniowany');
+console.log('virtualEditModal istnieje:', !!document.getElementById('virtualEditModal'));
 </script>
 </body>
 </html>
