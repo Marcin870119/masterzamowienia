@@ -9,54 +9,27 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 #virtualEditModal {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 100% !important;
-  height: 100% !important;
-  background: rgba(0,0,0,0.5) !important;
-  display: none !important;
-  justify-content: center !important;
-  align-items: center !important;
-  z-index: 100000 !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  box-sizing: border-box !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #virtualEditModal .modal-content {
-  width: 80vw !important;
-  max-width: 800px !important;
-  height: 80vh !important;
-  max-height: 1000px !important;
-  min-height: 400px !important;
-  padding: 20px !important;
-  margin: auto !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  background: #fff !important;
-  border-radius: 8px !important;
-  overflow: auto !important;
-  box-sizing: border-box !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  width: 90vw;
+  max-width: 560px;
+  height: 90vh;
+  max-height: 700px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
 }
 #virtualEditModal .canvas-container {
-  width: 560px !important;
-  height: 700px !important;
-  margin: 20px auto !important;
-  border: 1px solid #ccc !important;
-  box-sizing: border-box !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: relative !important;
-}
-#virtualEditModal canvas {
-  width: 560px !important;
-  height: 700px !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  width: 280px;
+  height: 350px;
+  margin: 20px auto;
+  border: 1px solid #ccc;
 }
 </style>
 </head>
@@ -199,30 +172,8 @@ Język:
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <script src="config.js"></script>
-<script defer src="kreator3.js"></script>
-<script defer src="kreator2-2.js"></script>
-<script defer src="kreator1-2.js"></script>
-<script>
-console.log('Ładowanie skryptów rozpoczęte');
-console.log('jspdf:', typeof window.jspdf !== 'undefined' ? 'Załadowany' : 'Niezaładowany');
-console.log('XLSX:', typeof window.XLSX !== 'undefined' ? 'Załadowany' : 'Niezaładowany');
-console.log('Papa:', typeof window.Papa !== 'undefined' ? 'Załadowany' : 'Niezaładowany');
-console.log('JsBarcode:', typeof window.JsBarcode !== 'undefined' ? 'Załadowany' : 'Niezaładowany');
-console.log('fabric:', typeof window.fabric !== 'undefined' ? 'Załadowany' : 'Niezaładowany');
-console.log('showVirtualEditModal:', typeof window.showVirtualEditModal !== 'undefined' ? 'Zdefiniowany' : 'Niezdefiniowany');
-console.log('virtualEditModal istnieje:', !!document.getElementById('virtualEditModal'));
-function checkModalVisibility() {
-  const modal = document.getElementById('virtualEditModal');
-  if (modal) {
-    const styles = window.getComputedStyle(modal);
-    console.log('virtualEditModal style:', {
-      display: styles.display,
-      visibility: styles.visibility,
-      opacity: styles.opacity,
-      zIndex: styles.zIndex
-    });
-  }
-}
-</script>
+<script src="kreator1-2.js"></script>
+<script src="kreator2-2.js"></script>
+<script src="kreator3.js"></script>
 </body>
 </html>
