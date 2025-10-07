@@ -309,7 +309,7 @@ async function buildPDF(jsPDF, save = true) {
                 } else {
                   doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
                 }
-              } than (e) {
+              } catch (e) {
                 console.error('Błąd dodawania kodu kreskowego:', e);
                 document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego";
               }
@@ -538,16 +538,25 @@ async function previewPDF() {
   try {
     showProgressModal();
     const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+      throw new Error("Biblioteka jsPDF nie jest załadowana");
+    }
+    if (!window.products || window.products.length === 0) {
+      throw new Error("Brak produktów do wyświetlenia w podglądzie PDF");
+    }
     const doc = await buildPDF(jsPDF, false);
-    const blobUrl = doc.output("bloburl");
+    const pdfBlob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(pdfBlob);
     const pdfIframe = document.getElementById("pdfIframe");
-    pdfIframe.src = "";
+    if (!pdfIframe) {
+      throw new Error("Nie znaleziono elementu pdfIframe");
+    }
     pdfIframe.src = blobUrl;
     document.getElementById("pdfPreview").style.display = "block";
     hideProgressModal();
   } catch (e) {
     console.error('Błąd generowania podglądu PDF:', e);
-    document.getElementById('debug').innerText = "Błąd generowania podglądu PDF";
+    document.getElementById('debug').innerText = `Błąd generowania podglądu PDF: ${e.message}`;
     hideProgressModal();
   }
 }
