@@ -495,9 +495,10 @@ function showVirtualEditModal(productIndex) {
     });
     canvas.add(indeksText);
 
+    let rankingText;
     if (showRanking && product.ranking) {
       const layoutRanking = layout.ranking || { x: 0.05, y: 0.85, w: 0.9, h: 0.1 };
-      const rankingText = new fabric.Text(`RANKING: ${product.ranking}`, {
+      rankingText = new fabric.Text(`RANKING: ${product.ranking}`, {
         left: canvasWidth * layoutRanking.x,
         top: canvasHeight * layoutRanking.y,
         fontSize: 16,
@@ -509,9 +510,10 @@ function showVirtualEditModal(productIndex) {
       canvas.add(rankingText);
     }
 
+    let cenaText;
     if (showCena && product.cena) {
       const layoutPrice = layout.price || { x: 0.05, y: 0.65, w: 0.9, h: 0.1 };
-      const cenaText = new fabric.Text(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, {
+      cenaText = new fabric.Text(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, {
         left: canvasWidth * layoutPrice.x,
         top: canvasHeight * layoutPrice.y,
         fontSize: edit.priceFontSize === 'small' ? 16 : edit.priceFontSize === 'medium' ? 20 : 24,
@@ -553,11 +555,13 @@ function showVirtualEditModal(productIndex) {
       document.getElementById('backgroundOpacitySelect').value = edit.backgroundOpacity || 1.0;
       window.applyTextEdit = function() {
         try {
-          obj.set({
-            fontFamily: document.getElementById('fontSelect').value,
-            fill: document.getElementById('colorSelect').value,
-            fontSize: document.getElementById('sizeSelect').value === 'small' ? 16 : document.getElementById('sizeSelect').value === 'medium' ? 20 : 24
-          });
+          if (obj.type === 'text') {
+            obj.set({
+              fontFamily: document.getElementById('fontSelect').value,
+              fill: document.getElementById('colorSelect').value,
+              fontSize: document.getElementById('sizeSelect').value === 'small' ? 16 : document.getElementById('sizeSelect').value === 'medium' ? 20 : 24
+            });
+          }
           const borderStyle = document.getElementById('borderStyleSelect').value;
           const borderColor = document.getElementById('borderColorSelect').value;
           const backgroundOpacity = parseFloat(document.getElementById('backgroundOpacitySelect').value);
@@ -574,9 +578,6 @@ function showVirtualEditModal(productIndex) {
               }, { crossOrigin: 'anonymous' });
             };
             reader.readAsDataURL(backgroundTextureInput);
-          } else {
-            canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
-            edit.backgroundTexture = null;
           }
           borderRect.set({
             stroke: borderColor,
@@ -612,33 +613,30 @@ function showVirtualEditModal(productIndex) {
         objects.forEach(obj => {
           if (obj.id) {
             newLayout[obj.id] = {
-              x: obj.left / canvasWidth,
-              y: obj.top / canvasHeight,
-              w: (obj.width * obj.scaleX) / canvasWidth,
-              h: (obj.height * obj.scaleY) / canvasHeight
+              x: Math.max(0, Math.min(obj.left / canvasWidth, 0.95)),
+              y: Math.max(0, Math.min(obj.top / canvasHeight, 0.95)),
+              w: Math.max(0.1, Math.min((obj.width * obj.scaleX) / canvasWidth, 0.9)),
+              h: Math.max(0.05, Math.min((obj.height * obj.scaleY) / canvasHeight, 0.4))
             };
           }
         });
-        const activeObject = canvas.getActiveObject();
-        if (activeObject) {
-          window.productEdits[productIndex] = {
-            ...window.productEdits[productIndex],
-            nazwaFont: activeObject.id === 'name' ? activeObject.fontFamily : edit.nazwaFont,
-            nazwaFontColor: activeObject.id === 'name' ? activeObject.fill : edit.nazwaFontColor,
-            indeksFont: activeObject.id === 'index' ? activeObject.fontFamily : edit.indeksFont,
-            indeksFontColor: activeObject.id === 'index' ? activeObject.fill : edit.indeksFontColor,
-            rankingFont: activeObject.id === 'ranking' ? activeObject.fontFamily : edit.rankingFont,
-            rankingFontColor: activeObject.id === 'ranking' ? activeObject.fill : edit.rankingFontColor,
-            cenaFont: activeObject.id === 'price' ? activeObject.fontFamily : edit.cenaFont,
-            cenaFontColor: activeObject.id === 'price' ? activeObject.fill : edit.cenaFontColor,
-            priceFontSize: activeObject.id === 'name' || activeObject.id === 'price' ? (activeObject.fontSize === 16 ? 'small' : activeObject.fontSize === 20 ? 'medium' : 'large') : edit.priceFontSize,
-            borderStyle: edit.borderStyle || 'solid',
-            borderColor: edit.borderColor || '#000000',
-            backgroundTexture: edit.backgroundTexture || null,
-            backgroundOpacity: edit.backgroundOpacity || 1.0,
-            layout: newLayout
-          };
-        }
+        window.productEdits[productIndex] = {
+          ...window.productEdits[productIndex],
+          nazwaFont: nazwaText.fontFamily || edit.nazwaFont,
+          nazwaFontColor: nazwaText.fill || edit.nazwaFontColor,
+          indeksFont: indeksText.fontFamily || edit.indeksFont,
+          indeksFontColor: indeksText.fill || edit.indeksFontColor,
+          rankingFont: rankingText ? rankingText.fontFamily || edit.rankingFont : edit.rankingFont,
+          rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
+          cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
+          cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
+          priceFontSize: cenaText ? (cenaText.fontSize === 16 ? 'small' : cenaText.fontSize === 20 ? 'medium' : 'large') : edit.priceFontSize,
+          borderStyle: edit.borderStyle || 'solid',
+          borderColor: edit.borderColor || '#000000',
+          backgroundTexture: edit.backgroundTexture || null,
+          backgroundOpacity: edit.backgroundOpacity || 1.0,
+          layout: newLayout
+        };
         console.log('Saved Virtual Edit for Product Index:', productIndex, window.productEdits[productIndex]);
         canvas.dispose();
         modal.style.display = 'none';
