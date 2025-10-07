@@ -278,11 +278,15 @@ function renderCatalog() {
       const editButton = document.createElement('button');
       editButton.className = 'btn-primary edit-button';
       editButton.innerHTML = '<i class="fas fa-edit"></i> Edytuj';
-      editButton.onclick = () => window.showEditModal(i);
+      editButton.onclick = () => {
+        console.log('Kliknięto Edytuj dla produktu:', i);
+        window.showEditModal(i);
+      };
       const layoutButton = document.createElement('button');
       layoutButton.className = 'btn-primary layout-button';
       layoutButton.innerHTML = '<i class="fas fa-object-group"></i> Edytuj układ';
       layoutButton.onclick = () => {
+        console.log('Kliknięto Edytuj układ dla produktu:', i);
         if (typeof window.showVirtualEditModal === 'function') {
           window.showVirtualEditModal(i);
         } else {
@@ -596,12 +600,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const pageEditButton = document.createElement('button');
     pageEditButton.className = 'btn-secondary';
     pageEditButton.innerHTML = '<i class="fas fa-file-alt"></i> Edytuj stronę PDF';
-    pageEditButton.onclick = () => window.showPageEditModal(0);
+    pageEditButton.onclick = () => {
+      console.log('Kliknięto Edytuj stronę PDF');
+      window.showPageEditModal(0);
+    };
     document.querySelector('.improved-panel').appendChild(pageEditButton);
 
     const previewButton = document.getElementById('previewButton');
     if (previewButton) {
       previewButton.addEventListener('click', () => {
+        console.log('Kliknięto Podgląd PDF');
         if (typeof window.previewPDF === 'function') {
           window.previewPDF();
         } else {
