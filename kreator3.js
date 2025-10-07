@@ -387,32 +387,36 @@ function showVirtualEditModal(productIndex) {
     };
     const modal = document.getElementById('virtualEditModal');
     modal.innerHTML = `
-      <div style="position: relative; width: 280px; height: 350px; border: 1px solid #ccc;">
-        <canvas id="virtualEditCanvas" width="280" height="350"></canvas>
-        <div id="editPanel" style="position: absolute; top: 10px; right: 10px; background: white; padding: 10px; border: 1px solid #ccc; display: none;">
-          <select id="fontSelect">
-            <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
-            <option value="Helvetica" ${edit.nazwaFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
-            <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
-          </select>
-          <input type="color" id="colorSelect" value="${edit.nazwaFontColor}">
-          <select id="sizeSelect">
-            <option value="small" ${edit.priceFontSize === 'small' ? 'selected' : ''}>Mały</option>
-            <option value="medium" ${edit.priceFontSize === 'medium' ? 'selected' : ''}>Średni</option>
-            <option value="large" ${edit.priceFontSize === 'large' ? 'selected' : ''}>Duży</option>
-          </select>
-          <select id="borderStyleSelect">
-            <option value="solid" ${edit.borderStyle === 'solid' ? 'selected' : ''}>Pełna linia</option>
-            <option value="dashed" ${edit.borderStyle === 'dashed' ? 'selected' : ''}>Kreskowana</option>
-            <option value="dotted" ${edit.borderStyle === 'dotted' ? 'selected' : ''}>Kropkowana</option>
-          </select>
-          <input type="color" id="borderColorSelect" value="${edit.borderColor || '#000000'}">
-          <input type="file" id="backgroundTextureSelect" accept="image/*">
-          <label>Przezroczystość tła:</label>
-          <input type="range" id="backgroundOpacitySelect" min="0.1" max="1.0" step="0.1" value="${edit.backgroundOpacity || 1.0}">
-          <button onclick="window.applyTextEdit()">Zastosuj</button>
+      <div class="modal-content" style="width: 560px; height: 700px; padding: 20px; display: flex; flex-direction: column; align-items: center;">
+        <span class="close" onclick="window.hideEditModal()">&times;</span>
+        <h3>Edytuj produkt wizualnie</h3>
+        <div style="position: relative; width: 280px; height: 350px; border: 1px solid #ccc; margin: 20px auto;">
+          <canvas id="virtualEditCanvas" width="280" height="350"></canvas>
+          <div id="editPanel" style="position: absolute; top: 10px; right: 10px; background: white; padding: 10px; border: 1px solid #ccc; display: none;">
+            <select id="fontSelect">
+              <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
+              <option value="Helvetica" ${edit.nazwaFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
+              <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
+            </select>
+            <input type="color" id="colorSelect" value="${edit.nazwaFontColor}">
+            <select id="sizeSelect">
+              <option value="small" ${edit.priceFontSize === 'small' ? 'selected' : ''}>Mały</option>
+              <option value="medium" ${edit.priceFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+              <option value="large" ${edit.priceFontSize === 'large' ? 'selected' : ''}>Duży</option>
+            </select>
+            <select id="borderStyleSelect">
+              <option value="solid" ${edit.borderStyle === 'solid' ? 'selected' : ''}>Pełna linia</option>
+              <option value="dashed" ${edit.borderStyle === 'dashed' ? 'selected' : ''}>Kreskowana</option>
+              <option value="dotted" ${edit.borderStyle === 'dotted' ? 'selected' : ''}>Kropkowana</option>
+            </select>
+            <input type="color" id="borderColorSelect" value="${edit.borderColor || '#000000'}">
+            <input type="file" id="backgroundTextureSelect" accept="image/*">
+            <label>Przezroczystość tła:</label>
+            <input type="range" id="backgroundOpacitySelect" min="0.1" max="1.0" step="0.1" value="${edit.backgroundOpacity || 1.0}">
+            <button onclick="window.applyTextEdit()">Zastosuj</button>
+          </div>
+          <button id="saveVirtualEdit" style="position: absolute; bottom: 10px; right: 10px;">Zapisz</button>
         </div>
-        <button id="saveVirtualEdit" style="position: absolute; bottom: 10px; right: 10px;">Zapisz</button>
       </div>
     `;
     modal.style.display = 'block';
