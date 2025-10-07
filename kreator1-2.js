@@ -1,16 +1,19 @@
 async function toBase64(url) {
   try {
-    const response = await fetch(url);
-    if (!response.ok) return null;
+    const response = await fetch(url, { cache: 'no-cache' });
+    if (!response.ok) {
+      console.warn(`Nie udało się załadować obrazu z ${url}: ${response.status}`);
+      return null;
+    }
     const blob = await response.blob();
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
+      reader.onerror = () => reject(new Error(`Błąd odczytu obrazu z ${url}`));
       reader.readAsDataURL(blob);
     });
   } catch (e) {
-    console.error('Błąd konwersji URL na base64:', e);
+    console.warn(`Błąd konwersji URL na base64 (${url}):`, e);
     return null;
   }
 }
@@ -57,12 +60,15 @@ async function loadProducts() {
       let base64Img = null;
       for (const url of urls) {
         base64Img = await toBase64(url);
-        if (base64Img) break;
+        if (base64Img) {
+          console.log(`Załadowano obraz dla indeksu ${p.INDEKS}: ${url}`);
+          break;
+        }
       }
       return {
-        nazwa: p.NAZWA,
-        opakowanie: p.OPAKOWANIE,
-        ean: p["unit barcode"],
+        nazwa: p.NAZWA || '',
+        opakowanie: p.OPAKOWANIE || '',
+        ean: p["unit barcode"] || '',
         ranking: p.RANKING || '',
         cena: p.CENA || '',
         indeks: p.INDEKS.toString(),
@@ -73,8 +79,8 @@ async function loadProducts() {
     console.log("Załadowano jsonProducts:", window.jsonProducts.length);
     await loadManufacturerLogos();
   } catch (error) {
-    document.getElementById('debug').innerText = "Błąd ładowania JSON: " + error.message;
     console.error("Błąd loadProducts:", error);
+    document.getElementById('debug').innerText = "Błąd ładowania JSON: " + error.message;
   }
 }
 
@@ -117,7 +123,7 @@ function loadCustomImages(file, data) {
   const fileName = file.name.split('.')[0];
   window.uploadedImages[fileName] = data;
   console.log(`Załadowano obraz dla indeksu: ${fileName}`);
-  renderCatalog();
+  window.renderCatalog();
 }
 
 function showBannerModal() {
@@ -167,7 +173,10 @@ async function loadBanners() {
       let base64Banner = null;
       for (const url of urls) {
         base64Banner = await toBase64(url);
-        if (base64Banner) break;
+        if (base64Banner) {
+          console.log(`Załadowano baner ${id}: ${url}`);
+          break;
+        }
       }
       if (base64Banner) {
         const preview = document.createElement('img');
@@ -328,95 +337,105 @@ function importExcel() {
       return;
     }
     const reader = new FileReader();
-    reader.onload = (e) => {
-      let rows;
-      if (file.name.endsWith('.csv')) {
-        const parsed = Papa.parse(e.target.result, { header: true, skipEmptyLines: true });
-        rows = parsed.data;
-        if (rows.length === 0) {
-          console.error("Plik CSV jest pusty lub niepoprawny");
-          document.getElementById('debug').innerText = "Błąd: Plik CSV jest pusty";
-          return;
+    reader.onload = async (e) => {
+      try {
+        // Czekaj na załadowanie jsonProducts, jeśli jeszcze nie jest załadowane
+        if (!window.jsonProducts || window.jsonProducts.length === 0) {
+          console.log("jsonProducts niezaładowane, wywołuję loadProducts");
+          await window.loadProducts();
         }
-        const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim());
-        rows = rows.map(row => {
-          let obj = {};
-          headers.forEach((header, i) => {
-            const value = row[Object.keys(row)[i]];
-            if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = value || '';
-            if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = value || '';
-            if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
-            if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
-            if (['nazwa', 'name'].some(h => header.includes(h))) obj['nazwa'] = value || '';
-            if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
-          });
-          return obj;
-        });
-      } else {
-        const workbook = XLSX.read(e.target.result, { type: 'binary' });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
-        const headers = rows[0].map(h => h.toString().toLowerCase().trim());
-        rows = rows.slice(1).map(row => {
-          let obj = {};
-          headers.forEach((header, i) => {
-            if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = row[i] || '';
-            if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = row[i] || '';
-            if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = row[i] || '';
-            if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = row[i] || '';
-            if (['nazwa', 'name'].some(h => header.includes(h))) obj['nazwa'] = row[i] || '';
-            if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = row[i] || '';
-          });
-          return obj;
-        });
-      }
-      console.log("Przetworzone wiersze CSV/Excel:", rows);
-      const newProducts = [];
-      rows.forEach(row => {
-        const indeks = row['indeks'] || row[0];
-        if (indeks) {
-          const matched = window.jsonProducts.find(p => p.indeks === indeks.toString());
-          let barcodeImg = null;
-          if (row['ean'] && /^\d{12,13}$/.test(row['ean'])) {
-            try {
-              const barcodeCanvas = document.createElement('canvas');
-              JsBarcode(barcodeCanvas, row['ean'], {
-                format: "EAN13",
-                width: 1.6,
-                height: 32,
-                displayValue: true,
-                fontSize: 9,
-                margin: 0
-              });
-              barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
-            } catch (e) {
-              console.error('Błąd generowania kodu kreskowego:', e);
-              document.getElementById('debug').innerText = "Błąd generowania kodu kreskowego";
-            }
+        let rows;
+        if (file.name.endsWith('.csv')) {
+          const parsed = Papa.parse(e.target.result, { header: true, skipEmptyLines: true });
+          rows = parsed.data;
+          if (rows.length === 0) {
+            console.error("Plik CSV jest pusty lub niepoprawny");
+            document.getElementById('debug').innerText = "Błąd: Plik CSV jest pusty";
+            return;
           }
-          newProducts.push({
-            nazwa: row['nazwa'] || (matched ? matched.nazwa : ''),
-            ean: row['ean'] || (matched ? matched.ean : ''),
-            ranking: row['ranking'] || (matched ? matched.ranking : ''),
-            cena: row['cena'] || (matched ? matched.cena : ''),
-            indeks: indeks.toString(),
-            img: window.uploadedImages[indeks.toString()] || (matched ? matched.img : null),
-            barcode: barcodeImg,
-            producent: row['producent'] || (matched ? matched.producent : '')
+          const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim());
+          rows = rows.map(row => {
+            let obj = {};
+            headers.forEach((header, i) => {
+              const value = row[Object.keys(row)[i]];
+              if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = value || '';
+              if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = value || '';
+              if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
+              if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
+              if (['nazwa', 'name'].some(h => header.includes(h))) obj['nazwa'] = value || '';
+              if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
+            });
+            return obj;
+          });
+        } else {
+          const workbook = XLSX.read(e.target.result, { type: 'binary' });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
+          const headers = rows[0].map(h => h.toString().toLowerCase().trim());
+          rows = rows.slice(1).map(row => {
+            let obj = {};
+            headers.forEach((header, i) => {
+              if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = row[i] || '';
+              if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = row[i] || '';
+              if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = row[i] || '';
+              if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = row[i] || '';
+              if (['nazwa', 'name'].some(h => header.includes(h))) obj['nazwa'] = row[i] || '';
+              if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = row[i] || '';
+            });
+            return obj;
           });
         }
-      });
-      console.log("Nowe produkty:", newProducts);
-      if (newProducts.length) {
-        window.products = newProducts;
-        window.productEdits = {};
-        window.pageEdits = {};
-        renderCatalog();
-        document.getElementById('pdfButton').disabled = false;
-        document.getElementById('previewButton').disabled = false;
-        document.getElementById('debug').innerText = `Zaimportowano ${newProducts.length} produktów`;
-      } else {
-        document.getElementById('debug').innerText = "Brak produktów po imporcie. Sprawdź format pliku.";
+        console.log("Przetworzone wiersze CSV/Excel:", rows);
+        const newProducts = [];
+        rows.forEach(row => {
+          const indeks = row['indeks'] || row[0];
+          if (indeks) {
+            const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString()) || {};
+            let barcodeImg = null;
+            if (row['ean'] && /^\d{12,13}$/.test(row['ean'])) {
+              try {
+                const barcodeCanvas = document.createElement('canvas');
+                JsBarcode(barcodeCanvas, row['ean'], {
+                  format: "EAN13",
+                  width: 1.6,
+                  height: 32,
+                  displayValue: true,
+                  fontSize: 9,
+                  margin: 0
+                });
+                barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
+              } catch (e) {
+                console.error('Błąd generowania kodu kreskowego dla EAN:', row['ean'], e);
+                document.getElementById('debug').innerText = "Błąd generowania kodu kreskowego";
+              }
+            }
+            newProducts.push({
+              nazwa: row['nazwa'] || matched.nazwa || '',
+              ean: row['ean'] || matched.ean || '',
+              ranking: row['ranking'] || matched.ranking || '',
+              cena: row['cena'] || matched.cena || '',
+              indeks: indeks.toString(),
+              img: window.uploadedImages[indeks.toString()] || matched.img || null,
+              barcode: barcodeImg || matched.barcode || null,
+              producent: row['producent'] || matched.producent || ''
+            });
+          }
+        });
+        console.log("Nowe produkty:", newProducts);
+        if (newProducts.length) {
+          window.products = newProducts;
+          window.productEdits = {};
+          window.pageEdits = {};
+          window.renderCatalog();
+          document.getElementById('pdfButton').disabled = false;
+          document.getElementById('previewButton').disabled = false;
+          document.getElementById('debug').innerText = `Zaimportowano ${newProducts.length} produktów`;
+        } else {
+          document.getElementById('debug').innerText = "Brak produktów po imporcie. Sprawdź format pliku.";
+        }
+      } catch (e) {
+        console.error("Błąd przetwarzania pliku Excel/CSV:", e);
+        document.getElementById('debug').innerText = "Błąd przetwarzania pliku Excel/CSV: " + e.message;
       }
     };
     reader.onerror = () => {
@@ -588,7 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currencySelect.addEventListener('change', (e) => {
         window.globalCurrency = e.target.value;
         console.log("Zmieniono walutę na:", window.globalCurrency);
-        renderCatalog();
+        window.renderCatalog();
       });
     }
 
@@ -597,7 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
       languageSelect.addEventListener('change', (e) => {
         window.globalLanguage = e.target.value;
         console.log("Zmieniono język na:", window.globalLanguage);
-        renderCatalog();
+        window.renderCatalog();
       });
     }
 
@@ -606,6 +625,9 @@ document.addEventListener("DOMContentLoaded", () => {
     pageEditButton.innerHTML = '<i class="fas fa-file-alt"></i> Edytuj stronę PDF';
     pageEditButton.onclick = () => window.showPageEditModal(0);
     document.querySelector('.improved-panel').appendChild(pageEditButton);
+
+    // Inicjalne wczytanie produktów
+    window.loadProducts();
   } catch (e) {
     console.error('Błąd inicjalizacji zdarzeń DOM:', e);
     document.getElementById('debug').innerText = "Błąd inicjalizacji zdarzeń DOM: " + e.message;
