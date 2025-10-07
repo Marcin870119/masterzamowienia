@@ -230,7 +230,7 @@ async function buildPDF(jsPDF, save = true) {
                 let h = img.height * scale;
                 let imgX = x + (boxWidth - w) / 2;
                 let imgY = y + 5;
-                if (itemLayout.image) {
+                if (itemLayout.image && finalEdit.layout) {
                   imgX = x + (boxWidth * itemLayout.image.x);
                   imgY = y + (boxHeight * itemLayout.image.y);
                   w = boxWidth * itemLayout.image.w;
@@ -247,9 +247,9 @@ async function buildPDF(jsPDF, save = true) {
             doc.setFontSize(sectionCols === 1 ? 14 : 11);
             const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
-            const nameX = itemLayout.name ? x + (boxWidth * itemLayout.name.x) : x + boxWidth / 2;
-            const nameWidth = itemLayout.name ? boxWidth * itemLayout.name.w : boxWidth - (sectionCols === 1 ? 80 : 40);
-            if (itemLayout.name) textY = y + (boxHeight * itemLayout.name.y);
+            const nameX = itemLayout.name && finalEdit.layout ? x + (boxWidth * itemLayout.name.x) : x + boxWidth / 2;
+            const nameWidth = itemLayout.name && finalEdit.layout ? boxWidth * itemLayout.name.w : boxWidth - (sectionCols === 1 ? 80 : 40);
+            if (itemLayout.name && finalEdit.layout) textY = y + (boxHeight * itemLayout.name.y);
             const lines = doc.splitTextToSize(p.nazwa || "Brak nazwy", nameWidth);
             const maxLines = 3;
             lines.slice(0, maxLines).forEach((line, index) => {
@@ -261,8 +261,8 @@ async function buildPDF(jsPDF, save = true) {
             doc.setFontSize(sectionCols === 1 ? 11 : 9);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
-            const indexX = itemLayout.index ? x + (boxWidth * itemLayout.index.x) : x + boxWidth / 2;
-            if (itemLayout.index) textY = y + (boxHeight * itemLayout.index.y);
+            const indexX = itemLayout.index && finalEdit.layout ? x + (boxWidth * itemLayout.index.x) : x + boxWidth / 2;
+            if (itemLayout.index && finalEdit.layout) textY = y + (boxHeight * itemLayout.index.y);
             doc.text(`Indeks: ${p.indeks || '-'}`, indexX, textY, { align: "center" });
             textY += sectionCols === 1 ? 22 : 18;
 
@@ -270,8 +270,8 @@ async function buildPDF(jsPDF, save = true) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
               doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
-              const rankingX = itemLayout.ranking ? x + (boxWidth * itemLayout.ranking.x) : x + boxWidth / 2;
-              if (itemLayout.ranking) textY = y + (boxHeight * itemLayout.ranking.y);
+              const rankingX = itemLayout.ranking && finalEdit.layout ? x + (boxWidth * itemLayout.ranking.x) : x + boxWidth / 2;
+              if (itemLayout.ranking && finalEdit.layout) textY = y + (boxHeight * itemLayout.ranking.y);
               doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { align: "center" });
               textY += sectionCols === 1 ? 22 : 18;
             }
@@ -284,8 +284,8 @@ async function buildPDF(jsPDF, save = true) {
               doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
               const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
               const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-              const priceX = itemLayout.price ? x + (boxWidth * itemLayout.price.x) : x + boxWidth / 2;
-              if (itemLayout.price) textY = y + (boxHeight * itemLayout.price.y);
+              const priceX = itemLayout.price && finalEdit.layout ? x + (boxWidth * itemLayout.price.x) : x + boxWidth / 2;
+              if (itemLayout.price && finalEdit.layout) textY = y + (boxHeight * itemLayout.price.y);
               doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { align: "center" });
               textY += sectionCols === 1 ? 22 : 18;
             }
@@ -316,7 +316,7 @@ async function buildPDF(jsPDF, save = true) {
                 const bh = sectionCols === 1 ? 50 : 40;
                 const bx = x + (boxWidth - bw) / 2;
                 const by = y + boxHeight - bh - 5;
-                if (itemLayout.barcode) {
+                if (itemLayout.barcode && finalEdit.layout) {
                   const barcodeX = x + (boxWidth * itemLayout.barcode.x);
                   const barcodeY = y + (boxHeight * itemLayout.barcode.y);
                   const barcodeW = boxWidth * itemLayout.barcode.w;
