@@ -387,8 +387,8 @@ function showVirtualEditModal(productIndex) {
     };
     const modal = document.getElementById('virtualEditModal');
     modal.innerHTML = `
-      <div style="position: relative; width: 800px; height: 600px; border: 1px solid #ccc;">
-        <canvas id="virtualEditCanvas" width="800" height="600"></canvas>
+      <div style="position: relative; width: 1000px; height: 750px; border: 1px solid #ccc;">
+        <canvas id="virtualEditCanvas" width="1000" height="750"></canvas>
         <div id="editPanel" style="position: absolute; top: 10px; right: 10px; background: white; padding: 10px; border: 1px solid #ccc; display: none;">
           <select id="fontSelect">
             <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
@@ -417,8 +417,8 @@ function showVirtualEditModal(productIndex) {
     `;
     modal.style.display = 'block';
     const canvas = new fabric.Canvas('virtualEditCanvas');
-    const canvasWidth = 800;
-    const canvasHeight = 600;
+    const canvasWidth = 1000;
+    const canvasHeight = 750;
 
     if (edit.backgroundTexture) {
       try {
@@ -475,7 +475,7 @@ function showVirtualEditModal(productIndex) {
     const nazwaText = new fabric.Text(product.nazwa || 'Brak nazwy', {
       left: canvasWidth * layoutName.x,
       top: canvasHeight * layoutName.y,
-      fontSize: edit.priceFontSize === 'small' ? 16 : edit.priceFontSize === 'medium' ? 20 : 24,
+      fontSize: edit.priceFontSize === 'small' ? 20 : edit.priceFontSize === 'medium' ? 24 : 28,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
       selectable: true,
@@ -487,7 +487,7 @@ function showVirtualEditModal(productIndex) {
     const indeksText = new fabric.Text(`Indeks: ${product.indeks || '-'}`, {
       left: canvasWidth * layoutIndex.x,
       top: canvasHeight * layoutIndex.y,
-      fontSize: 16,
+      fontSize: 20,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
       selectable: true,
@@ -501,7 +501,7 @@ function showVirtualEditModal(productIndex) {
       rankingText = new fabric.Text(`RANKING: ${product.ranking}`, {
         left: canvasWidth * layoutRanking.x,
         top: canvasHeight * layoutRanking.y,
-        fontSize: 16,
+        fontSize: 20,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
         selectable: true,
@@ -516,7 +516,7 @@ function showVirtualEditModal(productIndex) {
       cenaText = new fabric.Text(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, {
         left: canvasWidth * layoutPrice.x,
         top: canvasHeight * layoutPrice.y,
-        fontSize: edit.priceFontSize === 'small' ? 16 : edit.priceFontSize === 'medium' ? 20 : 24,
+        fontSize: edit.priceFontSize === 'small' ? 20 : edit.priceFontSize === 'medium' ? 24 : 28,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
         selectable: true,
@@ -549,7 +549,7 @@ function showVirtualEditModal(productIndex) {
       document.getElementById('editPanel').style.display = 'block';
       document.getElementById('fontSelect').value = obj.fontFamily || 'Arial';
       document.getElementById('colorSelect').value = obj.fill || '#000000';
-      document.getElementById('sizeSelect').value = obj.fontSize === 16 ? 'small' : obj.fontSize === 20 ? 'medium' : 'large';
+      document.getElementById('sizeSelect').value = obj.fontSize === 20 ? 'small' : obj.fontSize === 24 ? 'medium' : 'large';
       document.getElementById('borderStyleSelect').value = edit.borderStyle || 'solid';
       document.getElementById('borderColorSelect').value = edit.borderColor || '#000000';
       document.getElementById('backgroundOpacitySelect').value = edit.backgroundOpacity || 1.0;
@@ -559,7 +559,7 @@ function showVirtualEditModal(productIndex) {
             obj.set({
               fontFamily: document.getElementById('fontSelect').value,
               fill: document.getElementById('colorSelect').value,
-              fontSize: document.getElementById('sizeSelect').value === 'small' ? 16 : document.getElementById('sizeSelect').value === 'medium' ? 20 : 24
+              fontSize: document.getElementById('sizeSelect').value === 'small' ? 20 : document.getElementById('sizeSelect').value === 'medium' ? 24 : 28
             });
           }
           const borderStyle = document.getElementById('borderStyleSelect').value;
@@ -630,7 +630,7 @@ function showVirtualEditModal(productIndex) {
           rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
           cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
           cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
-          priceFontSize: cenaText ? (cenaText.fontSize === 16 ? 'small' : cenaText.fontSize === 20 ? 'medium' : 'large') : edit.priceFontSize,
+          priceFontSize: cenaText ? (cenaText.fontSize === 20 ? 'small' : cenaText.fontSize === 24 ? 'medium' : 'large') : edit.priceFontSize,
           borderStyle: edit.borderStyle || 'solid',
           borderColor: edit.borderColor || '#000000',
           backgroundTexture: edit.backgroundTexture || null,
