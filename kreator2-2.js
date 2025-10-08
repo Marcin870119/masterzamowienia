@@ -180,7 +180,7 @@ async function buildPDF(jsPDF, save = true) {
             pageBackgroundOpacity: 1.0
           };
           const finalEdit = { ...pageEdit, ...edit };
-          const itemLayout = finalEdit.layout || {
+          const itemLayout = {
             image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
             name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
             price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
@@ -188,12 +188,8 @@ async function buildPDF(jsPDF, save = true) {
             ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
             barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
           };
-          // Minimalne zabezpieczenie przed błędem
-          if (!finalEdit.layout || typeof finalEdit.layout.name === 'undefined' || typeof finalEdit.layout.name.x !== 'number') {
-            console.warn(`Brak poprawnego layoutu dla produktu ${productIndex}, używam domyślnego itemLayout.name`);
-            finalEdit.layout = finalEdit.layout || {};
-            finalEdit.layout.name = itemLayout.name;
-          }
+          // Używanie itemLayout jako domyślnego, jeśli finalEdit.layout nie istnieje
+          const layoutToUse = finalEdit.layout || itemLayout;
           if (finalEdit.backgroundTexture) {
             try {
               doc.saveGraphicsState();
