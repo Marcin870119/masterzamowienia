@@ -188,11 +188,16 @@ async function buildPDF(jsPDF, save = true) {
             ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
             barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
           };
-          // Zabezpieczenie przed brakiem layoutu
-          if (!finalEdit.layout) {
-            console.warn(`Brak layoutu dla produktu ${productIndex}, używam domyślnego itemLayout`);
-            finalEdit.layout = itemLayout;
+          // Zabezpieczenie przed brakiem layoutu lub niekompletnymi danymi
+          if (!finalEdit.layout || !finalEdit.layout.name || !finalEdit.layout.name.x) {
+            console.warn(`Brak lub niekompletny layout dla produktu ${productIndex}, używam domyślnego itemLayout.name`);
+            finalEdit.layout = finalEdit.layout || {};
+            finalEdit.layout.name = itemLayout.name;
           }
+          if (!finalEdit.layout.index || !finalEdit.layout.index.x) finalEdit.layout.index = itemLayout.index;
+          if (!finalEdit.layout.price || !finalEdit.layout.price.x) finalEdit.layout.price = itemLayout.price;
+          if (!finalEdit.layout.ranking || !finalEdit.layout.ranking.x) finalEdit.layout.ranking = itemLayout.ranking;
+          if (!finalEdit.layout.barcode || !finalEdit.layout.barcode.x) finalEdit.layout.barcode = itemLayout.barcode;
           if (finalEdit.backgroundTexture) {
             try {
               doc.saveGraphicsState();
@@ -228,9 +233,6 @@ async function buildPDF(jsPDF, save = true) {
                   imgY = y + (boxHeight * finalEdit.layout.image.y);
                   w = boxWidth * finalEdit.layout.image.w;
                   h = boxHeight * finalEdit.layout.image.h;
-                  // Upewnienie się, że współrzędne są w granicach
-                  imgX = Math.max(x, Math.min(imgX, x + boxWidth - w));
-                  imgY = Math.max(y, Math.min(imgY, y + boxHeight - h));
                 }
                 doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
@@ -249,9 +251,9 @@ async function buildPDF(jsPDF, save = true) {
             const lines = doc.splitTextToSize(p.nazwa || "Brak nazwy", nameWidth);
             const maxLines = 3;
             lines.slice(0, maxLines).forEach((line, index) => {
-              // Zabezpieczenie przed nieprawidłowymi współrzędnymi
-              const textYAdjusted = Math.max(y, Math.min(textY + (index * 18), y + boxHeight - 10));
-              doc.text(line, nameX, textYAdjusted, { align: "center" });
+              // Zabezpieczenie przed niepoprawnymi współrzędnymi
+              const adjustedTextY = Math.max(y + 5, Math.min(textY + (index * 18), y + boxHeight - 10));
+              doc.text(line, nameX, adjustedTextY, { align: "center" });
             });
             textY += Math.min(lines.length, maxLines) * 18 + 10;
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
@@ -314,10 +316,7 @@ async function buildPDF(jsPDF, save = true) {
                   const barcodeY = y + (boxHeight * finalEdit.layout.barcode.y);
                   const barcodeW = boxWidth * finalEdit.layout.barcode.w;
                   const barcodeH = boxHeight * finalEdit.layout.barcode.h;
-                  // Upewnienie się, że współrzędne są w granicach
-                  const adjustedBarcodeX = Math.max(x, Math.min(barcodeX, x + boxWidth - barcodeW));
-                  const adjustedBarcodeY = Math.max(y, Math.min(barcodeY, y + boxHeight - barcodeH));
-                  doc.addImage(p.barcode, "PNG", adjustedBarcodeX, adjustedBarcodeY, barcodeW, barcodeH, undefined, "SLOW");
+                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
                 } else {
                   doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
                 }
