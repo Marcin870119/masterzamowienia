@@ -54,7 +54,7 @@ function showEditModal(productIndex) {
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
+        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
     const showRanking = document.getElementById('showRanking')?.checked || false;
@@ -89,7 +89,7 @@ function showEditModal(productIndex) {
         <select id="editIndeksFont">
           <option value="Arial" ${edit.indeksFont === 'Arial' ? 'selected' : ''}>Arial</option>
           <option value="Helvetica" ${edit.indeksFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
-          <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
+          <option value="Times" ${edit.indeksFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editIndeksColor" value="${edit.indeksFontColor}">
       </div>
@@ -266,7 +266,7 @@ function saveEdit(productIndex) {
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
+        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
     console.log('Saved Edit for Product Index:', productIndex, window.productEdits[productIndex]);
@@ -457,7 +457,7 @@ function showVirtualEditModal(productIndex) {
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
+        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -487,7 +487,7 @@ function showVirtualEditModal(productIndex) {
             <input type="color" id="borderColorSelect" value="${edit.borderColor || '#000000'}">
             <input type="file" id="backgroundTextureSelect" accept="image/*">
             <label>Przezroczystość tła:</label>
-            <input type="range" id="editBackgroundOpacity" min="0.1" max="1.0" step="0.1" value="${edit.backgroundOpacity || 1.0}">
+            <input type="range" id="backgroundOpacitySelect" min="0.1" max="1.0" step="0.1" value="${edit.backgroundOpacity || 1.0}">
             <button onclick="window.applyTextEdit()">Zastosuj</button>
           </div>
           <button id="saveVirtualEdit" style="position: absolute; bottom: -40px; right: 0;">Zapisz</button>
@@ -697,7 +697,7 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować kodu kreskowego";
             return;
           }
-          const layoutBarcode = layout.barcode || { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 };
+          const layoutBarcode = layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 };
           const maxBarcodeWidth = contentWidth * layoutBarcode.w; // ~206 pikseli
           const maxBarcodeHeight = contentHeight * layoutBarcode.h; // ~35 pikseli
           const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
@@ -893,13 +893,13 @@ function showVirtualEditModal(productIndex) {
           price: layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
           index: layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
           ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-          barcode: layout.barcode || { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
+          barcode: layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 }
         };
         objects.forEach(obj => {
           if (obj.id) {
             const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.width * obj.scaleX : obj.width;
             const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.height * obj.scaleY : obj.height;
-            let normalizedX = obj.id === 'image' ? (obj.left - borderMargin) / contentWidth : obj.id === 'barcode' ? 0.0714 : 0.5;
+            let normalizedX = obj.id === 'image' ? (obj.left - borderMargin) / contentWidth : obj.id === 'barcode' ? 0.2143 : 0.5;
             let normalizedY = (obj.top - borderMargin) / contentHeight;
             const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.8571) : 0.9;
             const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : obj.id === 'barcode' ? Math.min(objHeight / contentHeight, 0.1143) : 0.1;
