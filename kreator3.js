@@ -586,7 +586,7 @@ function showVirtualEditModal(productIndex) {
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
-      document.getElementById('debug').innerText = "Błąd ładowania obrazu produktu w podglądzie: " + e.message);
+      document.getElementById('debug').innerText = "Błąd ładowania obrazu produktu w podglądzie: " + e.message;
     }
 
     console.log('Tworzenie ramki');
@@ -803,7 +803,7 @@ function showVirtualEditModal(productIndex) {
           console.log('Zastosowano edycję tekstu');
         } catch (e) {
           console.error('Błąd stosowania edycji tekstu:', e);
-          document.getElementById('debug').innerText = "Błąd stosowania edycji tekstu: " + e.message);
+          document.getElementById('debug').innerText = "Błąd stosowania edycji tekstu: " + e.message;
         }
       };
     });
@@ -832,8 +832,8 @@ function showVirtualEditModal(productIndex) {
             const objWidth = obj.width * obj.scaleX;
             const objHeight = obj.height * obj.scaleY;
             newLayout[obj.id] = {
-              left: Math.max(borderMargin, Math.min(obj.left, canvasWidth - borderMargin - objWidth)),
-              top: Math.max(borderMargin, Math.min(obj.top, canvasHeight - borderMargin - objHeight)),
+              left: Math.round(Math.max(borderMargin, Math.min(obj.left, canvasWidth - borderMargin - objWidth))),
+              top: Math.round(Math.max(borderMargin, Math.min(obj.top, canvasHeight - borderMargin - objHeight))),
               w: Math.max(0.1, Math.min(objWidth / (canvasWidth - borderMargin * 2), 0.8571)),
               h: Math.max(0.05, Math.min(objHeight / (canvasHeight - borderMargin * 2), 0.4))
             };
