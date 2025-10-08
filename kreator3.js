@@ -618,7 +618,7 @@ function showVirtualEditModal(productIndex) {
     });
     canvas.add(nazwaText);
     console.log('Tekst nazwy dodany:', wrappedName);
-    console.log('Tworzenie tekstu indeksu');
+    console | console.log('Tworzenie tekstu indeksu');
     const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 };
     const maxIndexWidth = contentWidth * layoutIndex.w; // 216 pikseli
     const wrappedIndex = wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, 9, edit.indeksFont, canvas);
@@ -709,8 +709,8 @@ function showVirtualEditModal(productIndex) {
             selectable: true,
             id: 'barcode',
             hasBorders: true,
-            lockScalingX: true,
-            lockScalingY: true,
+            lockScalingX: false,
+            lockScalingY: false,
             lockRotation: true,
             originX: 'center'
           });
@@ -725,8 +725,8 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
-      const objWidth = obj.id === 'image' ? obj.width * obj.scaleX : obj.width;
-      const objHeight = obj.id === 'image' ? obj.height * obj.scaleY : obj.height;
+      const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.width * obj.scaleX : obj.width;
+      const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.height * obj.scaleY : obj.height;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
       // Ograniczenie ruchu w pionie, zachowanie wyśrodkowania w poziomie dla tekstu i kodu kreskowego
@@ -749,9 +749,9 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:scaling');
     canvas.on('object:scaling', (e) => {
       const obj = e.target;
-      if (obj.id === 'image') {
-        const maxW = contentWidth * 0.9; // Maksymalna szerokość: 216 pikseli
-        const maxH = contentHeight * 0.4; // Maksymalna wysokość: 124 piksele
+      if (obj.id === 'image' || obj.id === 'barcode') {
+        const maxW = contentWidth * (obj.id === 'image' ? 0.9 : 0.5); // 216 pikseli dla obrazu, 120 pikseli dla kodu kreskowego
+        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : 0.1); // 124 piksele dla obrazu, 31 pikseli dla kodu kreskowego
         const objWidth = obj.width * obj.scaleX;
         const objHeight = obj.height * obj.scaleY;
         if (objWidth > maxW || objHeight > maxH) {
@@ -766,11 +766,18 @@ function showVirtualEditModal(productIndex) {
         const maxLeft = borderMargin + contentWidth - objWidth;
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
-        obj.set({
-          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
-          top: Math.max(minTop, Math.min(obj.top, maxTop))
-        });
-        console.log('Skalowano obraz:', obj.id, 'scaleX:', obj.scaleX, 'scaleY:', obj.scaleY, 'width:', objWidth, 'height:', objHeight);
+        if (obj.id === 'barcode') {
+          obj.set({
+            left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie dla kodu kreskowego
+            top: Math.max(minTop, Math.min(obj.top, maxTop))
+          });
+        } else {
+          obj.set({
+            left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+            top: Math.max(minTop, Math.min(obj.top, maxTop))
+          });
+        }
+        console.log('Skalowano:', obj.id, 'scaleX:', obj.scaleX, 'scaleY:', obj.scaleY, 'width:', objWidth, 'height:', objHeight);
       }
     });
     console.log('Dodawanie zdarzenia object:selected');
@@ -890,11 +897,11 @@ function showVirtualEditModal(productIndex) {
         };
         objects.forEach(obj => {
           if (obj.id) {
-            const objWidth = obj.id === 'image' ? obj.width * obj.scaleX : obj.width;
-            const objHeight = obj.id === 'image' ? obj.height * obj.scaleY : obj.height;
+            const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.width * obj.scaleX : obj.width;
+            const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.height * obj.scaleY : obj.height;
             let normalizedX = obj.id === 'image' ? (obj.left - borderMargin) / contentWidth : 0.5; // Wyśrodkowanie dla tekstu i kodu kreskowego
             let normalizedY = (obj.top - borderMargin) / contentHeight;
-            const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? 0.5 : 0.9;
+            const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.5) : 0.9;
             const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : 0.1;
             // Ograniczenie pozycji Y
             normalizedY = Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH));
