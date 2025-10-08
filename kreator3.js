@@ -57,7 +57,7 @@ function showEditModal(productIndex) {
         price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
         index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
         ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
-        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 } // Zmiana y na 0.85
+        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
     const showRanking = document.getElementById('showRanking')?.checked || false;
@@ -270,7 +270,7 @@ function saveEdit(productIndex) {
         price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
         index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
         ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
-        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 } // Zmiana y na 0.85
+        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
     console.log('Saved Edit for Product Index:', productIndex, window.productEdits[productIndex]);
@@ -464,7 +464,7 @@ function showVirtualEditModal(productIndex) {
         price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
         index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
         ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
-        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 } // Zmiana y na 0.85
+        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -617,6 +617,7 @@ function showVirtualEditModal(productIndex) {
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
       width: maxNameWidth,
+      textAlign: 'center', // Centrowanie tekstu
       selectable: true,
       id: 'name',
       hasBorders: true
@@ -635,6 +636,7 @@ function showVirtualEditModal(productIndex) {
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
       width: maxIndexWidth,
+      textAlign: 'center', // Centrowanie tekstu
       selectable: true,
       id: 'index',
       hasBorders: true
@@ -655,6 +657,7 @@ function showVirtualEditModal(productIndex) {
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
         width: maxRankingWidth,
+        textAlign: 'center', // Centrowanie tekstu
         selectable: true,
         id: 'ranking',
         hasBorders: true
@@ -676,6 +679,7 @@ function showVirtualEditModal(productIndex) {
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
         width: maxPriceWidth,
+        textAlign: 'center', // Centrowanie tekstu
         selectable: true,
         id: 'price',
         hasBorders: true
@@ -761,7 +765,8 @@ function showVirtualEditModal(productIndex) {
               fill: document.getElementById('colorSelect').value,
               fontSize: document.getElementById('sizeSelect').value === 'small' ? 12 : document.getElementById('sizeSelect').value === 'medium' ? 14 : 16,
               text: wrappedText,
-              width: maxWidth
+              width: maxWidth,
+              textAlign: 'center' // Centrowanie tekstu
             });
           }
           const borderStyle = document.getElementById('borderStyleSelect').value;
