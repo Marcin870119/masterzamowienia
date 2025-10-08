@@ -53,10 +53,10 @@ function showEditModal(productIndex) {
       pageBackgroundOpacity: 1.0,
       layout: {
         image: { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
-        name: { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
-        price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
-        index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
-        ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
+        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
+        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
+        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
+        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
         barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
@@ -266,10 +266,10 @@ function saveEdit(productIndex) {
       pageBackgroundOpacity: parseFloat(document.getElementById('editPageBackgroundOpacity').value) || 1.0,
       layout: window.productEdits[productIndex]?.layout || {
         image: { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
-        name: { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
-        price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
-        index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
-        ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
+        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
+        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
+        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
+        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
         barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
@@ -460,10 +460,10 @@ function showVirtualEditModal(productIndex) {
       backgroundOpacity: 1.0,
       layout: {
         image: { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
-        name: { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
-        price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
-        index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
-        ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
+        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
+        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
+        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
+        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
         barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
       }
     };
@@ -525,6 +525,7 @@ function showVirtualEditModal(productIndex) {
     const canvasWidth = 280;
     const canvasHeight = 350;
     const borderMargin = 20; // Margines ramki (1x 20 pt w PDF)
+    const imageHeightRatio = 0.4; // Wysokość obrazu w module 4 (40% wysokości)
 
     console.log('Ładowanie tekstury tła');
     if (edit.backgroundTexture) {
@@ -611,8 +612,8 @@ function showVirtualEditModal(productIndex) {
     const maxNameWidth = (canvasWidth - borderMargin * 2) * layoutName.w;
     const wrappedName = wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, 11, edit.nazwaFont, canvas);
     const nazwaText = new fabric.Text(wrappedName, {
-      left: x + (canvasWidth * layoutName.x),
-      top: y + (canvasHeight * layoutName.y) + (canvasHeight * 0.4 * layoutName.y),
+      left: borderMargin + (canvasWidth - borderMargin * 2) * layoutName.x,
+      top: borderMargin + (canvasHeight * imageHeightRatio) + (canvasHeight - (canvasHeight * imageHeightRatio)) * layoutName.y,
       fontSize: 11,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
@@ -630,8 +631,8 @@ function showVirtualEditModal(productIndex) {
     const maxIndexWidth = (canvasWidth - borderMargin * 2) * layoutIndex.w;
     const wrappedIndex = wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, 9, edit.indeksFont, canvas);
     const indeksText = new fabric.Text(wrappedIndex, {
-      left: x + (canvasWidth * layoutIndex.x),
-      top: y + (canvasHeight * layoutIndex.y) + (canvasHeight * 0.4 * layoutIndex.y) + 18,
+      left: borderMargin + (canvasWidth - borderMargin * 2) * layoutIndex.x,
+      top: borderMargin + (canvasHeight * imageHeightRatio) + (canvasHeight - (canvasHeight * imageHeightRatio)) * layoutIndex.y,
       fontSize: 9,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
@@ -651,8 +652,8 @@ function showVirtualEditModal(productIndex) {
       const maxRankingWidth = (canvasWidth - borderMargin * 2) * layoutRanking.w;
       const wrappedRanking = wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, 9, edit.rankingFont, canvas);
       rankingText = new fabric.Text(wrappedRanking, {
-        left: x + (canvasWidth * layoutRanking.x),
-        top: y + (canvasHeight * layoutRanking.y) + (canvasHeight * 0.4 * layoutRanking.y) + 40,
+        left: borderMargin + (canvasWidth - borderMargin * 2) * layoutRanking.x,
+        top: borderMargin + (canvasHeight * imageHeightRatio) + (canvasHeight - (canvasHeight * imageHeightRatio)) * layoutRanking.y,
         fontSize: 9,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
@@ -673,8 +674,8 @@ function showVirtualEditModal(productIndex) {
       const maxPriceWidth = (canvasWidth - borderMargin * 2) * layoutPrice.w;
       const wrappedPrice = wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16, edit.cenaFont, canvas);
       cenaText = new fabric.Text(wrappedPrice, {
-        left: x + (canvasWidth * layoutPrice.x),
-        top: y + (canvasHeight * layoutPrice.y) + (canvasHeight * 0.4 * layoutPrice.y) + 18,
+        left: borderMargin + (canvasWidth - borderMargin * 2) * layoutPrice.x,
+        top: borderMargin + (canvasHeight * imageHeightRatio) + (canvasHeight - (canvasHeight * imageHeightRatio)) * layoutPrice.y,
         fontSize: edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
@@ -731,7 +732,7 @@ function showVirtualEditModal(productIndex) {
       const maxTop = canvasHeight - borderMargin - objHeight;
       obj.set({
         left: Math.max(borderMargin, Math.min(obj.left, maxLeft)),
-        top: Math.max(borderMargin, Math.min(obj.top, maxTop))
+        top: Math.max(borderMargin + (canvasHeight * imageHeightRatio), Math.min(obj.top, maxTop))
       });
       console.log('Przesunięto:', obj.id, 'left:', obj.left, 'top:', obj.top, 'width:', objWidth, 'height:', objHeight);
     });
@@ -831,13 +832,13 @@ function showVirtualEditModal(productIndex) {
           if (obj.id) {
             const objWidth = obj.width * obj.scaleX;
             const objHeight = obj.height * obj.scaleY;
-            const baseY = y + (canvasHeight * 0.4); // Bazowa pozycja po obrazie
+            const baseY = borderMargin + (canvasHeight * imageHeightRatio); // Bazowa pozycja po obrazie
             const offsetY = obj.top - baseY; // Offset od bazowej pozycji
-            const normalizedX = (obj.left - x) / canvasWidth;
-            const normalizedY = (offsetY) / (canvasHeight - (canvasHeight * 0.4)); // Normalizacja od bazowej pozycji
+            const normalizedX = (obj.left - borderMargin) / (canvasWidth - borderMargin * 2);
+            const normalizedY = offsetY / (canvasHeight - (canvasHeight * imageHeightRatio)); // Normalizacja względem dostępnej wysokości
             newLayout[obj.id] = {
               x: Math.max(0, Math.min(normalizedX, 0.9)),
-              y: Math.max(0.5, Math.min(0.5 + normalizedY, 0.95)),
+              y: 0.5 + Math.max(0, Math.min(normalizedY, 0.45)),
               w: Math.max(0.1, Math.min(objWidth / (canvasWidth - borderMargin * 2), 0.9)),
               h: Math.max(0.05, Math.min(objHeight / (canvasHeight - borderMargin * 2), 0.1))
             };
