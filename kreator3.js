@@ -569,8 +569,8 @@ function showVirtualEditModal(productIndex) {
           selectable: true,
           id: 'image',
           hasBorders: true,
-          lockScalingX: true,
-          lockScalingY: true,
+          lockScalingX: false,
+          lockScalingY: false,
           lockRotation: true,
           originX: 'left'
         });
@@ -725,11 +725,11 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
-      const objWidth = obj.width;
-      const objHeight = obj.height;
+      const objWidth = obj.id === 'image' ? obj.width * obj.scaleX : obj.width;
+      const objHeight = obj.id === 'image' ? obj.height * obj.scaleY : obj.height;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      // Ograniczenie ruchu w pionie, zachowanie wyśrodkowania w poziomie
+      // Ograniczenie ruchu w pionie, zachowanie wyśrodkowania w poziomie dla tekstu i kodu kreskowego
       if (obj.id !== 'image') {
         const maxWidth = obj.id === 'barcode' ? contentWidth * 0.5 : contentWidth * 0.9;
         obj.set({
@@ -745,6 +745,33 @@ function showVirtualEditModal(productIndex) {
         });
       }
       console.log('Przesunięto:', obj.id, 'left:', obj.left, 'top:', obj.top, 'width:', objWidth, 'height:', objHeight);
+    });
+    console.log('Dodawanie zdarzenia object:scaling');
+    canvas.on('object:scaling', (e) => {
+      const obj = e.target;
+      if (obj.id === 'image') {
+        const maxW = contentWidth * 0.9; // Maksymalna szerokość: 216 pikseli
+        const maxH = contentHeight * 0.4; // Maksymalna wysokość: 124 piksele
+        const objWidth = obj.width * obj.scaleX;
+        const objHeight = obj.height * obj.scaleY;
+        if (objWidth > maxW || objHeight > maxH) {
+          const scale = Math.min(maxW / obj.width, maxH / obj.height);
+          obj.set({
+            scaleX: scale,
+            scaleY: scale
+          });
+        }
+        // Ograniczenie pozycji po skalowaniu
+        const minLeft = borderMargin;
+        const maxLeft = borderMargin + contentWidth - objWidth;
+        const minTop = borderMargin;
+        const maxTop = borderMargin + contentHeight - objHeight;
+        obj.set({
+          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+          top: Math.max(minTop, Math.min(obj.top, maxTop))
+        });
+        console.log('Skalowano obraz:', obj.id, 'scaleX:', obj.scaleX, 'scaleY:', obj.scaleY, 'width:', objWidth, 'height:', objHeight);
+      }
     });
     console.log('Dodawanie zdarzenia object:selected');
     canvas.on('object:selected', (e) => {
@@ -863,11 +890,12 @@ function showVirtualEditModal(productIndex) {
         };
         objects.forEach(obj => {
           if (obj.id) {
-            const objHeight = obj.height;
+            const objWidth = obj.id === 'image' ? obj.width * obj.scaleX : obj.width;
+            const objHeight = obj.id === 'image' ? obj.height * obj.scaleY : obj.height;
             let normalizedX = obj.id === 'image' ? (obj.left - borderMargin) / contentWidth : 0.5; // Wyśrodkowanie dla tekstu i kodu kreskowego
             let normalizedY = (obj.top - borderMargin) / contentHeight;
-            const normalizedW = obj.id === 'barcode' ? 0.5 : obj.id === 'image' ? layout.image.w : 0.9;
-            const normalizedH = obj.id === 'image' ? layout.image.h : 0.1;
+            const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? 0.5 : 0.9;
+            const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : 0.1;
             // Ograniczenie pozycji Y
             normalizedY = Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH));
             // Ograniczenie pozycji X dla obrazu
