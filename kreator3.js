@@ -586,7 +586,7 @@ function showVirtualEditModal(productIndex) {
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
-      document.getElementById('debug').innerText = "Błąd ładowania obrazu produktu w podglądzie: " + e.message;
+      document.getElementById('debug').innerText = "Błąd ładowania obrazu produktu w podglądzie: " + e.message);
     }
 
     console.log('Tworzenie ramki');
@@ -718,7 +718,7 @@ function showVirtualEditModal(productIndex) {
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania kodu kreskowego w podglądzie:', e);
-        document.getElementById('debug').innerText = "Błąd ładowania kodu kreskowego w podglądzie: " + e.message;
+        document.getElementById('debug').innerText = "Błąd ładowania kodu kreskowego w podglądzie: " + e.message);
       }
     }
 
@@ -803,7 +803,7 @@ function showVirtualEditModal(productIndex) {
           console.log('Zastosowano edycję tekstu');
         } catch (e) {
           console.error('Błąd stosowania edycji tekstu:', e);
-          document.getElementById('debug').innerText = "Błąd stosowania edycji tekstu: " + e.message;
+          document.getElementById('debug').innerText = "Błąd stosowania edycji tekstu: " + e.message);
         }
       };
     });
@@ -867,13 +867,13 @@ function showVirtualEditModal(productIndex) {
         window.previewPDF();
       } catch (e) {
         console.error('Błąd zapisywania wirtualnej edycji:', e);
-        document.getElementById('debug').innerText = "Błąd zapisywania wirtualnej edycji: " + e.message;
+        document.getElementById('debug').innerText = "Błąd zapisywania wirtualnej edycji: " + e.message);
       }
     };
     console.log('showVirtualEditModal zakończony');
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji wirtualnej:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji wirtualnej: " + e.message;
+    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji wirtualnej: " + e.message);
   }
 }
 
@@ -887,7 +887,7 @@ function hideEditModal() {
     console.log('Modale ukryte');
   } catch (e) {
     console.error('Błąd ukrywania modalu edycji:', e);
-    document.getElementById('debug').innerText = "Błąd ukrywania modalu edycji: " + e.message;
+    document.getElementById('debug').innerText = "Błąd ukrywania modalu edycji: " + e.message);
   }
 }
 
