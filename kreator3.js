@@ -453,11 +453,11 @@ function showVirtualEditModal(productIndex) {
       backgroundOpacity: 1.0,
       layout: {
         image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
-        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
-        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
-        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
-        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
+        name: { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
+        price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
+        index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
+        ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
+        barcode: { x: 0.5, y: 0.95, w: 0.5, h: 0.1 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -597,11 +597,11 @@ function showVirtualEditModal(productIndex) {
     canvas.add(borderRect);
     console.log('Ramka dodana');
     console.log('Tworzenie tekstu nazwy');
-    const layoutName = layout.name || { x: 0.05, y: 0.5, w: 0.9, h: 0.1 };
+    const layoutName = layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 };
     const maxNameWidth = contentWidth * layoutName.w; // 216 pikseli
     const wrappedName = wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, 11, edit.nazwaFont, canvas);
     const nazwaText = new fabric.Text(wrappedName, {
-      left: borderMargin + layoutName.x * contentWidth,
+      left: borderMargin + (contentWidth - maxNameWidth) / 2, // Wyśrodkowanie w poziomie
       top: borderMargin + layoutName.y * contentHeight,
       fontSize: 11,
       fill: edit.nazwaFontColor,
@@ -612,16 +612,17 @@ function showVirtualEditModal(productIndex) {
       id: 'name',
       hasBorders: true,
       lockScalingX: true,
-      lockScalingY: true
+      lockScalingY: true,
+      originX: 'center' // Punkt odniesienia w środku
     });
     canvas.add(nazwaText);
     console.log('Tekst nazwy dodany:', wrappedName);
     console.log('Tworzenie tekstu indeksu');
-    const layoutIndex = layout.index || { x: 0.05, y: 0.75, w: 0.9, h: 0.1 };
+    const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 };
     const maxIndexWidth = contentWidth * layoutIndex.w; // 216 pikseli
     const wrappedIndex = wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, 9, edit.indeksFont, canvas);
     const indeksText = new fabric.Text(wrappedIndex, {
-      left: borderMargin + layoutIndex.x * contentWidth,
+      left: borderMargin + (contentWidth - maxIndexWidth) / 2, // Wyśrodkowanie w poziomie
       top: borderMargin + layoutIndex.y * contentHeight,
       fontSize: 9,
       fill: edit.indeksFontColor,
@@ -631,19 +632,20 @@ function showVirtualEditModal(productIndex) {
       selectable: true,
       id: 'index',
       hasBorders: true,
-      lockScalingX: true,
-      lockScalingY: true
+      lockScalingX: second,
+      lockScalingY: true,
+      originX: 'center' // Punkt odniesienia w środku
     });
     canvas.add(indeksText);
     console.log('Tekst indeksu dodany:', wrappedIndex);
     let rankingText;
     if (showRanking && product.ranking) {
       console.log('Tworzenie tekstu rankingu');
-      const layoutRanking = layout.ranking || { x: 0.05, y: 0.85, w: 0.9, h: 0.1 };
+      const layoutRanking = layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 };
       const maxRankingWidth = contentWidth * layoutRanking.w; // 216 pikseli
       const wrappedRanking = wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, 9, edit.rankingFont, canvas);
       rankingText = new fabric.Text(wrappedRanking, {
-        left: borderMargin + layoutRanking.x * contentWidth,
+        left: borderMargin + (contentWidth - maxRankingWidth) / 2, // Wyśrodkowanie w poziomie
         top: borderMargin + layoutRanking.y * contentHeight,
         fontSize: 9,
         fill: edit.rankingFontColor,
@@ -654,7 +656,8 @@ function showVirtualEditModal(productIndex) {
         id: 'ranking',
         hasBorders: true,
         lockScalingX: true,
-        lockScalingY: true
+        lockScalingY: true,
+        originX: 'center' // Punkt odniesienia w środku
       });
       canvas.add(rankingText);
       console.log('Tekst rankingu dodany:', wrappedRanking);
@@ -662,12 +665,12 @@ function showVirtualEditModal(productIndex) {
     let cenaText;
     if (showCena && product.cena) {
       console.log('Tworzenie tekstu ceny');
-      const layoutPrice = layout.price || { x: 0.05, y: 0.65, w: 0.9, h: 0.1 };
+      const layoutPrice = layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 };
       const maxPriceWidth = contentWidth * layoutPrice.w; // 216 pikseli
       const fontSize = edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16;
       const wrappedPrice = wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, fontSize, edit.cenaFont, canvas);
       cenaText = new fabric.Text(wrappedPrice, {
-        left: borderMargin + layoutPrice.x * contentWidth,
+        left: borderMargin + (contentWidth - maxPriceWidth) / 2, // Wyśrodkowanie w poziomie
         top: borderMargin + layoutPrice.y * contentHeight,
         fontSize: fontSize,
         fill: edit.cenaFontColor,
@@ -678,7 +681,8 @@ function showVirtualEditModal(productIndex) {
         id: 'price',
         hasBorders: true,
         lockScalingX: true,
-        lockScalingY: true
+        lockScalingY: true,
+        originX: 'center' // Punkt odniesienia w środku
       });
       canvas.add(cenaText);
       console.log('Tekst ceny dodany:', wrappedPrice);
@@ -692,12 +696,12 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować kodu kreskowego";
             return;
           }
-          const layoutBarcode = layout.barcode || { x: 0.05, y: 0.95, w: 0.9, h: 0.1 };
-          const maxBarcodeWidth = contentWidth * layoutBarcode.w;
-          const maxBarcodeHeight = contentHeight * layoutBarcode.h;
+          const layoutBarcode = layout.barcode || { x: 0.5, y: 0.95, w: 0.5, h: 0.1 };
+          const maxBarcodeWidth = contentWidth * layoutBarcode.w; // 120 pikseli
+          const maxBarcodeHeight = contentHeight * layoutBarcode.h; // 31 pikseli
           let scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
           barcodeImg.set({
-            left: borderMargin + layoutBarcode.x * contentWidth,
+            left: borderMargin + (contentWidth - maxBarcodeWidth) / 2, // Wyśrodkowanie w poziomie
             top: borderMargin + layoutBarcode.y * contentHeight,
             scaleX: scale,
             scaleY: scale,
@@ -706,7 +710,8 @@ function showVirtualEditModal(productIndex) {
             hasBorders: true,
             lockScalingX: true,
             lockScalingY: true,
-            lockRotation: true
+            lockRotation: true,
+            originX: 'center' // Punkt odniesienia w środku
           });
           canvas.add(barcodeImg);
           console.log('Kod kreskowy dodany, pozycja:', { left: barcodeImg.left, top: barcodeImg.top, width: barcodeImg.width * scale, height: barcodeImg.height * scale });
@@ -719,17 +724,25 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
-      const objWidth = obj.width; // Skala zablokowana, więc bez scaleX
-      const objHeight = obj.height; // Skala zablokowana, więc bez scaleY
+      const objWidth = obj.width;
+      const objHeight = obj.height;
       const minLeft = borderMargin;
       const minTop = borderMargin;
       const maxLeft = borderMargin + contentWidth - objWidth;
       const maxTop = borderMargin + contentHeight - objHeight;
-      // Ścisłe ograniczenie ruchu do wnętrza ramki
+      // Ograniczenie ruchu do wnętrza ramki, zachowanie wyśrodkowania w poziomie
       obj.set({
         left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
         top: Math.max(minTop, Math.min(obj.top, maxTop))
       });
+      // Zachowanie wyśrodkowania w poziomie dla tekstu i kodu kreskowego
+      if (obj.id !== 'image') {
+        const layoutKey = obj.id;
+        const maxWidth = contentWidth * (layout[layoutKey]?.w || (obj.id === 'barcode' ? 0.5 : 0.9));
+        obj.set({
+          left: borderMargin + (contentWidth - maxWidth) / 2 // Wyśrodkowanie w poziomie
+        });
+      }
       console.log('Przesunięto:', obj.id, 'left:', obj.left, 'top:', obj.top, 'width:', objWidth, 'height:', objHeight);
     });
     console.log('Dodawanie zdarzenia object:selected');
@@ -777,13 +790,14 @@ function showVirtualEditModal(productIndex) {
               fontSize: fontSize,
               text: wrappedText,
               width: maxWidth,
-              textAlign: 'center'
+              textAlign: 'center',
+              left: borderMargin + (contentWidth - maxWidth) / 2 // Wyśrodkowanie w poziomie
             });
             // Ograniczenie pozycji po zmianie tekstu
             const objWidth = obj.width;
             const objHeight = obj.height;
             obj.set({
-              left: Math.max(borderMargin, Math.min(obj.left, borderMargin + contentWidth - objWidth)),
+              left: borderMargin + (contentWidth - maxWidth) / 2, // Wyśrodkowanie w poziomie
               top: Math.max(borderMargin, Math.min(obj.top, borderMargin + contentHeight - objHeight))
             });
             canvas.renderAll();
@@ -839,33 +853,27 @@ function showVirtualEditModal(productIndex) {
         const objects = canvas.getObjects();
         const newLayout = {
           image: layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
-          name: layout.name || { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
-          price: layout.price || { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
-          index: layout.index || { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
-          ranking: layout.ranking || { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
-          barcode: layout.barcode || { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
+          name: layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
+          price: layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
+          index: layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
+          ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
+          barcode: layout.barcode || { x: 0.5, y: 0.95, w: 0.5, h: 0.1 }
         };
         objects.forEach(obj => {
           if (obj.id) {
             const objWidth = obj.width;
             const objHeight = obj.height;
-            // Normalizacja pozycji względem wnętrza ramki
-            let normalizedX = (obj.left - borderMargin) / contentWidth;
+            // Normalizacja pozycji, zachowanie wyśrodkowania w poziomie
+            let normalizedX = 0.5; // Domyślnie wyśrodkowany
             let normalizedY = (obj.top - borderMargin) / contentHeight;
-            // Ustalanie szerokości i wysokości w zależności od typu elementu
-            let normalizedW, normalizedH;
+            let normalizedW = obj.id === 'barcode' ? 0.5 : 0.9; // Stała szerokość
+            let normalizedH = 0.1; // Stała wysokość dla tekstu i kodu kreskowego
             if (obj.id === 'image') {
+              normalizedX = (obj.left - borderMargin) / contentWidth;
               normalizedW = layout.image.w; // Zachowaj oryginalną szerokość obrazu
               normalizedH = layout.image.h; // Zachowaj oryginalną wysokość obrazu
-            } else if (obj.id === 'barcode') {
-              normalizedW = layout.barcode.w; // Zachowaj oryginalną szerokość kodu kreskowego
-              normalizedH = layout.barcode.h; // Zachowaj oryginalną wysokość kodu kreskowego
-            } else {
-              normalizedW = 0.9; // Stała szerokość dla tekstu
-              normalizedH = 0.1; // Stała wysokość dla tekstu
             }
-            // Ścisłe ograniczenie pozycji do wnętrza prostokąta
-            normalizedX = Math.max(0.05, Math.min(normalizedX, 0.95 - normalizedW));
+            // Ograniczenie pozycji Y do wnętrza prostokąta
             normalizedY = Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH));
             newLayout[obj.id] = {
               x: normalizedX,
