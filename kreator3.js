@@ -54,7 +54,7 @@ function showEditModal(productIndex) {
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 }
+        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 }
       }
     };
     const showRanking = document.getElementById('showRanking')?.checked || false;
@@ -266,7 +266,7 @@ function saveEdit(productIndex) {
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 }
+        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 }
       }
     };
     console.log('Saved Edit for Product Index:', productIndex, window.productEdits[productIndex]);
@@ -457,7 +457,7 @@ function showVirtualEditModal(productIndex) {
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 }
+        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -571,7 +571,7 @@ function showVirtualEditModal(productIndex) {
           hasBorders: true,
           lockScalingX: false,
           lockScalingY: false,
-          lockRotation: true,
+          lockRotation: false,
           originX: 'left'
         });
         canvas.add(img);
@@ -697,7 +697,7 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować kodu kreskowego";
             return;
           }
-          const layoutBarcode = layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 };
+          const layoutBarcode = layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 };
           const maxBarcodeWidth = contentWidth * layoutBarcode.w; // ~206 pikseli
           const maxBarcodeHeight = contentHeight * layoutBarcode.h; // ~35 pikseli
           const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
@@ -706,16 +706,17 @@ function showVirtualEditModal(productIndex) {
             top: borderMargin + layoutBarcode.y * contentHeight,
             scaleX: scale,
             scaleY: scale,
+            angle: layoutBarcode.rotation || 0, // Wczytanie zapisanego obrotu
             selectable: true,
             id: 'barcode',
             hasBorders: true,
             lockScalingX: false,
             lockScalingY: false,
-            lockRotation: true,
+            lockRotation: false,
             originX: 'center'
           });
           canvas.add(barcodeImg);
-          console.log('Kod kreskowy dodany, pozycja:', { left: barcodeImg.left, top: barcodeImg.top, width: barcodeImg.width * scale, height: barcodeImg.height * scale });
+          console.log('Kod kreskowy dodany, pozycja:', { left: barcodeImg.left, top: barcodeImg.top, width: barcodeImg.width * scale, height: barcodeImg.height * scale, angle: barcodeImg.angle });
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania kodu kreskowego w podglądzie:', e);
@@ -725,8 +726,8 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
-      const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.width * obj.scaleX : obj.width;
-      const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.height * obj.scaleY : obj.height;
+      const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledWidth() : obj.width;
+      const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledHeight() : obj.height;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
       // Ograniczenie ruchu w pionie, zachowanie wyśrodkowania w poziomie dla tekstu i kodu kreskowego
@@ -744,7 +745,7 @@ function showVirtualEditModal(productIndex) {
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
       }
-      console.log('Przesunięto:', obj.id, 'left:', obj.left, 'top:', obj.top, 'width:', objWidth, 'height:', objHeight);
+      console.log('Przesunięto:', obj.id, 'left:', obj.left, 'top:', obj.top, 'width:', objWidth, 'height:', objHeight, 'angle:', obj.angle);
     });
     console.log('Dodawanie zdarzenia object:scaling');
     canvas.on('object:scaling', (e) => {
@@ -752,8 +753,8 @@ function showVirtualEditModal(productIndex) {
       if (obj.id === 'image' || obj.id === 'barcode') {
         const maxW = contentWidth * (obj.id === 'image' ? 0.9 : 0.8571); // 216 pikseli dla obrazu, ~206 pikseli dla kodu kreskowego
         const maxH = contentHeight * (obj.id === 'image' ? 0.4 : 0.1143); // 124 piksele dla obrazu, ~35 pikseli dla kodu kreskowego
-        const objWidth = obj.width * obj.scaleX;
-        const objHeight = obj.height * obj.scaleY;
+        const objWidth = obj.getScaledWidth();
+        const objHeight = obj.getScaledHeight();
         if (objWidth > maxW || objHeight > maxH) {
           const scale = Math.min(maxW / obj.width, maxH / obj.height);
           obj.set({
@@ -777,7 +778,17 @@ function showVirtualEditModal(productIndex) {
             top: Math.max(minTop, Math.min(obj.top, maxTop))
           });
         }
-        console.log('Skalowano:', obj.id, 'scaleX:', obj.scaleX, 'scaleY:', obj.scaleY, 'width:', objWidth, 'height:', objHeight);
+        console.log('Skalowano:', obj.id, 'scaleX:', obj.scaleX, 'scaleY:', obj.scaleY, 'width:', objWidth, 'height:', objHeight, 'angle:', obj.angle);
+      }
+    });
+    console.log('Dodawanie zdarzenia object:rotating');
+    canvas.on('object:rotating', (e) => {
+      const obj = e.target;
+      if (obj.id === 'barcode') {
+        obj.set({
+          left: borderMargin + contentWidth / 2 // Wyśrodkowanie w poziomie po obrocie
+        });
+        console.log('Obrócono kod kreskowy:', obj.id, 'angle:', obj.angle);
       }
     });
     console.log('Dodawanie zdarzenia object:selected');
@@ -893,12 +904,12 @@ function showVirtualEditModal(productIndex) {
           price: layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
           index: layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
           ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-          barcode: layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143 }
+          barcode: layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 }
         };
         objects.forEach(obj => {
           if (obj.id) {
-            const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.width * obj.scaleX : obj.width;
-            const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.height * obj.scaleY : obj.height;
+            const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledWidth() : obj.width;
+            const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledHeight() : obj.height;
             let normalizedX = obj.id === 'image' ? (obj.left - borderMargin) / contentWidth : obj.id === 'barcode' ? 0.2143 : 0.5;
             let normalizedY = (obj.top - borderMargin) / contentHeight;
             const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.8571) : 0.9;
@@ -913,7 +924,8 @@ function showVirtualEditModal(productIndex) {
               x: normalizedX,
               y: normalizedY,
               w: normalizedW,
-              h: normalizedH
+              h: normalizedH,
+              ...(obj.id === 'barcode' ? { rotation: obj.angle || 0 } : {}) // Zapis obrotu dla kodu kreskowego
             };
             console.log(`Zapisano pozycję dla ${obj.id}:`, newLayout[obj.id]);
           }
