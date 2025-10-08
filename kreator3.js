@@ -49,12 +49,12 @@ function showEditModal(productIndex) {
       pageBackgroundGradient: 'none',
       pageBackgroundOpacity: 1.0,
       layout: {
-        image: { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
-        name: { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
-        price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
-        index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
-        ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
-        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
+        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
+        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
+        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
+        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
+        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
+        barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
       }
     };
     const showRanking = document.getElementById('showRanking')?.checked || false;
@@ -261,12 +261,12 @@ function saveEdit(productIndex) {
       pageBackgroundGradient: document.getElementById('editPageBackgroundGradient').value || 'none',
       pageBackgroundOpacity: parseFloat(document.getElementById('editPageBackgroundOpacity').value) || 1.0,
       layout: window.productEdits[productIndex]?.layout || {
-        image: { x: 0.0714, y: 0.0143, w: 0.8571, h: 0.4 },
-        name: { x: 0.0714, y: 0.4714, w: 0.8571, h: 0.0514 },
-        price: { x: 0.0714, y: 0.6571, w: 0.8571, h: 0.0514 },
-        index: { x: 0.0714, y: 0.7429, w: 0.8571, h: 0.0514 },
-        ranking: { x: 0.0714, y: 0.8286, w: 0.8571, h: 0.0514 },
-        barcode: { x: 0.0714, y: 0.85, w: 0.8571, h: 0.1143 }
+        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
+        name: { x: 0.05, y: 0.5, w: 0.9, h: 0.1 },
+        price: { x: 0.05, y: 0.65, w: 0.9, h: 0.1 },
+        index: { x: 0.05, y: 0.75, w: 0.9, h: 0.1 },
+        ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
+        barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
       }
     };
     console.log('Saved Edit for Product Index:', productIndex, window.productEdits[productIndex]);
@@ -610,7 +610,9 @@ function showVirtualEditModal(productIndex) {
       textAlign: 'center',
       selectable: true,
       id: 'name',
-      hasBorders: true
+      hasBorders: true,
+      lockScalingX: true,
+      lockScalingY: true
     });
     canvas.add(nazwaText);
     console.log('Tekst nazwy dodany:', wrappedName);
@@ -628,7 +630,9 @@ function showVirtualEditModal(productIndex) {
       textAlign: 'center',
       selectable: true,
       id: 'index',
-      hasBorders: true
+      hasBorders: true,
+      lockScalingX: true,
+      lockScalingY: true
     });
     canvas.add(indeksText);
     console.log('Tekst indeksu dodany:', wrappedIndex);
@@ -648,7 +652,9 @@ function showVirtualEditModal(productIndex) {
         textAlign: 'center',
         selectable: true,
         id: 'ranking',
-        hasBorders: true
+        hasBorders: true,
+        lockScalingX: true,
+        lockScalingY: true
       });
       canvas.add(rankingText);
       console.log('Tekst rankingu dodany:', wrappedRanking);
@@ -669,7 +675,9 @@ function showVirtualEditModal(productIndex) {
         textAlign: 'center',
         selectable: true,
         id: 'price',
-        hasBorders: true
+        hasBorders: true,
+        lockScalingX: true,
+        lockScalingY: true
       });
       canvas.add(cenaText);
       console.log('Tekst ceny dodany:', wrappedPrice);
@@ -712,29 +720,14 @@ function showVirtualEditModal(productIndex) {
       const obj = e.target;
       const objWidth = obj.width * (obj.scaleX || 1);
       const objHeight = obj.height * (obj.scaleY || 1);
-      const maxLeft = borderMargin + contentWidth - objWidth;
-      const maxTop = borderMargin + contentHeight - objHeight;
       const minLeft = borderMargin;
       const minTop = borderMargin;
-      // Ograniczenie ruchu do wnętrza ramki
+      const maxLeft = borderMargin + contentWidth - objWidth;
+      const maxTop = borderMargin + contentHeight - objHeight;
+      // Ścisłe ograniczenie ruchu do wnętrza ramki
       obj.set({
         left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
         top: Math.max(minTop, Math.min(obj.top, maxTop))
-      });
-      // Zapobieganie nakładaniu się elementów
-      const objects = canvas.getObjects().filter(o => o !== obj && o.selectable);
-      objects.forEach(other => {
-        const otherWidth = other.width * (other.scaleX || 1);
-        const otherHeight = other.height * (other.scaleY || 1);
-        const overlapX = Math.abs(obj.left + objWidth / 2 - (other.left + otherWidth / 2)) < (objWidth + otherWidth) / 2;
-        const overlapY = Math.abs(obj.top + objHeight / 2 - (other.top + otherHeight / 2)) < (objHeight + otherHeight) / 2;
-        if (overlapX && overlapY) {
-          // Przywrócenie poprzedniej pozycji w przypadku kolizji
-          obj.set({
-            left: obj.left - e.transform.offsetX,
-            top: obj.top - e.transform.offsetY
-          });
-        }
       });
       console.log('Przesunięto:', obj.id, 'left:', obj.left, 'top:', obj.top, 'width:', objWidth, 'height:', objHeight);
     });
@@ -864,10 +857,14 @@ function showVirtualEditModal(productIndex) {
           if (obj.id) {
             const objWidth = obj.width * (obj.scaleX || 1);
             const objHeight = obj.height * (obj.scaleY || 1);
-            const normalizedX = Math.max(0, Math.min((obj.left - borderMargin) / contentWidth, 0.95));
-            const normalizedY = Math.max(0, Math.min((obj.top - borderMargin) / contentHeight, 0.95));
-            const normalizedW = Math.max(0.1, Math.min(objWidth / contentWidth, 0.9));
-            const normalizedH = Math.max(0.05, Math.min(objHeight / contentHeight, 0.1));
+            // Normalizacja pozycji względem wnętrza ramki
+            let normalizedX = (obj.left - borderMargin) / contentWidth;
+            let normalizedY = (obj.top - borderMargin) / contentHeight;
+            const normalizedW = Math.min(objWidth / contentWidth, 0.9);
+            const normalizedH = Math.min(objHeight / contentHeight, 0.1);
+            // Ścisłe ograniczenie pozycji do wnętrza prostokąta
+            normalizedX = Math.max(0.05, Math.min(normalizedX, 0.95 - normalizedW));
+            normalizedY = Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH));
             newLayout[obj.id] = {
               x: normalizedX,
               y: normalizedY,
