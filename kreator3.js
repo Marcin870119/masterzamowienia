@@ -24,12 +24,17 @@ function wrapText(text, maxWidth, fontSize, fontFamily, canvas) {
 function showEditModal(productIndex) {
   try {
     console.log('showEditModal wywołany dla produktu:', productIndex);
-    const product = window.products[productIndex];
-    if (!product) {
-      console.error('Produkt nie istnieje dla indeksu:', productIndex);
-      document.getElementById('debug').innerText = "Błąd: Produkt nie istnieje";
-      return;
-    }
+    const product = window.products[productIndex] || {
+      nazwa: 'Brak nazwy',
+      indeks: 'Brak indeksu',
+      cena: '',
+      ranking: '',
+      img: 'https://dummyimage.com/120x84/eee/000&text=brak',
+      producent: '',
+      ean: '',
+      barcode: ''
+    };
+    console.log('Dane produktu:', product);
     const edit = window.productEdits[productIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
@@ -39,7 +44,7 @@ function showEditModal(productIndex) {
       rankingFontColor: '#000000',
       cenaFont: 'Arial',
       cenaFontColor: '#000000',
-      priceCurrency: window.globalCurrency,
+      priceCurrency: window.globalCurrency || 'EUR',
       priceFontSize: 'medium',
       logo: null,
       borderStyle: 'solid',
@@ -132,7 +137,7 @@ function showEditModal(productIndex) {
           <img src="${edit.logo || (product.producent && window.manufacturerLogos[product.producent]) || 'https://dummyimage.com/80x40/eee/000&text=brak'}" style="width:80px;height:40px;object-fit:contain;margin-bottom:10px;">
           <select id="editLogoSelect">
             <option value="">Brak logo</option>
-            ${Object.keys(window.manufacturerLogos).map(name => `<option value="${name}" ${product.producent === name ? 'selected' : ''}>${name}</option>`).join('')}
+            ${Object.keys(window.manufacturerLogos || {}).map(name => `<option value="${name}" ${product.producent === name ? 'selected' : ''}>${name}</option>`).join('')}
           </select>
           <input type="file" id="editLogo" accept="image/*">
         </div>
@@ -187,12 +192,16 @@ function showEditModal(productIndex) {
 function saveEdit(productIndex) {
   try {
     console.log('saveEdit wywołany dla produktu:', productIndex);
-    const product = window.products[productIndex];
-    if (!product) {
-      console.error('Produkt nie istnieje dla indeksu:', productIndex);
-      document.getElementById('debug').innerText = "Błąd: Produkt nie istnieje";
-      return;
-    }
+    const product = window.products[productIndex] || {
+      nazwa: 'Brak nazwy',
+      indeks: 'Brak indeksu',
+      cena: '',
+      ranking: '',
+      img: 'https://dummyimage.com/120x84/eee/000&text=brak',
+      producent: '',
+      ean: '',
+      barcode: ''
+    };
     const editImage = document.getElementById('editImage').files[0];
     if (editImage) {
       const reader = new FileReader();
@@ -234,8 +243,8 @@ function saveEdit(productIndex) {
       window.productEdits[productIndex] = window.productEdits[productIndex] || {};
       window.productEdits[productIndex].backgroundTexture = null;
     }
-    product.nazwa = document.getElementById('editNazwa').value;
-    product.indeks = document.getElementById('editIndeks').value;
+    product.nazwa = document.getElementById('editNazwa').value || 'Brak nazwy';
+    product.indeks = document.getElementById('editIndeks').value || 'Brak indeksu';
     if (document.getElementById('showRanking')?.checked) {
       product.ranking = document.getElementById('editRanking')?.value || '';
     }
@@ -251,7 +260,7 @@ function saveEdit(productIndex) {
       rankingFontColor: document.getElementById('editRankingColor')?.value || '#000000',
       cenaFont: document.getElementById('editCenaFont')?.value || 'Arial',
       cenaFontColor: document.getElementById('editCenaColor')?.value || '#000000',
-      priceCurrency: document.getElementById('editCenaCurrency')?.value || window.globalCurrency,
+      priceCurrency: document.getElementById('editCenaCurrency')?.value || window.globalCurrency || 'EUR',
       priceFontSize: document.getElementById('editCenaFontSize')?.value || 'medium',
       logo: window.productEdits[productIndex]?.logo || null,
       borderStyle: document.getElementById('editBorderStyle').value || 'solid',
@@ -289,7 +298,7 @@ function showPageEditModal(pageIndex) {
       rankingFontColor: '#000000',
       cenaFont: 'Arial',
       cenaFontColor: '#000000',
-      priceCurrency: window.globalCurrency,
+      priceCurrency: window.globalCurrency || 'EUR',
       showPriceLabel: true,
       pageBackgroundGradient: 'none',
       pageBackgroundOpacity: 1.0
@@ -429,13 +438,17 @@ function showVirtualEditModal(productIndex) {
       return;
     }
     console.log('virtualEditModal znaleziony:', modal);
-    const product = window.products[productIndex];
-    if (!product) {
-      console.error('Produkt nie istnieje dla indeksu:', productIndex);
-      document.getElementById('debug').innerText = "Błąd: Produkt nie istnieje";
-      return;
-    }
-    console.log('Produkt:', product);
+    const product = window.products[productIndex] || {
+      nazwa: 'Brak nazwy',
+      indeks: 'Brak indeksu',
+      cena: '',
+      ranking: '',
+      img: 'https://dummyimage.com/120x84/eee/000&text=brak',
+      producent: '',
+      ean: '',
+      barcode: ''
+    };
+    console.log('Dane produktu:', product);
     const edit = window.productEdits[productIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
@@ -445,7 +458,7 @@ function showVirtualEditModal(productIndex) {
       rankingFontColor: '#000000',
       cenaFont: 'Arial',
       cenaFontColor: '#000000',
-      priceCurrency: window.globalCurrency,
+      priceCurrency: window.globalCurrency || 'EUR',
       priceFontSize: 'medium',
       borderStyle: 'solid',
       borderColor: '#000000',
