@@ -56,7 +56,6 @@ async function buildPDF(jsPDF, save = true) {
     let pageNumber = 1;
     let totalProducts = window.products.length;
     let processedProducts = 0;
-
     if (window.selectedCover) {
       try {
         doc.addImage(window.selectedCover.data, window.selectedCover.data.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, pageHeight, undefined, "FAST");
@@ -68,11 +67,9 @@ async function buildPDF(jsPDF, save = true) {
         document.getElementById('debug').innerText = "Błąd dodawania okładki: " + e.message;
       }
     }
-
     const bannerImg = window.selectedBanner ? window.selectedBanner.data : null;
     const backgroundImg = window.selectedBackground ? window.selectedBackground.data : null;
     const priceLabel = window.globalLanguage === 'en' ? 'PRICE' : 'CENA';
-
     const applyGradient = (gradientType, opacity) => {
       doc.saveGraphicsState();
       doc.setGState(new doc.GState({ opacity: opacity || 1.0 }));
@@ -109,7 +106,6 @@ async function buildPDF(jsPDF, save = true) {
       }
       doc.restoreGraphicsState();
     };
-
     if (window.products.length > 0) {
       const pageEdit = window.pageEdits[pageNumber - 1] || {};
       if (pageEdit.pageBackgroundGradient && pageEdit.pageBackgroundGradient !== "none") {
@@ -139,7 +135,6 @@ async function buildPDF(jsPDF, save = true) {
       doc.setFontSize(12);
       doc.text(`${pageNumber}`, pageWidth - 20, pageHeight - 10, { align: "right" });
     }
-
     const marginTop = 20 + bannerHeight;
     const marginBottom = 28;
     const marginLeftRight = 14;
@@ -151,7 +146,6 @@ async function buildPDF(jsPDF, save = true) {
     let x = marginLeftRight;
     let y = marginTop;
     let productIndex = 0;
-
     const getItemsPerPage = () => {
       if (layout === "1") return 1;
       if (layout === "2") return 2;
@@ -161,9 +155,7 @@ async function buildPDF(jsPDF, save = true) {
       if (layout === "4-2-4") return 10;
       return 4;
     };
-
     const itemsPerPage = getItemsPerPage();
-
     const drawSection = async (sectionCols, sectionRows, boxWidth, boxHeight, isLarge) => {
       for (let row = 0; row < sectionRows && productIndex < window.products.length; row++) {
         for (let col = 0; col < sectionCols && productIndex < window.products.length; col++) {
@@ -196,7 +188,11 @@ async function buildPDF(jsPDF, save = true) {
             ranking: { x: 0.05, y: 0.85, w: 0.9, h: 0.1 },
             barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
           };
-
+          // Zabezpieczenie przed brakiem layoutu
+          if (!finalEdit.layout) {
+            console.warn(`Brak layoutu dla produktu ${productIndex}, używam domyślnego itemLayout`);
+            finalEdit.layout = itemLayout;
+          }
           if (finalEdit.backgroundTexture) {
             try {
               doc.saveGraphicsState();
@@ -208,12 +204,9 @@ async function buildPDF(jsPDF, save = true) {
               document.getElementById('debug').innerText = "Błąd dodawania tekstury tła: " + e.message;
             }
           }
-
           drawBox(doc, x, y, boxWidth, boxHeight, finalEdit.borderStyle || 'solid', finalEdit.borderColor || '#000000');
-
           let imgSrc = window.uploadedImages[p.indeks] || p.img;
           let logoSrc = edit.logo || (p.producent && window.manufacturerLogos[p.producent]) || null;
-
           if (isLarge) {
             if (imgSrc) {
               try {
@@ -230,11 +223,14 @@ async function buildPDF(jsPDF, save = true) {
                 let h = img.height * scale;
                 let imgX = x + (boxWidth - w) / 2;
                 let imgY = y + 5;
-                if (itemLayout.image && finalEdit.layout) {
-                  imgX = x + (boxWidth * itemLayout.image.x);
-                  imgY = y + (boxHeight * itemLayout.image.y);
-                  w = boxWidth * itemLayout.image.w;
-                  h = boxHeight * itemLayout.image.h;
+                if (finalEdit.layout && finalEdit.layout.image) {
+                  imgX = x + (boxWidth * finalEdit.layout.image.x);
+                  imgY = y + (boxHeight * finalEdit.layout.image.y);
+                  w = boxWidth * finalEdit.layout.image.w;
+                  h = boxHeight * finalEdit.layout.image.h;
+                  // Upewnienie się, że współrzędne są w granicach
+                  imgX = Math.max(x, Math.min(imgX, x + boxWidth - w));
+                  imgY = Math.max(y, Math.min(imgY, y + boxHeight - h));
                 }
                 doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
               } catch (e) {
@@ -247,35 +243,34 @@ async function buildPDF(jsPDF, save = true) {
             doc.setFontSize(sectionCols === 1 ? 14 : 11);
             const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
-            const nameX = itemLayout.name && finalEdit.layout ? x + (boxWidth * itemLayout.name.x) : x + boxWidth / 2;
-            const nameWidth = itemLayout.name && finalEdit.layout ? boxWidth * itemLayout.name.w : boxWidth - (sectionCols === 1 ? 80 : 40);
-            if (itemLayout.name && finalEdit.layout) textY = y + (boxHeight * itemLayout.name.y);
+            const nameX = finalEdit.layout && finalEdit.layout.name ? x + (boxWidth * finalEdit.layout.name.x) : x + boxWidth / 2;
+            const nameWidth = finalEdit.layout && finalEdit.layout.name ? boxWidth * finalEdit.layout.name.w : boxWidth - (sectionCols === 1 ? 80 : 40);
+            if (finalEdit.layout && finalEdit.layout.name) textY = y + (boxHeight * finalEdit.layout.name.y);
             const lines = doc.splitTextToSize(p.nazwa || "Brak nazwy", nameWidth);
             const maxLines = 3;
             lines.slice(0, maxLines).forEach((line, index) => {
-              doc.text(line, nameX, textY + (index * 18), { align: "center" });
+              // Zabezpieczenie przed nieprawidłowymi współrzędnymi
+              const textYAdjusted = Math.max(y, Math.min(textY + (index * 18), y + boxHeight - 10));
+              doc.text(line, nameX, textYAdjusted, { align: "center" });
             });
             textY += Math.min(lines.length, maxLines) * 18 + 10;
-
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
             doc.setFontSize(sectionCols === 1 ? 11 : 9);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
-            const indexX = itemLayout.index && finalEdit.layout ? x + (boxWidth * itemLayout.index.x) : x + boxWidth / 2;
-            if (itemLayout.index && finalEdit.layout) textY = y + (boxHeight * itemLayout.index.y);
+            const indexX = finalEdit.layout && finalEdit.layout.index ? x + (boxWidth * finalEdit.layout.index.x) : x + boxWidth / 2;
+            if (finalEdit.layout && finalEdit.layout.index) textY = y + (boxHeight * finalEdit.layout.index.y);
             doc.text(`Indeks: ${p.indeks || '-'}`, indexX, textY, { align: "center" });
             textY += sectionCols === 1 ? 22 : 18;
-
             if (showRanking && p.ranking) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
               doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
-              const rankingX = itemLayout.ranking && finalEdit.layout ? x + (boxWidth * itemLayout.ranking.x) : x + boxWidth / 2;
-              if (itemLayout.ranking && finalEdit.layout) textY = y + (boxHeight * itemLayout.ranking.y);
+              const rankingX = finalEdit.layout && finalEdit.layout.ranking ? x + (boxWidth * finalEdit.layout.ranking.x) : x + boxWidth / 2;
+              if (finalEdit.layout && finalEdit.layout.ranking) textY = y + (boxHeight * finalEdit.layout.ranking.y);
               doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { align: "center" });
               textY += sectionCols === 1 ? 22 : 18;
             }
-
             if (showCena && p.cena) {
               doc.setFont(finalEdit.cenaFont || 'Arial', "bold");
               const priceFontSize = sectionCols === 1 ? (finalEdit.priceFontSize === 'small' ? 16 : finalEdit.priceFontSize === 'medium' ? 20 : 24) : (finalEdit.priceFontSize === 'small' ? 12 : finalEdit.priceFontSize === 'medium' ? 14 : 16);
@@ -284,12 +279,11 @@ async function buildPDF(jsPDF, save = true) {
               doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
               const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
               const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-              const priceX = itemLayout.price && finalEdit.layout ? x + (boxWidth * itemLayout.price.x) : x + boxWidth / 2;
-              if (itemLayout.price && finalEdit.layout) textY = y + (boxHeight * itemLayout.price.y);
+              const priceX = finalEdit.layout && finalEdit.layout.price ? x + (boxWidth * finalEdit.layout.price.x) : x + boxWidth / 2;
+              if (finalEdit.layout && finalEdit.layout.price) textY = y + (boxHeight * finalEdit.layout.price.y);
               doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { align: "center" });
               textY += sectionCols === 1 ? 22 : 18;
             }
-
             if (showLogo && logoSrc) {
               try {
                 const logoImg = new Image();
@@ -309,19 +303,21 @@ async function buildPDF(jsPDF, save = true) {
                 document.getElementById('debug').innerText = "Błąd dodawania loga: " + e.message;
               }
             }
-
             if (showEan && p.ean && p.barcode) {
               try {
                 const bw = sectionCols === 1 ? 180 : 140;
                 const bh = sectionCols === 1 ? 50 : 40;
                 const bx = x + (boxWidth - bw) / 2;
                 const by = y + boxHeight - bh - 5;
-                if (itemLayout.barcode && finalEdit.layout) {
-                  const barcodeX = x + (boxWidth * itemLayout.barcode.x);
-                  const barcodeY = y + (boxHeight * itemLayout.barcode.y);
-                  const barcodeW = boxWidth * itemLayout.barcode.w;
-                  const barcodeH = boxHeight * itemLayout.barcode.h;
-                  doc.addImage(p.barcode, "PNG", barcodeX, barcodeY, barcodeW, barcodeH, undefined, "SLOW");
+                if (finalEdit.layout && finalEdit.layout.barcode) {
+                  const barcodeX = x + (boxWidth * finalEdit.layout.barcode.x);
+                  const barcodeY = y + (boxHeight * finalEdit.layout.barcode.y);
+                  const barcodeW = boxWidth * finalEdit.layout.barcode.w;
+                  const barcodeH = boxHeight * finalEdit.layout.barcode.h;
+                  // Upewnienie się, że współrzędne są w granicach
+                  const adjustedBarcodeX = Math.max(x, Math.min(barcodeX, x + boxWidth - barcodeW));
+                  const adjustedBarcodeY = Math.max(y, Math.min(barcodeY, y + boxHeight - barcodeH));
+                  doc.addImage(p.barcode, "PNG", adjustedBarcodeX, adjustedBarcodeY, barcodeW, barcodeH, undefined, "SLOW");
                 } else {
                   doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
                 }
@@ -359,14 +355,12 @@ async function buildPDF(jsPDF, save = true) {
             doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
             doc.text(p.nazwa || "Brak nazwy", x + 105, textY, { maxWidth: boxWidth - 110 });
             textY += 25;
-
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
             doc.setFontSize(7);
             const indeksFontColor = finalEdit.indeksFontColor || '#000000';
             doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
             doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, x + 105, textY, { maxWidth: 150 });
             textY += 12;
-
             if (showRanking && p.ranking) {
               doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
               const rankingFontColor = finalEdit.rankingFontColor || '#000000';
@@ -374,7 +368,6 @@ async function buildPDF(jsPDF, save = true) {
               doc.text(`RANKING: ${p.ranking}`, x + 105, textY, { maxWidth: 150 });
               textY += 12;
             }
-
             if (showCena && p.cena) {
               doc.setFont(finalEdit.cenaFont || 'Arial', "bold");
               const priceFontSize = (finalEdit.priceFontSize || 'medium') === 'small' ? 10 : (finalEdit.priceFontSize || 'medium') === 'medium' ? 12 : 14;
@@ -386,7 +379,6 @@ async function buildPDF(jsPDF, save = true) {
               doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, x + 105, textY, { maxWidth: 150 });
               textY += 16;
             }
-
             if (showEan && p.ean && p.barcode) {
               try {
                 const bw = 85;
@@ -400,7 +392,6 @@ async function buildPDF(jsPDF, save = true) {
               }
             }
           }
-
           processedProducts++;
           const progress = (processedProducts / totalProducts) * 100;
           document.getElementById('progressBar').style.width = `${progress}%`;
@@ -413,7 +404,6 @@ async function buildPDF(jsPDF, save = true) {
       }
       return y;
     };
-
     while (productIndex < window.products.length) {
       let cols, rows, boxWidth, boxHeight, isLarge;
       if (layout === "1") {
@@ -506,7 +496,6 @@ async function buildPDF(jsPDF, save = true) {
         y = marginTop;
       }
     }
-
     hideProgressModal();
     if (save) {
       try {
