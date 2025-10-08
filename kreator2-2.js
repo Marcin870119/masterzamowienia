@@ -189,15 +189,15 @@ async function buildPDF(jsPDF, save = true) {
             barcode: { x: 0.05, y: 0.95, w: 0.9, h: 0.1 }
           };
           // Zabezpieczenie przed brakiem layoutu lub niekompletnymi danymi
-          if (!finalEdit.layout || !finalEdit.layout.name || !finalEdit.layout.name.x) {
+          if (!finalEdit.layout || !finalEdit.layout.name || typeof finalEdit.layout.name.x !== 'number') {
             console.warn(`Brak lub niekompletny layout dla produktu ${productIndex}, używam domyślnego itemLayout.name`);
             finalEdit.layout = finalEdit.layout || {};
             finalEdit.layout.name = itemLayout.name;
           }
-          if (!finalEdit.layout.index || !finalEdit.layout.index.x) finalEdit.layout.index = itemLayout.index;
-          if (!finalEdit.layout.price || !finalEdit.layout.price.x) finalEdit.layout.price = itemLayout.price;
-          if (!finalEdit.layout.ranking || !finalEdit.layout.ranking.x) finalEdit.layout.ranking = itemLayout.ranking;
-          if (!finalEdit.layout.barcode || !finalEdit.layout.barcode.x) finalEdit.layout.barcode = itemLayout.barcode;
+          if (!finalEdit.layout.index || typeof finalEdit.layout.index.x !== 'number') finalEdit.layout.index = itemLayout.index;
+          if (!finalEdit.layout.price || typeof finalEdit.layout.price.x !== 'number') finalEdit.layout.price = itemLayout.price;
+          if (!finalEdit.layout.ranking || typeof finalEdit.layout.ranking.x !== 'number') finalEdit.layout.ranking = itemLayout.ranking;
+          if (!finalEdit.layout.barcode || typeof finalEdit.layout.barcode.x !== 'number') finalEdit.layout.barcode = itemLayout.barcode;
           if (finalEdit.backgroundTexture) {
             try {
               doc.saveGraphicsState();
@@ -251,9 +251,7 @@ async function buildPDF(jsPDF, save = true) {
             const lines = doc.splitTextToSize(p.nazwa || "Brak nazwy", nameWidth);
             const maxLines = 3;
             lines.slice(0, maxLines).forEach((line, index) => {
-              // Zabezpieczenie przed niepoprawnymi współrzędnymi
-              const adjustedTextY = Math.max(y + 5, Math.min(textY + (index * 18), y + boxHeight - 10));
-              doc.text(line, nameX, adjustedTextY, { align: "center" });
+              doc.text(line, nameX, textY + (index * 18), { align: "center" });
             });
             textY += Math.min(lines.length, maxLines) * 18 + 10;
             doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
