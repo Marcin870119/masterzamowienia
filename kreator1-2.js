@@ -248,6 +248,23 @@ function renderCatalog() {
         const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
         details.innerHTML += `<br><span style="font-family: ${finalEdit.cenaFont || 'Arial'}; color: ${finalEdit.cenaFontColor || '#000000'}; font-size: ${finalEdit.priceFontSize || 'medium'}">${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}</span>`;
       }
+      if (showLogo && layout === "4" && (finalEdit.logo || (p.producent && window.manufacturerLogos[p.producent]))) {
+        const logoImg = document.createElement('img');
+        logoImg.src = finalEdit.logo || window.manufacturerLogos[p.producent];
+        logoImg.style.width = '120px';
+        logoImg.style.height = '60px';
+        logoImg.style.objectFit = 'contain';
+        logoImg.style.marginTop = '8px';
+        details.appendChild(logoImg);
+      }
+      if (showEan && p.ean && p.barcode) {
+        const barcodeImg = document.createElement('img');
+        barcodeImg.src = p.barcode;
+        barcodeImg.style.width = '85px';
+        barcodeImg.style.height = '32px';
+        barcodeImg.style.marginTop = '8px';
+        details.appendChild(barcodeImg);
+      }
       const editButton = document.createElement('button');
       editButton.className = 'btn-primary edit-button';
       editButton.innerHTML = '<i class="fas fa-edit"></i> Edytuj';
@@ -275,30 +292,11 @@ function renderCatalog() {
           document.getElementById('debug').innerText = "Błąd: Funkcja edycji układu nie jest dostępna";
         }
       };
-      if (showLogo && layout === "4" && (finalEdit.logo || (p.producent && window.manufacturerLogos[p.producent]))) {
-        const logoImg = document.createElement('img');
-        logoImg.src = finalEdit.logo || window.manufacturerLogos[p.producent];
-        logoImg.style.width = '120px';
-        logoImg.style.height = '60px';
-        logoImg.style.objectFit = 'contain';
-        logoImg.style.marginTop = '8px';
-        details.appendChild(logoImg);
-      }
-      if (showEan && p.ean && p.barcode) {
-        const barcodeImg = document.createElement('img');
-        barcodeImg.src = p.barcode;
-        barcodeImg.style.width = '85px';
-        barcodeImg.style.height = '32px';
-        barcodeImg.style.marginTop = '8px';
-        details.appendChild(barcodeImg);
-      }
       item.appendChild(img);
       item.appendChild(details);
       item.appendChild(editButton);
       item.appendChild(layoutButton);
-      window.products[i] = p; // Synchronizacja danych produktu
       pageDiv.appendChild(item);
-      console.log('Renderuję produkt:', i, p, finalEdit); // Debugowanie
     });
   } catch (e) {
     console.error('Błąd renderowania katalogu:', e);
