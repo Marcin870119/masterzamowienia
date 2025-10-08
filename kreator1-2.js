@@ -1,5 +1,4 @@
 console.log('kreator1-2.js załadowany');
-
 async function toBase64(url) {
   try {
     const response = await fetch(url, { cache: 'no-cache' });
@@ -19,7 +18,6 @@ async function toBase64(url) {
     return null;
   }
 }
-
 async function loadManufacturerLogos() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/Producenci.json");
@@ -46,7 +44,6 @@ async function loadManufacturerLogos() {
     document.getElementById('debug').innerText = "Błąd ładowania logów producentów: " + error.message;
   }
 }
-
 async function loadProducts() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json");
@@ -85,7 +82,6 @@ async function loadProducts() {
     document.getElementById('debug').innerText = "Błąd ładowania JSON: " + error.message;
   }
 }
-
 function handleFiles(files, callback) {
   if (!files || files.length === 0) {
     console.error("Brak plików do załadowania");
@@ -105,29 +101,24 @@ function handleFiles(files, callback) {
     reader.readAsDataURL(file);
   });
 }
-
 function loadCustomBanner(file, data) {
   window.selectedBanner = { id: "custom", data };
   console.log("Załadowano baner:", file.name);
 }
-
 function loadCustomBackground(file, data) {
   window.selectedBackground = { id: "customBackground", data };
   console.log("Załadowano tło:", file.name);
 }
-
 function loadCustomCover(file, data) {
   window.selectedCover = { id: "customCover", data };
   console.log("Załadowano okładkę:", file.name);
 }
-
 function loadCustomImages(file, data) {
   const fileName = file.name.split('.')[0];
   window.uploadedImages[fileName] = data;
   console.log(`Załadowano obraz dla indeksu: ${fileName}`);
   window.renderCatalog();
 }
-
 function showBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -143,7 +134,6 @@ function showBannerModal() {
     document.getElementById('debug').innerText = "Błąd pokazywania modalu banera";
   }
 }
-
 function hideBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -155,7 +145,6 @@ function hideBannerModal() {
     document.getElementById('debug').innerText = "Błąd ukrywania modalu banera";
   }
 }
-
 async function loadBanners() {
   try {
     const bannerOptions = document.getElementById('bannerOptions');
@@ -193,14 +182,12 @@ async function loadBanners() {
     document.getElementById('debug').innerText = "Błąd ładowania banerów";
   }
 }
-
 function selectBanner(id, data) {
   window.selectedBanner = { id, data };
   document.querySelectorAll('.banner-preview').forEach(p => p.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
   hideBannerModal();
 }
-
 function renderCatalog() {
   try {
     console.log('renderCatalog wywołany');
@@ -304,12 +291,12 @@ function renderCatalog() {
       item.appendChild(layoutButton);
       pageDiv.appendChild(item);
     });
+    console.log('renderCatalog zakończony, produkty:', window.products.length);
   } catch (e) {
     console.error('Błąd renderowania katalogu:', e);
     document.getElementById('debug').innerText = "Błąd renderowania katalogu: " + e.message;
   }
 }
-
 function importExcel() {
   try {
     const file = document.getElementById('excelFile').files[0];
@@ -430,7 +417,6 @@ function importExcel() {
     document.getElementById('debug').innerText = "Błąd importu pliku Excel/CSV: " + e.message;
   }
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log('DOMContentLoaded wywołany');
@@ -466,7 +452,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Nie znaleziono elementów: imageInput lub uploadArea");
       document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi zdjęć";
     }
-
     const bannerFileInput = document.getElementById("bannerFileInput");
     const bannerUpload = document.getElementById("bannerUpload");
     if (bannerFileInput && bannerUpload) {
@@ -499,7 +484,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Nie znaleziono elementów: bannerFileInput lub bannerUpload");
       document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi banera";
     }
-
     const backgroundFileInput = document.getElementById("backgroundFileInput");
     const backgroundUpload = document.getElementById("backgroundUpload");
     if (backgroundFileInput && backgroundUpload) {
@@ -532,7 +516,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Nie znaleziono elementów: backgroundFileInput lub backgroundUpload");
       document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi tła";
     }
-
     const coverFileInput = document.getElementById("coverFileInput");
     const coverUpload = document.getElementById("coverUpload");
     if (coverFileInput && coverUpload) {
@@ -565,7 +548,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Nie znaleziono elementów: coverFileInput lub coverUpload");
       document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi okładki";
     }
-
     const excelFileInput = document.getElementById("excelFile");
     const fileLabelWrapper = document.querySelector(".file-label-wrapper");
     if (excelFileInput && fileLabelWrapper) {
@@ -583,7 +565,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Nie znaleziono elementów: excelFileInput lub fileLabelWrapper");
       document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi importu Excel";
     }
-
     const currencySelect = document.getElementById('currencySelect');
     if (currencySelect) {
       currencySelect.addEventListener('change', (e) => {
@@ -592,7 +573,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.renderCatalog();
       });
     }
-
     const languageSelect = document.getElementById('languageSelect');
     if (languageSelect) {
       languageSelect.addEventListener('change', (e) => {
@@ -601,7 +581,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.renderCatalog();
       });
     }
-
     const pageEditButton = document.createElement('button');
     pageEditButton.className = 'btn-secondary';
     pageEditButton.innerHTML = '<i class="fas fa-file-alt"></i> Edytuj stronę PDF';
@@ -610,7 +589,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.showPageEditModal(0);
     };
     document.querySelector('.improved-panel').appendChild(pageEditButton);
-
     const previewButton = document.getElementById('previewButton');
     if (previewButton) {
       previewButton.addEventListener('click', () => {
@@ -626,14 +604,12 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Nie znaleziono elementu previewButton");
       document.getElementById('debug').innerText = "Błąd: Brak przycisku podglądu PDF";
     }
-
     window.loadProducts();
   } catch (e) {
     console.error('Błąd inicjalizacji zdarzeń DOM:', e);
     document.getElementById('debug').innerText = "Błąd inicjalizacji zdarzeń DOM: " + e.message;
   }
 });
-
 window.importExcel = importExcel;
 window.renderCatalog = renderCatalog;
 window.showBannerModal = showBannerModal;
