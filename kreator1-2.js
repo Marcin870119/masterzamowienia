@@ -248,7 +248,6 @@ function renderCatalog() {
         const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
         details.innerHTML += `<br><span style="font-family: ${finalEdit.cenaFont || 'Arial'}; color: ${finalEdit.cenaFontColor || '#000000'}; font-size: ${finalEdit.priceFontSize || 'medium'}">${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}</span>`;
       }
-      // Usunięto warunek dla logo, aby zawsze dodać przyciski
       const editButton = document.createElement('button');
       editButton.className = 'btn-primary edit-button';
       editButton.innerHTML = '<i class="fas fa-edit"></i> Edytuj';
