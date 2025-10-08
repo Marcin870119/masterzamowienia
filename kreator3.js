@@ -569,8 +569,8 @@ function showVirtualEditModal(productIndex) {
           selectable: true,
           id: 'image',
           hasBorders: true,
-          lockScalingX: false,
-          lockScalingY: false,
+          lockScalingX: true,
+          lockScalingY: true,
           lockRotation: true
         });
         canvas.add(img);
@@ -664,11 +664,12 @@ function showVirtualEditModal(productIndex) {
       console.log('Tworzenie tekstu ceny');
       const layoutPrice = layout.price || { x: 0.05, y: 0.65, w: 0.9, h: 0.1 };
       const maxPriceWidth = contentWidth * layoutPrice.w; // 216 pikseli
-      const wrappedPrice = wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16, edit.cenaFont, canvas);
+      const fontSize = edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16;
+      const wrappedPrice = wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, fontSize, edit.cenaFont, canvas);
       cenaText = new fabric.Text(wrappedPrice, {
         left: borderMargin + layoutPrice.x * contentWidth,
         top: borderMargin + layoutPrice.y * contentHeight,
-        fontSize: edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16,
+        fontSize: fontSize,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
         width: maxPriceWidth,
@@ -703,8 +704,8 @@ function showVirtualEditModal(productIndex) {
             selectable: true,
             id: 'barcode',
             hasBorders: true,
-            lockScalingX: false,
-            lockScalingY: false,
+            lockScalingX: true,
+            lockScalingY: true,
             lockRotation: true
           });
           canvas.add(barcodeImg);
@@ -718,8 +719,8 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
-      const objWidth = obj.width * (obj.scaleX || 1);
-      const objHeight = obj.height * (obj.scaleY || 1);
+      const objWidth = obj.width; // Skala zablokowana, więc bez scaleX
+      const objHeight = obj.height; // Skala zablokowana, więc bez scaleY
       const minLeft = borderMargin;
       const minTop = borderMargin;
       const maxLeft = borderMargin + contentWidth - objWidth;
@@ -730,29 +731,6 @@ function showVirtualEditModal(productIndex) {
         top: Math.max(minTop, Math.min(obj.top, maxTop))
       });
       console.log('Przesunięto:', obj.id, 'left:', obj.left, 'top:', obj.top, 'width:', objWidth, 'height:', objHeight);
-    });
-    console.log('Dodawanie zdarzenia object:scaling');
-    canvas.on('object:scaling', (e) => {
-      const obj = e.target;
-      const objWidth = obj.width * obj.scaleX;
-      const objHeight = obj.height * obj.scaleY;
-      const maxWidth = contentWidth * 0.9; // Maksymalna szerokość to 90% contentWidth
-      const maxHeight = contentHeight * 0.1; // Maksymalna wysokość to 10% contentHeight
-      if (objWidth > maxWidth || objHeight > maxHeight) {
-        const scale = Math.min(maxWidth / obj.width, maxHeight / obj.height);
-        obj.set({
-          scaleX: scale,
-          scaleY: scale
-        });
-      }
-      // Ograniczenie pozycji po skalowaniu
-      const maxLeft = borderMargin + contentWidth - objWidth;
-      const maxTop = borderMargin + contentHeight - objHeight;
-      obj.set({
-        left: Math.max(borderMargin, Math.min(obj.left, maxLeft)),
-        top: Math.max(borderMargin, Math.min(obj.top, maxTop))
-      });
-      console.log('Skalowano:', obj.id, 'scaleX:', obj.scaleX, 'scaleY:', obj.scaleY);
     });
     console.log('Dodawanie zdarzenia object:selected');
     canvas.on('object:selected', (e) => {
@@ -779,22 +757,36 @@ function showVirtualEditModal(productIndex) {
             const layoutKey = obj.id;
             const maxWidth = contentWidth * (layout[layoutKey]?.w || 0.9);
             const fontSize = document.getElementById('sizeSelect').value === 'small' ? 12 : document.getElementById('sizeSelect').value === 'medium' ? 14 : 16;
-            const wrappedText = wrapText(obj.text, maxWidth, fontSize, document.getElementById('fontSelect').value, canvas);
+            const fontFamily = document.getElementById('fontSelect').value;
+            const fill = document.getElementById('colorSelect').value;
+            let textContent = obj.text;
+            // Aktualizacja treści tekstu w zależności od typu
+            if (layoutKey === 'name') {
+              textContent = product.nazwa || 'Brak nazwy';
+            } else if (layoutKey === 'index') {
+              textContent = `Indeks: ${product.indeks || '-'}`;
+            } else if (layoutKey === 'ranking') {
+              textContent = `RANKING: ${product.ranking || ''}`;
+            } else if (layoutKey === 'price') {
+              textContent = `${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`;
+            }
+            const wrappedText = wrapText(textContent, maxWidth, fontSize, fontFamily, canvas);
             obj.set({
-              fontFamily: document.getElementById('fontSelect').value,
-              fill: document.getElementById('colorSelect').value,
+              fontFamily: fontFamily,
+              fill: fill,
               fontSize: fontSize,
               text: wrappedText,
               width: maxWidth,
               textAlign: 'center'
             });
             // Ograniczenie pozycji po zmianie tekstu
-            const objWidth = obj.width * (obj.scaleX || 1);
-            const objHeight = obj.height * (obj.scaleY || 1);
+            const objWidth = obj.width;
+            const objHeight = obj.height;
             obj.set({
               left: Math.max(borderMargin, Math.min(obj.left, borderMargin + contentWidth - objWidth)),
               top: Math.max(borderMargin, Math.min(obj.top, borderMargin + contentHeight - objHeight))
             });
+            canvas.renderAll();
           }
           const borderStyle = document.getElementById('borderStyleSelect').value;
           const borderColor = document.getElementById('borderColorSelect').value;
@@ -855,13 +847,23 @@ function showVirtualEditModal(productIndex) {
         };
         objects.forEach(obj => {
           if (obj.id) {
-            const objWidth = obj.width * (obj.scaleX || 1);
-            const objHeight = obj.height * (obj.scaleY || 1);
+            const objWidth = obj.width;
+            const objHeight = obj.height;
             // Normalizacja pozycji względem wnętrza ramki
             let normalizedX = (obj.left - borderMargin) / contentWidth;
             let normalizedY = (obj.top - borderMargin) / contentHeight;
-            const normalizedW = Math.min(objWidth / contentWidth, 0.9);
-            const normalizedH = Math.min(objHeight / contentHeight, 0.1);
+            // Ustalanie szerokości i wysokości w zależności od typu elementu
+            let normalizedW, normalizedH;
+            if (obj.id === 'image') {
+              normalizedW = layout.image.w; // Zachowaj oryginalną szerokość obrazu
+              normalizedH = layout.image.h; // Zachowaj oryginalną wysokość obrazu
+            } else if (obj.id === 'barcode') {
+              normalizedW = layout.barcode.w; // Zachowaj oryginalną szerokość kodu kreskowego
+              normalizedH = layout.barcode.h; // Zachowaj oryginalną wysokość kodu kreskowego
+            } else {
+              normalizedW = 0.9; // Stała szerokość dla tekstu
+              normalizedH = 0.1; // Stała wysokość dla tekstu
+            }
             // Ścisłe ograniczenie pozycji do wnętrza prostokąta
             normalizedX = Math.max(0.05, Math.min(normalizedX, 0.95 - normalizedW));
             normalizedY = Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH));
