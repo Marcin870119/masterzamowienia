@@ -195,7 +195,7 @@ function showVirtualEditModal(productIndex) {
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
       document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`;
-    }
+      }
     let logoImgInstance;
     if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
       console.log('Ładowanie logo');
@@ -389,10 +389,17 @@ function showVirtualEditModal(productIndex) {
       const maxTop = borderMargin + contentHeight - objHeight;
       const minLeft = borderMargin;
       const maxLeft = borderMargin + contentWidth - objWidth;
-      obj.set({
-        left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
-        top: Math.max(minTop, Math.min(obj.top, maxTop))
-      });
+      if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
+        obj.set({
+          left: borderMargin + contentWidth / 2,
+          top: Math.max(minTop, Math.min(obj.top, maxTop))
+        });
+      } else {
+        obj.set({
+          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+          top: Math.max(minTop, Math.min(obj.top, maxTop))
+        });
+      }
       console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, angle: ${obj.angle || 0}`);
     });
     console.log('Dodawanie zdarzenia object:scaling');
