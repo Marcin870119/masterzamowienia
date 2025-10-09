@@ -1,728 +1,641 @@
-console.log('kreator1-2.js załadowany');
+console.log('kreator3-1.js załadowany');
 
-// Inicjalizacja zmiennej dla aktualnej strony
-window.currentPage = 0;
-
-async function toBase64(url) {
+function showVirtualEditModal(productIndex) {
   try {
-    const response = await fetch(url, { cache: 'no-cache' });
-    if (!response.ok) {
-      console.warn(`Nie udało się załadować obrazu z ${url}: ${response.status}`);
-      return null;
+    console.log(`showVirtualEditModal wywołany dla produktu: ${productIndex}`);
+    const modal = document.getElementById('virtualEditModal');
+    if (!modal) {
+      console.error('Nie znaleziono elementu virtualEditModal');
+      document.getElementById('debug').innerText = "Błąd: Brak modalu edycji wirtualnej";
+      return;
     }
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error(`Błąd odczytu obrazu z ${url}`));
-      reader.readAsDataURL(blob);
-    });
-  } catch (e) {
-    console.warn(`Błąd konwersji URL na base64 (${url}):`, e);
-    return null;
-  }
-}
-
-async function loadManufacturerLogos() {
-  try {
-    const response = await fetch("https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/Producenci.json");
-    if (!response.ok) throw new Error(`Nie udało się załadować Producenci.json: ${response.status}`);
-    const jsonData = await response.json();
-    for (const manufacturer of jsonData) {
-      const name = manufacturer.NAZWA_PROD?.trim() || '';
-      const urls = [
-        `https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/zdjecia/${name}.jpg`,
-        `https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/zdjecia/${name}.png`
-      ];
-      let base64Logo = null;
-      for (const url of urls) {
-        base64Logo = await toBase64(url);
-        if (base64Logo) break;
-      }
-      if (base64Logo) {
-        window.manufacturerLogos[name] = base64Logo;
-      }
-    }
-    console.log(`Załadowano loga producentów: ${Object.keys(window.manufacturerLogos).length}`);
-  } catch (error) {
-    console.error("Błąd ładowania logów producentów:", error);
-    document.getElementById('debug').innerText = `Błąd ładowania logów producentów: ${error.message}`;
-  }
-}
-
-async function loadProducts() {
-  try {
-    const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json");
-    if (!response.ok) throw new Error(`Nie udało się załadować JSON: ${response.status}`);
-    const jsonData = await response.json();
-    window.jsonProducts = await Promise.all(jsonData.map(async (p) => {
-      const urls = [
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.jpg`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.png`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.jpg`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.png`
-      ];
-      let base64Img = null;
-      for (const url of urls) {
-        base64Img = await toBase64(url);
-        if (base64Img) {
-          console.log(`Załadowano obraz dla indeksu ${p.INDEKS}: ${url}`);
-          break;
-        }
-      }
-      return {
-        nazwa: p.NAZWA || '',
-        opakowanie: p.OPAKOWANIE || '',
-        ean: p["unit barcode"] || '',
-        ranking: p.RANKING || '',
-        cena: p.CENA || '',
-        indeks: p.INDEKS?.toString() || '',
-        img: base64Img,
-        producent: p.NAZWA_PROD || ''
-      };
-    }));
-    console.log(`Załadowano jsonProducts: ${window.jsonProducts.length}`);
-    await loadManufacturerLogos();
-  } catch (error) {
-    console.error("Błąd loadProducts:", error);
-    document.getElementById('debug').innerText = `Błąd ładowania JSON: ${error.message}`;
-  }
-}
-
-function handleFiles(files, callback) {
-  if (!files || files.length === 0) {
-    console.error("Brak plików do załadowania");
-    document.getElementById('debug').innerText = "Brak zdjęć do załadowania";
-    return;
-  }
-  [...files].forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      callback(file, e.target.result);
-      document.getElementById('debug').innerText = `Załadowano plik: ${file.name}`;
+    console.log('virtualEditModal znaleziony:', modal);
+    const product = window.products[productIndex] || {
+      nazwa: 'Brak nazwy',
+      indeks: 'Brak indeksu',
+      cena: '',
+      ranking: '',
+      img: 'https://github.com/MasterMM2025/kreator-katalog/raw/main/zdjecia/[nazwa_pliku].jpg',
+      producent: '',
+      ean: '',
+      barcode: ''
     };
-    reader.onerror = () => {
-      console.error(`Błąd ładowania pliku: ${file.name}`);
-      document.getElementById('debug').innerText = `Błąd ładowania pliku: ${file.name}`;
+    console.log('Dane produktu:', product);
+    const edit = window.productEdits[productIndex] || {
+      nazwaFont: 'Arial',
+      nazwaFontColor: '#000000',
+      nazwaFontSize: 'medium',
+      indeksFont: 'Arial',
+      indeksFontColor: '#000000',
+      indeksFontSize: 'medium',
+      rankingFont: 'Arial',
+      rankingFontColor: '#000000',
+      rankingFontSize: 'medium',
+      cenaFont: 'Arial',
+      cenaFontColor: '#000000',
+      cenaFontSize: 'medium',
+      priceCurrency: window.globalCurrency || 'EUR',
+      borderStyle: 'solid',
+      borderColor: '#000000',
+      backgroundTexture: null,
+      backgroundOpacity: 1.0,
+      layout: {
+        image: { x: 0.5, y: 0.05, w: 0.85, h: 0.4, rotation: 0 },
+        name: { x: 0.5, y: 0.5, w: 0.85, h: 0.1 },
+        price: { x: 0.5, y: 0.65, w: 0.85, h: 0.1 },
+        index: { x: 0.5, y: 0.75, w: 0.85, h: 0.1 },
+        ranking: { x: 0.5, y: 0.85, w: 0.85, h: 0.1 },
+        barcode: { x: 0.5, y: 0.95, w: 0.85, h: 0.1, rotation: 0 },
+        logo: { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 }
+      }
     };
-    reader.readAsDataURL(file);
-  });
-}
-
-function loadCustomBanner(file, data) {
-  window.selectedBanner = { id: "custom", data };
-  console.log(`Załadowano baner: ${file.name}`);
-}
-
-function loadCustomBackground(file, data) {
-  window.selectedBackground = { id: "customBackground", data };
-  console.log(`Załadowano tło: ${file.name}`);
-}
-
-function loadCustomCover(file, data) {
-  window.selectedCover = { id: "customCover", data };
-  console.log(`Załadowano okładkę: ${file.name}`);
-}
-
-function loadCustomImages(file, data) {
-  const fileName = file.name.split('.')[0];
-  window.uploadedImages[fileName] = data;
-  console.log(`Załadowano obraz dla indeksu: ${fileName}`);
-  window.renderCatalog();
-}
-
-function showBannerModal() {
-  try {
-    const bannerModal = document.getElementById('bannerModal');
-    if (bannerModal) {
-      bannerModal.style.display = 'block';
-      loadBanners();
-    } else {
-      console.error("Nie znaleziono elementu bannerModal");
-      document.getElementById('debug').innerText = "Błąd: Brak modalu banera";
-    }
-  } catch (e) {
-    console.error('Błąd pokazywania modalu banera:', e);
-    document.getElementById('debug').innerText = `Błąd pokazywania modalu banera: ${e.message}`;
-  }
-}
-
-function hideBannerModal() {
-  try {
-    const bannerModal = document.getElementById('bannerModal');
-    if (bannerModal) {
-      bannerModal.style.display = 'none';
-    }
-  } catch (e) {
-    console.error('Błąd ukrywania modalu banera:', e);
-    document.getElementById('debug').innerText = `Błąd ukrywania modalu banera: ${e.message}`;
-  }
-}
-
-async function loadBanners() {
-  try {
-    const bannerOptions = document.getElementById('bannerOptions');
-    if (!bannerOptions) {
-      console.error("Nie znaleziono elementu bannerOptions");
-      document.getElementById('debug').innerText = "Błąd: Brak kontenera opcji banera";
+    console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
+    modal.innerHTML = `
+      <div class="modal-content">
+        <span class="close" onclick="window.hideEditModal()">&times;</span>
+        <h3>Edytuj produkt wizualnie</h3>
+        <div class="canvas-container">
+          <canvas id="virtualEditCanvas" width="280" height="402"></canvas>
+          <div id="editPanel" style="position: absolute; top: 10px; right: -250px; background: white; padding: 15px; border: 1px solid #ccc; border-radius: 8px; display: none;">
+            <div class="edit-field">
+              <label>Czcionka:</label>
+              <select id="fontSelect">
+                <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
+                <option value="Helvetica" ${edit.nazwaFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
+                <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
+              </select>
+            </div>
+            <div class="edit-field">
+              <label>Kolor:</label>
+              <input type="color" id="colorSelect" value="${edit.nazwaFontColor}">
+            </div>
+            <div class="edit-field">
+              <label>Rozmiar tekstu:</label>
+              <select id="sizeSelect">
+                <option value="small" ${edit.nazwaFontSize === 'small' ? 'selected' : ''}>Mały</option>
+                <option value="medium" ${edit.nazwaFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+                <option value="large" ${edit.nazwaFontSize === 'large' ? 'selected' : ''}>Duży</option>
+              </select>
+            </div>
+            <div class="edit-field">
+              <label>Styl obramowania:</label>
+              <select id="borderStyleSelect">
+                <option value="solid" ${edit.borderStyle === 'solid' ? 'selected' : ''}>Pełna linia</option>
+                <option value="dashed" ${edit.borderStyle === 'dashed' ? 'selected' : ''}>Kreskowana</option>
+                <option value="dotted" ${edit.borderStyle === 'dotted' ? 'selected' : ''}>Kropkowana</option>
+              </select>
+            </div>
+            <div class="edit-field">
+              <label>Kolor obramowania:</label>
+              <input type="color" id="borderColorSelect" value="${edit.borderColor || '#000000'}">
+            </div>
+            <div class="edit-field">
+              <label>Tekstura tła:</label>
+              <input type="file" id="backgroundTextureSelect" accept="image/*">
+            </div>
+            <div class="edit-field">
+              <label>Przezroczystość tła:</label>
+              <input type="range" id="backgroundOpacitySelect" min="0.1" max="1.0" step="0.1" value="${edit.backgroundOpacity || 1.0}">
+            </div>
+            <div class="edit-field">
+              <button onclick="window.applyTextEdit()" class="btn-primary">Zastosuj</button>
+            </div>
+          </div>
+          <div class="edit-field" style="flex-direction: row; gap: 15px; position: absolute; bottom: -50px; right: 0;">
+            <button id="saveVirtualEdit" class="btn-primary">Zapisz</button>
+            <button onclick="window.hideEditModal()" class="btn-secondary">Anuluj</button>
+          </div>
+        </div>
+      </div>
+    `;
+    console.log('Modal HTML ustawiony');
+    modal.style.display = 'block';
+    console.log('Modal ustawiony na display: block');
+    const canvasElement = document.getElementById('virtualEditCanvas');
+    if (!canvasElement) {
+      console.error('Nie znaleziono elementu virtualEditCanvas');
+      document.getElementById('debug').innerText = "Błąd: Brak elementu canvas";
       return;
     }
-    bannerOptions.innerHTML = '';
-    const bannerList = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    for (const id of bannerList) {
-      const urls = [
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BANER/${id}.JPG`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BANER/${id}.jpg`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BANER/${id}.png`
-      ];
-      let base64Banner = null;
-      for (const url of urls) {
-        base64Banner = await toBase64(url);
-        if (base64Banner) {
-          console.log(`Załadowano baner ${id}: ${url}`);
-          break;
-        }
-      }
-      if (base64Banner) {
-        const preview = document.createElement('img');
-        preview.src = base64Banner;
-        preview.className = 'banner-preview';
-        preview.onclick = () => selectBanner(id, base64Banner);
-        bannerOptions.appendChild(preview);
-      }
-    }
-  } catch (e) {
-    console.error('Błąd ładowania banerów:', e);
-    document.getElementById('debug').innerText = `Błąd ładowania banerów: ${e.message}`;
-  }
-}
-
-function selectBanner(id, data) {
-  window.selectedBanner = { id, data };
-  document.querySelectorAll('.banner-preview').forEach(p => p.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-  hideBannerModal();
-}
-
-function renderCatalog() {
-  try {
-    console.log(`renderCatalog wywołany, currentPage: ${window.currentPage}`);
-    const container = document.getElementById("catalog");
-    const pageInfo = document.getElementById("pageInfo");
-    if (!container) {
-      console.error("Nie znaleziono elementu catalog");
-      document.getElementById('debug').innerText = "Błąd: Brak elementu katalogu";
+    console.log('virtualEditCanvas znaleziony:', canvasElement);
+    if (!window.fabric) {
+      console.error('Biblioteka Fabric.js nie jest załadowana');
+      document.getElementById('debug').innerText = "Błąd: Biblioteka Fabric.js nie jest załadowana";
       return;
     }
-    container.innerHTML = "";
-    if (!window.products || window.products.length === 0) {
-      container.innerHTML = "<p>Brak produktów do wyświetlenia. Zaimportuj plik Excel.</p>";
-      document.getElementById('prevPage').disabled = true;
-      document.getElementById('nextPage').disabled = true;
-      if (pageInfo) pageInfo.innerText = "Strona 0/0";
-      return;
-    }
-    const layout = document.getElementById('layoutSelect')?.value || "16";
-    const showCena = document.getElementById('showCena')?.checked || false;
-    const showLogo = document.getElementById('showLogo')?.checked || false;
-    const showRanking = document.getElementById('showRanking')?.checked || false;
-    const showEan = document.getElementById('showEan')?.checked || false;
-    const priceLabel = window.globalLanguage === 'en' ? 'Price' : 'Cena';
-    let itemsPerPage;
-    let gridColumns;
-    if (layout === "1") {
-      itemsPerPage = 1;
-      gridColumns = "1fr";
-    } else if (layout === "2") {
-      itemsPerPage = 2;
-      gridColumns = "repeat(2, 1fr)";
-    } else if (layout === "4") {
-      itemsPerPage = 4;
-      gridColumns = "repeat(2, 1fr)";
-    } else if (layout === "8") {
-      itemsPerPage = 8;
-      gridColumns = "repeat(4, 1fr)";
-    } else if (layout === "16") {
-      itemsPerPage = 16;
-      gridColumns = "repeat(4, 1fr)";
-    } else if (layout === "4-2-4") {
-      itemsPerPage = 10;
-      gridColumns = "repeat(4, 1fr)";
-    }
-    const totalPages = Math.ceil(window.products.length / itemsPerPage);
-    if (window.currentPage >= totalPages) window.currentPage = totalPages - 1;
-    if (window.currentPage < 0) window.currentPage = 0;
-    const startIndex = window.currentPage * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage, window.products.length);
-    const pageProducts = window.products.slice(startIndex, endIndex);
-    document.getElementById('prevPage').disabled = window.currentPage === 0;
-    document.getElementById('nextPage').disabled = window.currentPage >= totalPages - 1;
-    if (pageInfo) {
-      pageInfo.innerText = `Strona ${window.currentPage + 1}/${totalPages}`;
-    }
-    const pageDiv = document.createElement("div");
-    pageDiv.className = "page";
-    pageDiv.setAttribute("data-page", window.currentPage);
-    pageDiv.setAttribute("data-layout", layout);
-    pageDiv.style.display = "grid";
-    pageDiv.style.gridTemplateColumns = gridColumns;
-    pageDiv.style.gap = "25px";
-    pageDiv.style.padding = "20px";
-    container.appendChild(pageDiv);
-    pageProducts.forEach((p, pageIndex) => {
-      if (!p || !p.indeks) {
-        console.warn(`Produkt o indeksie ${startIndex + pageIndex} jest nieprawidłowy lub brak indeksu`, p);
-        return;
-      }
-      const globalIndex = startIndex + pageIndex;
-      const item = document.createElement("div");
-      item.className = layout === "1" || layout === "2" ? "item item-large" : "item";
-      const edit = window.productEdits[globalIndex] || {};
-      const pageEdit = window.pageEdits[window.currentPage] || {};
-      const finalEdit = { ...pageEdit, ...edit };
-      const nazwaFontSize = finalEdit.nazwaFontSize === 'small' ? '12px' : finalEdit.nazwaFontSize === 'large' ? '16px' : '14px';
-      const indeksFontSize = finalEdit.indeksFontSize === 'small' ? '10px' : finalEdit.indeksFontSize === 'large' ? '14px' : '12px';
-      const rankingFontSize = finalEdit.rankingFontSize === 'small' ? '10px' : finalEdit.rankingFontSize === 'large' ? '14px' : '12px';
-      const cenaFontSize = finalEdit.cenaFontSize === 'small' ? '12px' : finalEdit.cenaFontSize === 'large' ? '16px' : '14px';
-      const img = document.createElement('img');
-      img.src = window.uploadedImages[p.indeks] || p.img || "https://dummyimage.com/120x84/eee/000&text=brak";
-      img.style.width = layout === "1" || layout === "2" ? '200px' : '120px';
-      img.style.height = layout === "1" || layout === "2" ? '140px' : '84px';
-      img.style.objectFit = "contain";
-      img.onerror = () => {
-        console.warn(`Błąd ładowania obrazu dla produktu ${p.indeks}`);
-        img.src = "https://dummyimage.com/120x84/eee/000&text=brak";
-      };
-      const details = document.createElement('div');
-      details.className = "details";
-      details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}; font-size: ${nazwaFontSize}">${p.nazwa || 'Brak nazwy'}</b><br>` +
-                         `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}; font-size: ${indeksFontSize}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
-      if (showRanking && p.ranking) {
-        details.innerHTML += `<br><span style="font-family: ${finalEdit.rankingFont || 'Arial'}; color: ${finalEdit.rankingFontColor || '#000000'}; font-size: ${rankingFontSize}">RANKING: ${p.ranking}</span>`;
-      }
-      if (showCena && p.cena) {
-        const currency = finalEdit.priceCurrency || window.globalCurrency;
-        const currencySymbol = currency === 'EUR' ? '€' : '£';
-        const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-        details.innerHTML += `<br><span style="font-family: ${finalEdit.cenaFont || 'Arial'}; color: ${finalEdit.cenaFontColor || '#000000'}; font-size: ${cenaFontSize}">${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}</span>`;
-      }
-      if (showLogo && layout === "4" && (finalEdit.logo || (p.producent && window.manufacturerLogos[p.producent]))) {
-        const logoImg = document.createElement('img');
-        logoImg.src = finalEdit.logo || window.manufacturerLogos[p.producent] || "https://dummyimage.com/120x60/eee/000&text=brak";
-        logoImg.style.width = '120px';
-        logoImg.style.height = '60px';
-        logoImg.style.objectFit = 'contain';
-        logoImg.style.marginTop = '8px';
-        logoImg.onerror = () => {
-          console.warn(`Błąd ładowania logo dla produktu ${p.indeks}`);
-          logoImg.src = "https://dummyimage.com/120x60/eee/000&text=brak";
-        };
-        details.appendChild(logoImg);
-      }
-      if (showEan && p.ean && p.barcode) {
-        const barcodeImg = document.createElement('img');
-        barcodeImg.src = p.barcode;
-        barcodeImg.style.width = '85px';
-        barcodeImg.style.height = '32px';
-        barcodeImg.style.marginTop = '8px';
-        barcodeImg.onerror = () => {
-          console.warn(`Błąd ładowania kodu kreskowego dla produktu ${p.indeks}`);
-          barcodeImg.src = "https://dummyimage.com/85x32/eee/000&text=brak";
-        };
-        details.appendChild(barcodeImg);
-      }
-      const buttonsContainer = document.createElement('div');
-      buttonsContainer.className = 'buttons-container';
-      buttonsContainer.style.display = 'flex';
-      buttonsContainer.style.gap = '10px';
-      buttonsContainer.style.marginTop = '10px';
-      const editButton = document.createElement('button');
-      editButton.className = 'btn-primary edit-button';
-      editButton.innerHTML = '<i class="fas fa-edit"></i> Edytuj';
-      editButton.onclick = () => {
-        console.log(`Kliknięto Edytuj dla produktu: ${globalIndex}`);
-        window.showEditModal(globalIndex);
-      };
-      const layoutButton = document.createElement('button');
-      layoutButton.className = 'btn-primary layout-button';
-      layoutButton.innerHTML = '<i class="fas fa-object-group"></i> Edytuj układ';
-      layoutButton.onclick = () => {
-        console.log(`Kliknięto Edytuj układ dla produktu: ${globalIndex}`);
-        console.log(`showVirtualEditModal dostępny: ${typeof window.showVirtualEditModal}`);
-        if (typeof window.showVirtualEditModal === 'function') {
-          window.showVirtualEditModal(globalIndex);
-        } else {
-          console.error('Funkcja showVirtualEditModal nie jest zdefiniowana');
-          document.getElementById('debug').innerText = "Błąd: Funkcja edycji układu nie jest dostępna";
-        }
-      };
-      buttonsContainer.appendChild(editButton);
-      buttonsContainer.appendChild(layoutButton);
-      item.appendChild(img);
-      item.appendChild(details);
-      item.appendChild(buttonsContainer);
-      pageDiv.appendChild(item);
-      console.log(`Dodano produkt ${p.indeks} z przyciskami edycji na stronie ${window.currentPage}, fontSizes:`, { nazwaFontSize, indeksFontSize, rankingFontSize, cenaFontSize });
+    console.log('Inicjalizacja kanwy Fabric.js');
+    const canvas = new fabric.Canvas('virtualEditCanvas', {
+      width: 280,
+      height: 402
     });
-    console.log(`renderCatalog zakończony, strona: ${window.currentPage}, produkty: ${pageProducts.length}, totalPages: ${totalPages}`);
-  } catch (e) {
-    console.error('Błąd renderowania katalogu:', e);
-    document.getElementById('debug').innerText = `Błąd renderowania katalogu: ${e.message}`;
-  }
-}
-
-function showPage(pageNum) {
-  try {
-    const totalPages = Math.ceil(window.products.length / getItemsPerPage());
-    window.currentPage = Math.max(0, Math.min(pageNum, totalPages - 1));
-    console.log(`showPage wywołany, strona: ${window.currentPage}`);
-    renderCatalog();
-  } catch (e) {
-    console.error('Błąd przełączania strony:', e);
-    document.getElementById('debug').innerText = `Błąd przełączania strony: ${e.message}`;
-  }
-}
-
-function getItemsPerPage() {
-  const layout = document.getElementById('layoutSelect')?.value || "16";
-  if (layout === "1") return 1;
-  else if (layout === "2") return 2;
-  else if (layout === "4") return 4;
-  else if (layout === "8") return 8;
-  else if (layout === "16") return 16;
-  else if (layout === "4-2-4") return 10;
-  return 16;
-}
-
-function importExcel() {
-  try {
-    const file = document.getElementById('excelFile').files[0];
-    if (!file) {
-      alert('Wybierz plik Excel lub CSV do importu');
-      document.getElementById('debug').innerText = "Błąd: Nie wybrano pliku";
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = async (e) => {
+    console.log('Kanwa Fabric.js zainicjalizowana');
+    const canvasWidth = 280;
+    const canvasHeight = 402;
+    const borderMargin = 10;
+    const contentWidth = canvasWidth - borderMargin * 2;
+    const contentHeight = canvasHeight - borderMargin * 2;
+    console.log('Ładowanie tekstury tła');
+    if (edit.backgroundTexture) {
       try {
-        if (!window.jsonProducts || window.jsonProducts.length === 0) {
-          console.log("jsonProducts niezaładowane, wywołuję loadProducts");
-          await window.loadProducts();
-        }
-        let rows;
-        if (file.name.endsWith('.csv')) {
-          const parsed = Papa.parse(e.target.result, { header: true, skipEmptyLines: true });
-          rows = parsed.data;
-          if (rows.length === 0) {
-            console.error("Plik CSV jest pusty lub niepoprawny");
-            document.getElementById('debug').innerText = "Błąd: Plik CSV jest pusty";
+        fabric.Image.fromURL(edit.backgroundTexture, (bgImg) => {
+          if (!bgImg) {
+            console.error('Nie udało się załadować tekstury tła:', edit.backgroundTexture);
+            document.getElementById('debug').innerText = "Błąd: Nie udało się załadować tekstury tła";
             return;
           }
-          const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim());
-          rows = rows.map(row => {
-            let obj = {};
-            headers.forEach((header, i) => {
-              const value = row[Object.keys(row)[i]];
-              if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = value || '';
-              if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = value || '';
-              if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
-              if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
-              if (['nazwa', 'name'].some(h => header.includes(h))) obj['nazwa'] = value || '';
-              if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
-            });
-            return obj;
+          bgImg.scaleToWidth(contentWidth);
+          bgImg.set({
+            left: borderMargin,
+            top: borderMargin,
+            opacity: edit.backgroundOpacity || 1.0
           });
-        } else {
-          const workbook = XLSX.read(e.target.result, { type: 'binary' });
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
-          const headers = rows[0].map(h => h.toString().toLowerCase().trim());
-          rows = rows.slice(1).map(row => {
-            let obj = {};
-            headers.forEach((header, i) => {
-              if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = row[i] || '';
-              if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = row[i] || '';
-              if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = row[i] || '';
-              if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = row[i] || '';
-              if (['nazwa', 'name'].some(h => header.includes(h))) obj['nazwa'] = row[i] || '';
-              if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = row[i] || '';
-            });
-            return obj;
+          canvas.setBackgroundImage(bgImg, canvas.renderAll.bind(canvas));
+          console.log('Tekstura tła załadowana');
+        }, { crossOrigin: 'anonymous' });
+      } catch (e) {
+        console.error('Błąd ładowania tekstury tła w podglądzie:', e);
+        document.getElementById('debug').innerText = `Błąd ładowania tekstury tła w podglądzie: ${e.message}`;
+      }
+    }
+    const layout = edit.layout || {};
+    const showRanking = document.getElementById('showRanking')?.checked || false;
+    const showCena = document.getElementById('showCena')?.checked || false;
+    const showEan = document.getElementById('showEan')?.checked || false;
+    const showLogo = document.getElementById('showLogo')?.checked || false;
+    const priceLabel = window.globalLanguage === 'en' ? 'PRICE' : 'CENA';
+    console.log('Ładowanie obrazu produktu');
+    const imageUrl = window.uploadedImages[product.indeks] || product.img || 'https://github.com/MasterMM2025/kreator-katalog/raw/main/zdjecia/[nazwa_pliku].jpg';
+    try {
+      fabric.Image.fromURL(imageUrl, (img) => {
+        if (!img) {
+          console.error('Nie udało się załadować obrazu produktu:', imageUrl);
+          document.getElementById('debug').innerText = "Błąd: Nie udało się załadować obrazu produktu";
+          return;
+        }
+        const layoutImg = layout.image || { x: 0.5, y: 0.05, w: 0.85, h: 0.4, rotation: 0 };
+        const maxW = contentWidth * layoutImg.w;
+        const maxH = contentHeight * layoutImg.h;
+        const scale = Math.min(maxW / img.width, maxH / img.height);
+        img.set({
+          left: borderMargin + contentWidth * layoutImg.x,
+          top: borderMargin + contentHeight * layoutImg.y,
+          scaleX: scale,
+          scaleY: scale,
+          angle: layoutImg.rotation || 0,
+          selectable: true,
+          id: 'image',
+          hasBorders: true,
+          lockScalingX: false,
+          lockScalingY: false,
+          lockRotation: false,
+          originX: 'center',
+          originY: 'top'
+        });
+        canvas.add(img);
+        console.log('Obraz produktu załadowany:', imageUrl, { left: img.left, top: img.top, width: img.getScaledWidth(), height: img.getScaledHeight(), angle: img.angle });
+      }, { crossOrigin: 'anonymous' });
+    } catch (e) {
+      console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
+      document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`);
+    }
+    let logoImgInstance;
+    if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
+      console.log('Ładowanie logo');
+      const logoUrl = edit.logo || window.manufacturerLogos[product.producent] || 'https://github.com/MasterMM2025/kreator-katalog/raw/main/zdjecia/[nazwa_pliku].jpg';
+      try {
+        fabric.Image.fromURL(logoUrl, (logoImg) => {
+          if (!logoImg) {
+            console.error('Nie udało się załadować logo:', logoUrl);
+            document.getElementById('debug').innerText = "Błąd: Nie udało się załadować logo";
+            return;
+          }
+          const layoutLogo = layout.logo || { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 };
+          const maxLogoWidth = contentWidth * layoutLogo.w;
+          const maxLogoHeight = contentHeight * layoutLogo.h;
+          const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height);
+          logoImg.set({
+            left: borderMargin + (contentWidth * layoutLogo.x - (maxLogoWidth * scale) / 2),
+            top: borderMargin + contentHeight * layoutLogo.y,
+            scaleX: scale,
+            scaleY: scale,
+            angle: layoutLogo.rotation || 0,
+            selectable: true,
+            id: 'logo',
+            hasBorders: true,
+            lockScalingX: false,
+            lockScalingY: false,
+            lockRotation: false,
+            originX: 'center',
+            originY: 'top'
+          });
+          canvas.add(logoImg);
+          logoImgInstance = logoImg;
+          console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, width: logoImg.getScaledWidth(), height: logoImg.getScaledHeight(), angle: logoImg.angle });
+        }, { crossOrigin: 'anonymous' });
+      } catch (e) {
+        console.error('Błąd ładowania logo w podglądzie:', e);
+        document.getElementById('debug').innerText = `Błąd ładowania logo w podglądzie: ${e.message}`);
+      }
+    }
+    console.log('Tworzenie ramki');
+    const borderRect = new fabric.Rect({
+      left: borderMargin,
+      top: borderMargin,
+      width: contentWidth,
+      height: contentHeight,
+      fill: 'transparent',
+      stroke: edit.borderColor || '#000000',
+      strokeWidth: 2,
+      strokeDashArray: edit.borderStyle === 'dashed' ? [5, 5] : edit.borderStyle === 'dotted' ? [2, 2] : null,
+      rx: 5,
+      ry: 5,
+      selectable: false
+    });
+    canvas.add(borderRect);
+    console.log('Ramka dodana');
+    console.log('Tworzenie tekstu nazwy');
+    const layoutName = layout.name || { x: 0.5, y: 0.5, w: 0.85, h: 0.1 };
+    const maxNameWidth = contentWidth * layoutName.w;
+    const nazwaFontSize = edit.nazwaFontSize === 'small' ? 11 : edit.nazwaFontSize === 'large' ? 14 : 12;
+    const wrappedName = window.wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, nazwaFontSize, edit.nazwaFont, canvas).split('\n').slice(0, 3).join('\n');
+    const nazwaText = new fabric.Text(wrappedName, {
+      left: borderMargin + contentWidth * layoutName.x,
+      top: borderMargin + contentHeight * layoutName.y,
+      fontSize: nazwaFontSize,
+      fill: edit.nazwaFontColor,
+      fontFamily: edit.nazwaFont,
+      width: maxNameWidth,
+      textAlign: 'center',
+      selectable: true,
+      id: 'name',
+      hasBorders: true,
+      lockScalingX: true,
+      lockScalingY: true,
+      lockRotation: true,
+      originX: 'center',
+      originY: 'top'
+    });
+    canvas.add(nazwaText);
+    console.log('Tekst nazwy dodany:', wrappedName, `fontSize: ${nazwaFontSize}`);
+    console.log('Tworzenie tekstu indeksu');
+    const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.85, h: 0.1 };
+    const maxIndexWidth = contentWidth * layoutIndex.w;
+    const indeksFontSize = edit.indeksFontSize === 'small' ? 9 : edit.indeksFontSize === 'large' ? 11 : 10;
+    const wrappedIndex = window.wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, indeksFontSize, edit.indeksFont, canvas).split('\n').slice(0, 3).join('\n');
+    const indeksText = new fabric.Text(wrappedIndex, {
+      left: borderMargin + contentWidth * layoutIndex.x,
+      top: borderMargin + contentHeight * layoutIndex.y,
+      fontSize: indeksFontSize,
+      fill: edit.indeksFontColor,
+      fontFamily: edit.indeksFont,
+      width: maxIndexWidth,
+      textAlign: 'center',
+      selectable: true,
+      id: 'index',
+      hasBorders: true,
+      lockScalingX: true,
+      lockScalingY: true,
+      lockRotation: true,
+      originX: 'center',
+      originY: 'top'
+    });
+    canvas.add(indeksText);
+    console.log('Tekst indeksu dodany:', wrappedIndex, `fontSize: ${indeksFontSize}`);
+    let rankingText;
+    if (showRanking && product.ranking) {
+      console.log('Tworzenie tekstu rankingu');
+      const layoutRanking = layout.ranking || { x: 0.5, y: 0.85, w: 0.85, h: 0.1 };
+      const maxRankingWidth = contentWidth * layoutRanking.w;
+      const rankingFontSize = edit.rankingFontSize === 'small' ? 9 : edit.rankingFontSize === 'large' ? 11 : 10;
+      const wrappedRanking = window.wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, rankingFontSize, edit.rankingFont, canvas).split('\n').slice(0, 3).join('\n');
+      rankingText = new fabric.Text(wrappedRanking, {
+        left: borderMargin + contentWidth * layoutRanking.x,
+        top: borderMargin + contentHeight * layoutRanking.y,
+        fontSize: rankingFontSize,
+        fill: edit.rankingFontColor,
+        fontFamily: edit.rankingFont,
+        width: maxRankingWidth,
+        textAlign: 'center',
+        selectable: true,
+        id: 'ranking',
+        hasBorders: true,
+        lockScalingX: true,
+        lockScalingY: true,
+        lockRotation: true,
+        originX: 'center',
+        originY: 'top'
+      });
+      canvas.add(rankingText);
+      console.log('Tekst rankingu dodany:', wrappedRanking, `fontSize: ${rankingFontSize}`);
+    }
+    let cenaText;
+    if (showCena && product.cena) {
+      console.log('Tworzenie tekstu ceny');
+      const layoutPrice = layout.price || { x: 0.5, y: 0.65, w: 0.85, h: 0.1 };
+      const maxPriceWidth = contentWidth * layoutPrice.w;
+      const cenaFontSize = edit.cenaFontSize === 'small' ? 12 : edit.cenaFontSize === 'large' ? 16 : 14;
+      const wrappedPrice = window.wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, cenaFontSize, edit.cenaFont, canvas).split('\n').slice(0, 3).join('\n');
+      cenaText = new fabric.Text(wrappedPrice, {
+        left: borderMargin + contentWidth * layoutPrice.x,
+        top: borderMargin + contentHeight * layoutPrice.y,
+        fontSize: cenaFontSize,
+        fill: edit.cenaFontColor,
+        fontFamily: edit.cenaFont,
+        width: maxPriceWidth,
+        textAlign: 'center',
+        selectable: true,
+        id: 'price',
+        hasBorders: true,
+        lockScalingX: true,
+        lockScalingY: true,
+        lockRotation: true,
+        originX: 'center',
+        originY: 'top'
+      });
+      canvas.add(cenaText);
+      console.log('Tekst ceny dodany:', wrappedPrice, `fontSize: ${cenaFontSize}`);
+    }
+    let barcodeImgInstance;
+    if (showEan && product.ean && product.barcode) {
+      console.log('Ładowanie kodu kreskowego');
+      try {
+        fabric.Image.fromURL(product.barcode, (barcodeImg) => {
+          if (!barcodeImg) {
+            console.error('Nie udało się załadować kodu kreskowego:', product.barcode);
+            document.getElementById('debug').innerText = "Błąd: Nie udało się załadować kodu kreskowego";
+            return;
+          }
+          const layoutBarcode = layout.barcode || { x: 0.5, y: 0.95, w: 0.85, h: 0.1, rotation: 0 };
+          const maxBarcodeWidth = contentWidth * layoutBarcode.w;
+          const maxBarcodeHeight = contentHeight * layoutBarcode.h;
+          const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
+          barcodeImg.set({
+            left: borderMargin + (contentWidth * layoutBarcode.x - (maxBarcodeWidth * scale) / 2),
+            top: borderMargin + contentHeight * layoutBarcode.y,
+            scaleX: scale,
+            scaleY: scale,
+            angle: layoutBarcode.rotation || 0,
+            selectable: true,
+            id: 'barcode',
+            hasBorders: true,
+            lockScalingX: false,
+            lockScalingY: false,
+            lockRotation: false,
+            originX: 'center',
+            originY: 'top'
+          });
+          canvas.add(barcodeImg);
+          barcodeImgInstance = barcodeImg;
+          console.log('Kod kreskowy dodany:', { left: barcodeImg.left, top: barcodeImg.top, width: barcodeImg.getScaledWidth(), height: barcodeImg.getScaledHeight(), angle: barcodeImg.angle });
+        }, { crossOrigin: 'anonymous' });
+      } catch (e) {
+        console.error('Błąd ładowania kodu kreskowego w podglądzie:', e);
+        document.getElementById('debug').innerText = `Błąd ładowania kodu kreskowego w podglądzie: ${e.message}`);
+      }
+    }
+    console.log('Dodawanie zdarzenia object:moving');
+    canvas.on('object:moving', (e) => {
+      const obj = e.target;
+      const objWidth = obj.getScaledWidth();
+      const objHeight = obj.getScaledHeight();
+      const centerX = borderMargin + contentWidth / 2;
+      const minTop = borderMargin;
+      const maxTop = borderMargin + contentHeight - objHeight;
+      const minLeft = centerX - contentWidth / 2;
+      const maxLeft = centerX + contentWidth / 2 - objWidth;
+      if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
+        obj.set({
+          left: borderMargin + contentWidth / 2,
+          top: Math.max(minTop, Math.min(obj.top, maxTop))
+        });
+      } else {
+        obj.set({
+          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+          top: Math.max(minTop, Math.min(obj.top, maxTop))
+        });
+      }
+      console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle || 0}`);
+    });
+    console.log('Dodawanie zdarzenia object:scaling');
+    canvas.on('object:scaling', (e) => {
+      const obj = e.target;
+      if (obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo') {
+        const maxW = contentWidth * (obj.id === 'image' ? 0.85 : obj.id === 'barcode' ? 0.85 : 0.3);
+        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1 : 0.1);
+        const objWidth = obj.getScaledWidth();
+        const objHeight = obj.getScaledHeight();
+        if (objWidth > maxW || objHeight > maxH) {
+          const scale = Math.min(maxW / objWidth, maxH / objHeight);
+          obj.set({
+            scaleX: scale * obj.scaleX,
+            scaleY: scale * obj.scaleY
           });
         }
-        console.log("Przetworzone wiersze CSV/Excel:", rows);
-        const newProducts = [];
-        rows.forEach(row => {
-          const indeks = row['indeks'] || row[0];
-          if (indeks) {
-            const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString()) || {};
-            let barcodeImg = null;
-            if (row['ean'] && /^\d{12,13}$/.test(row['ean'])) {
-              try {
-                const barcodeCanvas = document.createElement('canvas');
-                JsBarcode(barcodeCanvas, row['ean'], {
-                  format: "EAN13",
-                  width: 1.6,
-                  height: 32,
-                  displayValue: true,
-                  fontSize: 9,
-                  margin: 0
-                });
-                barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
-              } catch (e) {
-                console.error(`Błąd generowania kodu kreskowego dla EAN: ${row['ean']}`, e);
-                document.getElementById('debug').innerText = "Błąd generowania kodu kreskowego";
-              }
+        const centerX = borderMargin + contentWidth / 2;
+        const minLeft = centerX - contentWidth / 2;
+        const maxLeft = centerX + contentWidth / 2 - objWidth;
+        const minTop = borderMargin;
+        const maxTop = borderMargin + contentHeight - objHeight;
+        obj.set({
+          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+          top: Math.max(minTop, Math.min(obj.top, maxTop))
+        });
+        console.log(`Skalowano: ${obj.id}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle || 0}`);
+      }
+    });
+    console.log('Dodawanie zdarzenia object:rotating');
+    canvas.on('object:rotating', (e) => {
+      const obj = e.target;
+      if (obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo') {
+        console.log(`Obrócono: ${obj.id}, angle: ${obj.angle}`);
+      }
+    });
+    console.log('Dodawanie zdarzenia object:selected');
+    canvas.on('object:selected', (e) => {
+      const obj = e.target;
+      const editPanel = document.getElementById('editPanel');
+      if (!editPanel) {
+        console.error('Nie znaleziono elementu editPanel');
+        document.getElementById('debug').innerText = "Błąd: Brak panelu edycji";
+        return;
+      }
+      editPanel.style.display = obj.type === 'text' ? 'block' : 'none';
+      console.log('editPanel wyświetlony:', editPanel);
+      if (obj.type === 'text') {
+        document.getElementById('fontSelect').value = obj.fontFamily || 'Arial';
+        document.getElementById('colorSelect').value = obj.fill || '#000000';
+        const fontSizeKey = obj.id === 'name' ? 'nazwaFontSize' : obj.id === 'index' ? 'indeksFontSize' : obj.id === 'ranking' ? 'rankingFontSize' : 'cenaFontSize';
+        document.getElementById('sizeSelect').value = edit[fontSizeKey] || (obj.fontSize <= 10 ? 'small' : obj.fontSize >= 16 ? 'large' : 'medium');
+      }
+      document.getElementById('borderStyleSelect').value = edit.borderStyle || 'solid';
+      document.getElementById('borderColorSelect').value = edit.borderColor || '#000000';
+      document.getElementById('backgroundOpacitySelect').value = edit.backgroundOpacity || 1.0;
+      console.log(`Panel edycji wyświetlony dla obiektu: ${obj.id}`);
+      window.applyTextEdit = function() {
+        try {
+          console.log('applyTextEdit wywołany');
+          if (obj.type === 'text') {
+            const layoutKey = obj.id;
+            const maxWidth = contentWidth * (layout[layoutKey]?.w || 0.85);
+            const fontSize = document.getElementById('sizeSelect').value === 'small' ? (layoutKey === 'name' ? 11 : layoutKey === 'price' ? 12 : 9) :
+                            document.getElementById('sizeSelect').value === 'large' ? (layoutKey === 'name' ? 14 : layoutKey === 'price' ? 16 : 11) :
+                            (layoutKey === 'name' ? 12 : layoutKey === 'price' ? 14 : 10);
+            const fontFamily = document.getElementById('fontSelect').value;
+            const fill = document.getElementById('colorSelect').value;
+            let textContent = obj.text;
+            if (layoutKey === 'name') {
+              textContent = product.nazwa || 'Brak nazwy';
+            } else if (layoutKey === 'index') {
+              textContent = `Indeks: ${product.indeks || '-'}`;
+            } else if (layoutKey === 'ranking') {
+              textContent = `RANKING: ${product.ranking || ''}`;
+            } else if (layoutKey === 'price') {
+              textContent = `${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`;
             }
-            newProducts.push({
-              nazwa: row['nazwa'] || matched.nazwa || '',
-              ean: row['ean'] || matched.ean || '',
-              ranking: row['ranking'] || matched.ranking || '',
-              cena: row['cena'] || matched.cena || '',
-              indeks: indeks.toString(),
-              img: window.uploadedImages[indeks.toString()] || matched.img || null,
-              barcode: barcodeImg || matched.barcode || null,
-              producent: row['producent'] || matched.producent || ''
+            const wrappedText = window.wrapText(textContent, maxWidth, fontSize, fontFamily, canvas).split('\n').slice(0, 3).join('\n');
+            obj.set({
+              fontFamily: fontFamily,
+              fill: fill,
+              fontSize: fontSize,
+              text: wrappedText,
+              width: maxWidth,
+              textAlign: 'center',
+              left: borderMargin + contentWidth / 2,
+              originX: 'center'
             });
+            const objHeight = obj.getScaledHeight();
+            obj.set({
+              top: Math.max(borderMargin, Math.min(obj.top, borderMargin + contentHeight - objHeight))
+            });
+            canvas.renderAll();
+            console.log(`Zastosowano edycję tekstu dla ${layoutKey}: fontSize=${fontSize}`);
+          }
+          const borderStyle = document.getElementById('borderStyleSelect').value;
+          const borderColor = document.getElementById('borderColorSelect').value;
+          const backgroundOpacity = parseFloat(document.getElementById('backgroundOpacitySelect').value);
+          const backgroundTextureInput = document.getElementById('backgroundTextureSelect').files[0];
+          if (backgroundTextureInput) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              fabric.Image.fromURL(e.target.result, (bgImg) => {
+                if (!bgImg) {
+                  console.error('Nie udało się załadować nowej tekstury tła');
+                  document.getElementById('debug').innerText = "Błąd: Nie udało się załadować nowej tekstury tła";
+                  return;
+                }
+                bgImg.scaleToWidth(contentWidth);
+                bgImg.set({ left: borderMargin, top: borderMargin, opacity: backgroundOpacity });
+                canvas.setBackgroundImage(bgImg, canvas.renderAll.bind(canvas));
+                edit.backgroundTexture = e.target.result;
+                edit.backgroundOpacity = backgroundOpacity;
+                console.log('Nowa tekstura tła załadowana');
+              }, { crossOrigin: 'anonymous' });
+            };
+            reader.readAsDataURL(backgroundTextureInput);
+          }
+          borderRect.set({
+            stroke: borderColor,
+            strokeDashArray: borderStyle === 'dashed' ? [5, 5] : borderStyle === 'dotted' ? [2, 2] : null
+          });
+          edit.borderStyle = borderStyle;
+          edit.borderColor = borderColor;
+          edit.backgroundOpacity = backgroundOpacity;
+          canvas.renderAll();
+          console.log('Zastosowano edycję tekstu');
+        } catch (e) {
+          console.error('Błąd stosowania edycji tekstu:', e);
+          document.getElementById('debug').innerText = `Błąd stosowania edycji tekstu: ${e.message}`);
+        }
+      };
+    });
+    console.log('Dodawanie zdarzenia dla przycisku saveVirtualEdit');
+    const saveButton = document.getElementById('saveVirtualEdit');
+    if (!saveButton) {
+      console.error('Nie znaleziono elementu saveVirtualEdit');
+      document.getElementById('debug').innerText = "Błąd: Brak przycisku zapisu";
+      return;
+    }
+    saveButton.onclick = () => {
+      try {
+        console.log('saveVirtualEdit wywołany');
+        const objects = canvas.getObjects();
+        const newLayout = {
+          image: layout.image || { x: 0.5, y: 0.05, w: 0.85, h: 0.4, rotation: 0 },
+          name: layout.name || { x: 0.5, y: 0.5, w: 0.85, h: 0.1 },
+          price: layout.price || { x: 0.5, y: 0.65, w: 0.85, h: 0.1 },
+          index: layout.index || { x: 0.5, y: 0.75, w: 0.85, h: 0.1 },
+          ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.85, h: 0.1 },
+          barcode: layout.barcode || { x: 0.5, y: 0.95, w: 0.85, h: 0.1, rotation: 0 },
+          logo: layout.logo || { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 }
+        };
+        objects.forEach(obj => {
+          if (obj.id) {
+            const objWidth = obj.getScaledWidth();
+            const objHeight = obj.getScaledHeight();
+            const centerX = borderMargin + contentWidth / 2;
+            const centerY = borderMargin + contentHeight / 2;
+            const normalizedX = (obj.left + objWidth / 2 - centerX) / contentWidth + 0.5;
+            const normalizedY = (obj.top - borderMargin) / contentHeight;
+            const normalizedW = objWidth / contentWidth;
+            const normalizedH = objHeight / contentHeight;
+            newLayout[obj.id] = {
+              x: Math.max(0, Math.min(normalizedX, 1)),
+              y: Math.max(0, Math.min(normalizedY, 1)),
+              w: Math.min(normalizedW, obj.id === 'image' ? 0.85 : obj.id === 'barcode' ? 0.85 : 0.3),
+              h: Math.min(normalizedH, obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1 : 0.1),
+              rotation: obj.angle || 0
+            };
+            console.log(`Zapisano pozycję dla ${obj.id}:`, newLayout[obj.id]);
           }
         });
-        console.log("Nowe produkty:", newProducts);
-        if (newProducts.length) {
-          window.products = newProducts;
-          window.productEdits = {};
-          window.pageEdits = {};
-          window.currentPage = 0; // Reset strony po imporcie
-          window.renderCatalog();
-          document.getElementById('pdfButton').disabled = false;
-          document.getElementById('previewButton').disabled = false;
-          document.getElementById('debug').innerText = `Zaimportowano ${newProducts.length} produktów`;
-        } else {
-          document.getElementById('debug').innerText = "Brak produktów po imporcie. Sprawdź format pliku.";
-        }
+        // Zachowaj domyślne wyśrodkowanie dla tekstu
+        ['name', 'price', 'index', 'ranking'].forEach(key => {
+          if (layout[key]) {
+            newLayout[key].x = 0.5;
+            newLayout[key].w = layout[key].w;
+          }
+        });
+        window.productEdits[productIndex] = {
+          ...window.productEdits[productIndex],
+          nazwaFont: nazwaText.fontFamily || edit.nazwaFont,
+          nazwaFontColor: nazwaText.fill || edit.nazwaFontColor,
+          nazwaFontSize: edit.nazwaFontSize || (nazwaText.fontSize <= 11 ? 'small' : nazwaText.fontSize >= 14 ? 'large' : 'medium'),
+          indeksFont: indeksText.fontFamily || edit.indeksFont,
+          indeksFontColor: indeksText.fill || edit.indeksFontColor,
+          indeksFontSize: edit.indeksFontSize || (indeksText.fontSize <= 9 ? 'small' : indeksText.fontSize >= 11 ? 'large' : 'medium'),
+          rankingFont: rankingText ? rankingText.fontFamily || edit.rankingFont : edit.rankingFont,
+          rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
+          rankingFontSize: edit.rankingFontSize || (rankingText && rankingText.fontSize <= 9 ? 'small' : rankingText && rankingText.fontSize >= 11 ? 'large' : 'medium'),
+          cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
+          cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
+          cenaFontSize: edit.cenaFontSize || (cenaText && cenaText.fontSize <= 12 ? 'small' : cenaText && cenaText.fontSize >= 16 ? 'large' : 'medium'),
+          priceCurrency: edit.priceCurrency || window.globalCurrency || 'EUR',
+          borderStyle: edit.borderStyle || 'solid',
+          borderColor: edit.borderColor || '#000000',
+          backgroundTexture: edit.backgroundTexture || null,
+          backgroundOpacity: edit.backgroundOpacity || 1.0,
+          logo: edit.logo || (product.producent && window.manufacturerLogos[product.producent]) || null,
+          layout: newLayout
+        };
+        console.log('Zapisano wirtualną edycję dla produktu:', productIndex, window.productEdits[productIndex]);
+        console.log('Zapisane pozycje layoutu:', newLayout);
+        canvas.dispose();
+        modal.style.display = 'none';
+        window.renderCatalog();
+        window.previewPDF();
       } catch (e) {
-        console.error("Błąd przetwarzania pliku Excel/CSV:", e);
-        document.getElementById('debug').innerText = `Błąd przetwarzania pliku Excel/CSV: ${e.message}`;
+        console.error('Błąd zapisywania wirtualnej edycji:', e);
+        document.getElementById('debug').innerText = `Błąd zapisywania wirtualnej edycji: ${e.message}`);
       }
     };
-    reader.onerror = () => {
-      console.error("Błąd odczytu pliku");
-      document.getElementById('debug').innerText = "Błąd odczytu pliku CSV/Excel";
-    };
-    if (file.name.endsWith('.csv')) reader.readAsText(file);
-    else reader.readAsBinaryString(file);
+    console.log('showVirtualEditModal zakończony');
   } catch (e) {
-    console.error('Błąd importu pliku Excel/CSV:', e);
-    document.getElementById('debug').innerText = `Błąd importu pliku Excel/CSV: ${e.message}`;
+    console.error('Błąd pokazywania modalu edycji wirtualnej:', e);
+    document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji wirtualnej: ${e.message}`);
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  try {
-    console.log('DOMContentLoaded wywołany');
-    const imageInput = document.getElementById("imageInput");
-    const uploadArea = document.getElementById("uploadArea");
-    if (imageInput && uploadArea) {
-      imageInput.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-          console.log(`Zmiana w imageInput, pliki: ${e.target.files.length}`);
-          handleFiles(e.target.files, loadCustomImages);
-        }
-      });
-      uploadArea.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        uploadArea.classList.add("dragover");
-      });
-      uploadArea.addEventListener("dragleave", () => {
-        uploadArea.classList.remove("dragover");
-      });
-      uploadArea.addEventListener("drop", (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove("dragover");
-        if (e.dataTransfer.files.length > 0) {
-          console.log(`Drop zdjęć: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomImages);
-        }
-      });
-      uploadArea.querySelector('.file-label').addEventListener("click", (e) => {
-        e.preventDefault();
-        imageInput.click();
-      });
-    } else {
-      console.error("Nie znaleziono elementów: imageInput lub uploadArea");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi zdjęć";
-    }
-    const bannerFileInput = document.getElementById("bannerFileInput");
-    const bannerUpload = document.getElementById("bannerUpload");
-    if (bannerFileInput && bannerUpload) {
-      bannerFileInput.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-          console.log(`Zmiana w bannerFileInput, pliki: ${e.target.files.length}`);
-          handleFiles(e.target.files, loadCustomBanner);
-        }
-      });
-      bannerUpload.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        bannerUpload.classList.add("dragover");
-      });
-      bannerUpload.addEventListener("dragleave", () => {
-        bannerUpload.classList.remove("dragover");
-      });
-      bannerUpload.addEventListener("drop", (e) => {
-        e.preventDefault();
-        bannerUpload.classList.remove("dragover");
-        if (e.dataTransfer.files.length > 0) {
-          console.log(`Drop banera: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomBanner);
-        }
-      });
-      bannerUpload.querySelector('.file-label').addEventListener("click", (e) => {
-        e.preventDefault();
-        bannerFileInput.click();
-      });
-    } else {
-      console.error("Nie znaleziono elementów: bannerFileInput lub bannerUpload");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi banera";
-    }
-    const backgroundFileInput = document.getElementById("backgroundFileInput");
-    const backgroundUpload = document.getElementById("backgroundUpload");
-    if (backgroundFileInput && backgroundUpload) {
-      backgroundFileInput.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-          console.log(`Zmiana w backgroundFileInput, pliki: ${e.target.files.length}`);
-          handleFiles(e.target.files, loadCustomBackground);
-        }
-      });
-      backgroundUpload.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        backgroundUpload.classList.add("dragover");
-      });
-      backgroundUpload.addEventListener("dragleave", () => {
-        backgroundUpload.classList.remove("dragover");
-      });
-      backgroundUpload.addEventListener("drop", (e) => {
-        e.preventDefault();
-        backgroundUpload.classList.remove("dragover");
-        if (e.dataTransfer.files.length > 0) {
-          console.log(`Drop tła: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomBackground);
-        }
-      });
-      backgroundUpload.querySelector('.file-label').addEventListener("click", (e) => {
-        e.preventDefault();
-        backgroundFileInput.click();
-      });
-    } else {
-      console.error("Nie znaleziono elementów: backgroundFileInput lub backgroundUpload");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi tła";
-    }
-    const coverFileInput = document.getElementById("coverFileInput");
-    const coverUpload = document.getElementById("coverUpload");
-    if (coverFileInput && coverUpload) {
-      coverFileInput.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-          console.log(`Zmiana w coverFileInput, pliki: ${e.target.files.length}`);
-          handleFiles(e.target.files, loadCustomCover);
-        }
-      });
-      coverUpload.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        coverUpload.classList.add("dragover");
-      });
-      coverUpload.addEventListener("dragleave", () => {
-        coverUpload.classList.remove("dragover");
-      });
-      coverUpload.addEventListener("drop", (e) => {
-        e.preventDefault();
-        coverUpload.classList.remove("dragover");
-        if (e.dataTransfer.files.length > 0) {
-          console.log(`Drop okładki: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomCover);
-        }
-      });
-      coverUpload.querySelector('.file-label').addEventListener("click", (e) => {
-        e.preventDefault();
-        coverFileInput.click();
-      });
-    } else {
-      console.error("Nie znaleziono elementów: coverFileInput lub coverUpload");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi okładki";
-    }
-    const excelFileInput = document.getElementById("excelFile");
-    const fileLabelWrapper = document.querySelector(".file-label-wrapper");
-    if (excelFileInput && fileLabelWrapper) {
-      excelFileInput.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-          console.log(`Zmiana w excelFileInput, plik: ${e.target.files[0].name}`);
-          importExcel();
-        }
-      });
-      fileLabelWrapper.addEventListener("click", (e) => {
-        e.preventDefault();
-        excelFileInput.click();
-      });
-    } else {
-      console.error("Nie znaleziono elementów: excelFileInput lub fileLabelWrapper");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi importu Excel";
-    }
-    const currencySelect = document.getElementById('currencySelect');
-    if (currencySelect) {
-      currencySelect.addEventListener('change', (e) => {
-        window.globalCurrency = e.target.value;
-        console.log(`Zmieniono walutę na: ${window.globalCurrency}`);
-        window.currentPage = 0; // Reset strony po zmianie waluty
-        window.renderCatalog();
-      });
-    }
-    const languageSelect = document.getElementById('languageSelect');
-    if (languageSelect) {
-      languageSelect.addEventListener('change', (e) => {
-        window.globalLanguage = e.target.value;
-        console.log(`Zmieniono język na: ${window.globalLanguage}`);
-        window.currentPage = 0; // Reset strony po zmianie języka
-        window.renderCatalog();
-      });
-    }
-    const layoutSelect = document.getElementById('layoutSelect');
-    if (layoutSelect) {
-      layoutSelect.addEventListener('change', (e) => {
-        window.currentPage = 0; // Reset strony po zmianie układu
-        window.renderCatalog();
-      });
-    }
-    const pageEditButton = document.createElement('button');
-    pageEditButton.className = 'btn-secondary';
-    pageEditButton.innerHTML = '<i class="fas fa-file-alt"></i> Edytuj stronę PDF';
-    pageEditButton.onclick = () => {
-      console.log('Kliknięto Edytuj stronę PDF');
-      window.showPageEditModal(window.currentPage);
-    };
-    document.querySelector('.improved-panel').appendChild(pageEditButton);
-    const previewButton = document.getElementById('previewButton');
-    if (previewButton) {
-      previewButton.addEventListener('click', () => {
-        console.log('Kliknięto Podgląd PDF');
-        if (typeof window.previewPDF === 'function') {
-          window.previewPDF();
-        } else {
-          console.error('Funkcja previewPDF nie jest zdefiniowana');
-          document.getElementById('debug').innerText = "Błąd: Funkcja podglądu PDF nie jest dostępna";
-        }
-      });
-    } else {
-      console.error("Nie znaleziono elementu previewButton");
-      document.getElementById('debug').innerText = "Błąd: Brak przycisku podglądu PDF";
-    }
-    window.loadProducts();
-  } catch (e) {
-    console.error('Błąd inicjalizacji zdarzeń DOM:', e);
-    document.getElementById('debug').innerText = `Błąd inicjalizacji zdarzeń DOM: ${e.message}`;
-  }
-});
-window.importExcel = importExcel;
-window.renderCatalog = renderCatalog;
-window.showBannerModal = showBannerModal;
-window.hideBannerModal = hideBannerModal;
-window.loadBanners = loadBanners;
-window.selectBanner = selectBanner;
-window.loadProducts = loadProducts;
-window.showPage = showPage;
+window.showVirtualEditModal = showVirtualEditModal;
+window.applyTextEdit = window.applyTextEdit || function() {};
+
+console.log('kreator3-1.js funkcje przypisane do window');
