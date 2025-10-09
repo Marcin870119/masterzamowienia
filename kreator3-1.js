@@ -177,7 +177,7 @@ function showVirtualEditModal(productIndex) {
         const maxH = contentHeight * layoutImg.h;
         const scale = Math.min(maxW / img.width, maxH / img.height);
         img.set({
-          left: borderMargin + (contentWidth * layoutImg.x - (maxW * scale) / 2),
+          left: borderMargin + contentWidth * layoutImg.x - (maxW * scale) / 2,
           top: borderMargin + contentHeight * layoutImg.y,
           scaleX: scale,
           scaleY: scale,
@@ -400,18 +400,16 @@ function showVirtualEditModal(productIndex) {
       const objHeight = obj.getScaledHeight();
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      const minLeft = borderMargin;
-      const maxLeft = borderMargin + contentWidth - objWidth;
+      const minLeft = borderMargin - contentWidth / 2;
+      const maxLeft = borderMargin + contentWidth / 2;
       if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
         obj.set({
           left: borderMargin + contentWidth / 2,
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
       } else {
-        const centerX = borderMargin + contentWidth / 2;
-        const newLeft = centerX + (obj.left - centerX);
         obj.set({
-          left: Math.max(minLeft, Math.min(newLeft, maxLeft)),
+          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
       }
@@ -432,14 +430,12 @@ function showVirtualEditModal(productIndex) {
             scaleY: scale * obj.scaleY
           });
         }
-        const minLeft = borderMargin;
-        const maxLeft = borderMargin + contentWidth - objWidth;
+        const minLeft = borderMargin - contentWidth / 2;
+        const maxLeft = borderMargin + contentWidth / 2;
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
-        const centerX = borderMargin + contentWidth / 2;
-        const newLeft = centerX + (obj.left - centerX);
         obj.set({
-          left: Math.max(minLeft, Math.min(newLeft, maxLeft)),
+          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
         console.log(`Skalowano: ${obj.id}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle || 0}`);
@@ -577,7 +573,7 @@ function showVirtualEditModal(productIndex) {
             const centerX = borderMargin + contentWidth / 2;
             const centerY = borderMargin + contentHeight / 2;
             const normalizedX = (obj.left + objWidth / 2 - centerX) / contentWidth + 0.5;
-            const normalizedY = (obj.top + objHeight / 2 - centerY) / contentHeight + 0.5;
+            const normalizedY = (obj.top - borderMargin) / contentHeight;
             const normalizedW = objWidth / contentWidth;
             const normalizedH = objHeight / contentHeight;
             newLayout[obj.id] = {
@@ -590,10 +586,10 @@ function showVirtualEditModal(productIndex) {
             console.log(`Zapisano pozycję dla ${obj.id}:`, newLayout[obj.id]);
           }
         });
-        // Zachowaj oryginalne wartości tekstu z layout, aby uniknąć rozpadania się
+        // Zachowaj domyślne wyśrodkowanie dla tekstu
         ['name', 'price', 'index', 'ranking'].forEach(key => {
           if (layout[key]) {
-            newLayout[key].x = layout[key].x;
+            newLayout[key].x = 0.5;
             newLayout[key].w = layout[key].w;
           }
         });
