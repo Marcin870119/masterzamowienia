@@ -40,13 +40,13 @@ function showVirtualEditModal(productIndex) {
       backgroundTexture: null,
       backgroundOpacity: 1.0,
       layout: {
-        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 },
+        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1, rotation: 0 },
         name: { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
         barcode: { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, scaleX: 1, scaleY: 1, rotation: 0 },
-        logo: { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 }
+        logo: { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1, rotation: 0 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -172,7 +172,7 @@ function showVirtualEditModal(productIndex) {
           document.getElementById('debug').innerText = "Błąd: Nie udało się załadować obrazu produktu";
           return;
         }
-        const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 };
+        const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1, rotation: 0 };
         const maxW = contentWidth * layoutImg.w;
         const maxH = contentHeight * layoutImg.h;
         const scale = Math.min(maxW / img.width, maxH / img.height) * (layoutImg.scaleX || 1);
@@ -181,6 +181,7 @@ function showVirtualEditModal(productIndex) {
           top: borderMargin + layoutImg.y * contentHeight,
           scaleX: scale,
           scaleY: scale,
+          angle: layoutImg.rotation || 0,
           selectable: true,
           id: 'image',
           hasBorders: true,
@@ -190,12 +191,12 @@ function showVirtualEditModal(productIndex) {
           originX: 'left'
         });
         canvas.add(img);
-        console.log('Obraz produktu załadowany:', imageUrl, { left: img.left, top: img.top, scaleX: img.scaleX, scaleY: img.scaleY });
+        console.log('Obraz produktu załadowany:', imageUrl, { left: img.left, top: img.top, scaleX: img.scaleX, scaleY: img.scaleY, angle: img.angle });
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
       document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`;
-      }
+    }
     let logoImgInstance;
     if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
       console.log('Ładowanie logo');
@@ -207,7 +208,7 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować logo";
             return;
           }
-          const layoutLogo = layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 };
+          const layoutLogo = layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1, rotation: 0 };
           const maxLogoWidth = contentWidth * layoutLogo.w;
           const maxLogoHeight = contentHeight * layoutLogo.h;
           const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height) * (layoutLogo.scaleX || 1);
@@ -216,6 +217,7 @@ function showVirtualEditModal(productIndex) {
             top: borderMargin + layoutLogo.y * contentHeight,
             scaleX: scale,
             scaleY: scale,
+            angle: layoutLogo.rotation || 0,
             selectable: true,
             id: 'logo',
             hasBorders: true,
@@ -226,7 +228,7 @@ function showVirtualEditModal(productIndex) {
           });
           canvas.add(logoImg);
           logoImgInstance = logoImg;
-          console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, scaleX: logoImg.scaleX, scaleY: logoImg.scaleY });
+          console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, scaleX: logoImg.scaleX, scaleY: logoImg.scaleY, angle: logoImg.angle });
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania logo w podglądzie:', e);
@@ -431,7 +433,7 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:rotating');
     canvas.on('object:rotating', (e) => {
       const obj = e.target;
-      if (obj.id === 'barcode' || obj.id === 'image' || obj.id === 'logo') {
+      if (obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo') {
         console.log(`Obrócono: ${obj.id}, angle: ${obj.angle}`);
       }
     });
@@ -545,13 +547,13 @@ function showVirtualEditModal(productIndex) {
         console.log('saveVirtualEdit wywołany');
         const objects = canvas.getObjects();
         const newLayout = {
-          image: layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 },
+          image: layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1, rotation: 0 },
           name: layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
           price: layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
           index: layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
           ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
           barcode: layout.barcode || { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, scaleX: 1, scaleY: 1, rotation: 0 },
-          logo: layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 }
+          logo: layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1, rotation: 0 }
         };
         objects.forEach(obj => {
           if (obj.id) {
@@ -562,13 +564,13 @@ function showVirtualEditModal(productIndex) {
             const scaleX = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.scaleX : 1;
             const scaleY = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.scaleY : 1;
             newLayout[obj.id] = {
-              x: Math.max(0.05, Math.min(normalizedX, 0.95)),
-              y: Math.max(0.05, Math.min(normalizedY, 0.95)),
+              x: Math.max(0, Math.min(normalizedX, 1)),
+              y: Math.max(0, Math.min(normalizedY, 1)),
               w: obj.id === 'image' ? 0.9 : obj.id === 'barcode' ? 0.8571 : 0.3,
               h: obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1143 : 0.1,
               scaleX: scaleX,
               scaleY: scaleY,
-              ...(obj.id === 'barcode' ? { rotation: obj.angle || 0 } : {})
+              rotation: obj.angle || 0
             };
             console.log(`Zapisano pozycję dla ${obj.id}:`, newLayout[obj.id]);
           }
