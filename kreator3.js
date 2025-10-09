@@ -1,4 +1,5 @@
 console.log('kreator3.js załadowany');
+
 // Funkcja pomocnicza do zawijania tekstu
 function wrapText(text, maxWidth, fontSize, fontFamily, canvas) {
   const words = text.split(' ');
@@ -21,9 +22,10 @@ function wrapText(text, maxWidth, fontSize, fontFamily, canvas) {
   canvas.remove(tempText);
   return lines.join('\n');
 }
+
 function showEditModal(productIndex) {
   try {
-    console.log('showEditModal wywołany dla produktu:', productIndex);
+    console.log(`showEditModal wywołany dla produktu: ${productIndex}`);
     const product = window.products[productIndex] || {
       nazwa: 'Brak nazwy',
       indeks: 'Brak indeksu',
@@ -75,7 +77,7 @@ function showEditModal(productIndex) {
     editForm.innerHTML = `
       <div class="edit-field">
         <label>Zdjęcie:</label>
-        <img src="${window.uploadedImages[product.indeks] || product.img || 'https://dummyimage.com/120x84/eee/000&text=brak'}" style="width:100px;height:100px;object-fit:contain;margin-bottom:10px;">
+        <img src="${window.uploadedImages[product.indeks] || product.img || 'https://dummyimage.com/120x84/eee/000&text=brak'}" style="width:120px;height:120px;object-fit:contain;margin-bottom:12px;border-radius:8px;">
         <input type="file" id="editImage" accept="image/*">
       </div>
       <div class="edit-field">
@@ -134,7 +136,7 @@ function showEditModal(productIndex) {
       ${showLogo ? `
         <div class="edit-field">
           <label>Logo:</label>
-          <img src="${edit.logo || (product.producent && window.manufacturerLogos[product.producent]) || 'https://dummyimage.com/80x40/eee/000&text=brak'}" style="width:80px;height:40px;object-fit:contain;margin-bottom:10px;">
+          <img src="${edit.logo || (product.producent && window.manufacturerLogos[product.producent]) || 'https://dummyimage.com/80x40/eee/000&text=brak'}" style="width:100px;height:50px;object-fit:contain;margin-bottom:12px;border-radius:8px;">
           <select id="editLogoSelect">
             <option value="">Brak logo</option>
             ${Object.keys(window.manufacturerLogos || {}).map(name => `<option value="${name}" ${product.producent === name ? 'selected' : ''}>${name}</option>`).join('')}
@@ -174,7 +176,10 @@ function showEditModal(productIndex) {
         <label>Przezroczystość tła:</label>
         <input type="range" id="editPageBackgroundOpacity" min="0.1" max="1.0" step="0.1" value="${edit.pageBackgroundOpacity || 1.0}">
       </div>
-      <button onclick="window.saveEdit(${productIndex})" class="btn-primary">Zapisz</button>
+      <div class="edit-field" style="flex-direction: row; gap: 15px;">
+        <button onclick="window.saveEdit(${productIndex})" class="btn-primary">Zapisz</button>
+        <button onclick="window.hideEditModal()" class="btn-secondary">Anuluj</button>
+      </div>
     `;
     const editModal = document.getElementById('editModal');
     if (!editModal) {
@@ -183,15 +188,16 @@ function showEditModal(productIndex) {
       return;
     }
     editModal.style.display = 'block';
-    console.log('editModal wyświetlony dla produktu:', productIndex);
+    console.log(`editModal wyświetlony dla produktu: ${productIndex}`);
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji: " + e.message;
+    document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji: ${e.message}`;
   }
 }
+
 function saveEdit(productIndex) {
   try {
-    console.log('saveEdit wywołany dla produktu:', productIndex);
+    console.log(`saveEdit wywołany dla produktu: ${productIndex}`);
     const product = window.products[productIndex] || {
       nazwa: 'Brak nazwy',
       indeks: 'Brak indeksu',
@@ -207,7 +213,7 @@ function saveEdit(productIndex) {
       const reader = new FileReader();
       reader.onload = (e) => {
         window.uploadedImages[product.indeks] = e.target.result;
-        console.log('Załadowano nowe zdjęcie dla produktu:', product.indeks);
+        console.log(`Załadowano nowe zdjęcie dla produktu: ${product.indeks}`);
         window.renderCatalog();
       };
       reader.readAsDataURL(editImage);
@@ -218,7 +224,7 @@ function saveEdit(productIndex) {
       reader.onload = (e) => {
         window.productEdits[productIndex] = window.productEdits[productIndex] || {};
         window.productEdits[productIndex].logo = e.target.result;
-        console.log('Załadowano nowe logo dla produktu:', productIndex);
+        console.log(`Załadowano nowe logo dla produktu: ${productIndex}`);
         window.renderCatalog();
       };
       reader.readAsDataURL(editLogo);
@@ -227,7 +233,7 @@ function saveEdit(productIndex) {
       window.productEdits[productIndex] = window.productEdits[productIndex] || {};
       window.productEdits[productIndex].logo = selectedLogo ? window.manufacturerLogos[selectedLogo] : null;
       product.producent = selectedLogo || product.producent;
-      console.log('Wybrano logo z listy dla produktu:', productIndex, selectedLogo);
+      console.log(`Wybrano logo z listy dla produktu: ${productIndex}, logo: ${selectedLogo}`);
     }
     const editBackgroundTexture = document.getElementById('editBackgroundTexture').files[0];
     if (editBackgroundTexture) {
@@ -235,7 +241,7 @@ function saveEdit(productIndex) {
       reader.onload = (e) => {
         window.productEdits[productIndex] = window.productEdits[productIndex] || {};
         window.productEdits[productIndex].backgroundTexture = e.target.result;
-        console.log('Załadowano nową teksturę tła dla produktu:', productIndex);
+        console.log(`Załadowano nową teksturę tła dla produktu: ${productIndex}`);
         window.renderCatalog();
       };
       reader.readAsDataURL(editBackgroundTexture);
@@ -278,17 +284,18 @@ function saveEdit(productIndex) {
         barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 }
       }
     };
-    console.log('Saved Edit for Product Index:', productIndex, window.productEdits[productIndex]);
+    console.log('Zapisano edycję dla produktu:', productIndex, window.productEdits[productIndex]);
     window.renderCatalog();
     window.hideEditModal();
   } catch (e) {
     console.error('Błąd zapisywania edycji produktu:', e);
-    document.getElementById('debug').innerText = "Błąd zapisywania edycji produktu: " + e.message;
+    document.getElementById('debug').innerText = `Błąd zapisywania edycji produktu: ${e.message}`;
   }
 }
+
 function showPageEditModal(pageIndex) {
   try {
-    console.log('showPageEditModal wywołany dla strony:', pageIndex);
+    console.log(`showPageEditModal wywołany dla strony: ${pageIndex}`);
     const edit = window.pageEdits[pageIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
@@ -387,7 +394,10 @@ function showPageEditModal(pageIndex) {
         <label>Przezroczystość tła:</label>
         <input type="range" id="editPageBackgroundOpacity" min="0.1" max="1.0" step="0.1" value="${edit.pageBackgroundOpacity || 1.0}">
       </div>
-      <button onclick="window.savePageEdit(${pageIndex})" class="btn-primary">Zapisz</button>
+      <div class="edit-field" style="flex-direction: row; gap: 15px;">
+        <button onclick="window.savePageEdit(${pageIndex})" class="btn-primary">Zapisz</button>
+        <button onclick="window.hideEditModal()" class="btn-secondary">Anuluj</button>
+      </div>
     `;
     const editModal = document.getElementById('editModal');
     if (!editModal) {
@@ -396,15 +406,16 @@ function showPageEditModal(pageIndex) {
       return;
     }
     editModal.style.display = 'block';
-    console.log('editModal wyświetlony dla strony:', pageIndex);
+    console.log(`editModal wyświetlony dla strony: ${pageIndex}`);
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji strony:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji strony: " + e.message;
+    document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji strony: ${e.message}`;
   }
 }
+
 function savePageEdit(pageIndex) {
   try {
-    console.log('savePageEdit wywołany dla strony:', pageIndex);
+    console.log(`savePageEdit wywołany dla strony: ${pageIndex}`);
     const newPageIndex = parseInt(document.getElementById('editPageSelect').value);
     window.pageEdits[newPageIndex] = {
       nazwaFont: document.getElementById('editNazwaFont').value,
@@ -420,17 +431,18 @@ function savePageEdit(pageIndex) {
       pageBackgroundGradient: document.getElementById('editPageBackgroundGradient').value || 'none',
       pageBackgroundOpacity: parseFloat(document.getElementById('editPageBackgroundOpacity').value) || 1.0
     };
-    console.log('Saved Page Edit for Page Index:', newPageIndex, window.pageEdits[newPageIndex]);
+    console.log('Zapisano edycję strony:', newPageIndex, window.pageEdits[newPageIndex]);
     window.renderCatalog();
     window.hideEditModal();
   } catch (e) {
     console.error('Błąd zapisywania edycji strony:', e);
-    document.getElementById('debug').innerText = "Błąd zapisywania edycji strony: " + e.message;
+    document.getElementById('debug').innerText = `Błąd zapisywania edycji strony: ${e.message}`;
   }
 }
+
 function showVirtualEditModal(productIndex) {
   try {
-    console.log('showVirtualEditModal wywołany dla produktu:', productIndex);
+    console.log(`showVirtualEditModal wywołany dla produktu: ${productIndex}`);
     const modal = document.getElementById('virtualEditModal');
     if (!modal) {
       console.error('Nie znaleziono elementu virtualEditModal');
@@ -479,31 +491,56 @@ function showVirtualEditModal(productIndex) {
         <span class="close" onclick="window.hideEditModal()">&times;</span>
         <h3>Edytuj produkt wizualnie</h3>
         <div class="canvas-container">
-          <canvas id="virtualEditCanvas" width="280" height="350"></canvas>
-          <div id="editPanel" style="position: absolute; top: 10px; right: -200px; background: white; padding: 10px; border: 1px solid #ccc; display: none;">
-            <select id="fontSelect">
-              <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
-              <option value="Helvetica" ${edit.nazwaFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
-              <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
-            </select>
-            <input type="color" id="colorSelect" value="${edit.nazwaFontColor}">
-            <select id="sizeSelect">
-              <option value="small" ${edit.priceFontSize === 'small' ? 'selected' : ''}>Mały</option>
-              <option value="medium" ${edit.priceFontSize === 'medium' ? 'selected' : ''}>Średni</option>
-              <option value="large" ${edit.priceFontSize === 'large' ? 'selected' : ''}>Duży</option>
-            </select>
-            <select id="borderStyleSelect">
-              <option value="solid" ${edit.borderStyle === 'solid' ? 'selected' : ''}>Pełna linia</option>
-              <option value="dashed" ${edit.borderStyle === 'dashed' ? 'selected' : ''}>Kreskowana</option>
-              <option value="dotted" ${edit.borderStyle === 'dotted' ? 'selected' : ''}>Kropkowana</option>
-            </select>
-            <input type="color" id="borderColorSelect" value="${edit.borderColor || '#000000'}">
-            <input type="file" id="backgroundTextureSelect" accept="image/*">
-            <label>Przezroczystość tła:</label>
-            <input type="range" id="backgroundOpacitySelect" min="0.1" max="1.0" step="0.1" value="${edit.backgroundOpacity || 1.0}">
-            <button onclick="window.applyTextEdit()">Zastosuj</button>
+          <canvas id="virtualEditCanvas" width="350" height="400"></canvas>
+          <div id="editPanel" style="position: absolute; top: 10px; right: -250px; background: white; padding: 15px; border: 1px solid #ccc; border-radius: 8px; display: none;">
+            <div class="edit-field">
+              <label>Czcionka:</label>
+              <select id="fontSelect">
+                <option value="Arial" ${edit.nazwaFont === 'Arial' ? 'selected' : ''}>Arial</option>
+                <option value="Helvetica" ${edit.nazwaFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
+                <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
+              </select>
+            </div>
+            <div class="edit-field">
+              <label>Kolor:</label>
+              <input type="color" id="colorSelect" value="${edit.nazwaFontColor}">
+            </div>
+            <div class="edit-field">
+              <label>Rozmiar tekstu:</label>
+              <select id="sizeSelect">
+                <option value="small" ${edit.priceFontSize === 'small' ? 'selected' : ''}>Mały</option>
+                <option value="medium" ${edit.priceFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+                <option value="large" ${edit.priceFontSize === 'large' ? 'selected' : ''}>Duży</option>
+              </select>
+            </div>
+            <div class="edit-field">
+              <label>Styl obramowania:</label>
+              <select id="borderStyleSelect">
+                <option value="solid" ${edit.borderStyle === 'solid' ? 'selected' : ''}>Pełna linia</option>
+                <option value="dashed" ${edit.borderStyle === 'dashed' ? 'selected' : ''}>Kreskowana</option>
+                <option value="dotted" ${edit.borderStyle === 'dotted' ? 'selected' : ''}>Kropkowana</option>
+              </select>
+            </div>
+            <div class="edit-field">
+              <label>Kolor obramowania:</label>
+              <input type="color" id="borderColorSelect" value="${edit.borderColor || '#000000'}">
+            </div>
+            <div class="edit-field">
+              <label>Tekstura tła:</label>
+              <input type="file" id="backgroundTextureSelect" accept="image/*">
+            </div>
+            <div class="edit-field">
+              <label>Przezroczystość tła:</label>
+              <input type="range" id="backgroundOpacitySelect" min="0.1" max="1.0" step="0.1" value="${edit.backgroundOpacity || 1.0}">
+            </div>
+            <div class="edit-field">
+              <button onclick="window.applyTextEdit()" class="btn-primary">Zastosuj</button>
+            </div>
           </div>
-          <button id="saveVirtualEdit" style="position: absolute; bottom: -40px; right: 0;">Zapisz</button>
+          <div class="edit-field" style="flex-direction: row; gap: 15px; position: absolute; bottom: -50px; right: 0;">
+            <button id="saveVirtualEdit" class="btn-primary">Zapisz</button>
+            <button onclick="window.hideEditModal()" class="btn-secondary">Anuluj</button>
+          </div>
         </div>
       </div>
     `;
@@ -524,15 +561,15 @@ function showVirtualEditModal(productIndex) {
     }
     console.log('Inicjalizacja kanwy Fabric.js');
     const canvas = new fabric.Canvas('virtualEditCanvas', {
-      width: 280,
-      height: 350
+      width: 350,
+      height: 400
     });
     console.log('Kanwa Fabric.js zainicjalizowana');
-    const canvasWidth = 280;
-    const canvasHeight = 350;
+    const canvasWidth = 350;
+    const canvasHeight = 400;
     const borderMargin = 20; // Margines ramki (1x 20 pt w PDF)
-    const contentWidth = canvasWidth - borderMargin * 2; // 240 pikseli
-    const contentHeight = canvasHeight - borderMargin * 2; // 310 pikseli
+    const contentWidth = canvasWidth - borderMargin * 2; // 310 pikseli
+    const contentHeight = canvasHeight - borderMargin * 2; // 360 pikseli
     console.log('Ładowanie tekstury tła');
     if (edit.backgroundTexture) {
       try {
@@ -553,7 +590,7 @@ function showVirtualEditModal(productIndex) {
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania tekstury tła w podglądzie:', e);
-        document.getElementById('debug').innerText = "Błąd ładowania tekstury tła w podglądzie: " + e.message;
+        document.getElementById('debug').innerText = `Błąd ładowania tekstury tła w podglądzie: ${e.message}`;
       }
     }
     const layout = edit.layout || {};
@@ -571,8 +608,8 @@ function showVirtualEditModal(productIndex) {
           return;
         }
         const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4 };
-        const maxW = contentWidth * layoutImg.w; // 216 pikseli
-        const maxH = contentHeight * layoutImg.h; // 124 pikseli
+        const maxW = contentWidth * layoutImg.w; // 279 pikseli
+        const maxH = contentHeight * layoutImg.h; // 144 pikseli
         const scale = Math.min(maxW / img.width, maxH / img.height);
         img.set({
           left: borderMargin + layoutImg.x * contentWidth,
@@ -592,7 +629,7 @@ function showVirtualEditModal(productIndex) {
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
-      document.getElementById('debug').innerText = "Błąd ładowania obrazu produktu w podglądzie: " + e.message;
+      document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`;
     }
     console.log('Tworzenie ramki');
     const borderRect = new fabric.Rect({
@@ -612,12 +649,12 @@ function showVirtualEditModal(productIndex) {
     console.log('Ramka dodana');
     console.log('Tworzenie tekstu nazwy');
     const layoutName = layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 };
-    const maxNameWidth = contentWidth * layoutName.w; // 216 pikseli
-    const wrappedName = wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, 11, edit.nazwaFont, canvas);
+    const maxNameWidth = contentWidth * layoutName.w; // 279 pikseli
+    const wrappedName = wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, 12, edit.nazwaFont, canvas);
     const nazwaText = new fabric.Text(wrappedName, {
       left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
       top: borderMargin + layoutName.y * contentHeight,
-      fontSize: 11,
+      fontSize: 12,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
       width: maxNameWidth,
@@ -633,12 +670,12 @@ function showVirtualEditModal(productIndex) {
     console.log('Tekst nazwy dodany:', wrappedName);
     console.log('Tworzenie tekstu indeksu');
     const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 };
-    const maxIndexWidth = contentWidth * layoutIndex.w; // 216 pikseli
-    const wrappedIndex = wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, 9, edit.indeksFont, canvas);
+    const maxIndexWidth = contentWidth * layoutIndex.w; // 279 pikseli
+    const wrappedIndex = wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, 10, edit.indeksFont, canvas);
     const indeksText = new fabric.Text(wrappedIndex, {
       left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
       top: borderMargin + layoutIndex.y * contentHeight,
-      fontSize: 9,
+      fontSize: 10,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
       width: maxIndexWidth,
@@ -656,12 +693,12 @@ function showVirtualEditModal(productIndex) {
     if (showRanking && product.ranking) {
       console.log('Tworzenie tekstu rankingu');
       const layoutRanking = layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 };
-      const maxRankingWidth = contentWidth * layoutRanking.w; // 216 pikseli
-      const wrappedRanking = wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, 9, edit.rankingFont, canvas);
+      const maxRankingWidth = contentWidth * layoutRanking.w; // 279 pikseli
+      const wrappedRanking = wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, 10, edit.rankingFont, canvas);
       rankingText = new fabric.Text(wrappedRanking, {
         left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
         top: borderMargin + layoutRanking.y * contentHeight,
-        fontSize: 9,
+        fontSize: 10,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
         width: maxRankingWidth,
@@ -680,7 +717,7 @@ function showVirtualEditModal(productIndex) {
     if (showCena && product.cena) {
       console.log('Tworzenie tekstu ceny');
       const layoutPrice = layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 };
-      const maxPriceWidth = contentWidth * layoutPrice.w; // 216 pikseli
+      const maxPriceWidth = contentWidth * layoutPrice.w; // 279 pikseli
       const fontSize = edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16;
       const wrappedPrice = wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, fontSize, edit.cenaFont, canvas);
       cenaText = new fabric.Text(wrappedPrice, {
@@ -711,15 +748,15 @@ function showVirtualEditModal(productIndex) {
             return;
           }
           const layoutBarcode = layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 };
-          const maxBarcodeWidth = contentWidth * layoutBarcode.w; // ~206 pikseli
-          const maxBarcodeHeight = contentHeight * layoutBarcode.h; // ~35 pikseli
+          const maxBarcodeWidth = contentWidth * layoutBarcode.w; // ~265 pikseli
+          const maxBarcodeHeight = contentHeight * layoutBarcode.h; // ~41 pikseli
           const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
           barcodeImg.set({
             left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
             top: borderMargin + layoutBarcode.y * contentHeight,
             scaleX: scale,
             scaleY: scale,
-            angle: layoutBarcode.rotation || 0, // Wczytanie zapisanego obrotu
+            angle: layoutBarcode.rotation || 0,
             selectable: true,
             id: 'barcode',
             hasBorders: true,
@@ -733,7 +770,7 @@ function showVirtualEditModal(productIndex) {
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania kodu kreskowego w podglądzie:', e);
-        document.getElementById('debug').innerText = "Błąd ładowania kodu kreskowego w podglądzie: " + e.message;
+        document.getElementById('debug').innerText = `Błąd ładowania kodu kreskowego w podglądzie: ${e.message}`;
       }
     }
     console.log('Dodawanie zdarzenia object:moving');
@@ -743,7 +780,6 @@ function showVirtualEditModal(productIndex) {
       const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledHeight() : obj.height;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      // Ograniczenie ruchu w pionie, zachowanie wyśrodkowania w poziomie dla tekstu i kodu kreskowego
       if (obj.id !== 'image') {
         const maxWidth = obj.id === 'barcode' ? contentWidth * 0.8571 : contentWidth * 0.9;
         obj.set({
@@ -758,14 +794,14 @@ function showVirtualEditModal(productIndex) {
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
       }
-      console.log('Przesunięto:', obj.id, 'left:', obj.left, 'top:', obj.top, 'width:', objWidth, 'height:', objHeight, 'angle:', obj.angle);
+      console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle}`);
     });
     console.log('Dodawanie zdarzenia object:scaling');
     canvas.on('object:scaling', (e) => {
       const obj = e.target;
       if (obj.id === 'image' || obj.id === 'barcode') {
-        const maxW = contentWidth * (obj.id === 'image' ? 0.9 : 0.8571); // 216 pikseli dla obrazu, ~206 pikseli dla kodu kreskowego
-        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : 0.1143); // 124 piksele dla obrazu, ~35 pikseli dla kodu kreskowego
+        const maxW = contentWidth * (obj.id === 'image' ? 0.9 : 0.8571); // 279 pikseli dla obrazu, ~265 pikseli dla kodu kreskowego
+        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : 0.1143); // 144 piksele dla obrazu, ~41 pikseli dla kodu kreskowego
         const objWidth = obj.getScaledWidth();
         const objHeight = obj.getScaledHeight();
         if (objWidth > maxW || objHeight > maxH) {
@@ -775,7 +811,6 @@ function showVirtualEditModal(productIndex) {
             scaleY: scale
           });
         }
-        // Ograniczenie pozycji po skalowaniu
         const minLeft = borderMargin;
         const maxLeft = borderMargin + contentWidth - objWidth;
         const minTop = borderMargin;
@@ -791,7 +826,7 @@ function showVirtualEditModal(productIndex) {
             top: Math.max(minTop, Math.min(obj.top, maxTop))
           });
         }
-        console.log('Skalowano:', obj.id, 'scaleX:', obj.scaleX, 'scaleY:', obj.scaleY, 'width:', objWidth, 'height:', objHeight, 'angle:', obj.angle);
+        console.log(`Skalowano: ${obj.id}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle}`);
       }
     });
     console.log('Dodawanie zdarzenia object:rotating');
@@ -801,7 +836,7 @@ function showVirtualEditModal(productIndex) {
         obj.set({
           left: borderMargin + contentWidth / 2 // Wyśrodkowanie w poziomie po obrocie
         });
-        console.log('Obrócono kod kreskowy:', obj.id, 'angle:', obj.angle);
+        console.log(`Obrócono kod kreskowy: ${obj.id}, angle: ${obj.angle}`);
       }
     });
     console.log('Dodawanie zdarzenia object:selected');
@@ -823,7 +858,7 @@ function showVirtualEditModal(productIndex) {
       document.getElementById('borderStyleSelect').value = edit.borderStyle || 'solid';
       document.getElementById('borderColorSelect').value = edit.borderColor || '#000000';
       document.getElementById('backgroundOpacitySelect').value = edit.backgroundOpacity || 1.0;
-      console.log('Panel edycji wyświetlony dla obiektu:', obj.id);
+      console.log(`Panel edycji wyświetlony dla obiektu: ${obj.id}`);
       window.applyTextEdit = function() {
         try {
           console.log('applyTextEdit wywołany');
@@ -834,7 +869,6 @@ function showVirtualEditModal(productIndex) {
             const fontFamily = document.getElementById('fontSelect').value;
             const fill = document.getElementById('colorSelect').value;
             let textContent = obj.text;
-            // Aktualizacja treści tekstu w zależności od typu
             if (layoutKey === 'name') {
               textContent = product.nazwa || 'Brak nazwy';
             } else if (layoutKey === 'index') {
@@ -855,7 +889,6 @@ function showVirtualEditModal(productIndex) {
               left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
               originX: 'center'
             });
-            // Ograniczenie pozycji po zmianie tekstu
             const objHeight = obj.height;
             obj.set({
               top: Math.max(borderMargin, Math.min(obj.top, borderMargin + contentHeight - objHeight))
@@ -896,7 +929,7 @@ function showVirtualEditModal(productIndex) {
           console.log('Zastosowano edycję tekstu');
         } catch (e) {
           console.error('Błąd stosowania edycji tekstu:', e);
-          document.getElementById('debug').innerText = "Błąd stosowania edycji tekstu: " + e.message;
+          document.getElementById('debug').innerText = `Błąd stosowania edycji tekstu: ${e.message}`;
         }
       };
     });
@@ -927,9 +960,7 @@ function showVirtualEditModal(productIndex) {
             let normalizedY = (obj.top - borderMargin) / contentHeight;
             const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.8571) : 0.9;
             const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : obj.id === 'barcode' ? Math.min(objHeight / contentHeight, 0.1143) : 0.1;
-            // Ograniczenie pozycji Y
             normalizedY = Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH));
-            // Ograniczenie pozycji X dla obrazu
             if (obj.id === 'image') {
               normalizedX = Math.max(0.05, Math.min(normalizedX, 0.95 - normalizedW));
             }
@@ -938,7 +969,7 @@ function showVirtualEditModal(productIndex) {
               y: normalizedY,
               w: normalizedW,
               h: normalizedH,
-              ...(obj.id === 'barcode' ? { rotation: obj.angle || 0 } : {}) // Zapis obrotu dla kodu kreskowego
+              ...(obj.id === 'barcode' ? { rotation: obj.angle || 0 } : {})
             };
             console.log(`Zapisano pozycję dla ${obj.id}:`, newLayout[obj.id]);
           }
@@ -960,7 +991,7 @@ function showVirtualEditModal(productIndex) {
           backgroundOpacity: edit.backgroundOpacity || 1.0,
           layout: newLayout
         };
-        console.log('Saved Virtual Edit for Product Index:', productIndex, window.productEdits[productIndex]);
+        console.log('Zapisano wirtualną edycję dla produktu:', productIndex, window.productEdits[productIndex]);
         console.log('Zapisane pozycje layoutu:', newLayout);
         canvas.dispose();
         modal.style.display = 'none';
@@ -968,15 +999,16 @@ function showVirtualEditModal(productIndex) {
         window.previewPDF();
       } catch (e) {
         console.error('Błąd zapisywania wirtualnej edycji:', e);
-        document.getElementById('debug').innerText = "Błąd zapisywania wirtualnej edycji: " + e.message;
+        document.getElementById('debug').innerText = `Błąd zapisywania wirtualnej edycji: ${e.message}`;
       }
     };
     console.log('showVirtualEditModal zakończony');
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji wirtualnej:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu edycji wirtualnej: " + e.message;
+    document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji wirtualnej: ${e.message}`;
   }
 }
+
 function hideEditModal() {
   try {
     console.log('hideEditModal wywołany');
@@ -987,9 +1019,10 @@ function hideEditModal() {
     console.log('Modale ukryte');
   } catch (e) {
     console.error('Błąd ukrywania modalu edycji:', e);
-    document.getElementById('debug').innerText = "Błąd ukrywania modalu edycji: " + e.message;
+    document.getElementById('debug').innerText = `Błąd ukrywania modalu edycji: ${e.message}`;
   }
 }
+
 window.showEditModal = showEditModal;
 window.saveEdit = saveEdit;
 window.showPageEditModal = showPageEditModal;
