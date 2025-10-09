@@ -177,7 +177,7 @@ function showVirtualEditModal(productIndex) {
         const maxH = contentHeight * layoutImg.h;
         const scale = Math.min(maxW / img.width, maxH / img.height);
         img.set({
-          left: borderMargin + contentWidth * layoutImg.x - (maxW * scale) / 2,
+          left: borderMargin + contentWidth * layoutImg.x,
           top: borderMargin + contentHeight * layoutImg.y,
           scaleX: scale,
           scaleY: scale,
@@ -196,7 +196,7 @@ function showVirtualEditModal(productIndex) {
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
-      document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`;
+      document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`);
     }
     let logoImgInstance;
     if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
@@ -234,7 +234,7 @@ function showVirtualEditModal(productIndex) {
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania logo w podglądzie:', e);
-        document.getElementById('debug').innerText = `Błąd ładowania logo w podglądzie: ${e.message}`;
+        document.getElementById('debug').innerText = `Błąd ładowania logo w podglądzie: ${e.message}`);
       }
     }
     console.log('Tworzenie ramki');
@@ -390,7 +390,7 @@ function showVirtualEditModal(productIndex) {
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania kodu kreskowego w podglądzie:', e);
-        document.getElementById('debug').innerText = `Błąd ładowania kodu kreskowego w podglądzie: ${e.message}`;
+        document.getElementById('debug').innerText = `Błąd ładowania kodu kreskowego w podglądzie: ${e.message}`);
       }
     }
     console.log('Dodawanie zdarzenia object:moving');
@@ -544,7 +544,7 @@ function showVirtualEditModal(productIndex) {
           console.log('Zastosowano edycję tekstu');
         } catch (e) {
           console.error('Błąd stosowania edycji tekstu:', e);
-          document.getElementById('debug').innerText = `Błąd stosowania edycji tekstu: ${e.message}`;
+          document.getElementById('debug').innerText = `Błąd stosowania edycji tekstu: ${e.message}`);
         }
       };
     });
@@ -625,13 +625,13 @@ function showVirtualEditModal(productIndex) {
         window.previewPDF();
       } catch (e) {
         console.error('Błąd zapisywania wirtualnej edycji:', e);
-        document.getElementById('debug').innerText = `Błąd zapisywania wirtualnej edycji: ${e.message}`;
+        document.getElementById('debug').innerText = `Błąd zapisywania wirtualnej edycji: ${e.message}`);
       }
     };
     console.log('showVirtualEditModal zakończony');
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji wirtualnej:', e);
-    document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji wirtualnej: ${e.message}`;
+    document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji wirtualnej: ${e.message}`);
   }
 }
 
