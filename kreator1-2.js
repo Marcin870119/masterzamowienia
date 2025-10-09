@@ -1,4 +1,8 @@
 console.log('kreator1-2.js załadowany');
+
+// Inicjalizacja zmiennej dla aktualnej strony
+window.currentPage = 0;
+
 async function toBase64(url) {
   try {
     const response = await fetch(url, { cache: 'no-cache' });
@@ -18,13 +22,14 @@ async function toBase64(url) {
     return null;
   }
 }
+
 async function loadManufacturerLogos() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/Producenci.json");
     if (!response.ok) throw new Error(`Nie udało się załadować Producenci.json: ${response.status}`);
     const jsonData = await response.json();
     for (const manufacturer of jsonData) {
-      const name = manufacturer.NAZWA_PROD.trim();
+      const name = manufacturer.NAZWA_PROD?.trim() || '';
       const urls = [
         `https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/zdjecia/${name}.jpg`,
         `https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/zdjecia/${name}.png`
@@ -38,12 +43,13 @@ async function loadManufacturerLogos() {
         window.manufacturerLogos[name] = base64Logo;
       }
     }
-    console.log("Załadowano loga producentów:", Object.keys(window.manufacturerLogos).length);
+    console.log(`Załadowano loga producentów: ${Object.keys(window.manufacturerLogos).length}`);
   } catch (error) {
     console.error("Błąd ładowania logów producentów:", error);
-    document.getElementById('debug').innerText = "Błąd ładowania logów producentów: " + error.message;
+    document.getElementById('debug').innerText = `Błąd ładowania logów producentów: ${error.message}`;
   }
 }
+
 async function loadProducts() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json");
@@ -70,18 +76,19 @@ async function loadProducts() {
         ean: p["unit barcode"] || '',
         ranking: p.RANKING || '',
         cena: p.CENA || '',
-        indeks: p.INDEKS.toString(),
+        indeks: p.INDEKS?.toString() || '',
         img: base64Img,
         producent: p.NAZWA_PROD || ''
       };
     }));
-    console.log("Załadowano jsonProducts:", window.jsonProducts.length);
+    console.log(`Załadowano jsonProducts: ${window.jsonProducts.length}`);
     await loadManufacturerLogos();
   } catch (error) {
     console.error("Błąd loadProducts:", error);
-    document.getElementById('debug').innerText = "Błąd ładowania JSON: " + error.message;
+    document.getElementById('debug').innerText = `Błąd ładowania JSON: ${error.message}`;
   }
 }
+
 function handleFiles(files, callback) {
   if (!files || files.length === 0) {
     console.error("Brak plików do załadowania");
@@ -101,24 +108,29 @@ function handleFiles(files, callback) {
     reader.readAsDataURL(file);
   });
 }
+
 function loadCustomBanner(file, data) {
   window.selectedBanner = { id: "custom", data };
-  console.log("Załadowano baner:", file.name);
+  console.log(`Załadowano baner: ${file.name}`);
 }
+
 function loadCustomBackground(file, data) {
   window.selectedBackground = { id: "customBackground", data };
-  console.log("Załadowano tło:", file.name);
+  console.log(`Załadowano tło: ${file.name}`);
 }
+
 function loadCustomCover(file, data) {
   window.selectedCover = { id: "customCover", data };
-  console.log("Załadowano okładkę:", file.name);
+  console.log(`Załadowano okładkę: ${file.name}`);
 }
+
 function loadCustomImages(file, data) {
   const fileName = file.name.split('.')[0];
   window.uploadedImages[fileName] = data;
   console.log(`Załadowano obraz dla indeksu: ${fileName}`);
   window.renderCatalog();
 }
+
 function showBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -131,9 +143,10 @@ function showBannerModal() {
     }
   } catch (e) {
     console.error('Błąd pokazywania modalu banera:', e);
-    document.getElementById('debug').innerText = "Błąd pokazywania modalu banera";
+    document.getElementById('debug').innerText = `Błąd pokazywania modalu banera: ${e.message}`;
   }
 }
+
 function hideBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -142,9 +155,10 @@ function hideBannerModal() {
     }
   } catch (e) {
     console.error('Błąd ukrywania modalu banera:', e);
-    document.getElementById('debug').innerText = "Błąd ukrywania modalu banera";
+    document.getElementById('debug').innerText = `Błąd ukrywania modalu banera: ${e.message}`;
   }
 }
+
 async function loadBanners() {
   try {
     const bannerOptions = document.getElementById('bannerOptions');
@@ -179,18 +193,20 @@ async function loadBanners() {
     }
   } catch (e) {
     console.error('Błąd ładowania banerów:', e);
-    document.getElementById('debug').innerText = "Błąd ładowania banerów";
+    document.getElementById('debug').innerText = `Błąd ładowania banerów: ${e.message}`;
   }
 }
+
 function selectBanner(id, data) {
   window.selectedBanner = { id, data };
   document.querySelectorAll('.banner-preview').forEach(p => p.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
   hideBannerModal();
 }
+
 function renderCatalog() {
   try {
-    console.log('renderCatalog wywołany');
+    console.log(`renderCatalog wywołany, currentPage: ${window.currentPage}`);
     const container = document.getElementById("catalog");
     if (!container) {
       console.error("Nie znaleziono elementu catalog");
@@ -200,6 +216,8 @@ function renderCatalog() {
     container.innerHTML = "";
     if (!window.products || window.products.length === 0) {
       container.innerHTML = "<p>Brak produktów do wyświetlenia. Zaimportuj plik Excel.</p>";
+      document.getElementById('prevPage').disabled = true;
+      document.getElementById('nextPage').disabled = true;
       return;
     }
     const layout = document.getElementById('layoutSelect')?.value || "16";
@@ -215,30 +233,43 @@ function renderCatalog() {
     else if (layout === "8") itemsPerPage = 8;
     else if (layout === "16") itemsPerPage = 16;
     else if (layout === "4-2-4") itemsPerPage = 10;
-    let pageDiv;
-    let currentPage = 0;
-    window.products.forEach((p, i) => {
+    
+    const totalPages = Math.ceil(window.products.length / itemsPerPage);
+    if (window.currentPage >= totalPages) window.currentPage = totalPages - 1;
+    if (window.currentPage < 0) window.currentPage = 0;
+
+    const startIndex = window.currentPage * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, window.products.length);
+    const pageProducts = window.products.slice(startIndex, endIndex);
+
+    document.getElementById('prevPage').disabled = window.currentPage === 0;
+    document.getElementById('nextPage').disabled = window.currentPage >= totalPages - 1;
+
+    const pageDiv = document.createElement("div");
+    pageDiv.className = "page";
+    pageDiv.setAttribute("data-page", window.currentPage);
+    container.appendChild(pageDiv);
+
+    pageProducts.forEach((p, pageIndex) => {
       if (!p || !p.indeks) {
-        console.warn(`Produkt o indeksie ${i} jest nieprawidłowy lub brak indeksu`, p);
+        console.warn(`Produkt o indeksie ${startIndex + pageIndex} jest nieprawidłowy lub brak indeksu`, p);
         return;
       }
-      if (i % itemsPerPage === 0) {
-        pageDiv = document.createElement("div");
-        pageDiv.className = "page";
-        pageDiv.setAttribute("data-page", currentPage);
-        currentPage++;
-        container.appendChild(pageDiv);
-      }
+      const globalIndex = startIndex + pageIndex;
       const item = document.createElement("div");
       item.className = layout === "1" || layout === "2" ? "item item-large" : "item";
-      const edit = window.productEdits[i] || {};
-      const pageEdit = window.pageEdits[Math.floor(i / itemsPerPage)] || {};
+      const edit = window.productEdits[globalIndex] || {};
+      const pageEdit = window.pageEdits[window.currentPage] || {};
       const finalEdit = { ...pageEdit, ...edit };
       const img = document.createElement('img');
       img.src = window.uploadedImages[p.indeks] || p.img || "https://dummyimage.com/120x84/eee/000&text=brak";
       img.style.width = layout === "1" || layout === "2" ? '200px' : '120px';
       img.style.height = layout === "1" || layout === "2" ? '140px' : '84px';
       img.style.objectFit = "contain";
+      img.onerror = () => {
+        console.warn(`Błąd ładowania obrazu dla produktu ${p.indeks}`);
+        img.src = "https://dummyimage.com/120x84/eee/000&text=brak";
+      };
       const details = document.createElement('div');
       details.className = "details";
       details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}">${p.nazwa || 'Brak nazwy'}</b><br>` +
@@ -271,28 +302,32 @@ function renderCatalog() {
         barcodeImg.style.width = '85px';
         barcodeImg.style.height = '32px';
         barcodeImg.style.marginTop = '8px';
+        barcodeImg.onerror = () => {
+          console.warn(`Błąd ładowania kodu kreskowego dla produktu ${p.indeks}`);
+          barcodeImg.src = "https://dummyimage.com/85x32/eee/000&text=brak";
+        };
         details.appendChild(barcodeImg);
       }
       const buttonsContainer = document.createElement('div');
       buttonsContainer.className = 'buttons-container';
       buttonsContainer.style.display = 'flex';
-      buttonsContainer.style.gap = '8px';
-      buttonsContainer.style.marginTop = '8px';
+      buttonsContainer.style.gap = '10px';
+      buttonsContainer.style.marginTop = '10px';
       const editButton = document.createElement('button');
       editButton.className = 'btn-primary edit-button';
       editButton.innerHTML = '<i class="fas fa-edit"></i> Edytuj';
       editButton.onclick = () => {
-        console.log('Kliknięto Edytuj dla produktu:', i);
-        window.showEditModal(i);
+        console.log(`Kliknięto Edytuj dla produktu: ${globalIndex}`);
+        window.showEditModal(globalIndex);
       };
       const layoutButton = document.createElement('button');
       layoutButton.className = 'btn-primary layout-button';
       layoutButton.innerHTML = '<i class="fas fa-object-group"></i> Edytuj układ';
       layoutButton.onclick = () => {
-        console.log('Kliknięto Edytuj układ dla produktu:', i);
-        console.log('showVirtualEditModal dostępny:', typeof window.showVirtualEditModal);
+        console.log(`Kliknięto Edytuj układ dla produktu: ${globalIndex}`);
+        console.log(`showVirtualEditModal dostępny: ${typeof window.showVirtualEditModal}`);
         if (typeof window.showVirtualEditModal === 'function') {
-          window.showVirtualEditModal(i);
+          window.showVirtualEditModal(globalIndex);
         } else {
           console.error('Funkcja showVirtualEditModal nie jest zdefiniowana');
           document.getElementById('debug').innerText = "Błąd: Funkcja edycji układu nie jest dostępna";
@@ -304,14 +339,38 @@ function renderCatalog() {
       item.appendChild(details);
       item.appendChild(buttonsContainer);
       pageDiv.appendChild(item);
-      console.log(`Dodano produkt ${p.indeks} z przyciskami edycji`);
+      console.log(`Dodano produkt ${p.indeks} z przyciskami edycji na stronie ${window.currentPage}`);
     });
-    console.log('renderCatalog zakończony, produkty:', window.products.length);
+    console.log(`renderCatalog zakończony, strona: ${window.currentPage}, produkty: ${pageProducts.length}, totalPages: ${totalPages}`);
   } catch (e) {
     console.error('Błąd renderowania katalogu:', e);
-    document.getElementById('debug').innerText = "Błąd renderowania katalogu: " + e.message;
+    document.getElementById('debug').innerText = `Błąd renderowania katalogu: ${e.message}`;
   }
 }
+
+function showPage(pageNum) {
+  try {
+    const totalPages = Math.ceil(window.products.length / getItemsPerPage());
+    window.currentPage = Math.max(0, Math.min(pageNum, totalPages - 1));
+    console.log(`showPage wywołany, strona: ${window.currentPage}`);
+    renderCatalog();
+  } catch (e) {
+    console.error('Błąd przełączania strony:', e);
+    document.getElementById('debug').innerText = `Błąd przełączania strony: ${e.message}`;
+  }
+}
+
+function getItemsPerPage() {
+  const layout = document.getElementById('layoutSelect')?.value || "16";
+  if (layout === "1") return 1;
+  else if (layout === "2") return 2;
+  else if (layout === "4") return 4;
+  else if (layout === "8") return 8;
+  else if (layout === "16") return 16;
+  else if (layout === "4-2-4") return 10;
+  return 16;
+}
+
 function importExcel() {
   try {
     const file = document.getElementById('excelFile').files[0];
@@ -388,7 +447,7 @@ function importExcel() {
                 });
                 barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
               } catch (e) {
-                console.error('Błąd generowania kodu kreskowego dla EAN:', row['ean'], e);
+                console.error(`Błąd generowania kodu kreskowego dla EAN: ${row['ean']}`, e);
                 document.getElementById('debug').innerText = "Błąd generowania kodu kreskowego";
               }
             }
@@ -409,6 +468,7 @@ function importExcel() {
           window.products = newProducts;
           window.productEdits = {};
           window.pageEdits = {};
+          window.currentPage = 0; // Reset strony po imporcie
           window.renderCatalog();
           document.getElementById('pdfButton').disabled = false;
           document.getElementById('previewButton').disabled = false;
@@ -418,7 +478,7 @@ function importExcel() {
         }
       } catch (e) {
         console.error("Błąd przetwarzania pliku Excel/CSV:", e);
-        document.getElementById('debug').innerText = "Błąd przetwarzania pliku Excel/CSV: " + e.message;
+        document.getElementById('debug').innerText = `Błąd przetwarzania pliku Excel/CSV: ${e.message}`;
       }
     };
     reader.onerror = () => {
@@ -429,9 +489,10 @@ function importExcel() {
     else reader.readAsBinaryString(file);
   } catch (e) {
     console.error('Błąd importu pliku Excel/CSV:', e);
-    document.getElementById('debug').innerText = "Błąd importu pliku Excel/CSV: " + e.message;
+    document.getElementById('debug').innerText = `Błąd importu pliku Excel/CSV: ${e.message}`;
   }
 }
+
 document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log('DOMContentLoaded wywołany');
@@ -440,7 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (imageInput && uploadArea) {
       imageInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
-          console.log("Zmiana w imageInput, pliki:", e.target.files.length);
+          console.log(`Zmiana w imageInput, pliki: ${e.target.files.length}`);
           handleFiles(e.target.files, loadCustomImages);
         }
       });
@@ -455,7 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         uploadArea.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
-          console.log("Drop zdjęć:", e.dataTransfer.files.length);
+          console.log(`Drop zdjęć: ${e.dataTransfer.files.length}`);
           handleFiles(e.dataTransfer.files, loadCustomImages);
         }
       });
@@ -472,7 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (bannerFileInput && bannerUpload) {
       bannerFileInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
-          console.log("Zmiana w bannerFileInput, pliki:", e.target.files.length);
+          console.log(`Zmiana w bannerFileInput, pliki: ${e.target.files.length}`);
           handleFiles(e.target.files, loadCustomBanner);
         }
       });
@@ -487,7 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         bannerUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
-          console.log("Drop banera:", e.dataTransfer.files.length);
+          console.log(`Drop banera: ${e.dataTransfer.files.length}`);
           handleFiles(e.dataTransfer.files, loadCustomBanner);
         }
       });
@@ -504,7 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (backgroundFileInput && backgroundUpload) {
       backgroundFileInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
-          console.log("Zmiana w backgroundFileInput, pliki:", e.target.files.length);
+          console.log(`Zmiana w backgroundFileInput, pliki: ${e.target.files.length}`);
           handleFiles(e.target.files, loadCustomBackground);
         }
       });
@@ -519,7 +580,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         backgroundUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
-          console.log("Drop tła:", e.dataTransfer.files.length);
+          console.log(`Drop tła: ${e.dataTransfer.files.length}`);
           handleFiles(e.dataTransfer.files, loadCustomBackground);
         }
       });
@@ -536,7 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (coverFileInput && coverUpload) {
       coverFileInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
-          console.log("Zmiana w coverFileInput, pliki:", e.target.files.length);
+          console.log(`Zmiana w coverFileInput, pliki: ${e.target.files.length}`);
           handleFiles(e.target.files, loadCustomCover);
         }
       });
@@ -551,7 +612,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         coverUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
-          console.log("Drop okładki:", e.dataTransfer.files.length);
+          console.log(`Drop okładki: ${e.dataTransfer.files.length}`);
           handleFiles(e.dataTransfer.files, loadCustomCover);
         }
       });
@@ -568,7 +629,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (excelFileInput && fileLabelWrapper) {
       excelFileInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
-          console.log("Zmiana w excelFileInput, plik:", e.target.files[0].name);
+          console.log(`Zmiana w excelFileInput, plik: ${e.target.files[0].name}`);
           importExcel();
         }
       });
@@ -584,7 +645,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currencySelect) {
       currencySelect.addEventListener('change', (e) => {
         window.globalCurrency = e.target.value;
-        console.log("Zmieniono walutę na:", window.globalCurrency);
+        console.log(`Zmieniono walutę na: ${window.globalCurrency}`);
+        window.currentPage = 0; // Reset strony po zmianie waluty
         window.renderCatalog();
       });
     }
@@ -592,7 +654,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (languageSelect) {
       languageSelect.addEventListener('change', (e) => {
         window.globalLanguage = e.target.value;
-        console.log("Zmieniono język na:", window.globalLanguage);
+        console.log(`Zmieniono język na: ${window.globalLanguage}`);
+        window.currentPage = 0; // Reset strony po zmianie języka
         window.renderCatalog();
       });
     }
@@ -601,7 +664,7 @@ document.addEventListener("DOMContentLoaded", () => {
     pageEditButton.innerHTML = '<i class="fas fa-file-alt"></i> Edytuj stronę PDF';
     pageEditButton.onclick = () => {
       console.log('Kliknięto Edytuj stronę PDF');
-      window.showPageEditModal(0);
+      window.showPageEditModal(window.currentPage);
     };
     document.querySelector('.improved-panel').appendChild(pageEditButton);
     const previewButton = document.getElementById('previewButton');
@@ -622,9 +685,10 @@ document.addEventListener("DOMContentLoaded", () => {
     window.loadProducts();
   } catch (e) {
     console.error('Błąd inicjalizacji zdarzeń DOM:', e);
-    document.getElementById('debug').innerText = "Błąd inicjalizacji zdarzeń DOM: " + e.message;
+    document.getElementById('debug').innerText = `Błąd inicjalizacji zdarzeń DOM: ${e.message}`;
   }
-});
+}
+
 window.importExcel = importExcel;
 window.renderCatalog = renderCatalog;
 window.showBannerModal = showBannerModal;
@@ -632,3 +696,4 @@ window.hideBannerModal = hideBannerModal;
 window.loadBanners = loadBanners;
 window.selectBanner = selectBanner;
 window.loadProducts = loadProducts;
+window.showPage = showPage;
