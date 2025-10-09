@@ -15,7 +15,7 @@ function showVirtualEditModal(productIndex) {
       indeks: 'Brak indeksu',
       cena: '',
       ranking: '',
-      img: 'https://github.com/MasterMM2025/kreator-katalog/tree/main/zdjecia/[nazwa_pliku].jpg',
+      img: 'https://github.com/MasterMM2025/kreator-katalog/raw/main/zdjecia/[nazwa_pliku].jpg',
       producent: '',
       ean: '',
       barcode: ''
@@ -177,8 +177,8 @@ function showVirtualEditModal(productIndex) {
         const maxH = contentHeight * layoutImg.h;
         const scale = Math.min(maxW / img.width, maxH / img.height);
         img.set({
-          left: borderMargin + contentWidth * layoutImg.x,
-          top: borderMargin + contentHeight * layoutImg.y - (maxH * scale) / 2,
+          left: borderMargin + (contentWidth * layoutImg.x - (maxW * scale) / 2),
+          top: borderMargin + contentHeight * layoutImg.y,
           scaleX: scale,
           scaleY: scale,
           angle: layoutImg.rotation || 0,
@@ -189,7 +189,7 @@ function showVirtualEditModal(productIndex) {
           lockScalingY: false,
           lockRotation: false,
           originX: 'center',
-          originY: 'center'
+          originY: 'top'
         });
         canvas.add(img);
         console.log('Obraz produktu załadowany:', imageUrl, { left: img.left, top: img.top, width: img.getScaledWidth(), height: img.getScaledHeight(), angle: img.angle });
@@ -214,8 +214,8 @@ function showVirtualEditModal(productIndex) {
           const maxLogoHeight = contentHeight * layoutLogo.h;
           const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height);
           logoImg.set({
-            left: borderMargin + contentWidth * layoutLogo.x,
-            top: borderMargin + contentHeight * layoutLogo.y - (maxLogoHeight * scale) / 2,
+            left: borderMargin + (contentWidth * layoutLogo.x - (maxLogoWidth * scale) / 2),
+            top: borderMargin + contentHeight * layoutLogo.y,
             scaleX: scale,
             scaleY: scale,
             angle: layoutLogo.rotation || 0,
@@ -226,7 +226,7 @@ function showVirtualEditModal(productIndex) {
             lockScalingY: false,
             lockRotation: false,
             originX: 'center',
-            originY: 'center'
+            originY: 'top'
           });
           canvas.add(logoImg);
           logoImgInstance = logoImg;
@@ -273,7 +273,7 @@ function showVirtualEditModal(productIndex) {
       lockScalingY: true,
       lockRotation: true,
       originX: 'center',
-      originY: 'center'
+      originY: 'top'
     });
     canvas.add(nazwaText);
     console.log('Tekst nazwy dodany:', wrappedName, `fontSize: ${nazwaFontSize}`);
@@ -297,7 +297,7 @@ function showVirtualEditModal(productIndex) {
       lockScalingY: true,
       lockRotation: true,
       originX: 'center',
-      originY: 'center'
+      originY: 'top'
     });
     canvas.add(indeksText);
     console.log('Tekst indeksu dodany:', wrappedIndex, `fontSize: ${indeksFontSize}`);
@@ -323,7 +323,7 @@ function showVirtualEditModal(productIndex) {
         lockScalingY: true,
         lockRotation: true,
         originX: 'center',
-        originY: 'center'
+        originY: 'top'
       });
       canvas.add(rankingText);
       console.log('Tekst rankingu dodany:', wrappedRanking, `fontSize: ${rankingFontSize}`);
@@ -350,7 +350,7 @@ function showVirtualEditModal(productIndex) {
         lockScalingY: true,
         lockRotation: true,
         originX: 'center',
-        originY: 'center'
+        originY: 'top'
       });
       canvas.add(cenaText);
       console.log('Tekst ceny dodany:', wrappedPrice, `fontSize: ${cenaFontSize}`);
@@ -370,8 +370,8 @@ function showVirtualEditModal(productIndex) {
           const maxBarcodeHeight = contentHeight * layoutBarcode.h;
           const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
           barcodeImg.set({
-            left: borderMargin + contentWidth * layoutBarcode.x,
-            top: borderMargin + contentHeight * layoutBarcode.y - (maxBarcodeHeight * scale) / 2,
+            left: borderMargin + (contentWidth * layoutBarcode.x - (maxBarcodeWidth * scale) / 2),
+            top: borderMargin + contentHeight * layoutBarcode.y,
             scaleX: scale,
             scaleY: scale,
             angle: layoutBarcode.rotation || 0,
@@ -382,7 +382,7 @@ function showVirtualEditModal(productIndex) {
             lockScalingY: false,
             lockRotation: false,
             originX: 'center',
-            originY: 'center'
+            originY: 'top'
           });
           canvas.add(barcodeImg);
           barcodeImgInstance = barcodeImg;
@@ -588,6 +588,13 @@ function showVirtualEditModal(productIndex) {
               rotation: obj.angle || 0
             };
             console.log(`Zapisano pozycję dla ${obj.id}:`, newLayout[obj.id]);
+          }
+        });
+        // Zachowaj oryginalne wartości tekstu z layout, aby uniknąć rozpadania się
+        ['name', 'price', 'index', 'ranking'].forEach(key => {
+          if (layout[key]) {
+            newLayout[key].x = layout[key].x;
+            newLayout[key].w = layout[key].w;
           }
         });
         window.productEdits[productIndex] = {
