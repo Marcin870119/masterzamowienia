@@ -263,6 +263,7 @@ function renderCatalog() {
     const pageDiv = document.createElement("div");
     pageDiv.className = "page";
     pageDiv.setAttribute("data-page", window.currentPage);
+    pageDiv.setAttribute("data-layout", layout);
     pageDiv.style.display = "grid";
     pageDiv.style.gridTemplateColumns = gridColumns;
     pageDiv.style.gap = "25px";
@@ -279,6 +280,10 @@ function renderCatalog() {
       const edit = window.productEdits[globalIndex] || {};
       const pageEdit = window.pageEdits[window.currentPage] || {};
       const finalEdit = { ...pageEdit, ...edit };
+      const nazwaFontSize = finalEdit.nazwaFontSize === 'small' ? '12px' : finalEdit.nazwaFontSize === 'large' ? '16px' : '14px';
+      const indeksFontSize = finalEdit.indeksFontSize === 'small' ? '10px' : finalEdit.indeksFontSize === 'large' ? '14px' : '12px';
+      const rankingFontSize = finalEdit.rankingFontSize === 'small' ? '10px' : finalEdit.rankingFontSize === 'large' ? '14px' : '12px';
+      const cenaFontSize = finalEdit.cenaFontSize === 'small' ? '12px' : finalEdit.cenaFontSize === 'large' ? '16px' : '14px';
       const img = document.createElement('img');
       img.src = window.uploadedImages[p.indeks] || p.img || "https://dummyimage.com/120x84/eee/000&text=brak";
       img.style.width = layout === "1" || layout === "2" ? '200px' : '120px';
@@ -290,16 +295,16 @@ function renderCatalog() {
       };
       const details = document.createElement('div');
       details.className = "details";
-      details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}">${p.nazwa || 'Brak nazwy'}</b><br>` +
-                         `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
+      details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}; font-size: ${nazwaFontSize}">${p.nazwa || 'Brak nazwy'}</b><br>` +
+                         `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}; font-size: ${indeksFontSize}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
       if (showRanking && p.ranking) {
-        details.innerHTML += `<br><span style="font-family: ${finalEdit.rankingFont || 'Arial'}; color: ${finalEdit.rankingFontColor || '#000000'}">RANKING: ${p.ranking}</span>`;
+        details.innerHTML += `<br><span style="font-family: ${finalEdit.rankingFont || 'Arial'}; color: ${finalEdit.rankingFontColor || '#000000'}; font-size: ${rankingFontSize}">RANKING: ${p.ranking}</span>`;
       }
       if (showCena && p.cena) {
         const currency = finalEdit.priceCurrency || window.globalCurrency;
         const currencySymbol = currency === 'EUR' ? '€' : '£';
         const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
-        details.innerHTML += `<br><span style="font-family: ${finalEdit.cenaFont || 'Arial'}; color: ${finalEdit.cenaFontColor || '#000000'}; font-size: ${finalEdit.priceFontSize || 'medium'}">${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}</span>`;
+        details.innerHTML += `<br><span style="font-family: ${finalEdit.cenaFont || 'Arial'}; color: ${finalEdit.cenaFontColor || '#000000'}; font-size: ${cenaFontSize}">${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}</span>`;
       }
       if (showLogo && layout === "4" && (finalEdit.logo || (p.producent && window.manufacturerLogos[p.producent]))) {
         const logoImg = document.createElement('img');
@@ -357,7 +362,7 @@ function renderCatalog() {
       item.appendChild(details);
       item.appendChild(buttonsContainer);
       pageDiv.appendChild(item);
-      console.log(`Dodano produkt ${p.indeks} z przyciskami edycji na stronie ${window.currentPage}`);
+      console.log(`Dodano produkt ${p.indeks} z przyciskami edycji na stronie ${window.currentPage}, fontSizes:`, { nazwaFontSize, indeksFontSize, rankingFontSize, cenaFontSize });
     });
     console.log(`renderCatalog zakończony, strona: ${window.currentPage}, produkty: ${pageProducts.length}, totalPages: ${totalPages}`);
   } catch (e) {
