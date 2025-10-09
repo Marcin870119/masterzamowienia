@@ -196,6 +196,7 @@ function showVirtualEditModal(productIndex) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
       document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`;
     }
+    let logoImgInstance;
     if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
       console.log('Ładowanie logo');
       const logoUrl = edit.logo || window.manufacturerLogos[product.producent] || 'https://dummyimage.com/80x40/eee/000&text=brak';
@@ -224,6 +225,7 @@ function showVirtualEditModal(productIndex) {
             originX: 'left'
           });
           canvas.add(logoImg);
+          logoImgInstance = logoImg; // Store logo instance for saving
           console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, width: logoImg.width * scale, height: logoImg.height * scale });
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
@@ -341,6 +343,7 @@ function showVirtualEditModal(productIndex) {
       canvas.add(cenaText);
       console.log('Tekst ceny dodany:', wrappedPrice, `fontSize: ${cenaFontSize}`);
     }
+    let barcodeImgInstance;
     if (showEan && product.ean && product.barcode) {
       console.log('Ładowanie kodu kreskowego');
       try {
@@ -355,7 +358,7 @@ function showVirtualEditModal(productIndex) {
           const maxBarcodeHeight = contentHeight * layoutBarcode.h;
           const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
           barcodeImg.set({
-            left: borderMargin + contentWidth / 2,
+            left: borderMargin + layoutBarcode.x * contentWidth,
             top: borderMargin + layoutBarcode.y * contentHeight,
             scaleX: scale,
             scaleY: scale,
@@ -366,9 +369,10 @@ function showVirtualEditModal(productIndex) {
             lockScalingX: false,
             lockScalingY: false,
             lockRotation: false,
-            originX: 'center'
+            originX: 'left' // Changed to 'left' to allow free horizontal positioning
           });
           canvas.add(barcodeImg);
+          barcodeImgInstance = barcodeImg; // Store barcode instance for saving
           console.log('Kod kreskowy dodany, pozycja:', { left: barcodeImg.left, top: barcodeImg.top, width: barcodeImg.width * scale, height: barcodeImg.height * scale, angle: barcodeImg.angle });
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
@@ -383,15 +387,15 @@ function showVirtualEditModal(productIndex) {
       const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      if (obj.id !== 'image' && obj.id !== 'logo') {
+      const minLeft = borderMargin;
+      const maxLeft = borderMargin + contentWidth - objWidth;
+      if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
         const maxWidth = obj.id === 'barcode' ? contentWidth * 0.8571 : contentWidth * 0.9;
         obj.set({
           left: borderMargin + contentWidth / 2,
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
       } else {
-        const minLeft = borderMargin;
-        const maxLeft = borderMargin + contentWidth - objWidth;
         obj.set({
           left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
           top: Math.max(minTop, Math.min(obj.top, maxTop))
@@ -418,17 +422,10 @@ function showVirtualEditModal(productIndex) {
         const maxLeft = borderMargin + contentWidth - objWidth;
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
-        if (obj.id === 'barcode') {
-          obj.set({
-            left: borderMargin + contentWidth / 2,
-            top: Math.max(minTop, Math.min(obj.top, maxTop))
-          });
-        } else {
-          obj.set({
-            left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
-            top: Math.max(minTop, Math.min(obj.top, maxTop))
-          });
-        }
+        obj.set({
+          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+          top: Math.max(minTop, Math.min(obj.top, maxTop))
+        });
         console.log(`Skalowano: ${obj.id}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle}`);
       }
     });
@@ -436,9 +433,7 @@ function showVirtualEditModal(productIndex) {
     canvas.on('object:rotating', (e) => {
       const obj = e.target;
       if (obj.id === 'barcode') {
-        obj.set({
-          left: borderMargin + contentWidth / 2
-        });
+        // Allow rotation without forcing center alignment
         console.log(`Obrócono kod kreskowy: ${obj.id}, angle: ${obj.angle}`);
       }
     });
@@ -564,19 +559,23 @@ function showVirtualEditModal(productIndex) {
           if (obj.id) {
             const objWidth = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledWidth() : obj.width;
             const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
-            let normalizedX = obj.id === 'image' || obj.id === 'logo' ? (obj.left - borderMargin) / contentWidth : obj.id === 'barcode' ? 0.2143 : 0.5;
-            let normalizedY = (obj.top - borderMargin) / contentHeight;
-            const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.8571) : obj.id === 'logo' ? Math.min(objWidth / contentWidth, 0.3) : 0.9;
-            const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : obj.id === 'barcode' ? Math.min(objHeight / contentHeight, 0.1143) : obj.id === 'logo' ? Math.min(objHeight / contentHeight, 0.1) : 0.1;
-            normalizedY = Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH));
-            if (obj.id === 'image' || obj.id === 'logo') {
-              normalizedX = Math.max(0.05, Math.min(normalizedX, 0.95 - normalizedW));
-            }
+            const normalizedX = (obj.left - borderMargin) / contentWidth;
+            const normalizedY = (obj.top - borderMargin) / contentHeight;
+            const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : 
+                               obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.8571) : 
+                               obj.id === 'logo' ? Math.min(objWidth / contentWidth, 0.3) : 0.9;
+            const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : 
+                               obj.id === 'barcode' ? Math.min(objHeight / contentHeight, 0.1143) : 
+                               obj.id === 'logo' ? Math.min(objHeight / contentHeight, 0.1) : 0.1;
+            const scaleX = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.scaleX : 1;
+            const scaleY = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.scaleY : 1;
             newLayout[obj.id] = {
-              x: normalizedX,
-              y: normalizedY,
+              x: Math.max(0.05, Math.min(normalizedX, 0.95 - normalizedW)),
+              y: Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH)),
               w: normalizedW,
               h: normalizedH,
+              scaleX: scaleX,
+              scaleY: scaleY,
               ...(obj.id === 'barcode' ? { rotation: obj.angle || 0 } : {})
             };
             console.log(`Zapisano pozycję dla ${obj.id}:`, newLayout[obj.id]);
@@ -601,6 +600,7 @@ function showVirtualEditModal(productIndex) {
           borderColor: edit.borderColor || '#000000',
           backgroundTexture: edit.backgroundTexture || null,
           backgroundOpacity: edit.backgroundOpacity || 1.0,
+          logo: edit.logo || (product.producent && window.manufacturerLogos[product.producent]) || null, // Ensure logo URL is preserved
           layout: newLayout
         };
         console.log('Zapisano wirtualną edycję dla produktu:', productIndex, window.productEdits[productIndex]);
