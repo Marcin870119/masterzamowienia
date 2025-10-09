@@ -398,10 +398,11 @@ function showVirtualEditModal(productIndex) {
       const obj = e.target;
       const objWidth = obj.getScaledWidth();
       const objHeight = obj.getScaledHeight();
+      const centerX = borderMargin + contentWidth / 2;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      const minLeft = borderMargin - contentWidth / 2;
-      const maxLeft = borderMargin + contentWidth / 2;
+      const minLeft = centerX - contentWidth / 2;
+      const maxLeft = centerX + contentWidth / 2 - objWidth;
       if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
         obj.set({
           left: borderMargin + contentWidth / 2,
@@ -430,8 +431,9 @@ function showVirtualEditModal(productIndex) {
             scaleY: scale * obj.scaleY
           });
         }
-        const minLeft = borderMargin - contentWidth / 2;
-        const maxLeft = borderMargin + contentWidth / 2;
+        const centerX = borderMargin + contentWidth / 2;
+        const minLeft = centerX - contentWidth / 2;
+        const maxLeft = centerX + contentWidth / 2 - objWidth;
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
         obj.set({
