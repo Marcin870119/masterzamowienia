@@ -164,7 +164,7 @@ function showVirtualEditModal(productIndex) {
     const showLogo = document.getElementById('showLogo')?.checked || false;
     const priceLabel = window.globalLanguage === 'en' ? 'PRICE' : 'CENA';
     console.log('Ładowanie obrazu produktu');
-    const imageUrl = window.uploadedImages[product.indeks] || product.img || 'https://dummyimage.com/120x84/eee/000&text=brak';
+    const imageUrl = window.uploadedImages[product.indeks] || product.img || 'https://github.com/MasterMM2025/kreator-katalog/tree/main/zdjecia/[nazwa_pliku].jpg';
     try {
       fabric.Image.fromURL(imageUrl, (img) => {
         if (!img) {
@@ -201,7 +201,7 @@ function showVirtualEditModal(productIndex) {
     let logoImgInstance;
     if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
       console.log('Ładowanie logo');
-      const logoUrl = edit.logo || window.manufacturerLogos[product.producent] || 'https://dummyimage.com/80x40/eee/000&text=brak';
+      const logoUrl = edit.logo || window.manufacturerLogos[product.producent] || 'https://github.com/MasterMM2025/kreator-katalog/tree/main/zdjecia/[nazwa_pliku].jpg';
       try {
         fabric.Image.fromURL(logoUrl, (logoImg) => {
           if (!logoImg) {
@@ -408,9 +408,11 @@ function showVirtualEditModal(productIndex) {
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
       } else {
+        const newLeft = borderMargin + (contentWidth * (obj.left + objWidth / 2 - borderMargin) / contentWidth - objWidth / 2);
+        const newTop = borderMargin + (contentHeight * (obj.top - borderMargin) / contentHeight);
         obj.set({
-          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
-          top: Math.max(minTop, Math.min(obj.top, maxTop))
+          left: Math.max(minLeft, Math.min(newLeft, maxLeft)),
+          top: Math.max(minTop, Math.min(newTop, maxTop))
         });
       }
       console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle || 0}`);
@@ -424,10 +426,10 @@ function showVirtualEditModal(productIndex) {
         const objWidth = obj.getScaledWidth();
         const objHeight = obj.getScaledHeight();
         if (objWidth > maxW || objHeight > maxH) {
-          const scale = Math.min(maxW / obj.width, maxH / obj.height);
+          const scale = Math.min(maxW / objWidth, maxH / objHeight);
           obj.set({
-            scaleX: scale,
-            scaleY: scale
+            scaleX: scale * obj.scaleX,
+            scaleY: scale * obj.scaleY
           });
         }
         const minLeft = borderMargin;
@@ -570,7 +572,7 @@ function showVirtualEditModal(productIndex) {
           if (obj.id) {
             const objWidth = obj.getScaledWidth();
             const objHeight = obj.getScaledHeight();
-            const normalizedX = (obj.left - borderMargin + objWidth / 2) / contentWidth;
+            const normalizedX = (obj.left + objWidth / 2 - borderMargin) / contentWidth;
             const normalizedY = (obj.top - borderMargin) / contentHeight;
             const normalizedW = objWidth / contentWidth;
             const normalizedH = objHeight / contentHeight;
