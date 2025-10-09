@@ -40,13 +40,13 @@ function showVirtualEditModal(productIndex) {
       backgroundTexture: null,
       backgroundOpacity: 1.0,
       layout: {
-        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4, rotation: 0 },
+        image: { x: 0.5, y: 0.05, w: 0.9, h: 0.4, rotation: 0 },
         name: { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 },
-        logo: { x: 0.05, y: 0.55, w: 0.3, h: 0.1, rotation: 0 }
+        barcode: { x: 0.5, y: 0.95, w: 0.8571, h: 0.1143, rotation: 0 },
+        logo: { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -55,7 +55,7 @@ function showVirtualEditModal(productIndex) {
         <span class="close" onclick="window.hideEditModal()">&times;</span>
         <h3>Edytuj produkt wizualnie</h3>
         <div class="canvas-container">
-          <canvas id="virtualEditCanvas" width="350" height="400"></canvas>
+          <canvas id="virtualEditCanvas" width="280" height="402"></canvas>
           <div id="editPanel" style="position: absolute; top: 10px; right: -250px; background: white; padding: 15px; border: 1px solid #ccc; border-radius: 8px; display: none;">
             <div class="edit-field">
               <label>Czcionka:</label>
@@ -125,13 +125,13 @@ function showVirtualEditModal(productIndex) {
     }
     console.log('Inicjalizacja kanwy Fabric.js');
     const canvas = new fabric.Canvas('virtualEditCanvas', {
-      width: 350,
-      height: 400
+      width: 280,
+      height: 402
     });
     console.log('Kanwa Fabric.js zainicjalizowana');
-    const canvasWidth = 350;
-    const canvasHeight = 400;
-    const borderMargin = 20;
+    const canvasWidth = 280;
+    const canvasHeight = 402;
+    const borderMargin = 10;
     const contentWidth = canvasWidth - borderMargin * 2;
     const contentHeight = canvasHeight - borderMargin * 2;
     console.log('Ładowanie tekstury tła');
@@ -172,13 +172,13 @@ function showVirtualEditModal(productIndex) {
           document.getElementById('debug').innerText = "Błąd: Nie udało się załadować obrazu produktu";
           return;
         }
-        const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, rotation: 0 };
+        const layoutImg = layout.image || { x: 0.5, y: 0.05, w: 0.9, h: 0.4, rotation: 0 };
         const maxW = contentWidth * layoutImg.w;
         const maxH = contentHeight * layoutImg.h;
         const scale = Math.min(maxW / img.width, maxH / img.height);
         img.set({
-          left: borderMargin + layoutImg.x * contentWidth,
-          top: borderMargin + layoutImg.y * contentHeight,
+          left: borderMargin + (contentWidth * layoutImg.x - (maxW * scale) / 2),
+          top: borderMargin + contentHeight * layoutImg.y,
           scaleX: scale,
           scaleY: scale,
           angle: layoutImg.rotation || 0,
@@ -188,7 +188,7 @@ function showVirtualEditModal(productIndex) {
           lockScalingX: false,
           lockScalingY: false,
           lockRotation: false,
-          originX: 'left',
+          originX: 'center',
           originY: 'top'
         });
         canvas.add(img);
@@ -209,13 +209,13 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować logo";
             return;
           }
-          const layoutLogo = layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, rotation: 0 };
+          const layoutLogo = layout.logo || { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 };
           const maxLogoWidth = contentWidth * layoutLogo.w;
           const maxLogoHeight = contentHeight * layoutLogo.h;
           const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height);
           logoImg.set({
-            left: borderMargin + layoutLogo.x * contentWidth,
-            top: borderMargin + layoutLogo.y * contentHeight,
+            left: borderMargin + (contentWidth * layoutLogo.x - (maxLogoWidth * scale) / 2),
+            top: borderMargin + contentHeight * layoutLogo.y,
             scaleX: scale,
             scaleY: scale,
             angle: layoutLogo.rotation || 0,
@@ -225,7 +225,7 @@ function showVirtualEditModal(productIndex) {
             lockScalingX: false,
             lockScalingY: false,
             lockRotation: false,
-            originX: 'left',
+            originX: 'center',
             originY: 'top'
           });
           canvas.add(logoImg);
@@ -256,11 +256,11 @@ function showVirtualEditModal(productIndex) {
     console.log('Tworzenie tekstu nazwy');
     const layoutName = layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 };
     const maxNameWidth = contentWidth * layoutName.w;
-    const nazwaFontSize = edit.nazwaFontSize === 'small' ? 12 : edit.nazwaFontSize === 'large' ? 16 : 14;
-    const wrappedName = window.wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, nazwaFontSize, edit.nazwaFont, canvas);
+    const nazwaFontSize = edit.nazwaFontSize === 'small' ? 11 : edit.nazwaFontSize === 'large' ? 14 : 12;
+    const wrappedName = window.wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, nazwaFontSize, edit.nazwaFont, canvas).split('\n').slice(0, 3).join('\n');
     const nazwaText = new fabric.Text(wrappedName, {
-      left: borderMargin + contentWidth / 2,
-      top: borderMargin + layoutName.y * contentHeight,
+      left: borderMargin + contentWidth * layoutName.x,
+      top: borderMargin + contentHeight * layoutName.y,
       fontSize: nazwaFontSize,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
@@ -280,11 +280,11 @@ function showVirtualEditModal(productIndex) {
     console.log('Tworzenie tekstu indeksu');
     const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 };
     const maxIndexWidth = contentWidth * layoutIndex.w;
-    const indeksFontSize = edit.indeksFontSize === 'small' ? 10 : edit.indeksFontSize === 'large' ? 14 : 12;
-    const wrappedIndex = window.wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, indeksFontSize, edit.indeksFont, canvas);
+    const indeksFontSize = edit.indeksFontSize === 'small' ? 9 : edit.indeksFontSize === 'large' ? 11 : 10;
+    const wrappedIndex = window.wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, indeksFontSize, edit.indeksFont, canvas).split('\n').slice(0, 3).join('\n');
     const indeksText = new fabric.Text(wrappedIndex, {
-      left: borderMargin + contentWidth / 2,
-      top: borderMargin + layoutIndex.y * contentHeight,
+      left: borderMargin + contentWidth * layoutIndex.x,
+      top: borderMargin + contentHeight * layoutIndex.y,
       fontSize: indeksFontSize,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
@@ -306,11 +306,11 @@ function showVirtualEditModal(productIndex) {
       console.log('Tworzenie tekstu rankingu');
       const layoutRanking = layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 };
       const maxRankingWidth = contentWidth * layoutRanking.w;
-      const rankingFontSize = edit.rankingFontSize === 'small' ? 10 : edit.rankingFontSize === 'large' ? 14 : 12;
-      const wrappedRanking = window.wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, rankingFontSize, edit.rankingFont, canvas);
+      const rankingFontSize = edit.rankingFontSize === 'small' ? 9 : edit.rankingFontSize === 'large' ? 11 : 10;
+      const wrappedRanking = window.wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, rankingFontSize, edit.rankingFont, canvas).split('\n').slice(0, 3).join('\n');
       rankingText = new fabric.Text(wrappedRanking, {
-        left: borderMargin + contentWidth / 2,
-        top: borderMargin + layoutRanking.y * contentHeight,
+        left: borderMargin + contentWidth * layoutRanking.x,
+        top: borderMargin + contentHeight * layoutRanking.y,
         fontSize: rankingFontSize,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
@@ -334,10 +334,10 @@ function showVirtualEditModal(productIndex) {
       const layoutPrice = layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 };
       const maxPriceWidth = contentWidth * layoutPrice.w;
       const cenaFontSize = edit.cenaFontSize === 'small' ? 12 : edit.cenaFontSize === 'large' ? 16 : 14;
-      const wrappedPrice = window.wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, cenaFontSize, edit.cenaFont, canvas);
+      const wrappedPrice = window.wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, cenaFontSize, edit.cenaFont, canvas).split('\n').slice(0, 3).join('\n');
       cenaText = new fabric.Text(wrappedPrice, {
-        left: borderMargin + contentWidth / 2,
-        top: borderMargin + layoutPrice.y * contentHeight,
+        left: borderMargin + contentWidth * layoutPrice.x,
+        top: borderMargin + contentHeight * layoutPrice.y,
         fontSize: cenaFontSize,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
@@ -365,13 +365,13 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować kodu kreskowego";
             return;
           }
-          const layoutBarcode = layout.barcode || { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 };
+          const layoutBarcode = layout.barcode || { x: 0.5, y: 0.95, w: 0.8571, h: 0.1143, rotation: 0 };
           const maxBarcodeWidth = contentWidth * layoutBarcode.w;
           const maxBarcodeHeight = contentHeight * layoutBarcode.h;
           const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
           barcodeImg.set({
-            left: borderMargin + layoutBarcode.x * contentWidth,
-            top: borderMargin + layoutBarcode.y * contentHeight,
+            left: borderMargin + (contentWidth * layoutBarcode.x - (maxBarcodeWidth * scale) / 2),
+            top: borderMargin + contentHeight * layoutBarcode.y,
             scaleX: scale,
             scaleY: scale,
             angle: layoutBarcode.rotation || 0,
@@ -381,7 +381,7 @@ function showVirtualEditModal(productIndex) {
             lockScalingX: false,
             lockScalingY: false,
             lockRotation: false,
-            originX: 'left',
+            originX: 'center',
             originY: 'top'
           });
           canvas.add(barcodeImg);
@@ -475,9 +475,9 @@ function showVirtualEditModal(productIndex) {
           if (obj.type === 'text') {
             const layoutKey = obj.id;
             const maxWidth = contentWidth * (layout[layoutKey]?.w || 0.9);
-            const fontSize = document.getElementById('sizeSelect').value === 'small' ? (layoutKey === 'name' || layoutKey === 'price' ? 12 : 10) :
-                            document.getElementById('sizeSelect').value === 'large' ? (layoutKey === 'name' || layoutKey === 'price' ? 16 : 14) :
-                            (layoutKey === 'name' || layoutKey === 'price' ? 14 : 12);
+            const fontSize = document.getElementById('sizeSelect').value === 'small' ? (layoutKey === 'name' ? 11 : layoutKey === 'price' ? 12 : 9) :
+                            document.getElementById('sizeSelect').value === 'large' ? (layoutKey === 'name' ? 14 : layoutKey === 'price' ? 16 : 11) :
+                            (layoutKey === 'name' ? 12 : layoutKey === 'price' ? 14 : 10);
             const fontFamily = document.getElementById('fontSelect').value;
             const fill = document.getElementById('colorSelect').value;
             let textContent = obj.text;
@@ -490,7 +490,7 @@ function showVirtualEditModal(productIndex) {
             } else if (layoutKey === 'price') {
               textContent = `${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`;
             }
-            const wrappedText = window.wrapText(textContent, maxWidth, fontSize, fontFamily, canvas);
+            const wrappedText = window.wrapText(textContent, maxWidth, fontSize, fontFamily, canvas).split('\n').slice(0, 3).join('\n');
             obj.set({
               fontFamily: fontFamily,
               fill: fill,
@@ -501,7 +501,7 @@ function showVirtualEditModal(productIndex) {
               left: borderMargin + contentWidth / 2,
               originX: 'center'
             });
-            const objHeight = obj.height;
+            const objHeight = obj.getScaledHeight();
             obj.set({
               top: Math.max(borderMargin, Math.min(obj.top, borderMargin + contentHeight - objHeight))
             });
@@ -558,19 +558,19 @@ function showVirtualEditModal(productIndex) {
         console.log('saveVirtualEdit wywołany');
         const objects = canvas.getObjects();
         const newLayout = {
-          image: layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, rotation: 0 },
+          image: layout.image || { x: 0.5, y: 0.05, w: 0.9, h: 0.4, rotation: 0 },
           name: layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
           price: layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
           index: layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
           ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-          barcode: layout.barcode || { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 },
-          logo: layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, rotation: 0 }
+          barcode: layout.barcode || { x: 0.5, y: 0.95, w: 0.8571, h: 0.1143, rotation: 0 },
+          logo: layout.logo || { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 }
         };
         objects.forEach(obj => {
           if (obj.id) {
             const objWidth = obj.getScaledWidth();
             const objHeight = obj.getScaledHeight();
-            const normalizedX = (obj.left - borderMargin) / contentWidth;
+            const normalizedX = (obj.left - borderMargin + objWidth / 2) / contentWidth;
             const normalizedY = (obj.top - borderMargin) / contentHeight;
             const normalizedW = objWidth / contentWidth;
             const normalizedH = objHeight / contentHeight;
@@ -588,13 +588,13 @@ function showVirtualEditModal(productIndex) {
           ...window.productEdits[productIndex],
           nazwaFont: nazwaText.fontFamily || edit.nazwaFont,
           nazwaFontColor: nazwaText.fill || edit.nazwaFontColor,
-          nazwaFontSize: edit.nazwaFontSize || (nazwaText.fontSize <= 12 ? 'small' : nazwaText.fontSize >= 16 ? 'large' : 'medium'),
+          nazwaFontSize: edit.nazwaFontSize || (nazwaText.fontSize <= 11 ? 'small' : nazwaText.fontSize >= 14 ? 'large' : 'medium'),
           indeksFont: indeksText.fontFamily || edit.indeksFont,
           indeksFontColor: indeksText.fill || edit.indeksFontColor,
-          indeksFontSize: edit.indeksFontSize || (indeksText.fontSize <= 10 ? 'small' : indeksText.fontSize >= 14 ? 'large' : 'medium'),
+          indeksFontSize: edit.indeksFontSize || (indeksText.fontSize <= 9 ? 'small' : indeksText.fontSize >= 11 ? 'large' : 'medium'),
           rankingFont: rankingText ? rankingText.fontFamily || edit.rankingFont : edit.rankingFont,
           rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
-          rankingFontSize: edit.rankingFontSize || (rankingText && rankingText.fontSize <= 10 ? 'small' : rankingText && rankingText.fontSize >= 14 ? 'large' : 'medium'),
+          rankingFontSize: edit.rankingFontSize || (rankingText && rankingText.fontSize <= 9 ? 'small' : rankingText && rankingText.fontSize >= 11 ? 'large' : 'medium'),
           cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
           cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
           cenaFontSize: edit.cenaFontSize || (cenaText && cenaText.fontSize <= 12 ? 'small' : cenaText && cenaText.fontSize >= 16 ? 'large' : 'medium'),
