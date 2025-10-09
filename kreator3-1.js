@@ -5,8 +5,8 @@ function showVirtualEditModal(productIndex) {
     console.log(`showVirtualEditModal wywołany dla produktu: ${productIndex}`);
     const modal = document.getElementById('virtualEditModal');
     if (!modal) {
-      console.error('Błąd: Element virtualEditModal nie istnieje w DOM');
-      document.getElementById('debug').innerText = "Błąd: Brak elementu virtualEditModal w HTML";
+      console.error('Nie znaleziono elementu virtualEditModal');
+      document.getElementById('debug').innerText = "Błąd: Brak modalu edycji wirtualnej";
       return;
     }
     console.log('virtualEditModal znaleziony:', modal);
@@ -113,14 +113,14 @@ function showVirtualEditModal(productIndex) {
     console.log('Modal ustawiony na display: block');
     const canvasElement = document.getElementById('virtualEditCanvas');
     if (!canvasElement) {
-      console.error('Błąd: Element virtualEditCanvas nie istnieje w DOM');
-      document.getElementById('debug').innerText = "Błąd: Brak elementu virtualEditCanvas w HTML";
+      console.error('Nie znaleziono elementu virtualEditCanvas');
+      document.getElementById('debug').innerText = "Błąd: Brak elementu canvas";
       return;
     }
     console.log('virtualEditCanvas znaleziony:', canvasElement);
     if (!window.fabric) {
-      console.error('Błąd: Biblioteka Fabric.js nie jest załadowana');
-      document.getElementById('debug').innerText = "Błąd: Biblioteka Fabric.js nie jest załadowana. Dodaj <script src='https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js'></script> do HTML.";
+      console.error('Biblioteka Fabric.js nie jest załadowana');
+      document.getElementById('debug').innerText = "Błąd: Biblioteka Fabric.js nie jest załadowana";
       return;
     }
     console.log('Inicjalizacja kanwy Fabric.js');
@@ -196,7 +196,7 @@ function showVirtualEditModal(productIndex) {
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
-      document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`);
+      document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`;
     }
     let logoImgInstance;
     if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
@@ -401,8 +401,8 @@ function showVirtualEditModal(productIndex) {
       const centerX = borderMargin + contentWidth / 2;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      const minLeft = centerX - contentWidth / 2;
-      const maxLeft = centerX + contentWidth / 2 - objWidth;
+      const minLeft = centerX - (contentWidth * 0.85) / 2; // Ograniczenie do 85% szerokości
+      const maxLeft = centerX + (contentWidth * 0.85) / 2 - objWidth; // Ograniczenie do 85% szerokości
       if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
         obj.set({
           left: borderMargin + contentWidth / 2,
@@ -432,8 +432,8 @@ function showVirtualEditModal(productIndex) {
           });
         }
         const centerX = borderMargin + contentWidth / 2;
-        const minLeft = centerX - contentWidth / 2;
-        const maxLeft = centerX + contentWidth / 2 - objWidth;
+        const minLeft = centerX - (contentWidth * 0.85) / 2;
+        const maxLeft = centerX + (contentWidth * 0.85) / 2 - objWidth;
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
         obj.set({
@@ -625,13 +625,13 @@ function showVirtualEditModal(productIndex) {
         window.previewPDF();
       } catch (e) {
         console.error('Błąd zapisywania wirtualnej edycji:', e);
-        document.getElementById('debug').innerText = `Błąd zapisywania wirtualnej edycji: ${e.message}`);
+        document.getElementById('debug').innerText = `Błąd zapisywania wirtualnej edycji: ${e.message}`;
       }
     };
     console.log('showVirtualEditModal zakończony');
   } catch (e) {
     console.error('Błąd pokazywania modalu edycji wirtualnej:', e);
-    document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji wirtualnej: ${e.message}`);
+    document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji wirtualnej: ${e.message}`;
   }
 }
 
