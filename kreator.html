@@ -74,6 +74,7 @@
 #pageNav {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 15px;
   margin-bottom: 20px;
 }
@@ -94,6 +95,11 @@
 #pageNav button:disabled {
   background-color: #a0aec0;
   cursor: not-allowed;
+}
+#pageInfo {
+  font-size: 1rem;
+  color: #2d3748;
+  font-weight: 500;
 }
 </style>
 </head>
@@ -198,6 +204,7 @@ Język:
 <!-- Nawigacja stron -->
 <div id="pageNav">
 <button id="prevPage" disabled onclick="window.showPage(window.currentPage - 1)">Poprzednia strona</button>
+<span id="pageInfo">Strona 0/0</span>
 <button id="nextPage" disabled onclick="window.showPage(window.currentPage + 1)">Następna strona</button>
 </div>
 <!-- Katalog produktów -->
