@@ -208,6 +208,7 @@ function renderCatalog() {
   try {
     console.log(`renderCatalog wywołany, currentPage: ${window.currentPage}`);
     const container = document.getElementById("catalog");
+    const pageInfo = document.getElementById("pageInfo");
     if (!container) {
       console.error("Nie znaleziono elementu catalog");
       document.getElementById('debug').innerText = "Błąd: Brak elementu katalogu";
@@ -218,6 +219,7 @@ function renderCatalog() {
       container.innerHTML = "<p>Brak produktów do wyświetlenia. Zaimportuj plik Excel.</p>";
       document.getElementById('prevPage').disabled = true;
       document.getElementById('nextPage').disabled = true;
+      if (pageInfo) pageInfo.innerText = "Strona 0/0";
       return;
     }
     const layout = document.getElementById('layoutSelect')?.value || "16";
@@ -227,29 +229,45 @@ function renderCatalog() {
     const showEan = document.getElementById('showEan')?.checked || false;
     const priceLabel = window.globalLanguage === 'en' ? 'Price' : 'Cena';
     let itemsPerPage;
-    if (layout === "1") itemsPerPage = 1;
-    else if (layout === "2") itemsPerPage = 2;
-    else if (layout === "4") itemsPerPage = 4;
-    else if (layout === "8") itemsPerPage = 8;
-    else if (layout === "16") itemsPerPage = 16;
-    else if (layout === "4-2-4") itemsPerPage = 10;
-    
+    let gridColumns;
+    if (layout === "1") {
+      itemsPerPage = 1;
+      gridColumns = "1fr";
+    } else if (layout === "2") {
+      itemsPerPage = 2;
+      gridColumns = "repeat(2, 1fr)";
+    } else if (layout === "4") {
+      itemsPerPage = 4;
+      gridColumns = "repeat(2, 1fr)";
+    } else if (layout === "8") {
+      itemsPerPage = 8;
+      gridColumns = "repeat(4, 1fr)";
+    } else if (layout === "16") {
+      itemsPerPage = 16;
+      gridColumns = "repeat(4, 1fr)";
+    } else if (layout === "4-2-4") {
+      itemsPerPage = 10;
+      gridColumns = "repeat(4, 1fr)";
+    }
     const totalPages = Math.ceil(window.products.length / itemsPerPage);
     if (window.currentPage >= totalPages) window.currentPage = totalPages - 1;
     if (window.currentPage < 0) window.currentPage = 0;
-
     const startIndex = window.currentPage * itemsPerPage;
     const endIndex = Math.min(startIndex + itemsPerPage, window.products.length);
     const pageProducts = window.products.slice(startIndex, endIndex);
-
     document.getElementById('prevPage').disabled = window.currentPage === 0;
     document.getElementById('nextPage').disabled = window.currentPage >= totalPages - 1;
-
+    if (pageInfo) {
+      pageInfo.innerText = `Strona ${window.currentPage + 1}/${totalPages}`;
+    }
     const pageDiv = document.createElement("div");
     pageDiv.className = "page";
     pageDiv.setAttribute("data-page", window.currentPage);
+    pageDiv.style.display = "grid";
+    pageDiv.style.gridTemplateColumns = gridColumns;
+    pageDiv.style.gap = "25px";
+    pageDiv.style.padding = "20px";
     container.appendChild(pageDiv);
-
     pageProducts.forEach((p, pageIndex) => {
       if (!p || !p.indeks) {
         console.warn(`Produkt o indeksie ${startIndex + pageIndex} jest nieprawidłowy lub brak indeksu`, p);
@@ -656,6 +674,13 @@ document.addEventListener("DOMContentLoaded", () => {
         window.globalLanguage = e.target.value;
         console.log(`Zmieniono język na: ${window.globalLanguage}`);
         window.currentPage = 0; // Reset strony po zmianie języka
+        window.renderCatalog();
+      });
+    }
+    const layoutSelect = document.getElementById('layoutSelect');
+    if (layoutSelect) {
+      layoutSelect.addEventListener('change', (e) => {
+        window.currentPage = 0; // Reset strony po zmianie układu
         window.renderCatalog();
       });
     }
