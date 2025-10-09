@@ -260,10 +260,10 @@ h1 {
 }
 /* Buttons */
 button {
-  padding: 10px 16px;
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -343,23 +343,28 @@ button:disabled {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 500px;
-  max-height: 80vh;
+  width: 95vw;
+  max-width: 600px;
+  max-height: 90vh;
   background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  padding: 20px;
+  padding: 30px;
   overflow-y: auto;
   border-radius: 12px;
   transition: transform 0.3s ease;
 }
+#virtualEditModal {
+  max-width: 700px;
+  max-height: 95vh;
+}
 .modal-content {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 .close {
-  font-size: 18px;
+  font-size: 24px;
   cursor: pointer;
   color: #2d3748;
   align-self: flex-end;
@@ -405,11 +410,11 @@ button:disabled {
 }
 .banner-preview:hover {
   border-color: #3182ce;
-  box-shadow: 0 0 8px rgba(49,130,206,0.3);
+  box-shadow: 0 0 8px rgba(49, 130, 206, 0.3);
 }
 .banner-preview.selected {
   border-color: #3182ce;
-  box-shadow: 0 0 10px rgba(49,130,206,0.5);
+  box-shadow: 0 0 10px rgba(49, 130, 206, 0.5);
 }
 /* Katalog produktów */
 #catalog {
@@ -460,43 +465,76 @@ button:disabled {
   font-size: 10px;
   color: #555;
 }
-.edit-button {
-  margin-top: 8px;
-  padding: 8px 12px;
-  font-size: 0.8rem;
-  min-width: 100px;
-}
-/* Debug */
-#debug {
+.buttons-container {
+  display: flex;
+  gap: 10px;
   margin-top: 10px;
-  color: #e53e3e;
-  font-size: 11px;
+}
+.edit-button, .layout-button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  min-width: 120px;
+  border-radius: 8px;
+  background-color: #3182ce;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+.edit-button:hover, .layout-button:hover {
+  background-color: #2b6cb0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(49, 130, 206, 0.4);
+}
+/* Nawigacja stron */
+#pageNav {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+#pageNav button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: #3182ce;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#pageNav button:hover:not(:disabled) {
+  background-color: #2b6cb0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(49, 130, 206, 0.4);
+}
+#pageNav button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
 }
 /* Styl dla pól edycji w modalu */
 .edit-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 15px;
 }
 .edit-field label {
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   color: #2d3748;
 }
 .edit-field input[type="text"],
 .edit-field select,
 .edit-field input[type="color"] {
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  border-radius: 8px;
+  font-size: 1rem;
   width: 100%;
   box-sizing: border-box;
 }
 .edit-field input[type="color"] {
   padding: 2px;
-  height: 30px;
+  height: 40px;
 }
 /* Responsywność */
 @media (max-width: 768px) {
@@ -533,12 +571,15 @@ button:disabled {
   }
   .btn-banner,
   .btn-primary,
-  .btn-secondary {
+  .btn-secondary,
+  .edit-button,
+  .layout-button,
+  #pageNav button {
     width: 100%;
     justify-content: center;
     min-width: 0;
-    padding: 8px 12px;
-    font-size: 0.85rem;
+    padding: 10px 16px;
+    font-size: 0.9rem;
   }
   .pdf-buttons {
     flex-direction: column;
@@ -570,8 +611,18 @@ button:disabled {
   }
   .modal {
     width: 90%;
-    max-width: 400px;
-    max-height: 70vh;
+    max-width: 500px;
+    max-height: 80vh;
+    padding: 20px;
+  }
+  #virtualEditModal {
+    max-width: 600px;
+  }
+  .edit-field input[type="text"],
+  .edit-field select,
+  .edit-field input[type="color"] {
+    font-size: 0.9rem;
+    padding: 8px;
   }
 }
 @media (max-width: 480px) {
@@ -590,9 +641,12 @@ button:disabled {
   }
   .btn-banner,
   .btn-primary,
-  .btn-secondary {
-    padding: 6px 10px;
-    font-size: 0.8rem;
+  .btn-secondary,
+  .edit-button,
+  .layout-button,
+  #pageNav button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
   #catalog {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -620,12 +674,16 @@ button:disabled {
   }
   .modal {
     width: 95%;
-    max-width: 350px;
+    max-width: 400px;
+    padding: 15px;
+  }
+  #virtualEditModal {
+    max-width: 500px;
   }
   .edit-field input[type="text"],
   .edit-field select,
   .edit-field input[type="color"] {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     padding: 6px;
   }
 }
