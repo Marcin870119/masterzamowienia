@@ -177,7 +177,7 @@ function showVirtualEditModal(productIndex) {
         const maxH = contentHeight * layoutImg.h;
         const scale = Math.min(maxW / img.width, maxH / img.height);
         img.set({
-          left: borderMargin + contentWidth * layoutImg.x,
+          left: borderMargin + contentWidth * layoutImg.x - (maxW * scale) / 2,
           top: borderMargin + contentHeight * layoutImg.y,
           scaleX: scale,
           scaleY: scale,
@@ -401,8 +401,8 @@ function showVirtualEditModal(productIndex) {
       const centerX = borderMargin + contentWidth / 2;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      const minLeft = centerX - contentWidth / 2;
-      const maxLeft = centerX + contentWidth / 2 - objWidth;
+      const minLeft = centerX - contentWidth / 2 + (obj.id === 'image' ? 0 : borderMargin);
+      const maxLeft = centerX + contentWidth / 2 - objWidth - (obj.id === 'image' ? 0 : borderMargin);
       if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
         obj.set({
           left: borderMargin + contentWidth / 2,
@@ -432,8 +432,8 @@ function showVirtualEditModal(productIndex) {
           });
         }
         const centerX = borderMargin + contentWidth / 2;
-        const minLeft = centerX - contentWidth / 2;
-        const maxLeft = centerX + contentWidth / 2 - objWidth;
+        const minLeft = centerX - contentWidth / 2 + (obj.id === 'image' ? 0 : borderMargin);
+        const maxLeft = centerX + contentWidth / 2 - objWidth - (obj.id === 'image' ? 0 : borderMargin);
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
         obj.set({
