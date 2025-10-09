@@ -1,5 +1,4 @@
 console.log('kreator3.js załadowany');
-
 // Funkcja pomocnicza do zawijania tekstu
 function wrapText(text, maxWidth, fontSize, fontFamily, canvas) {
   const words = text.split(' ');
@@ -22,7 +21,6 @@ function wrapText(text, maxWidth, fontSize, fontFamily, canvas) {
   canvas.remove(tempText);
   return lines.join('\n');
 }
-
 function showEditModal(productIndex) {
   try {
     console.log(`showEditModal wywołany dla produktu: ${productIndex}`);
@@ -212,7 +210,6 @@ function showEditModal(productIndex) {
     document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji: ${e.message}`;
   }
 }
-
 function saveEdit(productIndex) {
   try {
     console.log(`saveEdit wywołany dla produktu: ${productIndex}`);
@@ -313,7 +310,6 @@ function saveEdit(productIndex) {
     document.getElementById('debug').innerText = `Błąd zapisywania edycji produktu: ${e.message}`;
   }
 }
-
 function showPageEditModal(pageIndex) {
   try {
     console.log(`showPageEditModal wywołany dla strony: ${pageIndex}`);
@@ -457,7 +453,6 @@ function showPageEditModal(pageIndex) {
     document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji strony: ${e.message}`;
   }
 }
-
 function savePageEdit(pageIndex) {
   try {
     console.log(`savePageEdit wywołany dla strony: ${pageIndex}`);
@@ -488,7 +483,6 @@ function savePageEdit(pageIndex) {
     document.getElementById('debug').innerText = `Błąd zapisywania edycji strony: ${e.message}`;
   }
 }
-
 function showVirtualEditModal(productIndex) {
   try {
     console.log(`showVirtualEditModal wywołany dla produktu: ${productIndex}`);
@@ -534,7 +528,8 @@ function showVirtualEditModal(productIndex) {
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 }
+        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 },
+        logo: { x: 0.05, y: 0.55, w: 0.3, h: 0.1 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -619,9 +614,9 @@ function showVirtualEditModal(productIndex) {
     console.log('Kanwa Fabric.js zainicjalizowana');
     const canvasWidth = 350;
     const canvasHeight = 400;
-    const borderMargin = 20; // Margines ramki (1x 20 pt w PDF)
-    const contentWidth = canvasWidth - borderMargin * 2; // 310 pikseli
-    const contentHeight = canvasHeight - borderMargin * 2; // 360 pikseli
+    const borderMargin = 20;
+    const contentWidth = canvasWidth - borderMargin * 2;
+    const contentHeight = canvasHeight - borderMargin * 2;
     console.log('Ładowanie tekstury tła');
     if (edit.backgroundTexture) {
       try {
@@ -649,6 +644,7 @@ function showVirtualEditModal(productIndex) {
     const showRanking = document.getElementById('showRanking')?.checked || false;
     const showCena = document.getElementById('showCena')?.checked || false;
     const showEan = document.getElementById('showEan')?.checked || false;
+    const showLogo = document.getElementById('showLogo')?.checked || false;
     const priceLabel = window.globalLanguage === 'en' ? 'PRICE' : 'CENA';
     console.log('Ładowanie obrazu produktu');
     const imageUrl = window.uploadedImages[product.indeks] || product.img || 'https://dummyimage.com/120x84/eee/000&text=brak';
@@ -660,8 +656,8 @@ function showVirtualEditModal(productIndex) {
           return;
         }
         const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4 };
-        const maxW = contentWidth * layoutImg.w; // 279 pikseli
-        const maxH = contentHeight * layoutImg.h; // 144 pikseli
+        const maxW = contentWidth * layoutImg.w;
+        const maxH = contentHeight * layoutImg.h;
         const scale = Math.min(maxW / img.width, maxH / img.height);
         img.set({
           left: borderMargin + layoutImg.x * contentWidth,
@@ -683,6 +679,41 @@ function showVirtualEditModal(productIndex) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
       document.getElementById('debug').innerText = `Błąd ładowania obrazu produktu w podglądzie: ${e.message}`;
     }
+    if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
+      console.log('Ładowanie logo');
+      const logoUrl = edit.logo || window.manufacturerLogos[product.producent] || 'https://dummyimage.com/80x40/eee/000&text=brak';
+      try {
+        fabric.Image.fromURL(logoUrl, (logoImg) => {
+          if (!logoImg) {
+            console.error('Nie udało się załadować logo:', logoUrl);
+            document.getElementById('debug').innerText = "Błąd: Nie udało się załadować logo";
+            return;
+          }
+          const layoutLogo = layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1 };
+          const maxLogoWidth = contentWidth * layoutLogo.w;
+          const maxLogoHeight = contentHeight * layoutLogo.h;
+          const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height);
+          logoImg.set({
+            left: borderMargin + layoutLogo.x * contentWidth,
+            top: borderMargin + layoutLogo.y * contentHeight,
+            scaleX: scale,
+            scaleY: scale,
+            selectable: true,
+            id: 'logo',
+            hasBorders: true,
+            lockScalingX: false,
+            lockScalingY: false,
+            lockRotation: false,
+            originX: 'left'
+          });
+          canvas.add(logoImg);
+          console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, width: logoImg.width * scale, height: logoImg.height * scale });
+        }, { crossOrigin: 'anonymous' });
+      } catch (e) {
+        console.error('Błąd ładowania logo w podglądzie:', e);
+        document.getElementById('debug').innerText = `Błąd ładowania logo w podglądzie: ${e.message}`;
+      }
+    }
     console.log('Tworzenie ramki');
     const borderRect = new fabric.Rect({
       left: borderMargin,
@@ -701,11 +732,11 @@ function showVirtualEditModal(productIndex) {
     console.log('Ramka dodana');
     console.log('Tworzenie tekstu nazwy');
     const layoutName = layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 };
-    const maxNameWidth = contentWidth * layoutName.w; // 279 pikseli
+    const maxNameWidth = contentWidth * layoutName.w;
     const nazwaFontSize = edit.nazwaFontSize === 'small' ? 12 : edit.nazwaFontSize === 'large' ? 16 : 14;
     const wrappedName = wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, nazwaFontSize, edit.nazwaFont, canvas);
     const nazwaText = new fabric.Text(wrappedName, {
-      left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
+      left: borderMargin + contentWidth / 2,
       top: borderMargin + layoutName.y * contentHeight,
       fontSize: nazwaFontSize,
       fill: edit.nazwaFontColor,
@@ -723,11 +754,11 @@ function showVirtualEditModal(productIndex) {
     console.log('Tekst nazwy dodany:', wrappedName, `fontSize: ${nazwaFontSize}`);
     console.log('Tworzenie tekstu indeksu');
     const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 };
-    const maxIndexWidth = contentWidth * layoutIndex.w; // 279 pikseli
+    const maxIndexWidth = contentWidth * layoutIndex.w;
     const indeksFontSize = edit.indeksFontSize === 'small' ? 10 : edit.indeksFontSize === 'large' ? 14 : 12;
     const wrappedIndex = wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, indeksFontSize, edit.indeksFont, canvas);
     const indeksText = new fabric.Text(wrappedIndex, {
-      left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
+      left: borderMargin + contentWidth / 2,
       top: borderMargin + layoutIndex.y * contentHeight,
       fontSize: indeksFontSize,
       fill: edit.indeksFontColor,
@@ -747,11 +778,11 @@ function showVirtualEditModal(productIndex) {
     if (showRanking && product.ranking) {
       console.log('Tworzenie tekstu rankingu');
       const layoutRanking = layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 };
-      const maxRankingWidth = contentWidth * layoutRanking.w; // 279 pikseli
+      const maxRankingWidth = contentWidth * layoutRanking.w;
       const rankingFontSize = edit.rankingFontSize === 'small' ? 10 : edit.rankingFontSize === 'large' ? 14 : 12;
       const wrappedRanking = wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, rankingFontSize, edit.rankingFont, canvas);
       rankingText = new fabric.Text(wrappedRanking, {
-        left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
+        left: borderMargin + contentWidth / 2,
         top: borderMargin + layoutRanking.y * contentHeight,
         fontSize: rankingFontSize,
         fill: edit.rankingFontColor,
@@ -772,11 +803,11 @@ function showVirtualEditModal(productIndex) {
     if (showCena && product.cena) {
       console.log('Tworzenie tekstu ceny');
       const layoutPrice = layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 };
-      const maxPriceWidth = contentWidth * layoutPrice.w; // 279 pikseli
+      const maxPriceWidth = contentWidth * layoutPrice.w;
       const cenaFontSize = edit.cenaFontSize === 'small' ? 12 : edit.cenaFontSize === 'large' ? 16 : 14;
       const wrappedPrice = wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, cenaFontSize, edit.cenaFont, canvas);
       cenaText = new fabric.Text(wrappedPrice, {
-        left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
+        left: borderMargin + contentWidth / 2,
         top: borderMargin + layoutPrice.y * contentHeight,
         fontSize: cenaFontSize,
         fill: edit.cenaFontColor,
@@ -803,11 +834,11 @@ function showVirtualEditModal(productIndex) {
             return;
           }
           const layoutBarcode = layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 };
-          const maxBarcodeWidth = contentWidth * layoutBarcode.w; // ~265 pikseli
-          const maxBarcodeHeight = contentHeight * layoutBarcode.h; // ~41 pikseli
+          const maxBarcodeWidth = contentWidth * layoutBarcode.w;
+          const maxBarcodeHeight = contentHeight * layoutBarcode.h;
           const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
           barcodeImg.set({
-            left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
+            left: borderMargin + contentWidth / 2,
             top: borderMargin + layoutBarcode.y * contentHeight,
             scaleX: scale,
             scaleY: scale,
@@ -831,14 +862,14 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
-      const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledWidth() : obj.width;
-      const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledHeight() : obj.height;
+      const objWidth = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledWidth() : obj.width;
+      const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      if (obj.id !== 'image') {
+      if (obj.id !== 'image' && obj.id !== 'logo') {
         const maxWidth = obj.id === 'barcode' ? contentWidth * 0.8571 : contentWidth * 0.9;
         obj.set({
-          left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
+          left: borderMargin + contentWidth / 2,
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
       } else {
@@ -854,9 +885,9 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:scaling');
     canvas.on('object:scaling', (e) => {
       const obj = e.target;
-      if (obj.id === 'image' || obj.id === 'barcode') {
-        const maxW = contentWidth * (obj.id === 'image' ? 0.9 : 0.8571); // 279 pikseli dla obrazu, ~265 pikseli dla kodu kreskowego
-        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : 0.1143); // 144 piksele dla obrazu, ~41 pikseli dla kodu kreskowego
+      if (obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo') {
+        const maxW = contentWidth * (obj.id === 'image' ? 0.9 : obj.id === 'barcode' ? 0.8571 : 0.3);
+        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1143 : 0.1);
         const objWidth = obj.getScaledWidth();
         const objHeight = obj.getScaledHeight();
         if (objWidth > maxW || objHeight > maxH) {
@@ -872,7 +903,7 @@ function showVirtualEditModal(productIndex) {
         const maxTop = borderMargin + contentHeight - objHeight;
         if (obj.id === 'barcode') {
           obj.set({
-            left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie dla kodu kreskowego
+            left: borderMargin + contentWidth / 2,
             top: Math.max(minTop, Math.min(obj.top, maxTop))
           });
         } else {
@@ -889,7 +920,7 @@ function showVirtualEditModal(productIndex) {
       const obj = e.target;
       if (obj.id === 'barcode') {
         obj.set({
-          left: borderMargin + contentWidth / 2 // Wyśrodkowanie w poziomie po obrocie
+          left: borderMargin + contentWidth / 2
         });
         console.log(`Obrócono kod kreskowy: ${obj.id}, angle: ${obj.angle}`);
       }
@@ -903,7 +934,7 @@ function showVirtualEditModal(productIndex) {
         document.getElementById('debug').innerText = "Błąd: Brak panelu edycji";
         return;
       }
-      editPanel.style.display = obj.type === 'text' ? 'block' : 'none'; // Pokazuj panel tylko dla tekstu
+      editPanel.style.display = obj.type === 'text' ? 'block' : 'none';
       console.log('editPanel wyświetlony:', editPanel);
       if (obj.type === 'text') {
         document.getElementById('fontSelect').value = obj.fontFamily || 'Arial';
@@ -921,8 +952,8 @@ function showVirtualEditModal(productIndex) {
           if (obj.type === 'text') {
             const layoutKey = obj.id;
             const maxWidth = contentWidth * (layout[layoutKey]?.w || 0.9);
-            const fontSize = document.getElementById('sizeSelect').value === 'small' ? (layoutKey === 'name' || layoutKey === 'price' ? 12 : 10) : 
-                            document.getElementById('sizeSelect').value === 'large' ? (layoutKey === 'name' || layoutKey === 'price' ? 16 : 14) : 
+            const fontSize = document.getElementById('sizeSelect').value === 'small' ? (layoutKey === 'name' || layoutKey === 'price' ? 12 : 10) :
+                            document.getElementById('sizeSelect').value === 'large' ? (layoutKey === 'name' || layoutKey === 'price' ? 16 : 14) :
                             (layoutKey === 'name' || layoutKey === 'price' ? 14 : 12);
             const fontFamily = document.getElementById('fontSelect').value;
             const fill = document.getElementById('colorSelect').value;
@@ -944,7 +975,7 @@ function showVirtualEditModal(productIndex) {
               text: wrappedText,
               width: maxWidth,
               textAlign: 'center',
-              left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
+              left: borderMargin + contentWidth / 2,
               originX: 'center'
             });
             const objHeight = obj.height;
@@ -1009,18 +1040,19 @@ function showVirtualEditModal(productIndex) {
           price: layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
           index: layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
           ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-          barcode: layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 }
+          barcode: layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 },
+          logo: layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1 }
         };
         objects.forEach(obj => {
           if (obj.id) {
-            const objWidth = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledWidth() : obj.width;
-            const objHeight = obj.id === 'image' || obj.id === 'barcode' ? obj.getScaledHeight() : obj.height;
-            let normalizedX = obj.id === 'image' ? (obj.left - borderMargin) / contentWidth : obj.id === 'barcode' ? 0.2143 : 0.5;
+            const objWidth = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledWidth() : obj.width;
+            const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
+            let normalizedX = obj.id === 'image' || obj.id === 'logo' ? (obj.left - borderMargin) / contentWidth : obj.id === 'barcode' ? 0.2143 : 0.5;
             let normalizedY = (obj.top - borderMargin) / contentHeight;
-            const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.8571) : 0.9;
-            const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : obj.id === 'barcode' ? Math.min(objHeight / contentHeight, 0.1143) : 0.1;
+            const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.8571) : obj.id === 'logo' ? Math.min(objWidth / contentWidth, 0.3) : 0.9;
+            const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : obj.id === 'barcode' ? Math.min(objHeight / contentHeight, 0.1143) : obj.id === 'logo' ? Math.min(objHeight / contentHeight, 0.1) : 0.1;
             normalizedY = Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH));
-            if (obj.id === 'image') {
+            if (obj.id === 'image' || obj.id === 'logo') {
               normalizedX = Math.max(0.05, Math.min(normalizedX, 0.95 - normalizedW));
             }
             newLayout[obj.id] = {
@@ -1071,7 +1103,6 @@ function showVirtualEditModal(productIndex) {
     document.getElementById('debug').innerText = `Błąd pokazywania modalu edycji wirtualnej: ${e.message}`;
   }
 }
-
 function hideEditModal() {
   try {
     console.log('hideEditModal wywołany');
@@ -1085,7 +1116,6 @@ function hideEditModal() {
     document.getElementById('debug').innerText = `Błąd ukrywania modalu edycji: ${e.message}`;
   }
 }
-
 window.showEditModal = showEditModal;
 window.saveEdit = saveEdit;
 window.showPageEditModal = showPageEditModal;
