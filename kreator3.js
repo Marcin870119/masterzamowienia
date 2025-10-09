@@ -40,14 +40,17 @@ function showEditModal(productIndex) {
     const edit = window.productEdits[productIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
+      nazwaFontSize: 'medium',
       indeksFont: 'Arial',
       indeksFontColor: '#000000',
+      indeksFontSize: 'medium',
       rankingFont: 'Arial',
       rankingFontColor: '#000000',
+      rankingFontSize: 'medium',
       cenaFont: 'Arial',
       cenaFontColor: '#000000',
+      cenaFontSize: 'medium',
       priceCurrency: window.globalCurrency || 'EUR',
-      priceFontSize: 'medium',
       logo: null,
       borderStyle: 'solid',
       borderColor: '#000000',
@@ -89,6 +92,11 @@ function showEditModal(productIndex) {
           <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editNazwaColor" value="${edit.nazwaFontColor}">
+        <select id="editNazwaFontSize">
+          <option value="small" ${edit.nazwaFontSize === 'small' ? 'selected' : ''}>Mały</option>
+          <option value="medium" ${edit.nazwaFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+          <option value="large" ${edit.nazwaFontSize === 'large' ? 'selected' : ''}>Duży</option>
+        </select>
       </div>
       <div class="edit-field">
         <label>Indeks:</label>
@@ -99,6 +107,11 @@ function showEditModal(productIndex) {
           <option value="Times" ${edit.indeksFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editIndeksColor" value="${edit.indeksFontColor}">
+        <select id="editIndeksFontSize">
+          <option value="small" ${edit.indeksFontSize === 'small' ? 'selected' : ''}>Mały</option>
+          <option value="medium" ${edit.indeksFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+          <option value="large" ${edit.indeksFontSize === 'large' ? 'selected' : ''}>Duży</option>
+        </select>
       </div>
       ${showRanking ? `
         <div class="edit-field">
@@ -110,6 +123,11 @@ function showEditModal(productIndex) {
             <option value="Times" ${edit.rankingFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
           </select>
           <input type="color" id="editRankingColor" value="${edit.rankingFontColor}">
+          <select id="editRankingFontSize">
+            <option value="small" ${edit.rankingFontSize === 'small' ? 'selected' : ''}>Mały</option>
+            <option value="medium" ${edit.rankingFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+            <option value="large" ${edit.rankingFontSize === 'large' ? 'selected' : ''}>Duży</option>
+          </select>
         </div>
       ` : ''}
       ${showCena ? `
@@ -127,9 +145,9 @@ function showEditModal(productIndex) {
             <option value="GBP" ${edit.priceCurrency === 'GBP' ? 'selected' : ''}>£ (GBP)</option>
           </select>
           <select id="editCenaFontSize">
-            <option value="small" ${edit.priceFontSize === 'small' ? 'selected' : ''}>Mały</option>
-            <option value="medium" ${edit.priceFontSize === 'medium' ? 'selected' : ''}>Średni</option>
-            <option value="large" ${edit.priceFontSize === 'large' ? 'selected' : ''}>Duży</option>
+            <option value="small" ${edit.cenaFontSize === 'small' ? 'selected' : ''}>Mały</option>
+            <option value="medium" ${edit.cenaFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+            <option value="large" ${edit.cenaFontSize === 'large' ? 'selected' : ''}>Duży</option>
           </select>
         </div>
       ` : ''}
@@ -260,14 +278,17 @@ function saveEdit(productIndex) {
     window.productEdits[productIndex] = {
       nazwaFont: document.getElementById('editNazwaFont').value || 'Arial',
       nazwaFontColor: document.getElementById('editNazwaColor').value || '#000000',
+      nazwaFontSize: document.getElementById('editNazwaFontSize').value || 'medium',
       indeksFont: document.getElementById('editIndeksFont').value || 'Arial',
       indeksFontColor: document.getElementById('editIndeksColor').value || '#000000',
+      indeksFontSize: document.getElementById('editIndeksFontSize').value || 'medium',
       rankingFont: document.getElementById('editRankingFont')?.value || 'Arial',
       rankingFontColor: document.getElementById('editRankingColor')?.value || '#000000',
+      rankingFontSize: document.getElementById('editRankingFontSize')?.value || 'medium',
       cenaFont: document.getElementById('editCenaFont')?.value || 'Arial',
       cenaFontColor: document.getElementById('editCenaColor')?.value || '#000000',
+      cenaFontSize: document.getElementById('editCenaFontSize')?.value || 'medium',
       priceCurrency: document.getElementById('editCenaCurrency')?.value || window.globalCurrency || 'EUR',
-      priceFontSize: document.getElementById('editCenaFontSize')?.value || 'medium',
       logo: window.productEdits[productIndex]?.logo || null,
       borderStyle: document.getElementById('editBorderStyle').value || 'solid',
       borderColor: document.getElementById('editBorderColor').value || '#000000',
@@ -299,12 +320,16 @@ function showPageEditModal(pageIndex) {
     const edit = window.pageEdits[pageIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
+      nazwaFontSize: 'medium',
       indeksFont: 'Arial',
       indeksFontColor: '#000000',
+      indeksFontSize: 'medium',
       rankingFont: 'Arial',
       rankingFontColor: '#000000',
+      rankingFontSize: 'medium',
       cenaFont: 'Arial',
       cenaFontColor: '#000000',
+      cenaFontSize: 'medium',
       priceCurrency: window.globalCurrency || 'EUR',
       showPriceLabel: true,
       pageBackgroundGradient: 'none',
@@ -340,15 +365,25 @@ function showPageEditModal(pageIndex) {
           <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editNazwaColor" value="${edit.nazwaFontColor}">
+        <select id="editNazwaFontSize">
+          <option value="small" ${edit.nazwaFontSize === 'small' ? 'selected' : ''}>Mały</option>
+          <option value="medium" ${edit.nazwaFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+          <option value="large" ${edit.nazwaFontSize === 'large' ? 'selected' : ''}>Duży</option>
+        </select>
       </div>
       <div class="edit-field">
         <label>Czcionka indeksu:</label>
         <select id="editIndeksFont">
           <option value="Arial" ${edit.indeksFont === 'Arial' ? 'selected' : ''}>Arial</option>
           <option value="Helvetica" ${edit.indeksFont === 'Helvetica' ? 'selected' : ''}>Helvetica</option>
-          <option value="Times" ${edit.nazwaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
+          <option value="Times" ${edit.indeksFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editIndeksColor" value="${edit.indeksFontColor}">
+        <select id="editIndeksFontSize">
+          <option value="small" ${edit.indeksFontSize === 'small' ? 'selected' : ''}>Mały</option>
+          <option value="medium" ${edit.indeksFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+          <option value="large" ${edit.indeksFontSize === 'large' ? 'selected' : ''}>Duży</option>
+        </select>
       </div>
       <div class="edit-field">
         <label>Czcionka rankingu:</label>
@@ -358,6 +393,11 @@ function showPageEditModal(pageIndex) {
           <option value="Times" ${edit.rankingFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editRankingColor" value="${edit.rankingFontColor}">
+        <select id="editRankingFontSize">
+          <option value="small" ${edit.rankingFontSize === 'small' ? 'selected' : ''}>Mały</option>
+          <option value="medium" ${edit.rankingFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+          <option value="large" ${edit.rankingFontSize === 'large' ? 'selected' : ''}>Duży</option>
+        </select>
       </div>
       <div class="edit-field">
         <label>Czcionka ceny:</label>
@@ -367,6 +407,11 @@ function showPageEditModal(pageIndex) {
           <option value="Times" ${edit.cenaFont === 'Times' ? 'selected' : ''}>Times New Roman</option>
         </select>
         <input type="color" id="editCenaColor" value="${edit.cenaFontColor}">
+        <select id="editCenaFontSize">
+          <option value="small" ${edit.cenaFontSize === 'small' ? 'selected' : ''}>Mały</option>
+          <option value="medium" ${edit.cenaFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+          <option value="large" ${edit.cenaFontSize === 'large' ? 'selected' : ''}>Duży</option>
+        </select>
       </div>
       <div class="edit-field">
         <label>Waluta:</label>
@@ -420,12 +465,16 @@ function savePageEdit(pageIndex) {
     window.pageEdits[newPageIndex] = {
       nazwaFont: document.getElementById('editNazwaFont').value,
       nazwaFontColor: document.getElementById('editNazwaColor').value,
+      nazwaFontSize: document.getElementById('editNazwaFontSize').value || 'medium',
       indeksFont: document.getElementById('editIndeksFont').value,
       indeksFontColor: document.getElementById('editIndeksColor').value,
+      indeksFontSize: document.getElementById('editIndeksFontSize').value || 'medium',
       rankingFont: document.getElementById('editRankingFont').value,
       rankingFontColor: document.getElementById('editRankingColor').value,
+      rankingFontSize: document.getElementById('editRankingFontSize').value || 'medium',
       cenaFont: document.getElementById('editCenaFont').value,
       cenaFontColor: document.getElementById('editCenaColor').value,
+      cenaFontSize: document.getElementById('editCenaFontSize').value || 'medium',
       priceCurrency: document.getElementById('editCenaCurrency').value,
       showPriceLabel: document.querySelector('input[name="priceFormat"]:checked').value === 'true',
       pageBackgroundGradient: document.getElementById('editPageBackgroundGradient').value || 'none',
@@ -464,14 +513,17 @@ function showVirtualEditModal(productIndex) {
     const edit = window.productEdits[productIndex] || {
       nazwaFont: 'Arial',
       nazwaFontColor: '#000000',
+      nazwaFontSize: 'medium',
       indeksFont: 'Arial',
       indeksFontColor: '#000000',
+      indeksFontSize: 'medium',
       rankingFont: 'Arial',
       rankingFontColor: '#000000',
+      rankingFontSize: 'medium',
       cenaFont: 'Arial',
       cenaFontColor: '#000000',
+      cenaFontSize: 'medium',
       priceCurrency: window.globalCurrency || 'EUR',
-      priceFontSize: 'medium',
       borderStyle: 'solid',
       borderColor: '#000000',
       backgroundTexture: null,
@@ -508,9 +560,9 @@ function showVirtualEditModal(productIndex) {
             <div class="edit-field">
               <label>Rozmiar tekstu:</label>
               <select id="sizeSelect">
-                <option value="small" ${edit.priceFontSize === 'small' ? 'selected' : ''}>Mały</option>
-                <option value="medium" ${edit.priceFontSize === 'medium' ? 'selected' : ''}>Średni</option>
-                <option value="large" ${edit.priceFontSize === 'large' ? 'selected' : ''}>Duży</option>
+                <option value="small" ${edit.nazwaFontSize === 'small' ? 'selected' : ''}>Mały</option>
+                <option value="medium" ${edit.nazwaFontSize === 'medium' ? 'selected' : ''}>Średni</option>
+                <option value="large" ${edit.nazwaFontSize === 'large' ? 'selected' : ''}>Duży</option>
               </select>
             </div>
             <div class="edit-field">
@@ -650,11 +702,12 @@ function showVirtualEditModal(productIndex) {
     console.log('Tworzenie tekstu nazwy');
     const layoutName = layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 };
     const maxNameWidth = contentWidth * layoutName.w; // 279 pikseli
-    const wrappedName = wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, 12, edit.nazwaFont, canvas);
+    const nazwaFontSize = edit.nazwaFontSize === 'small' ? 12 : edit.nazwaFontSize === 'large' ? 16 : 14;
+    const wrappedName = wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, nazwaFontSize, edit.nazwaFont, canvas);
     const nazwaText = new fabric.Text(wrappedName, {
       left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
       top: borderMargin + layoutName.y * contentHeight,
-      fontSize: 12,
+      fontSize: nazwaFontSize,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
       width: maxNameWidth,
@@ -667,15 +720,16 @@ function showVirtualEditModal(productIndex) {
       originX: 'center'
     });
     canvas.add(nazwaText);
-    console.log('Tekst nazwy dodany:', wrappedName);
+    console.log('Tekst nazwy dodany:', wrappedName, `fontSize: ${nazwaFontSize}`);
     console.log('Tworzenie tekstu indeksu');
     const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 };
     const maxIndexWidth = contentWidth * layoutIndex.w; // 279 pikseli
-    const wrappedIndex = wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, 10, edit.indeksFont, canvas);
+    const indeksFontSize = edit.indeksFontSize === 'small' ? 10 : edit.indeksFontSize === 'large' ? 14 : 12;
+    const wrappedIndex = wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, indeksFontSize, edit.indeksFont, canvas);
     const indeksText = new fabric.Text(wrappedIndex, {
       left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
       top: borderMargin + layoutIndex.y * contentHeight,
-      fontSize: 10,
+      fontSize: indeksFontSize,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
       width: maxIndexWidth,
@@ -688,17 +742,18 @@ function showVirtualEditModal(productIndex) {
       originX: 'center'
     });
     canvas.add(indeksText);
-    console.log('Tekst indeksu dodany:', wrappedIndex);
+    console.log('Tekst indeksu dodany:', wrappedIndex, `fontSize: ${indeksFontSize}`);
     let rankingText;
     if (showRanking && product.ranking) {
       console.log('Tworzenie tekstu rankingu');
       const layoutRanking = layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 };
       const maxRankingWidth = contentWidth * layoutRanking.w; // 279 pikseli
-      const wrappedRanking = wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, 10, edit.rankingFont, canvas);
+      const rankingFontSize = edit.rankingFontSize === 'small' ? 10 : edit.rankingFontSize === 'large' ? 14 : 12;
+      const wrappedRanking = wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, rankingFontSize, edit.rankingFont, canvas);
       rankingText = new fabric.Text(wrappedRanking, {
         left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
         top: borderMargin + layoutRanking.y * contentHeight,
-        fontSize: 10,
+        fontSize: rankingFontSize,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
         width: maxRankingWidth,
@@ -711,19 +766,19 @@ function showVirtualEditModal(productIndex) {
         originX: 'center'
       });
       canvas.add(rankingText);
-      console.log('Tekst rankingu dodany:', wrappedRanking);
+      console.log('Tekst rankingu dodany:', wrappedRanking, `fontSize: ${rankingFontSize}`);
     }
     let cenaText;
     if (showCena && product.cena) {
       console.log('Tworzenie tekstu ceny');
       const layoutPrice = layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 };
       const maxPriceWidth = contentWidth * layoutPrice.w; // 279 pikseli
-      const fontSize = edit.priceFontSize === 'small' ? 12 : edit.priceFontSize === 'medium' ? 14 : 16;
-      const wrappedPrice = wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, fontSize, edit.cenaFont, canvas);
+      const cenaFontSize = edit.cenaFontSize === 'small' ? 12 : edit.cenaFontSize === 'large' ? 16 : 14;
+      const wrappedPrice = wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, cenaFontSize, edit.cenaFont, canvas);
       cenaText = new fabric.Text(wrappedPrice, {
         left: borderMargin + contentWidth / 2, // Wyśrodkowanie w poziomie
         top: borderMargin + layoutPrice.y * contentHeight,
-        fontSize: fontSize,
+        fontSize: cenaFontSize,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
         width: maxPriceWidth,
@@ -736,7 +791,7 @@ function showVirtualEditModal(productIndex) {
         originX: 'center'
       });
       canvas.add(cenaText);
-      console.log('Tekst ceny dodany:', wrappedPrice);
+      console.log('Tekst ceny dodany:', wrappedPrice, `fontSize: ${cenaFontSize}`);
     }
     if (showEan && product.ean && product.barcode) {
       console.log('Ładowanie kodu kreskowego');
@@ -853,7 +908,8 @@ function showVirtualEditModal(productIndex) {
       if (obj.type === 'text') {
         document.getElementById('fontSelect').value = obj.fontFamily || 'Arial';
         document.getElementById('colorSelect').value = obj.fill || '#000000';
-        document.getElementById('sizeSelect').value = obj.fontSize === 12 ? 'small' : obj.fontSize === 14 ? 'medium' : 'large';
+        const fontSizeKey = obj.id === 'name' ? 'nazwaFontSize' : obj.id === 'index' ? 'indeksFontSize' : obj.id === 'ranking' ? 'rankingFontSize' : 'cenaFontSize';
+        document.getElementById('sizeSelect').value = edit[fontSizeKey] || (obj.fontSize <= 10 ? 'small' : obj.fontSize >= 16 ? 'large' : 'medium');
       }
       document.getElementById('borderStyleSelect').value = edit.borderStyle || 'solid';
       document.getElementById('borderColorSelect').value = edit.borderColor || '#000000';
@@ -865,7 +921,9 @@ function showVirtualEditModal(productIndex) {
           if (obj.type === 'text') {
             const layoutKey = obj.id;
             const maxWidth = contentWidth * (layout[layoutKey]?.w || 0.9);
-            const fontSize = document.getElementById('sizeSelect').value === 'small' ? 12 : document.getElementById('sizeSelect').value === 'medium' ? 14 : 16;
+            const fontSize = document.getElementById('sizeSelect').value === 'small' ? (layoutKey === 'name' || layoutKey === 'price' ? 12 : 10) : 
+                            document.getElementById('sizeSelect').value === 'large' ? (layoutKey === 'name' || layoutKey === 'price' ? 16 : 14) : 
+                            (layoutKey === 'name' || layoutKey === 'price' ? 14 : 12);
             const fontFamily = document.getElementById('fontSelect').value;
             const fill = document.getElementById('colorSelect').value;
             let textContent = obj.text;
@@ -894,6 +952,7 @@ function showVirtualEditModal(productIndex) {
               top: Math.max(borderMargin, Math.min(obj.top, borderMargin + contentHeight - objHeight))
             });
             canvas.renderAll();
+            console.log(`Zastosowano edycję tekstu dla ${layoutKey}: fontSize=${fontSize}`);
           }
           const borderStyle = document.getElementById('borderStyleSelect').value;
           const borderColor = document.getElementById('borderColorSelect').value;
@@ -978,13 +1037,17 @@ function showVirtualEditModal(productIndex) {
           ...window.productEdits[productIndex],
           nazwaFont: nazwaText.fontFamily || edit.nazwaFont,
           nazwaFontColor: nazwaText.fill || edit.nazwaFontColor,
+          nazwaFontSize: edit.nazwaFontSize || (nazwaText.fontSize <= 12 ? 'small' : nazwaText.fontSize >= 16 ? 'large' : 'medium'),
           indeksFont: indeksText.fontFamily || edit.indeksFont,
           indeksFontColor: indeksText.fill || edit.indeksFontColor,
+          indeksFontSize: edit.indeksFontSize || (indeksText.fontSize <= 10 ? 'small' : indeksText.fontSize >= 14 ? 'large' : 'medium'),
           rankingFont: rankingText ? rankingText.fontFamily || edit.rankingFont : edit.rankingFont,
           rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
+          rankingFontSize: edit.rankingFontSize || (rankingText && rankingText.fontSize <= 10 ? 'small' : rankingText && rankingText.fontSize >= 14 ? 'large' : 'medium'),
           cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
           cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
-          priceFontSize: cenaText ? (cenaText.fontSize === 12 ? 'small' : cenaText.fontSize === 14 ? 'medium' : 'large') : edit.priceFontSize,
+          cenaFontSize: edit.cenaFontSize || (cenaText && cenaText.fontSize <= 12 ? 'small' : cenaText && cenaText.fontSize >= 16 ? 'large' : 'medium'),
+          priceCurrency: edit.priceCurrency || window.globalCurrency || 'EUR',
           borderStyle: edit.borderStyle || 'solid',
           borderColor: edit.borderColor || '#000000',
           backgroundTexture: edit.backgroundTexture || null,
