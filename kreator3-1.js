@@ -5,8 +5,8 @@ function showVirtualEditModal(productIndex) {
     console.log(`showVirtualEditModal wywołany dla produktu: ${productIndex}`);
     const modal = document.getElementById('virtualEditModal');
     if (!modal) {
-      console.error('Nie znaleziono elementu virtualEditModal');
-      document.getElementById('debug').innerText = "Błąd: Brak modalu edycji wirtualnej";
+      console.error('Błąd: Element virtualEditModal nie istnieje w DOM');
+      document.getElementById('debug').innerText = "Błąd: Brak elementu virtualEditModal w HTML";
       return;
     }
     console.log('virtualEditModal znaleziony:', modal);
@@ -113,14 +113,14 @@ function showVirtualEditModal(productIndex) {
     console.log('Modal ustawiony na display: block');
     const canvasElement = document.getElementById('virtualEditCanvas');
     if (!canvasElement) {
-      console.error('Nie znaleziono elementu virtualEditCanvas');
-      document.getElementById('debug').innerText = "Błąd: Brak elementu canvas";
+      console.error('Błąd: Element virtualEditCanvas nie istnieje w DOM');
+      document.getElementById('debug').innerText = "Błąd: Brak elementu virtualEditCanvas w HTML";
       return;
     }
     console.log('virtualEditCanvas znaleziony:', canvasElement);
     if (!window.fabric) {
-      console.error('Biblioteka Fabric.js nie jest załadowana');
-      document.getElementById('debug').innerText = "Błąd: Biblioteka Fabric.js nie jest załadowana";
+      console.error('Błąd: Biblioteka Fabric.js nie jest załadowana');
+      document.getElementById('debug').innerText = "Błąd: Biblioteka Fabric.js nie jest załadowana. Dodaj <script src='https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js'></script> do HTML.";
       return;
     }
     console.log('Inicjalizacja kanwy Fabric.js');
@@ -401,8 +401,8 @@ function showVirtualEditModal(productIndex) {
       const centerX = borderMargin + contentWidth / 2;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      const minLeft = centerX - contentWidth / 2 + (obj.id === 'image' ? 0 : borderMargin);
-      const maxLeft = centerX + contentWidth / 2 - objWidth - (obj.id === 'image' ? 0 : borderMargin);
+      const minLeft = centerX - contentWidth / 2;
+      const maxLeft = centerX + contentWidth / 2 - objWidth;
       if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
         obj.set({
           left: borderMargin + contentWidth / 2,
@@ -432,8 +432,8 @@ function showVirtualEditModal(productIndex) {
           });
         }
         const centerX = borderMargin + contentWidth / 2;
-        const minLeft = centerX - contentWidth / 2 + (obj.id === 'image' ? 0 : borderMargin);
-        const maxLeft = centerX + contentWidth / 2 - objWidth - (obj.id === 'image' ? 0 : borderMargin);
+        const minLeft = centerX - contentWidth / 2;
+        const maxLeft = centerX + contentWidth / 2 - objWidth;
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
         obj.set({
