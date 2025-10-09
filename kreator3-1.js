@@ -15,7 +15,7 @@ function showVirtualEditModal(productIndex) {
       indeks: 'Brak indeksu',
       cena: '',
       ranking: '',
-      img: 'https://github.com/MasterMM2025/kreator-katalog/raw/main/zdjecia/[nazwa_pliku].jpg',
+      img: 'https://dummyimage.com/120x84/eee/000&text=brak',
       producent: '',
       ean: '',
       barcode: ''
@@ -40,13 +40,13 @@ function showVirtualEditModal(productIndex) {
       backgroundTexture: null,
       backgroundOpacity: 1.0,
       layout: {
-        image: { x: 0.5, y: 0.05, w: 0.85, h: 0.4, rotation: 0 },
-        name: { x: 0.5, y: 0.5, w: 0.85, h: 0.1 },
-        price: { x: 0.5, y: 0.65, w: 0.85, h: 0.1 },
-        index: { x: 0.5, y: 0.75, w: 0.85, h: 0.1 },
-        ranking: { x: 0.5, y: 0.85, w: 0.85, h: 0.1 },
-        barcode: { x: 0.5, y: 0.95, w: 0.85, h: 0.1, rotation: 0 },
-        logo: { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 }
+        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 },
+        name: { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
+        price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
+        index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
+        ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
+        barcode: { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, scaleX: 1, scaleY: 1, rotation: 0 },
+        logo: { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -55,7 +55,7 @@ function showVirtualEditModal(productIndex) {
         <span class="close" onclick="window.hideEditModal()">&times;</span>
         <h3>Edytuj produkt wizualnie</h3>
         <div class="canvas-container">
-          <canvas id="virtualEditCanvas" width="280" height="402"></canvas>
+          <canvas id="virtualEditCanvas" width="350" height="400"></canvas>
           <div id="editPanel" style="position: absolute; top: 10px; right: -250px; background: white; padding: 15px; border: 1px solid #ccc; border-radius: 8px; display: none;">
             <div class="edit-field">
               <label>Czcionka:</label>
@@ -125,13 +125,13 @@ function showVirtualEditModal(productIndex) {
     }
     console.log('Inicjalizacja kanwy Fabric.js');
     const canvas = new fabric.Canvas('virtualEditCanvas', {
-      width: 280,
-      height: 402
+      width: 350,
+      height: 400
     });
     console.log('Kanwa Fabric.js zainicjalizowana');
-    const canvasWidth = 280;
-    const canvasHeight = 402;
-    const borderMargin = 10;
+    const canvasWidth = 350;
+    const canvasHeight = 400;
+    const borderMargin = 20;
     const contentWidth = canvasWidth - borderMargin * 2;
     const contentHeight = canvasHeight - borderMargin * 2;
     console.log('Ładowanie tekstury tła');
@@ -164,7 +164,7 @@ function showVirtualEditModal(productIndex) {
     const showLogo = document.getElementById('showLogo')?.checked || false;
     const priceLabel = window.globalLanguage === 'en' ? 'PRICE' : 'CENA';
     console.log('Ładowanie obrazu produktu');
-    const imageUrl = window.uploadedImages[product.indeks] || product.img || 'https://github.com/MasterMM2025/kreator-katalog/raw/main/zdjecia/[nazwa_pliku].jpg';
+    const imageUrl = window.uploadedImages[product.indeks] || product.img || 'https://dummyimage.com/120x84/eee/000&text=brak';
     try {
       fabric.Image.fromURL(imageUrl, (img) => {
         if (!img) {
@@ -172,27 +172,25 @@ function showVirtualEditModal(productIndex) {
           document.getElementById('debug').innerText = "Błąd: Nie udało się załadować obrazu produktu";
           return;
         }
-        const layoutImg = layout.image || { x: 0.5, y: 0.05, w: 0.85, h: 0.4, rotation: 0 };
+        const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 };
         const maxW = contentWidth * layoutImg.w;
         const maxH = contentHeight * layoutImg.h;
-        const scale = Math.min(maxW / img.width, maxH / img.height);
+        const scale = Math.min(maxW / img.width, maxH / img.height) * (layoutImg.scaleX || 1);
         img.set({
-          left: borderMargin + contentWidth * layoutImg.x - (maxW * scale) / 2,
-          top: borderMargin + contentHeight * layoutImg.y,
+          left: borderMargin + layoutImg.x * contentWidth,
+          top: borderMargin + layoutImg.y * contentHeight,
           scaleX: scale,
           scaleY: scale,
-          angle: layoutImg.rotation || 0,
           selectable: true,
           id: 'image',
           hasBorders: true,
           lockScalingX: false,
           lockScalingY: false,
           lockRotation: false,
-          originX: 'center',
-          originY: 'top'
+          originX: 'left'
         });
         canvas.add(img);
-        console.log('Obraz produktu załadowany:', imageUrl, { left: img.left, top: img.top, width: img.getScaledWidth(), height: img.getScaledHeight(), angle: img.angle });
+        console.log('Obraz produktu załadowany:', imageUrl, { left: img.left, top: img.top, scaleX: img.scaleX, scaleY: img.scaleY });
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
@@ -201,7 +199,7 @@ function showVirtualEditModal(productIndex) {
     let logoImgInstance;
     if (showLogo && (edit.logo || (product.producent && window.manufacturerLogos[product.producent]))) {
       console.log('Ładowanie logo');
-      const logoUrl = edit.logo || window.manufacturerLogos[product.producent] || 'https://github.com/MasterMM2025/kreator-katalog/raw/main/zdjecia/[nazwa_pliku].jpg';
+      const logoUrl = edit.logo || window.manufacturerLogos[product.producent] || 'https://dummyimage.com/80x40/eee/000&text=brak';
       try {
         fabric.Image.fromURL(logoUrl, (logoImg) => {
           if (!logoImg) {
@@ -209,32 +207,30 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować logo";
             return;
           }
-          const layoutLogo = layout.logo || { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 };
+          const layoutLogo = layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 };
           const maxLogoWidth = contentWidth * layoutLogo.w;
           const maxLogoHeight = contentHeight * layoutLogo.h;
-          const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height);
+          const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height) * (layoutLogo.scaleX || 1);
           logoImg.set({
-            left: borderMargin + (contentWidth * layoutLogo.x - (maxLogoWidth * scale) / 2),
-            top: borderMargin + contentHeight * layoutLogo.y,
+            left: borderMargin + layoutLogo.x * contentWidth,
+            top: borderMargin + layoutLogo.y * contentHeight,
             scaleX: scale,
             scaleY: scale,
-            angle: layoutLogo.rotation || 0,
             selectable: true,
             id: 'logo',
             hasBorders: true,
             lockScalingX: false,
             lockScalingY: false,
             lockRotation: false,
-            originX: 'center',
-            originY: 'top'
+            originX: 'left'
           });
           canvas.add(logoImg);
           logoImgInstance = logoImg;
-          console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, width: logoImg.getScaledWidth(), height: logoImg.getScaledHeight(), angle: logoImg.angle });
+          console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, scaleX: logoImg.scaleX, scaleY: logoImg.scaleY });
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania logo w podglądzie:', e);
-        document.getElementById('debug').innerText = `Błąd ładowania logo w podglądzie: ${e.message}`);
+        document.getElementById('debug').innerText = `Błąd ładowania logo w podglądzie: ${e.message}`;
       }
     }
     console.log('Tworzenie ramki');
@@ -254,13 +250,13 @@ function showVirtualEditModal(productIndex) {
     canvas.add(borderRect);
     console.log('Ramka dodana');
     console.log('Tworzenie tekstu nazwy');
-    const layoutName = layout.name || { x: 0.5, y: 0.5, w: 0.85, h: 0.1 };
+    const layoutName = layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 };
     const maxNameWidth = contentWidth * layoutName.w;
-    const nazwaFontSize = edit.nazwaFontSize === 'small' ? 11 : edit.nazwaFontSize === 'large' ? 14 : 12;
-    const wrappedName = window.wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, nazwaFontSize, edit.nazwaFont, canvas).split('\n').slice(0, 3).join('\n');
+    const nazwaFontSize = edit.nazwaFontSize === 'small' ? 12 : edit.nazwaFontSize === 'large' ? 16 : 14;
+    const wrappedName = window.wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, nazwaFontSize, edit.nazwaFont, canvas);
     const nazwaText = new fabric.Text(wrappedName, {
-      left: borderMargin + contentWidth * layoutName.x,
-      top: borderMargin + contentHeight * layoutName.y,
+      left: borderMargin + contentWidth / 2,
+      top: borderMargin + layoutName.y * contentHeight,
       fontSize: nazwaFontSize,
       fill: edit.nazwaFontColor,
       fontFamily: edit.nazwaFont,
@@ -271,20 +267,18 @@ function showVirtualEditModal(productIndex) {
       hasBorders: true,
       lockScalingX: true,
       lockScalingY: true,
-      lockRotation: true,
-      originX: 'center',
-      originY: 'top'
+      originX: 'center'
     });
     canvas.add(nazwaText);
     console.log('Tekst nazwy dodany:', wrappedName, `fontSize: ${nazwaFontSize}`);
     console.log('Tworzenie tekstu indeksu');
-    const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.85, h: 0.1 };
+    const layoutIndex = layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 };
     const maxIndexWidth = contentWidth * layoutIndex.w;
-    const indeksFontSize = edit.indeksFontSize === 'small' ? 9 : edit.indeksFontSize === 'large' ? 11 : 10;
-    const wrappedIndex = window.wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, indeksFontSize, edit.indeksFont, canvas).split('\n').slice(0, 3).join('\n');
+    const indeksFontSize = edit.indeksFontSize === 'small' ? 10 : edit.indeksFontSize === 'large' ? 14 : 12;
+    const wrappedIndex = window.wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, indeksFontSize, edit.indeksFont, canvas);
     const indeksText = new fabric.Text(wrappedIndex, {
-      left: borderMargin + contentWidth * layoutIndex.x,
-      top: borderMargin + contentHeight * layoutIndex.y,
+      left: borderMargin + contentWidth / 2,
+      top: borderMargin + layoutIndex.y * contentHeight,
       fontSize: indeksFontSize,
       fill: edit.indeksFontColor,
       fontFamily: edit.indeksFont,
@@ -295,22 +289,20 @@ function showVirtualEditModal(productIndex) {
       hasBorders: true,
       lockScalingX: true,
       lockScalingY: true,
-      lockRotation: true,
-      originX: 'center',
-      originY: 'top'
+      originX: 'center'
     });
     canvas.add(indeksText);
     console.log('Tekst indeksu dodany:', wrappedIndex, `fontSize: ${indeksFontSize}`);
     let rankingText;
     if (showRanking && product.ranking) {
       console.log('Tworzenie tekstu rankingu');
-      const layoutRanking = layout.ranking || { x: 0.5, y: 0.85, w: 0.85, h: 0.1 };
+      const layoutRanking = layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 };
       const maxRankingWidth = contentWidth * layoutRanking.w;
-      const rankingFontSize = edit.rankingFontSize === 'small' ? 9 : edit.rankingFontSize === 'large' ? 11 : 10;
-      const wrappedRanking = window.wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, rankingFontSize, edit.rankingFont, canvas).split('\n').slice(0, 3).join('\n');
+      const rankingFontSize = edit.rankingFontSize === 'small' ? 10 : edit.rankingFontSize === 'large' ? 14 : 12;
+      const wrappedRanking = window.wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, rankingFontSize, edit.rankingFont, canvas);
       rankingText = new fabric.Text(wrappedRanking, {
-        left: borderMargin + contentWidth * layoutRanking.x,
-        top: borderMargin + contentHeight * layoutRanking.y,
+        left: borderMargin + contentWidth / 2,
+        top: borderMargin + layoutRanking.y * contentHeight,
         fontSize: rankingFontSize,
         fill: edit.rankingFontColor,
         fontFamily: edit.rankingFont,
@@ -321,9 +313,7 @@ function showVirtualEditModal(productIndex) {
         hasBorders: true,
         lockScalingX: true,
         lockScalingY: true,
-        lockRotation: true,
-        originX: 'center',
-        originY: 'top'
+        originX: 'center'
       });
       canvas.add(rankingText);
       console.log('Tekst rankingu dodany:', wrappedRanking, `fontSize: ${rankingFontSize}`);
@@ -331,13 +321,13 @@ function showVirtualEditModal(productIndex) {
     let cenaText;
     if (showCena && product.cena) {
       console.log('Tworzenie tekstu ceny');
-      const layoutPrice = layout.price || { x: 0.5, y: 0.65, w: 0.85, h: 0.1 };
+      const layoutPrice = layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 };
       const maxPriceWidth = contentWidth * layoutPrice.w;
       const cenaFontSize = edit.cenaFontSize === 'small' ? 12 : edit.cenaFontSize === 'large' ? 16 : 14;
-      const wrappedPrice = window.wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, cenaFontSize, edit.cenaFont, canvas).split('\n').slice(0, 3).join('\n');
+      const wrappedPrice = window.wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, cenaFontSize, edit.cenaFont, canvas);
       cenaText = new fabric.Text(wrappedPrice, {
-        left: borderMargin + contentWidth * layoutPrice.x,
-        top: borderMargin + contentHeight * layoutPrice.y,
+        left: borderMargin + contentWidth / 2,
+        top: borderMargin + layoutPrice.y * contentHeight,
         fontSize: cenaFontSize,
         fill: edit.cenaFontColor,
         fontFamily: edit.cenaFont,
@@ -348,9 +338,7 @@ function showVirtualEditModal(productIndex) {
         hasBorders: true,
         lockScalingX: true,
         lockScalingY: true,
-        lockRotation: true,
-        originX: 'center',
-        originY: 'top'
+        originX: 'center'
       });
       canvas.add(cenaText);
       console.log('Tekst ceny dodany:', wrappedPrice, `fontSize: ${cenaFontSize}`);
@@ -365,13 +353,13 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować kodu kreskowego";
             return;
           }
-          const layoutBarcode = layout.barcode || { x: 0.5, y: 0.95, w: 0.85, h: 0.1, rotation: 0 };
+          const layoutBarcode = layout.barcode || { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, scaleX: 1, scaleY: 1, rotation: 0 };
           const maxBarcodeWidth = contentWidth * layoutBarcode.w;
           const maxBarcodeHeight = contentHeight * layoutBarcode.h;
-          const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
+          const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height) * (layoutBarcode.scaleX || 1);
           barcodeImg.set({
-            left: borderMargin + (contentWidth * layoutBarcode.x - (maxBarcodeWidth * scale) / 2),
-            top: borderMargin + contentHeight * layoutBarcode.y,
+            left: borderMargin + layoutBarcode.x * contentWidth,
+            top: borderMargin + layoutBarcode.y * contentHeight,
             scaleX: scale,
             scaleY: scale,
             angle: layoutBarcode.rotation || 0,
@@ -381,59 +369,49 @@ function showVirtualEditModal(productIndex) {
             lockScalingX: false,
             lockScalingY: false,
             lockRotation: false,
-            originX: 'center',
-            originY: 'top'
+            originX: 'left'
           });
           canvas.add(barcodeImg);
           barcodeImgInstance = barcodeImg;
-          console.log('Kod kreskowy dodany:', { left: barcodeImg.left, top: barcodeImg.top, width: barcodeImg.getScaledWidth(), height: barcodeImg.getScaledHeight(), angle: barcodeImg.angle });
+          console.log('Kod kreskowy dodany:', { left: barcodeImg.left, top: barcodeImg.top, scaleX: barcodeImg.scaleX, scaleY: barcodeImg.scaleY, angle: barcodeImg.angle });
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania kodu kreskowego w podglądzie:', e);
-        document.getElementById('debug').innerText = `Błąd ładowania kodu kreskowego w podglądzie: ${e.message}`);
+        document.getElementById('debug').innerText = `Błąd ładowania kodu kreskowego w podglądzie: ${e.message}`;
       }
     }
     console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
-      const objWidth = obj.getScaledWidth();
-      const objHeight = obj.getScaledHeight();
-      const centerX = borderMargin + contentWidth / 2;
+      const objWidth = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledWidth() : obj.width;
+      const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
       const minTop = borderMargin;
       const maxTop = borderMargin + contentHeight - objHeight;
-      const minLeft = centerX - (contentWidth * 0.85) / 2; // Ograniczenie do 85% szerokości
-      const maxLeft = centerX + (contentWidth * 0.85) / 2 - objWidth; // Ograniczenie do 85% szerokości
-      if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
-        obj.set({
-          left: borderMargin + contentWidth / 2,
-          top: Math.max(minTop, Math.min(obj.top, maxTop))
-        });
-      } else {
-        obj.set({
-          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
-          top: Math.max(minTop, Math.min(obj.top, maxTop))
-        });
-      }
-      console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle || 0}`);
+      const minLeft = borderMargin;
+      const maxLeft = borderMargin + contentWidth - objWidth;
+      obj.set({
+        left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+        top: Math.max(minTop, Math.min(obj.top, maxTop))
+      });
+      console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, angle: ${obj.angle || 0}`);
     });
     console.log('Dodawanie zdarzenia object:scaling');
     canvas.on('object:scaling', (e) => {
       const obj = e.target;
       if (obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo') {
-        const maxW = contentWidth * (obj.id === 'image' ? 0.85 : obj.id === 'barcode' ? 0.85 : 0.3);
-        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1 : 0.1);
+        const maxW = contentWidth * (obj.id === 'image' ? 0.9 : obj.id === 'barcode' ? 0.8571 : 0.3);
+        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1143 : 0.1);
         const objWidth = obj.getScaledWidth();
         const objHeight = obj.getScaledHeight();
         if (objWidth > maxW || objHeight > maxH) {
-          const scale = Math.min(maxW / objWidth, maxH / objHeight);
+          const scale = Math.min(maxW / obj.width, maxH / obj.height);
           obj.set({
-            scaleX: scale * obj.scaleX,
-            scaleY: scale * obj.scaleY
+            scaleX: scale,
+            scaleY: scale
           });
         }
-        const centerX = borderMargin + contentWidth / 2;
-        const minLeft = centerX - (contentWidth * 0.85) / 2;
-        const maxLeft = centerX + (contentWidth * 0.85) / 2 - objWidth;
+        const minLeft = borderMargin;
+        const maxLeft = borderMargin + contentWidth - objWidth;
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
         obj.set({
@@ -446,7 +424,7 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:rotating');
     canvas.on('object:rotating', (e) => {
       const obj = e.target;
-      if (obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo') {
+      if (obj.id === 'barcode' || obj.id === 'image' || obj.id === 'logo') {
         console.log(`Obrócono: ${obj.id}, angle: ${obj.angle}`);
       }
     });
@@ -476,10 +454,10 @@ function showVirtualEditModal(productIndex) {
           console.log('applyTextEdit wywołany');
           if (obj.type === 'text') {
             const layoutKey = obj.id;
-            const maxWidth = contentWidth * (layout[layoutKey]?.w || 0.85);
-            const fontSize = document.getElementById('sizeSelect').value === 'small' ? (layoutKey === 'name' ? 11 : layoutKey === 'price' ? 12 : 9) :
-                            document.getElementById('sizeSelect').value === 'large' ? (layoutKey === 'name' ? 14 : layoutKey === 'price' ? 16 : 11) :
-                            (layoutKey === 'name' ? 12 : layoutKey === 'price' ? 14 : 10);
+            const maxWidth = contentWidth * (layout[layoutKey]?.w || 0.9);
+            const fontSize = document.getElementById('sizeSelect').value === 'small' ? (layoutKey === 'name' || layoutKey === 'price' ? 12 : 10) :
+                            document.getElementById('sizeSelect').value === 'large' ? (layoutKey === 'name' || layoutKey === 'price' ? 16 : 14) :
+                            (layoutKey === 'name' || layoutKey === 'price' ? 14 : 12);
             const fontFamily = document.getElementById('fontSelect').value;
             const fill = document.getElementById('colorSelect').value;
             let textContent = obj.text;
@@ -492,7 +470,7 @@ function showVirtualEditModal(productIndex) {
             } else if (layoutKey === 'price') {
               textContent = `${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`;
             }
-            const wrappedText = window.wrapText(textContent, maxWidth, fontSize, fontFamily, canvas).split('\n').slice(0, 3).join('\n');
+            const wrappedText = window.wrapText(textContent, maxWidth, fontSize, fontFamily, canvas);
             obj.set({
               fontFamily: fontFamily,
               fill: fill,
@@ -503,7 +481,7 @@ function showVirtualEditModal(productIndex) {
               left: borderMargin + contentWidth / 2,
               originX: 'center'
             });
-            const objHeight = obj.getScaledHeight();
+            const objHeight = obj.height;
             obj.set({
               top: Math.max(borderMargin, Math.min(obj.top, borderMargin + contentHeight - objHeight))
             });
@@ -544,7 +522,7 @@ function showVirtualEditModal(productIndex) {
           console.log('Zastosowano edycję tekstu');
         } catch (e) {
           console.error('Błąd stosowania edycji tekstu:', e);
-          document.getElementById('debug').innerText = `Błąd stosowania edycji tekstu: ${e.message}`);
+          document.getElementById('debug').innerText = `Błąd stosowania edycji tekstu: ${e.message}`;
         }
       };
     });
@@ -560,52 +538,45 @@ function showVirtualEditModal(productIndex) {
         console.log('saveVirtualEdit wywołany');
         const objects = canvas.getObjects();
         const newLayout = {
-          image: layout.image || { x: 0.5, y: 0.05, w: 0.85, h: 0.4, rotation: 0 },
-          name: layout.name || { x: 0.5, y: 0.5, w: 0.85, h: 0.1 },
-          price: layout.price || { x: 0.5, y: 0.65, w: 0.85, h: 0.1 },
-          index: layout.index || { x: 0.5, y: 0.75, w: 0.85, h: 0.1 },
-          ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.85, h: 0.1 },
-          barcode: layout.barcode || { x: 0.5, y: 0.95, w: 0.85, h: 0.1, rotation: 0 },
-          logo: layout.logo || { x: 0.5, y: 0.55, w: 0.3, h: 0.1, rotation: 0 }
+          image: layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 },
+          name: layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
+          price: layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
+          index: layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
+          ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
+          barcode: layout.barcode || { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, scaleX: 1, scaleY: 1, rotation: 0 },
+          logo: layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 }
         };
         objects.forEach(obj => {
           if (obj.id) {
-            const objWidth = obj.getScaledWidth();
-            const objHeight = obj.getScaledHeight();
-            const centerX = borderMargin + contentWidth / 2;
-            const centerY = borderMargin + contentHeight / 2;
-            const normalizedX = (obj.left + objWidth / 2 - centerX) / contentWidth + 0.5;
+            const objWidth = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledWidth() : obj.width;
+            const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
+            const normalizedX = (obj.left - borderMargin) / contentWidth;
             const normalizedY = (obj.top - borderMargin) / contentHeight;
-            const normalizedW = objWidth / contentWidth;
-            const normalizedH = objHeight / contentHeight;
+            const scaleX = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.scaleX : 1;
+            const scaleY = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.scaleY : 1;
             newLayout[obj.id] = {
-              x: Math.max(0, Math.min(normalizedX, 1)),
-              y: Math.max(0, Math.min(normalizedY, 1)),
-              w: Math.min(normalizedW, obj.id === 'image' ? 0.85 : obj.id === 'barcode' ? 0.85 : 0.3),
-              h: Math.min(normalizedH, obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1 : 0.1),
-              rotation: obj.angle || 0
+              x: Math.max(0.05, Math.min(normalizedX, 0.95)),
+              y: Math.max(0.05, Math.min(normalizedY, 0.95)),
+              w: obj.id === 'image' ? 0.9 : obj.id === 'barcode' ? 0.8571 : 0.3,
+              h: obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1143 : 0.1,
+              scaleX: scaleX,
+              scaleY: scaleY,
+              ...(obj.id === 'barcode' ? { rotation: obj.angle || 0 } : {})
             };
             console.log(`Zapisano pozycję dla ${obj.id}:`, newLayout[obj.id]);
-          }
-        });
-        // Zachowaj domyślne wyśrodkowanie dla tekstu
-        ['name', 'price', 'index', 'ranking'].forEach(key => {
-          if (layout[key]) {
-            newLayout[key].x = 0.5;
-            newLayout[key].w = layout[key].w;
           }
         });
         window.productEdits[productIndex] = {
           ...window.productEdits[productIndex],
           nazwaFont: nazwaText.fontFamily || edit.nazwaFont,
           nazwaFontColor: nazwaText.fill || edit.nazwaFontColor,
-          nazwaFontSize: edit.nazwaFontSize || (nazwaText.fontSize <= 11 ? 'small' : nazwaText.fontSize >= 14 ? 'large' : 'medium'),
+          nazwaFontSize: edit.nazwaFontSize || (nazwaText.fontSize <= 12 ? 'small' : nazwaText.fontSize >= 16 ? 'large' : 'medium'),
           indeksFont: indeksText.fontFamily || edit.indeksFont,
           indeksFontColor: indeksText.fill || edit.indeksFontColor,
-          indeksFontSize: edit.indeksFontSize || (indeksText.fontSize <= 9 ? 'small' : indeksText.fontSize >= 11 ? 'large' : 'medium'),
+          indeksFontSize: edit.indeksFontSize || (indeksText.fontSize <= 10 ? 'small' : indeksText.fontSize >= 14 ? 'large' : 'medium'),
           rankingFont: rankingText ? rankingText.fontFamily || edit.rankingFont : edit.rankingFont,
           rankingFontColor: rankingText ? rankingText.fill || edit.rankingFontColor : edit.rankingFontColor,
-          rankingFontSize: edit.rankingFontSize || (rankingText && rankingText.fontSize <= 9 ? 'small' : rankingText && rankingText.fontSize >= 11 ? 'large' : 'medium'),
+          rankingFontSize: edit.rankingFontSize || (rankingText && rankingText.fontSize <= 10 ? 'small' : rankingText && rankingText.fontSize >= 14 ? 'large' : 'medium'),
           cenaFont: cenaText ? cenaText.fontFamily || edit.cenaFont : edit.cenaFont,
           cenaFontColor: cenaText ? cenaText.fill || edit.cenaFontColor : edit.cenaFontColor,
           cenaFontSize: edit.cenaFontSize || (cenaText && cenaText.fontSize <= 12 ? 'small' : cenaText && cenaText.fontSize >= 16 ? 'large' : 'medium'),
