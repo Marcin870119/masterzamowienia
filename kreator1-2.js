@@ -198,7 +198,7 @@ function renderCatalog() {
       return;
     }
     container.innerHTML = "";
-    if (window.products.length === 0) {
+    if (!window.products || window.products.length === 0) {
       container.innerHTML = "<p>Brak produktów do wyświetlenia. Zaimportuj plik Excel.</p>";
       return;
     }
@@ -218,6 +218,10 @@ function renderCatalog() {
     let pageDiv;
     let currentPage = 0;
     window.products.forEach((p, i) => {
+      if (!p || !p.indeks) {
+        console.warn(`Produkt o indeksie ${i} jest nieprawidłowy lub brak indeksu`, p);
+        return;
+      }
       if (i % itemsPerPage === 0) {
         pageDiv = document.createElement("div");
         pageDiv.className = "page";
@@ -250,11 +254,15 @@ function renderCatalog() {
       }
       if (showLogo && layout === "4" && (finalEdit.logo || (p.producent && window.manufacturerLogos[p.producent]))) {
         const logoImg = document.createElement('img');
-        logoImg.src = finalEdit.logo || window.manufacturerLogos[p.producent];
+        logoImg.src = finalEdit.logo || window.manufacturerLogos[p.producent] || "https://dummyimage.com/120x60/eee/000&text=brak";
         logoImg.style.width = '120px';
         logoImg.style.height = '60px';
         logoImg.style.objectFit = 'contain';
         logoImg.style.marginTop = '8px';
+        logoImg.onerror = () => {
+          console.warn(`Błąd ładowania logo dla produktu ${p.indeks}`);
+          logoImg.src = "https://dummyimage.com/120x60/eee/000&text=brak";
+        };
         details.appendChild(logoImg);
       }
       if (showEan && p.ean && p.barcode) {
@@ -265,6 +273,11 @@ function renderCatalog() {
         barcodeImg.style.marginTop = '8px';
         details.appendChild(barcodeImg);
       }
+      const buttonsContainer = document.createElement('div');
+      buttonsContainer.className = 'buttons-container';
+      buttonsContainer.style.display = 'flex';
+      buttonsContainer.style.gap = '8px';
+      buttonsContainer.style.marginTop = '8px';
       const editButton = document.createElement('button');
       editButton.className = 'btn-primary edit-button';
       editButton.innerHTML = '<i class="fas fa-edit"></i> Edytuj';
@@ -285,11 +298,13 @@ function renderCatalog() {
           document.getElementById('debug').innerText = "Błąd: Funkcja edycji układu nie jest dostępna";
         }
       };
+      buttonsContainer.appendChild(editButton);
+      buttonsContainer.appendChild(layoutButton);
       item.appendChild(img);
       item.appendChild(details);
-      item.appendChild(editButton);
-      item.appendChild(layoutButton);
+      item.appendChild(buttonsContainer);
       pageDiv.appendChild(item);
+      console.log(`Dodano produkt ${p.indeks} z przyciskami edycji`);
     });
     console.log('renderCatalog zakończony, produkty:', window.products.length);
   } catch (e) {
@@ -609,7 +624,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error('Błąd inicjalizacji zdarzeń DOM:', e);
     document.getElementById('debug').innerText = "Błąd inicjalizacji zdarzeń DOM: " + e.message;
   }
-});
+}
 window.importExcel = importExcel;
 window.renderCatalog = renderCatalog;
 window.showBannerModal = showBannerModal;
