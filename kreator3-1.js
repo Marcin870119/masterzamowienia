@@ -40,13 +40,13 @@ function showVirtualEditModal(productIndex) {
       backgroundTexture: null,
       backgroundOpacity: 1.0,
       layout: {
-        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
+        image: { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 },
         name: { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
         price: { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
         index: { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
         ranking: { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-        barcode: { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 },
-        logo: { x: 0.05, y: 0.55, w: 0.3, h: 0.1 }
+        barcode: { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, scaleX: 1, scaleY: 1, rotation: 0 },
+        logo: { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 }
       }
     };
     console.log('Tworzenie zawartości modalu dla produktu:', productIndex);
@@ -172,10 +172,10 @@ function showVirtualEditModal(productIndex) {
           document.getElementById('debug').innerText = "Błąd: Nie udało się załadować obrazu produktu";
           return;
         }
-        const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4 };
+        const layoutImg = layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 };
         const maxW = contentWidth * layoutImg.w;
         const maxH = contentHeight * layoutImg.h;
-        const scale = Math.min(maxW / img.width, maxH / img.height);
+        const scale = Math.min(maxW / img.width, maxH / img.height) * (layoutImg.scaleX || 1);
         img.set({
           left: borderMargin + layoutImg.x * contentWidth,
           top: borderMargin + layoutImg.y * contentHeight,
@@ -190,7 +190,7 @@ function showVirtualEditModal(productIndex) {
           originX: 'left'
         });
         canvas.add(img);
-        console.log('Obraz produktu załadowany:', imageUrl);
+        console.log('Obraz produktu załadowany:', imageUrl, { left: img.left, top: img.top, scaleX: img.scaleX, scaleY: img.scaleY });
       }, { crossOrigin: 'anonymous' });
     } catch (e) {
       console.error('Błąd ładowania obrazu produktu w podglądzie:', e);
@@ -207,10 +207,10 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować logo";
             return;
           }
-          const layoutLogo = layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1 };
+          const layoutLogo = layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 };
           const maxLogoWidth = contentWidth * layoutLogo.w;
           const maxLogoHeight = contentHeight * layoutLogo.h;
-          const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height);
+          const scale = Math.min(maxLogoWidth / logoImg.width, maxLogoHeight / logoImg.height) * (layoutLogo.scaleX || 1);
           logoImg.set({
             left: borderMargin + layoutLogo.x * contentWidth,
             top: borderMargin + layoutLogo.y * contentHeight,
@@ -225,8 +225,8 @@ function showVirtualEditModal(productIndex) {
             originX: 'left'
           });
           canvas.add(logoImg);
-          logoImgInstance = logoImg; // Store logo instance for saving
-          console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, width: logoImg.width * scale, height: logoImg.height * scale });
+          logoImgInstance = logoImg;
+          console.log('Logo dodane:', logoUrl, { left: logoImg.left, top: logoImg.top, scaleX: logoImg.scaleX, scaleY: logoImg.scaleY });
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania logo w podglądzie:', e);
@@ -353,10 +353,10 @@ function showVirtualEditModal(productIndex) {
             document.getElementById('debug').innerText = "Błąd: Nie udało się załadować kodu kreskowego";
             return;
           }
-          const layoutBarcode = layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 };
+          const layoutBarcode = layout.barcode || { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, scaleX: 1, scaleY: 1, rotation: 0 };
           const maxBarcodeWidth = contentWidth * layoutBarcode.w;
           const maxBarcodeHeight = contentHeight * layoutBarcode.h;
-          const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height);
+          const scale = Math.min(maxBarcodeWidth / barcodeImg.width, maxBarcodeHeight / barcodeImg.height) * (layoutBarcode.scaleX || 1);
           barcodeImg.set({
             left: borderMargin + layoutBarcode.x * contentWidth,
             top: borderMargin + layoutBarcode.y * contentHeight,
@@ -369,11 +369,11 @@ function showVirtualEditModal(productIndex) {
             lockScalingX: false,
             lockScalingY: false,
             lockRotation: false,
-            originX: 'left' // Changed to 'left' to allow free horizontal positioning
+            originX: 'left'
           });
           canvas.add(barcodeImg);
-          barcodeImgInstance = barcodeImg; // Store barcode instance for saving
-          console.log('Kod kreskowy dodany, pozycja:', { left: barcodeImg.left, top: barcodeImg.top, width: barcodeImg.width * scale, height: barcodeImg.height * scale, angle: barcodeImg.angle });
+          barcodeImgInstance = barcodeImg;
+          console.log('Kod kreskowy dodany:', { left: barcodeImg.left, top: barcodeImg.top, scaleX: barcodeImg.scaleX, scaleY: barcodeImg.scaleY, angle: barcodeImg.angle });
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania kodu kreskowego w podglądzie:', e);
@@ -389,19 +389,11 @@ function showVirtualEditModal(productIndex) {
       const maxTop = borderMargin + contentHeight - objHeight;
       const minLeft = borderMargin;
       const maxLeft = borderMargin + contentWidth - objWidth;
-      if (obj.id === 'name' || obj.id === 'index' || obj.id === 'ranking' || obj.id === 'price') {
-        const maxWidth = obj.id === 'barcode' ? contentWidth * 0.8571 : contentWidth * 0.9;
-        obj.set({
-          left: borderMargin + contentWidth / 2,
-          top: Math.max(minTop, Math.min(obj.top, maxTop))
-        });
-      } else {
-        obj.set({
-          left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
-          top: Math.max(minTop, Math.min(obj.top, maxTop))
-        });
-      }
-      console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle}`);
+      obj.set({
+        left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+        top: Math.max(minTop, Math.min(obj.top, maxTop))
+      });
+      console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, angle: ${obj.angle || 0}`);
     });
     console.log('Dodawanie zdarzenia object:scaling');
     canvas.on('object:scaling', (e) => {
@@ -426,15 +418,14 @@ function showVirtualEditModal(productIndex) {
           left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
-        console.log(`Skalowano: ${obj.id}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle}`);
+        console.log(`Skalowano: ${obj.id}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle || 0}`);
       }
     });
     console.log('Dodawanie zdarzenia object:rotating');
     canvas.on('object:rotating', (e) => {
       const obj = e.target;
-      if (obj.id === 'barcode') {
-        // Allow rotation without forcing center alignment
-        console.log(`Obrócono kod kreskowy: ${obj.id}, angle: ${obj.angle}`);
+      if (obj.id === 'barcode' || obj.id === 'image' || obj.id === 'logo') {
+        console.log(`Obrócono: ${obj.id}, angle: ${obj.angle}`);
       }
     });
     console.log('Dodawanie zdarzenia object:selected');
@@ -547,13 +538,13 @@ function showVirtualEditModal(productIndex) {
         console.log('saveVirtualEdit wywołany');
         const objects = canvas.getObjects();
         const newLayout = {
-          image: layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4 },
+          image: layout.image || { x: 0.05, y: 0.05, w: 0.9, h: 0.4, scaleX: 1, scaleY: 1 },
           name: layout.name || { x: 0.5, y: 0.5, w: 0.9, h: 0.1 },
           price: layout.price || { x: 0.5, y: 0.65, w: 0.9, h: 0.1 },
           index: layout.index || { x: 0.5, y: 0.75, w: 0.9, h: 0.1 },
           ranking: layout.ranking || { x: 0.5, y: 0.85, w: 0.9, h: 0.1 },
-          barcode: layout.barcode || { x: 0.2143, y: 0.85, w: 0.8571, h: 0.1143, rotation: 0 },
-          logo: layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1 }
+          barcode: layout.barcode || { x: 0.05, y: 0.85, w: 0.8571, h: 0.1143, scaleX: 1, scaleY: 1, rotation: 0 },
+          logo: layout.logo || { x: 0.05, y: 0.55, w: 0.3, h: 0.1, scaleX: 1, scaleY: 1 }
         };
         objects.forEach(obj => {
           if (obj.id) {
@@ -561,19 +552,13 @@ function showVirtualEditModal(productIndex) {
             const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
             const normalizedX = (obj.left - borderMargin) / contentWidth;
             const normalizedY = (obj.top - borderMargin) / contentHeight;
-            const normalizedW = obj.id === 'image' ? Math.min(objWidth / contentWidth, 0.9) : 
-                               obj.id === 'barcode' ? Math.min(objWidth / contentWidth, 0.8571) : 
-                               obj.id === 'logo' ? Math.min(objWidth / contentWidth, 0.3) : 0.9;
-            const normalizedH = obj.id === 'image' ? Math.min(objHeight / contentHeight, 0.4) : 
-                               obj.id === 'barcode' ? Math.min(objHeight / contentHeight, 0.1143) : 
-                               obj.id === 'logo' ? Math.min(objHeight / contentHeight, 0.1) : 0.1;
             const scaleX = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.scaleX : 1;
             const scaleY = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.scaleY : 1;
             newLayout[obj.id] = {
-              x: Math.max(0.05, Math.min(normalizedX, 0.95 - normalizedW)),
-              y: Math.max(0.05, Math.min(normalizedY, 0.95 - normalizedH)),
-              w: normalizedW,
-              h: normalizedH,
+              x: Math.max(0.05, Math.min(normalizedX, 0.95)),
+              y: Math.max(0.05, Math.min(normalizedY, 0.95)),
+              w: obj.id === 'image' ? 0.9 : obj.id === 'barcode' ? 0.8571 : 0.3,
+              h: obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1143 : 0.1,
               scaleX: scaleX,
               scaleY: scaleY,
               ...(obj.id === 'barcode' ? { rotation: obj.angle || 0 } : {})
@@ -600,7 +585,7 @@ function showVirtualEditModal(productIndex) {
           borderColor: edit.borderColor || '#000000',
           backgroundTexture: edit.backgroundTexture || null,
           backgroundOpacity: edit.backgroundOpacity || 1.0,
-          logo: edit.logo || (product.producent && window.manufacturerLogos[product.producent]) || null, // Ensure logo URL is preserved
+          logo: edit.logo || (product.producent && window.manufacturerLogos[product.producent]) || null,
           layout: newLayout
         };
         console.log('Zapisano wirtualną edycję dla produktu:', productIndex, window.productEdits[productIndex]);
