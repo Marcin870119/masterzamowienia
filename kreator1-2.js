@@ -1,8 +1,6 @@
 console.log('kreator1-2.js załadowany');
-
 // Inicjalizacja zmiennej dla aktualnej strony
 window.currentPage = 0;
-
 async function toBase64(url) {
   try {
     const response = await fetch(url, { cache: 'no-cache' });
@@ -22,7 +20,6 @@ async function toBase64(url) {
     return null;
   }
 }
-
 async function loadManufacturerLogos() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/Producenci.json");
@@ -49,7 +46,6 @@ async function loadManufacturerLogos() {
     document.getElementById('debug').innerText = `Błąd ładowania logów producentów: ${error.message}`;
   }
 }
-
 async function loadProducts() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json");
@@ -88,7 +84,6 @@ async function loadProducts() {
     document.getElementById('debug').innerText = `Błąd ładowania JSON: ${error.message}`;
   }
 }
-
 function handleFiles(files, callback) {
   if (!files || files.length === 0) {
     console.error("Brak plików do załadowania");
@@ -108,29 +103,24 @@ function handleFiles(files, callback) {
     reader.readAsDataURL(file);
   });
 }
-
 function loadCustomBanner(file, data) {
   window.selectedBanner = { id: "custom", data };
   console.log(`Załadowano baner: ${file.name}`);
 }
-
 function loadCustomBackground(file, data) {
   window.selectedBackground = { id: "customBackground", data };
   console.log(`Załadowano tło: ${file.name}`);
 }
-
 function loadCustomCover(file, data) {
   window.selectedCover = { id: "customCover", data };
   console.log(`Załadowano okładkę: ${file.name}`);
 }
-
 function loadCustomImages(file, data) {
   const fileName = file.name.split('.')[0];
   window.uploadedImages[fileName] = data;
   console.log(`Załadowano obraz dla indeksu: ${fileName}`);
   window.renderCatalog();
 }
-
 function showBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -146,7 +136,6 @@ function showBannerModal() {
     document.getElementById('debug').innerText = `Błąd pokazywania modalu banera: ${e.message}`;
   }
 }
-
 function hideBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -158,7 +147,6 @@ function hideBannerModal() {
     document.getElementById('debug').innerText = `Błąd ukrywania modalu banera: ${e.message}`;
   }
 }
-
 async function loadBanners() {
   try {
     const bannerOptions = document.getElementById('bannerOptions');
@@ -196,14 +184,12 @@ async function loadBanners() {
     document.getElementById('debug').innerText = `Błąd ładowania banerów: ${e.message}`;
   }
 }
-
 function selectBanner(id, data) {
   window.selectedBanner = { id, data };
   document.querySelectorAll('.banner-preview').forEach(p => p.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
   hideBannerModal();
 }
-
 function renderCatalog() {
   try {
     console.log(`renderCatalog wywołany, currentPage: ${window.currentPage}`);
@@ -370,7 +356,6 @@ function renderCatalog() {
     document.getElementById('debug').innerText = `Błąd renderowania katalogu: ${e.message}`;
   }
 }
-
 function showPage(pageNum) {
   try {
     const totalPages = Math.ceil(window.products.length / getItemsPerPage());
@@ -382,7 +367,6 @@ function showPage(pageNum) {
     document.getElementById('debug').innerText = `Błąd przełączania strony: ${e.message}`;
   }
 }
-
 function getItemsPerPage() {
   const layout = document.getElementById('layoutSelect')?.value || "16";
   if (layout === "1") return 1;
@@ -393,7 +377,6 @@ function getItemsPerPage() {
   else if (layout === "4-2-4") return 10;
   return 16;
 }
-
 function importExcel() {
   try {
     const file = document.getElementById('excelFile').files[0];
@@ -427,7 +410,7 @@ function importExcel() {
               if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = value || '';
               if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
               if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
-              if (['nazwa', 'name'].some(h => header.includes(h))) obj['nazwa'] = value || '';
+              if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.includes(h))) obj['nazwa'] = value || '';
               if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
             });
             return obj;
@@ -444,7 +427,7 @@ function importExcel() {
               if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = row[i] || '';
               if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = row[i] || '';
               if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = row[i] || '';
-              if (['nazwa', 'name'].some(h => header.includes(h))) obj['nazwa'] = row[i] || '';
+              if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.includes(h))) obj['nazwa'] = row[i] || '';
               if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = row[i] || '';
             });
             return obj;
@@ -515,7 +498,6 @@ function importExcel() {
     document.getElementById('debug').innerText = `Błąd importu pliku Excel/CSV: ${e.message}`;
   }
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log('DOMContentLoaded wywołany');
