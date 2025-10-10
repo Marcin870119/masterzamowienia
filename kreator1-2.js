@@ -280,6 +280,7 @@ function renderCatalog() {
       };
       const details = document.createElement('div');
       details.className = "details";
+      console.log(`Renderowanie produktu ${p.indeks}, nazwa: ${p.nazwa}`); // Log nazwy produktu
       details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}; font-size: ${nazwaFontSize}">${p.nazwa || 'Brak nazwy'}</b><br>` +
                          `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}; font-size: ${indeksFontSize}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
       if (showRanking && p.ranking) {
