@@ -107,7 +107,8 @@ async function loadManufacturerLogos() {
   }
 }
 
-// POPRAWKA: Wybór obrazu - wyraźne logowanie wyboru jpg/png, zatrzymaj po pierwszym sukcesie
+// POPRAWKA: Wcześniejsze - Retry (max 3 próby) i lepsza obsługa błędów
+// POPRAWKA: Wybór obrazu - Wyraźne logowanie wyboru jpg/png, zatrzymaj po pierwszym sukcesie
 async function loadProducts(retryCount = 0) {
   try {
     const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json");
@@ -460,7 +461,8 @@ function getItemsPerPage() {
   return 16;
 }
 
-// POPRAWKA: Wybór obrazu - wyraźne logowanie wyboru jpg/png w dynamicznym ładowaniu, zatrzymaj po pierwszym sukcesie
+// POPRAWKA: Wcześniejsze - Await loadProducts, walidacja indeksu, dynamiczne ładowanie img, lepsze mapowanie kolumn, zachowaj pageEdits
+// POPRAWKA: Wybór obrazu - Wyraźne logowanie wyboru jpg/png w dynamicznym ładowaniu
 async function importExcel() {
   try {
     const file = document.getElementById('excelFile').files[0];
@@ -469,6 +471,7 @@ async function importExcel() {
       document.getElementById('debug').innerText = "Błąd: Nie wybrano pliku";
       return;
     }
+    // POPRAWKA: Wcześniejsze - Zawsze załaduj/aktualizuj JSON przed importem
     console.log("Ładowanie/aktualizacja jsonProducts przed importem...");
     await window.loadProducts();
     
@@ -486,6 +489,7 @@ async function importExcel() {
           }
           const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim().replace(/\s+/g, ' '));
           console.log("Nagłówki CSV:", headers);
+          // POPRAWKA: Wcześniejsze - Lepsze mapowanie kolumn
           rows = rows.map((row, rowIndex) => {
             let obj = {};
             headers.forEach((header, i) => {
@@ -498,7 +502,7 @@ async function importExcel() {
               if (nameMatchers.some(m => header.toLowerCase().replace(/[-\s]/g, '').includes(m.replace(/[-\s]/g, '')))) {
                 obj['nazwa'] = value && typeof value === 'string' ? value.trim() : '';
                 console.log(`Mapa nazwy dla wiersza ${rowIndex}: header=${header}, value=${value}`);
-                if (!value) console.warn(`Pusta lub brakująca nazwa w wierszu ${rowIndex}, header=${header}`);
+                if (!value) console.warn(`Pusta lub brakująca nazwaBryan nazwa w wierszu ${rowIndex}, header=${header}`);
               }
               if (['logo', 'nazwa_prod', 'producent', 'manufacturer', 'brand'].some(h => header.includes(h))) obj['producent'] = value || '';
             });
@@ -533,7 +537,8 @@ async function importExcel() {
         }
         console.log("Przetworzone wiersze CSV/Excel:", rows);
         const newProducts = [];
-        const preservedEdits = { ...window.productEdits };
+        const preservedEdits = { ...window.productEdits }; // POPRAWKA: Wcześniejsze - Zachowaj istniejące edycje
+        // POPRAWKA: Wcześniejsze - Nie resetuj pageEdits całkowicie
         const oldPageEdits = { ...window.pageEdits };
         
         for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
@@ -543,6 +548,7 @@ async function importExcel() {
             console.warn(`Pomijam wiersz ${rowIndex}: brak indeksu`);
             continue;
           }
+          // POPRAWKA: Wcześniejsze - Walidacja indeksu w JSON
           const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString());
           if (!matched) {
             console.warn(`Indeks ${indeks} z Excela nie znaleziony w JSON! Pomijam produkt.`);
@@ -568,7 +574,8 @@ async function importExcel() {
             }
           }
           let productImg = matched.img;
-          // POPRAWKA: Wybór obrazu - jeśli brak img w JSON, ładuj dynamicznie, zatrzymaj po pierwszym sukcesie
+          // POPRAWKA: Wcześniejsze - Dynamiczne ładowanie img jeśli brak w JSON
+          // POPRAWKA: Wybór obrazu - Wyraźne logowanie wyboru jpg/png
           if (!productImg) {
             console.log(`Brak img w JSON dla ${indeks}, próba dynamicznego ładowania...`);
             const urls = [
@@ -682,7 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
         githubUploadArea.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop zdjęć do GitHub: ${e.dataTransfer.files.length}`);
-          window.uploadImagesToGitHub(e.dataTransfer.files);
+          window.uploadImagesToGitHub(e.target.files);
         }
       });
       githubUploadArea.querySelector('.file-label').addEventListener("click", (e) => {
@@ -714,7 +721,7 @@ document.addEventListener("DOMContentLoaded", () => {
         bannerUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop banera: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomBanner);
+          handleFiles(e.target.files, loadCustomBanner);
         }
       });
       bannerUpload.querySelector('.file-label').addEventListener("click", (e) => {
