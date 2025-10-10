@@ -20,6 +20,64 @@ async function toBase64(url) {
     return null;
   }
 }
+async function uploadImagesToGitHub(files) {
+  try {
+    const githubToken = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN'; // Zastąp swoim tokenem GitHub
+    if (!githubToken || githubToken === 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN') {
+      throw new Error('Brak tokena GitHub. Wygeneruj token w ustawieniach GitHub i wstaw go w kodzie.');
+    }
+    const repoOwner = 'Marcin870119';
+    const repoName = 'masterzamowienia';
+    const folderPath = 'zdjecia-dodatkowe';
+    const batchSize = 100; // Maksymalna liczba plików w jednej partii
+    const delayMs = 1000; // Opóźnienie między partiami w milisekundach
+    const fileArray = Array.from(files);
+    document.getElementById('debug').innerText = `Rozpoczęto przesyłanie ${fileArray.length} plików do GitHub...`;
+    
+    for (let i = 0; i < fileArray.length; i += batchSize) {
+      const batch = fileArray.slice(i, i + batchSize);
+      console.log(`Przesyłanie partii ${Math.floor(i / batchSize) + 1} (${batch.length} plików)`);
+      
+      await Promise.all(batch.map(async (file) => {
+        const fileName = file.name;
+        const filePath = `${folderPath}/${fileName}`;
+        const reader = new FileReader();
+        const content = await new Promise((resolve) => {
+          reader.onload = () => resolve(reader.result.split(',')[1]); // Usuń prefix data:image
+          reader.readAsDataURL(file);
+        });
+        const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Dodano obraz ${fileName}`,
+            content: content
+          })
+        });
+        if (!response.ok) {
+          console.warn(`Nie udało się przesłać pliku ${fileName} do GitHub: ${response.status}`);
+          document.getElementById('debug').innerText = `Błąd przesyłania pliku ${fileName} do GitHub`;
+          return;
+        }
+        console.log(`Przesłano plik ${fileName} do GitHub`);
+      }));
+      
+      if (i + batchSize < fileArray.length) {
+        console.log(`Oczekiwanie ${delayMs}ms przed przesłaniem kolejnej partii...`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+    }
+    document.getElementById('debug').innerText = `Przesłano ${fileArray.length} plików do GitHub`;
+    // Odśwież katalog po przesłaniu
+    window.renderCatalog();
+  } catch (e) {
+    console.error('Błąd przesyłania zdjęć do GitHub:', e);
+    document.getElementById('debug').innerText = `Błąd przesyłania zdjęć do GitHub: ${e.message}`;
+  }
+}
 async function loadManufacturerLogos() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/Producenci.json");
@@ -52,20 +110,13 @@ async function loadProducts() {
     if (!response.ok) throw new Error(`Nie udało się załadować JSON: ${response.status}`);
     const jsonData = await response.json();
     window.jsonProducts = await Promise.all(jsonData.map(async (p) => {
-      // Mapowanie indeksu na ID pliku w Google Drive (przykład, wymaga dostarczenia ID)
-      // TODO: Zastąp poniższe wartości rzeczywistymi ID plików z folderu Google Drive
-      const googleDriveFileIds = {
-        '18981': 'EXAMPLE_FILE_ID_18981', // Zastąp ID pliku dla 18981.jpg/png
-        '53496': 'EXAMPLE_FILE_ID_53496'  // Zastąp ID pliku dla 53496.jpg/png
-        // Dodaj kolejne mapowania indeks -> fileId
-      };
-      const fileId = googleDriveFileIds[p.INDEKS] || 'UNKNOWN';
       const urls = [
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.jpg`,
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.png`,
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.jpg`,
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.png`,
-        `https://drive.google.com/uc?export=download&id=${fileId}`
+        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-dodatkowe/${p.INDEKS}.jpg`,
+        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-dodatkowe/${p.INDEKS}.png`
       ];
       let base64Img = null;
       for (const url of urls) {
@@ -561,6 +612,38 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Nie znaleziono elementów: imageInput lub uploadArea");
       document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi zdjęć";
     }
+    const githubImageInput = document.getElementById("githubImageInput");
+    const githubUploadArea = document.getElementById("githubUploadArea");
+    if (githubImageInput && githubUploadArea) {
+      githubImageInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          console.log(`Zmiana w githubImageInput, pliki: ${e.target.files.length}`);
+          window.uploadImagesToGitHub(e.target.files);
+        }
+      });
+      githubUploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        githubUploadArea.classList.add("dragover");
+      });
+      githubUploadArea.addEventListener("dragleave", () => {
+        githubUploadArea.classList.remove("dragover");
+      });
+      githubUploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        githubUploadArea.classList.remove("dragover");
+        if (e.dataTransfer.files.length > 0) {
+          console.log(`Drop zdjęć do GitHub: ${e.dataTransfer.files.length}`);
+          window.uploadImagesToGitHub(e.dataTransfer.files);
+        }
+      });
+      githubUploadArea.querySelector('.file-label').addEventListener("click", (e) => {
+        e.preventDefault();
+        githubImageInput.click();
+      });
+    } else {
+      console.error("Nie znaleziono elementów: githubImageInput lub githubUploadArea");
+      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi przesyłania zdjęć do GitHub";
+    }
     const bannerFileInput = document.getElementById("bannerFileInput");
     const bannerUpload = document.getElementById("bannerUpload");
     if (bannerFileInput && bannerUpload) {
@@ -646,7 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
         coverUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop okładki: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomCover);
+          handleFiles(e.target.files, loadCustomCover);
         }
       });
       coverUpload.querySelector('.file-label').addEventListener("click", (e) => {
@@ -736,3 +819,4 @@ window.loadBanners = loadBanners;
 window.selectBanner = selectBanner;
 window.loadProducts = loadProducts;
 window.showPage = showPage;
+window.uploadImagesToGitHub = uploadImagesToGitHub;
