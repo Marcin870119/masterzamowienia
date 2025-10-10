@@ -526,7 +526,544 @@ async function previewPDF() {
     }
     if (!window.products || window.products.length === 0) {
       throw new Error("Brak produktów do wyświetlenia w podglądzie PDF");
+    }function drawBox(doc, x, y, w, h, borderStyle, borderColor) {
+  doc.setFillColor(220, 220, 220);
+  doc.roundedRect(x + 2, y + 2, w, h, 5, 5, 'F');
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(x, y, w, h, 5, 5, 'F');
+  const color = borderColor ? [
+    parseInt(borderColor.substring(1, 3), 16),
+    parseInt(borderColor.substring(3, 5), 16),
+    parseInt(borderColor.substring(5, 7), 16)
+  ] : [80, 80, 80];
+  doc.setDrawColor(...color);
+  if (borderStyle === "dashed") {
+    doc.setLineDash([5, 5]);
+  } else if (borderStyle === "dotted") {
+    doc.setLineDash([2, 2]);
+  } else {
+    doc.setLineDash([]);
+  }
+  doc.roundedRect(x, y, w, h, 5, 5, 'S');
+}
+function showProgressModal() {
+  try {
+    const progressModal = document.getElementById('progressModal');
+    if (!progressModal) throw new Error("Nie znaleziono elementu progressModal");
+    progressModal.style.display = 'block';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressText').textContent = '0%';
+  } catch (e) {
+    console.error('Błąd pokazywania modalu postępu:', e);
+    document.getElementById('debug').innerText = "Błąd pokazywania modalu postępu: " + e.message;
+  }
+}
+function hideProgressModal() {
+  try {
+    const progressModal = document.getElementById('progressModal');
+    if (!progressModal) throw new Error("Nie znaleziono elementu progressModal");
+    progressModal.style.display = 'none';
+  } catch (e) {
+    console.error('Błąd ukrywania modalu postępu:', e);
+    document.getElementById('debug').innerText = "Błąd ukrywania modalu postępu: " + e.message;
+  }
+}
+async function buildPDF(jsPDF, save = true) {
+  try {
+    if (!window.products || window.products.length === 0) {
+      throw new Error("Brak produktów do generowania PDF");
     }
+    showProgressModal();
+    const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4", compress: true });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const bannerHeight = 85;
+    let pageNumber = 1;
+    let totalProducts = window.products.length;
+    let processedProducts = 0;
+    if (window.selectedCover) {
+      try {
+        doc.addImage(window.selectedCover.data, window.selectedCover.data.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, pageHeight, undefined, "FAST");
+        if (window.products.length > 0) {
+          doc.addPage();
+        }
+      } catch (e) {
+        console.error('Błąd dodawania okładki:', e);
+        document.getElementById('debug').innerText = "Błąd dodawania okładki: " + e.message;
+      }
+    }
+    const bannerImg = window.selectedBanner ? window.selectedBanner.data : null;
+    const backgroundImg = window.selectedBackground ? window.selectedBackground.data : null;
+    const priceLabel = window.globalLanguage === 'en' ? 'PRICE' : 'CENA';
+    const applyGradient = (gradientType, opacity) => {
+      doc.saveGraphicsState();
+      doc.setGState(new doc.GState({ opacity: opacity || 1.0 }));
+      if (gradientType === "blue") {
+        doc.setFillColor(240, 248, 255);
+        doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
+        doc.setFillColor(0, 105, 192);
+        doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
+      } else if (gradientType === "green") {
+        doc.setFillColor(245, 255, 245);
+        doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
+        doc.setFillColor(46, 139, 87);
+        doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
+      } else if (gradientType === "gray") {
+        doc.setFillColor(245, 245, 245);
+        doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
+        doc.setFillColor(112, 128, 144);
+        doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
+      } else if (gradientType === "red") {
+        doc.setFillColor(255, 240, 240);
+        doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
+        doc.setFillColor(178, 34, 34);
+        doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
+      } else if (gradientType === "purple") {
+        doc.setFillColor(245, 240, 255);
+        doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
+        doc.setFillColor(106, 90, 205);
+        doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
+      } else if (gradientType === "orange") {
+        doc.setFillColor(255, 245, 238);
+        doc.rect(0, 0, pageWidth, pageHeight * 0.6, 'F');
+        doc.setFillColor(255, 165, 0);
+        doc.rect(0, pageHeight * 0.6, pageWidth, pageHeight * 0.4, 'F');
+      }
+      doc.restoreGraphicsState();
+    };
+    if (window.products.length > 0) {
+      const pageEdit = window.pageEdits[pageNumber - 1] || {};
+      if (pageEdit.pageBackgroundGradient && pageEdit.pageBackgroundGradient !== "none") {
+        try {
+          applyGradient(pageEdit.pageBackgroundGradient, pageEdit.pageBackgroundOpacity);
+        } catch (e) {
+          console.error('Błąd dodawania gradientu tła:', e);
+          document.getElementById('debug').innerText = "Błąd dodawania gradientu tła: " + e.message;
+        }
+      } else if (backgroundImg) {
+        try {
+          doc.addImage(backgroundImg, backgroundImg.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, pageHeight, undefined, "FAST");
+        } catch (e) {
+          console.error('Błąd dodawania tła:', e);
+          document.getElementById('debug').innerText = "Błąd dodawania tła: " + e.message;
+        }
+      }
+      if (bannerImg) {
+        try {
+          doc.addImage(bannerImg, bannerImg.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, bannerHeight, undefined, "FAST");
+        } catch (e) {
+          console.error('Błąd dodawania banera:', e);
+          document.getElementById('debug').innerText = "Błąd dodawania banera: " + e.message;
+        }
+      }
+      doc.setFont("Arial", "bold");
+      doc.setFontSize(12);
+      doc.text(`${pageNumber}`, pageWidth - 20, pageHeight - 10, { align: "right" });
+    }
+    const marginTop = 20 + bannerHeight;
+    const marginBottom = 28;
+    const marginLeftRight = 14;
+    const layout = document.getElementById('layoutSelect')?.value || "16";
+    const showEan = document.getElementById('showEan')?.checked || false;
+    const showRanking = document.getElementById('showRanking')?.checked || false;
+    const showCena = document.getElementById('showCena')?.checked || false;
+    const showLogo = document.getElementById('showLogo')?.checked || false;
+    let x = marginLeftRight;
+    let y = marginTop;
+    let productIndex = 0;
+    const getItemsPerPage = () => {
+      if (layout === "1") return 1;
+      if (layout === "2") return 2;
+      if (layout === "4") return 4;
+      if (layout === "8") return 8;
+      if (layout === "16") return 16;
+      if (layout === "4-2-4") return 10;
+      return 4;
+    };
+    const itemsPerPage = getItemsPerPage();
+    const drawSection = async (sectionCols, sectionRows, boxWidth, boxHeight, isLarge) => {
+      for (let row = 0; row < sectionRows && productIndex < window.products.length; row++) {
+        for (let col = 0; col < sectionCols && productIndex < window.products.length; col++) {
+          const p = window.products[productIndex];
+          const edit = window.productEdits[productIndex] || {};
+          const pageEdit = window.pageEdits[Math.floor(productIndex / itemsPerPage)] || {
+            nazwaFont: 'Arial',
+            nazwaFontColor: '#000000',
+            indeksFont: 'Arial',
+            indeksFontColor: '#000000',
+            rankingFont: 'Arial',
+            rankingFontColor: '#000000',
+            cenaFont: 'Arial',
+            cenaFontColor: '#000000',
+            priceCurrency: window.globalCurrency,
+            showPriceLabel: true,
+            borderStyle: 'solid',
+            borderColor: '#000000',
+            backgroundTexture: null,
+            backgroundOpacity: 1.0,
+            pageBackgroundGradient: 'none',
+            pageBackgroundOpacity: 1.0
+          };
+          const finalEdit = { ...pageEdit, ...edit };
+          const itemLayout = {
+            image: { left: 30, top: 20, scaleX: 1, scaleY: 1 },
+            name: { left: 175, top: 200, width: 315 },
+            price: { left: 175, top: 260, width: 315 },
+            index: { left: 175, top: 300, width: 315 },
+            ranking: { left: 175, top: 340, width: 315 },
+            barcode: { left: 30, top: 340, scaleX: 1, scaleY: 1, rotation: 0 },
+            logo: { left: 30, top: 220, scaleX: 1, scaleY: 1 }
+          };
+          const layoutToUse = finalEdit.layout || itemLayout;
+          if (finalEdit.backgroundTexture) {
+            try {
+              doc.saveGraphicsState();
+              doc.setGState(new doc.GState({ opacity: finalEdit.backgroundOpacity || 1.0 }));
+              doc.addImage(finalEdit.backgroundTexture, finalEdit.backgroundTexture.includes('image/png') ? "PNG" : "JPEG", x, y, boxWidth, boxHeight, undefined, "SLOW");
+              doc.restoreGraphicsState();
+            } catch (e) {
+              console.error('Błąd dodawania tekstury tła:', e);
+              document.getElementById('debug').innerText = "Błąd dodawania tekstury tła: " + e.message;
+            }
+          }
+          drawBox(doc, x, y, boxWidth, boxHeight, finalEdit.borderStyle || 'solid', finalEdit.borderColor || '#000000');
+          let imgSrc = window.uploadedImages[p.indeks] || p.img;
+          let logoSrc = edit.logo || (p.producent && window.manufacturerLogos[p.producent]) || null;
+          if (isLarge) {
+            if (imgSrc) {
+              try {
+                const img = new Image();
+                img.src = imgSrc;
+                await Promise.race([
+                  new Promise((res, rej) => { img.onload = res; img.onerror = rej; }),
+                  new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania obrazu')), 5000))
+                ]);
+                const layoutImg = layoutToUse.image || itemLayout.image;
+                const scaleX = layoutImg.scaleX || 1;
+                const scaleY = layoutImg.scaleY || 1;
+                const w = img.width * scaleX;
+                const h = img.height * scaleY;
+                const imgX = x + layoutImg.left * (boxWidth / 350); // Przeliczenie z canvasu 350px na boxWidth
+                const imgY = y + layoutImg.top * (boxHeight / 400); // Przeliczenie z canvasu 400px na boxHeight
+                doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w * (boxWidth / 350), h * (boxHeight / 400), undefined, "SLOW");
+              } catch (e) {
+                console.error('Błąd dodawania obrazka:', e);
+                document.getElementById('debug').innerText = "Błąd dodawania obrazka: " + e.message;
+              }
+            }
+            let textY = y;
+            const layoutName = layoutToUse.name || itemLayout.name;
+            doc.setFont(finalEdit.nazwaFont || 'Arial', "bold");
+            doc.setFontSize(sectionCols === 1 ? 14 : 11);
+            const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
+            doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
+            const nameX = x + layoutName.left * (boxWidth / 350);
+            const nameWidth = layoutName.width * (boxWidth / 350);
+            textY = y + layoutName.top * (boxHeight / 400);
+            const lines = doc.splitTextToSize(p.nazwa || "Brak nazwy", nameWidth);
+            const maxLines = 3;
+            lines.slice(0, maxLines).forEach((line, index) => {
+              doc.text(line, nameX, textY + (index * 18), { align: "center" });
+            });
+            textY += Math.min(lines.length, maxLines) * 18 + 10;
+            const layoutIndex = layoutToUse.index || itemLayout.index;
+            doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
+            doc.setFontSize(sectionCols === 1 ? 11 : 9);
+            const indeksFontColor = finalEdit.indeksFontColor || '#000000';
+            doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
+            const indexX = x + layoutIndex.left * (boxWidth / 350);
+            textY = y + layoutIndex.top * (boxHeight / 400);
+            doc.text(`Indeks: ${p.indeks || '-'}`, indexX, textY, { align: "center" });
+            textY += sectionCols === 1 ? 22 : 18;
+            if (showRanking && p.ranking) {
+              const layoutRanking = layoutToUse.ranking || itemLayout.ranking;
+              doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
+              const rankingFontColor = finalEdit.rankingFontColor || '#000000';
+              doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
+              const rankingX = x + layoutRanking.left * (boxWidth / 350);
+              textY = y + layoutRanking.top * (boxHeight / 400);
+              doc.text(`RANKING: ${p.ranking}`, rankingX, textY, { align: "center" });
+              textY += sectionCols === 1 ? 22 : 18;
+            }
+            if (showCena && p.cena) {
+              const layoutPrice = layoutToUse.price || itemLayout.price;
+              doc.setFont(finalEdit.cenaFont || 'Arial', "bold");
+              const priceFontSize = sectionCols === 1 ? (finalEdit.priceFontSize === 'small' ? 16 : finalEdit.priceFontSize === 'medium' ? 20 : 24) : (finalEdit.priceFontSize === 'small' ? 12 : finalEdit.priceFontSize === 'medium' ? 14 : 16);
+              doc.setFontSize(priceFontSize);
+              const cenaFontColor = finalEdit.cenaFontColor || '#000000';
+              doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
+              const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
+              const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
+              const priceX = x + layoutPrice.left * (boxWidth / 350);
+              textY = y + layoutPrice.top * (boxHeight / 400);
+              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, priceX, textY, { align: "center" });
+              textY += sectionCols === 1 ? 22 : 18;
+            }
+            if (showLogo && logoSrc) {
+              try {
+                const layoutLogo = layoutToUse.logo || itemLayout.logo;
+                const logoImg = new Image();
+                logoImg.src = logoSrc;
+                await Promise.race([
+                  new Promise((res, rej) => { logoImg.onload = res; logoImg.onerror = rej; }),
+                  new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania loga')), 5000))
+                ]);
+                const scaleX = layoutLogo.scaleX || 1;
+                const scaleY = layoutLogo.scaleY || 1;
+                const logoW = 120 * scaleX;
+                const logoH = 60 * scaleY;
+                const logoX = x + layoutLogo.left * (boxWidth / 350);
+                const logoY = y + layoutLogo.top * (boxHeight / 400);
+                doc.addImage(logoSrc, logoSrc.includes('image/png') ? "PNG" : "JPEG", logoX, logoY, logoW * (boxWidth / 350), logoH * (boxHeight / 400), undefined, "SLOW");
+                textY += logoH + 5;
+              } catch (e) {
+                console.error('Błąd dodawania loga:', e);
+                document.getElementById('debug').innerText = "Błąd dodawania loga: " + e.message;
+              }
+            }
+            if (showEan && p.ean && p.barcode) {
+              try {
+                const layoutBarcode = layoutToUse.barcode || itemLayout.barcode;
+                const scaleX = layoutBarcode.scaleX || 1;
+                const scaleY = layoutBarcode.scaleY || 1;
+                const bw = 180 * scaleX;
+                const bh = 50 * scaleY;
+                const bx = x + layoutBarcode.left * (boxWidth / 350);
+                const by = y + layoutBarcode.top * (boxHeight / 400);
+                doc.addImage(p.barcode, "PNG", bx, by, bw * (boxWidth / 350), bh * (boxHeight / 400), undefined, "SLOW");
+              } catch (e) {
+                console.error('Błąd dodawania kodu kreskowego:', e);
+                document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego: " + e.message;
+              }
+            }
+          } else {
+            if (imgSrc) {
+              try {
+                const img = new Image();
+                img.src = imgSrc;
+                await Promise.race([
+                  new Promise((res, rej) => { img.onload = res; img.onerror = rej; }),
+                  new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout ładowania obrazu')), 5000))
+                ]);
+                const maxW = 90;
+                const maxH = 60;
+                let scale = Math.min(maxW / img.width, maxH / img.height);
+                let w = img.width * scale;
+                let h = img.height * scale;
+                let imgX = x + 5 + (maxW - w) / 2;
+                let imgY = y + 8 + (maxH - h) / 2;
+                doc.addImage(imgSrc, imgSrc.includes('image/png') ? "PNG" : "JPEG", imgX, imgY, w, h, undefined, "SLOW");
+              } catch (e) {
+                console.error('Błąd dodawania obrazka:', e);
+                document.getElementById('debug').innerText = "Błąd dodawania obrazka: " + e.message;
+              }
+            }
+            let textY = y + 20;
+            doc.setFont(finalEdit.nazwaFont || 'Arial', "bold");
+            doc.setFontSize(8);
+            const nazwaFontColor = finalEdit.nazwaFontColor || '#000000';
+            doc.setTextColor(parseInt(nazwaFontColor.substring(1, 3), 16), parseInt(nazwaFontColor.substring(3, 5), 16), parseInt(nazwaFontColor.substring(5, 7), 16));
+            doc.text(p.nazwa || "Brak nazwy", x + 105, textY, { maxWidth: boxWidth - 110 });
+            textY += 25;
+            doc.setFont(finalEdit.indeksFont || 'Arial', "normal");
+            doc.setFontSize(7);
+            const indeksFontColor = finalEdit.indeksFontColor || '#000000';
+            doc.setTextColor(parseInt(indeksFontColor.substring(1, 3), 16), parseInt(indeksFontColor.substring(3, 5), 16), parseInt(indeksFontColor.substring(5, 7), 16));
+            doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, x + 105, textY, { maxWidth: 150 });
+            textY += 12;
+            if (showRanking && p.ranking) {
+              doc.setFont(finalEdit.rankingFont || 'Arial', "normal");
+              const rankingFontColor = finalEdit.rankingFontColor || '#000000';
+              doc.setTextColor(parseInt(rankingFontColor.substring(1, 3), 16), parseInt(rankingFontColor.substring(3, 5), 16), parseInt(rankingFontColor.substring(5, 7), 16));
+              doc.text(`RANKING: ${p.ranking}`, x + 105, textY, { maxWidth: 150 });
+              textY += 12;
+            }
+            if (showCena && p.cena) {
+              doc.setFont(finalEdit.cenaFont || 'Arial', "bold");
+              const priceFontSize = (finalEdit.priceFontSize || 'medium') === 'small' ? 10 : (finalEdit.priceFontSize || 'medium') === 'medium' ? 12 : 14;
+              doc.setFontSize(priceFontSize);
+              const cenaFontColor = finalEdit.cenaFontColor || '#000000';
+              doc.setTextColor(parseInt(cenaFontColor.substring(1, 3), 16), parseInt(cenaFontColor.substring(3, 5), 16), parseInt(cenaFontColor.substring(5, 7), 16));
+              const currencySymbol = (finalEdit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£';
+              const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
+              doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, x + 105, textY, { maxWidth: 150 });
+              textY += 16;
+            }
+            if (showEan && p.ean && p.barcode) {
+              try {
+                const bw = 85;
+                const bh = 32;
+                const bx = x + boxWidth - bw - 10;
+                const by = y + boxHeight - bh - 5;
+                doc.addImage(p.barcode, "PNG", bx, by, bw, bh, undefined, "SLOW");
+              } catch (e) {
+                console.error('Błąd dodawania kodu kreskowego:', e);
+                document.getElementById('debug').innerText = "Błąd dodawania kodu kreskowego: " + e.message;
+              }
+            }
+          }
+          processedProducts++;
+          const progress = (processedProducts / totalProducts) * 100;
+          document.getElementById('progressBar').style.width = `${progress}%`;
+          document.getElementById('progressText').textContent = `${Math.round(progress)}%`;
+          x += boxWidth + 6;
+          productIndex++;
+        }
+        x = marginLeftRight;
+        y += boxHeight + 6;
+      }
+      return y;
+    };
+    while (productIndex < window.products.length) {
+      let cols, rows, boxWidth, boxHeight, isLarge;
+      if (layout === "1") {
+        cols = 1;
+        rows = 1;
+        boxWidth = pageWidth - marginLeftRight * 2;
+        boxHeight = pageHeight - marginTop - marginBottom;
+        isLarge = true;
+        y = await drawSection(cols, rows, boxWidth, boxHeight, isLarge);
+      } else if (layout === "2") {
+        cols = 2;
+        rows = 1;
+        boxWidth = (pageWidth - marginLeftRight * 2 - (cols - 1) * 6) / cols;
+        boxHeight = pageHeight - marginTop - marginBottom;
+        isLarge = true;
+        y = await drawSection(cols, rows, boxWidth, boxHeight, isLarge);
+      } else if (layout === "4") {
+        cols = 2;
+        rows = 2;
+        boxWidth = (pageWidth - marginLeftRight * 2 - (cols - 1) * 6) / cols;
+        boxHeight = (pageHeight - marginTop - marginBottom - (rows - 1) * 6) / rows;
+        isLarge = true;
+        y = await drawSection(cols, rows, boxWidth, boxHeight, isLarge);
+      } else if (layout === "8") {
+        cols = 2;
+        rows = 4;
+        boxWidth = (pageWidth - marginLeftRight * 2 - (cols - 1) * 6) / cols;
+        boxHeight = (pageHeight - marginTop - marginBottom - (rows - 1) * 6) / rows;
+        isLarge = false;
+        y = await drawSection(cols, rows, boxWidth, boxHeight, isLarge);
+      } else if (layout === "16") {
+        cols = 2;
+        rows = 8;
+        boxWidth = (pageWidth - marginLeftRight * 2 - (cols - 1) * 6) / cols;
+        boxHeight = (pageHeight - marginTop - marginBottom - (rows - 1) * 6) / rows;
+        isLarge = false;
+        y = await drawSection(cols, rows, boxWidth, boxHeight, isLarge);
+      } else if (layout === "4-2-4") {
+        cols = 2;
+        rows = 2;
+        boxWidth = (pageWidth - marginLeftRight * 2 - (cols - 1) * 6) / cols;
+        boxHeight = ((pageHeight - marginTop - marginBottom) * 0.3 - (rows - 1) * 6) / rows;
+        isLarge = false;
+        y = await drawSection(cols, rows, boxWidth, boxHeight, isLarge);
+        cols = 2;
+        rows = 1;
+        boxWidth = (pageWidth - marginLeftRight * 2 - (cols - 1) * 6) / cols;
+        boxHeight = ((pageHeight - marginTop - marginBottom) * 0.4 - (rows - 1) * 6) / rows;
+        isLarge = true;
+        y = await drawSection(cols, rows, boxWidth, boxHeight, isLarge);
+        cols = 2;
+        rows = 2;
+        boxWidth = (pageWidth - marginLeftRight * 2 - (cols - 1) * 6) / cols;
+        boxHeight = ((pageHeight - marginTop - marginBottom) * 0.3 - (rows - 1) * 6) / rows;
+        isLarge = false;
+        y = await drawSection(cols, rows, boxWidth, boxHeight, isLarge);
+      }
+      if (productIndex < window.products.length) {
+        doc.addPage();
+        pageNumber++;
+        const pageEdit = window.pageEdits[pageNumber - 1] || {};
+        if (pageEdit.pageBackgroundGradient && pageEdit.pageBackgroundGradient !== "none") {
+          try {
+            applyGradient(pageEdit.pageBackgroundGradient, pageEdit.pageBackgroundOpacity);
+          } catch (e) {
+            console.error('Błąd dodawania gradientu tła:', e);
+            document.getElementById('debug').innerText = "Błąd dodawania gradientu tła: " + e.message;
+          }
+        } else if (backgroundImg) {
+          try {
+            doc.addImage(backgroundImg, backgroundImg.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, pageHeight, undefined, "FAST");
+          } catch (e) {
+            console.error('Błąd dodawania tła:', e);
+            document.getElementById('debug').innerText = "Błąd dodawania tła: " + e.message;
+          }
+        }
+        if (bannerImg) {
+          try {
+            doc.addImage(bannerImg, bannerImg.includes('image/png') ? "PNG" : "JPEG", 0, 0, pageWidth, bannerHeight, undefined, "FAST");
+          } catch (e) {
+            console.error('Błąd dodawania banera:', e);
+            document.getElementById('debug').innerText = "Błąd dodawania banera: " + e.message;
+          }
+        }
+        doc.setFont("Arial", "bold");
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(12);
+        doc.text(`${pageNumber}`, pageWidth - 20, pageHeight - 10, { align: "right" });
+        x = marginLeftRight;
+        y = marginTop;
+      }
+    }
+    hideProgressModal();
+    if (save) {
+      try {
+        doc.save("katalog.pdf");
+      } catch (e) {
+        console.error('Błąd zapisywania PDF:', e);
+        document.getElementById('debug').innerText = "Błąd zapisywania PDF: " + e.message;
+      }
+    }
+    return doc;
+  } catch (e) {
+    console.error('Błąd generowania PDF:', e);
+    document.getElementById('debug').innerText = "Błąd generowania PDF: " + e.message;
+    hideProgressModal();
+    throw e;
+  }
+}
+async function generatePDF() {
+  try {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+      throw new Error("Biblioteka jsPDF nie jest załadowana");
+    }
+    await buildPDF(jsPDF, true);
+  } catch (e) {
+    console.error('Błąd generowania PDF:', e);
+    document.getElementById('debug').innerText = "Błąd generowania PDF: " + e.message;
+    hideProgressModal();
+  }
+}
+async function previewPDF() {
+  try {
+    showProgressModal();
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+      throw new Error("Biblioteka jsPDF nie jest załadowana");
+    }
+    if (!window.products || window.products.length === 0) {
+      throw new Error("Brak produktów do wyświetlenia w podglądzie PDF");
+    }
+    const doc = await buildPDF(jsPDF, false);
+    const pdfBlob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    const pdfIframe = document.getElementById("pdfIframe");
+    if (!pdfIframe) {
+      throw new Error("Nie znaleziono elementu pdfIframe");
+    }
+    pdfIframe.src = blobUrl;
+    document.getElementById("pdfPreview").style.display = "block";
+    hideProgressModal();
+  } catch (e) {
+    console.error('Błąd generowania podglądu PDF:', e);
+    document.getElementById('debug').innerText = `Błąd generowania podglądu PDF: ${e.message}`;
+    hideProgressModal();
+  }
+}
+window.generatePDF = generatePDF;
+window.previewPDF = previewPDF;
     const doc = await buildPDF(jsPDF, false);
     const pdfBlob = doc.output('blob');
     const blobUrl = URL.createObjectURL(pdfBlob);
