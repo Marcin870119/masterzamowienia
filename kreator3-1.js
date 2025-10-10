@@ -153,7 +153,7 @@ function showVirtualEditModal(productIndex) {
         }, { crossOrigin: 'anonymous' });
       } catch (e) {
         console.error('Błąd ładowania tekstury tła w podglądzie:', e);
-        document.getElementById('debug').innerText = `Błąd ładowania tekstury tła w podglądzie: ${e.message}`;
+        document.getElementById('debug').innerText = `Błąd ładowania tekstury tła w podglądzie: ${e.message}`);
       }
     }
     const originalLayout = JSON.parse(JSON.stringify(edit.layout || {}));
@@ -552,6 +552,7 @@ function showVirtualEditModal(productIndex) {
             left: activeObject.left,
             top: activeObject.top,
             ...(activeObject.id === 'image' || activeObject.id === 'logo' || (activeObject.id === 'barcode' && activeObject.__modified) ? { scaleX: activeObject.scaleX, scaleY: activeObject.scaleY } : {}),
+            ...(activeObject.id === 'name' || activeObject.id === 'price' || activeObject.id === 'index' || activeObject.id === 'ranking' ? { width: activeObject.width } : {}),
             ...(activeObject.id === 'barcode' ? { rotation: activeObject.angle || (originalLayout[activeObject.id]?.rotation || 0) } : {})
           };
           console.log(`Zapisano pozycję dla ${activeObject.id}:`, newLayout[activeObject.id]);
