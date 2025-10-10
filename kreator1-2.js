@@ -343,7 +343,7 @@ function renderCatalog() {
       };
       const details = document.createElement('div');
       details.className = "details";
-      console.log(`Renderowanie produktu ${p.indeks}, nazwa: ${p.nazwa}`);
+      console.log(`Renderowanie produktu ${p.indeks}, nazwa: ${p.nazwa}, edit:`, finalEdit);
       details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}; font-size: ${nazwaFontSize}">${p.nazwa || 'Brak nazwy'}</b><br>` +
                          `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}; font-size: ${indeksFontSize}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
       if (showRanking && p.ranking) {
@@ -511,6 +511,7 @@ function importExcel() {
         }
         console.log("Przetworzone wiersze CSV/Excel:", rows);
         const newProducts = [];
+        const preservedEdits = { ...window.productEdits }; // Zachowaj istniejące edycje
         rows.forEach((row, rowIndex) => {
           const indeks = row['indeks'] || row[0];
           if (indeks) {
@@ -551,7 +552,7 @@ function importExcel() {
         console.log("Nowe produkty:", newProducts);
         if (newProducts.length) {
           window.products = newProducts;
-          window.productEdits = {};
+          window.productEdits = preservedEdits; // Przywróć zachowane edycje
           window.pageEdits = {};
           window.currentPage = 0; // Reset strony po imporcie
           window.renderCatalog();
@@ -665,7 +666,7 @@ document.addEventListener("DOMContentLoaded", () => {
         bannerUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop banera: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomBanner);
+          handleFiles(e.target.files, loadCustomBanner);
         }
       });
       bannerUpload.querySelector('.file-label').addEventListener("click", (e) => {
@@ -697,7 +698,7 @@ document.addEventListener("DOMContentLoaded", () => {
         backgroundUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop tła: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomBackground);
+          handleFiles(e.target.files, loadCustomBackground);
         }
       });
       backgroundUpload.querySelector('.file-label').addEventListener("click", (e) => {
