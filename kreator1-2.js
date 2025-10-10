@@ -1,6 +1,7 @@
 console.log('kreator1-2.js załadowany');
 // Inicjalizacja zmiennej dla aktualnej strony
 window.currentPage = 0;
+
 async function toBase64(url) {
   try {
     const response = await fetch(url, { cache: 'no-cache' });
@@ -20,6 +21,7 @@ async function toBase64(url) {
     return null;
   }
 }
+
 async function uploadImagesToGitHub(files) {
   try {
     const githubToken = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN'; // Zastąp swoim tokenem GitHub
@@ -71,13 +73,13 @@ async function uploadImagesToGitHub(files) {
       }
     }
     document.getElementById('debug').innerText = `Przesłano ${fileArray.length} plików do GitHub`;
-    // Odśwież katalog po przesłaniu
     window.renderCatalog();
   } catch (e) {
     console.error('Błąd przesyłania zdjęć do GitHub:', e);
     document.getElementById('debug').innerText = `Błąd przesyłania zdjęć do GitHub: ${e.message}`;
   }
 }
+
 async function loadManufacturerLogos() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/Producenci.json");
@@ -104,7 +106,10 @@ async function loadManufacturerLogos() {
     document.getElementById('debug').innerText = `Błąd ładowania logów producentów: ${error.message}`;
   }
 }
-async function loadProducts() {
+
+// POPRAWKA: Wcześniejsze - Retry (max 3 próby) i lepsza obsługa błędów
+// POPRAWKA: Wybór obrazu - Wyraźne logowanie wyboru jpg/png, zatrzymaj po pierwszym sukcesie
+async function loadProducts(retryCount = 0) {
   try {
     const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json");
     if (!response.ok) throw new Error(`Nie udało się załadować JSON: ${response.status}`);
@@ -115,11 +120,13 @@ async function loadProducts() {
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.png`
       ];
       let base64Img = null;
+      let selectedUrl = null;
       for (const url of urls) {
         base64Img = await toBase64(url);
         if (base64Img) {
-          console.log(`Załadowano obraz dla indeksu ${p.INDEKS}: ${url}`);
-          break;
+          selectedUrl = url;
+          console.log(`Wybrano obraz dla indeksu ${p.INDEKS}: ${url}`);
+          break; // Zatrzymaj po pierwszym znalezionym obrazie
         }
       }
       if (!base64Img) {
@@ -139,9 +146,17 @@ async function loadProducts() {
     console.log(`Załadowano jsonProducts: ${window.jsonProducts.length}`, window.jsonProducts);
   } catch (error) {
     console.error("Błąd loadProducts:", error);
-    document.getElementById('debug').innerText = `Błąd ładowania JSON: ${error.message}`;
+    if (retryCount < 3) {
+      console.log(`Retry ${retryCount + 1}/3 dla loadProducts...`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await loadProducts(retryCount + 1);
+    } else {
+      document.getElementById('debug').innerText = `Błąd ładowania JSON po 3 próbach: ${error.message}`;
+      window.jsonProducts = [];
+    }
   }
 }
+
 function handleFiles(files, callback) {
   if (!files || files.length === 0) {
     console.error("Brak plików do załadowania");
@@ -161,24 +176,29 @@ function handleFiles(files, callback) {
     reader.readAsDataURL(file);
   });
 }
+
 function loadCustomBanner(file, data) {
   window.selectedBanner = { id: "custom", data };
   console.log(`Załadowano baner: ${file.name}`);
 }
+
 function loadCustomBackground(file, data) {
   window.selectedBackground = { id: "customBackground", data };
   console.log(`Załadowano tło: ${file.name}`);
 }
+
 function loadCustomCover(file, data) {
   window.selectedCover = { id: "customCover", data };
   console.log(`Załadowano okładkę: ${file.name}`);
 }
+
 function loadCustomImages(file, data) {
   const fileName = file.name.split('.')[0];
   window.uploadedImages[fileName] = data;
   console.log(`Załadowano obraz dla indeksu: ${fileName}`);
   window.renderCatalog();
 }
+
 function showBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -194,6 +214,7 @@ function showBannerModal() {
     document.getElementById('debug').innerText = `Błąd pokazywania modalu banera: ${e.message}`;
   }
 }
+
 function hideBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -205,6 +226,7 @@ function hideBannerModal() {
     document.getElementById('debug').innerText = `Błąd ukrywania modalu banera: ${e.message}`;
   }
 }
+
 async function loadBanners() {
   try {
     const bannerOptions = document.getElementById('bannerOptions');
@@ -242,12 +264,14 @@ async function loadBanners() {
     document.getElementById('debug').innerText = `Błąd ładowania banerów: ${e.message}`;
   }
 }
+
 function selectBanner(id, data) {
   window.selectedBanner = { id, data };
   document.querySelectorAll('.banner-preview').forEach(p => p.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
   hideBannerModal();
 }
+
 function renderCatalog() {
   try {
     console.log(`renderCatalog wywołany, currentPage: ${window.currentPage}`);
@@ -319,8 +343,6 @@ function renderCatalog() {
         return;
       }
       const globalIndex = startIndex + pageIndex;
-      const item = document.createElement("div");
-      item.className = layout === "1" || layout === "2" ? "item item-large" : "item";
       const edit = window.productEdits[globalIndex] || {};
       const pageEdit = window.pageEdits[window.currentPage] || {};
       const finalEdit = { ...pageEdit, ...edit };
@@ -415,6 +437,7 @@ function renderCatalog() {
     document.getElementById('debug').innerText = `Błąd renderowania katalogu: ${e.message}`;
   }
 }
+
 function showPage(pageNum) {
   try {
     const totalPages = Math.ceil(window.products.length / getItemsPerPage());
@@ -426,6 +449,7 @@ function showPage(pageNum) {
     document.getElementById('debug').innerText = `Błąd przełączania strony: ${e.message}`;
   }
 }
+
 function getItemsPerPage() {
   const layout = document.getElementById('layoutSelect')?.value || "16";
   if (layout === "1") return 1;
@@ -436,7 +460,10 @@ function getItemsPerPage() {
   else if (layout === "4-2-4") return 10;
   return 16;
 }
-function importExcel() {
+
+// POPRAWKA: Wcześniejsze - Await loadProducts, walidacja indeksu, dynamiczne ładowanie img, lepsze mapowanie kolumn, zachowaj pageEdits
+// POPRAWKA: Wybór obrazu - Wyraźne logowanie wyboru jpg/png w dynamicznym ładowaniu
+async function importExcel() {
   try {
     const file = document.getElementById('excelFile').files[0];
     if (!file) {
@@ -444,13 +471,13 @@ function importExcel() {
       document.getElementById('debug').innerText = "Błąd: Nie wybrano pliku";
       return;
     }
+    // POPRAWKA: Wcześniejsze - Zawsze załaduj/aktualizuj JSON przed importem
+    console.log("Ładowanie/aktualizacja jsonProducts przed importem...");
+    await window.loadProducts();
+    
     const reader = new FileReader();
     reader.onload = async (e) => {
       try {
-        if (!window.jsonProducts || window.jsonProducts.length === 0) {
-          console.log("jsonProducts niezaładowane, wywołuję loadProducts");
-          await window.loadProducts();
-        }
         let rows;
         if (file.name.endsWith('.csv')) {
           const parsed = Papa.parse(e.target.result, { header: true, skipEmptyLines: true });
@@ -462,20 +489,22 @@ function importExcel() {
           }
           const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim().replace(/\s+/g, ' '));
           console.log("Nagłówki CSV:", headers);
+          // POPRAWKA: Wcześniejsze - Lepsze mapowanie kolumn
           rows = rows.map((row, rowIndex) => {
             let obj = {};
             headers.forEach((header, i) => {
               const value = row[Object.keys(row)[i]];
-              if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = value || '';
-              if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = value || '';
+              if (['index', 'indeks', 'code', 'product_code'].some(h => header.includes(h))) obj['indeks'] = value || '';
+              if (['ean', 'kod ean', 'barcode', 'kod_kreskowy'].some(h => header.includes(h))) obj['ean'] = value || '';
               if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
-              if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
-              if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.toLowerCase().replace(/[-\s]/g, '').includes(h.replace(/[-\s]/g, '')))) {
+              if (['cen', 'cena', 'price', 'netto', 'gross'].some(h => header.includes(h))) obj['cena'] = value || '';
+              const nameMatchers = ['nazwa', 'name', 'product_name', 'towar', 'description', 'cell text-decoration-none'];
+              if (nameMatchers.some(m => header.toLowerCase().replace(/[-\s]/g, '').includes(m.replace(/[-\s]/g, '')))) {
                 obj['nazwa'] = value && typeof value === 'string' ? value.trim() : '';
                 console.log(`Mapa nazwy dla wiersza ${rowIndex}: header=${header}, value=${value}`);
-                if (!value) console.warn(`Pusta lub brakująca nazwa w wierszu ${rowIndex}, header=${header}`);
+                if (!value) console.warn(`Pusta lub brakująca nazwaBryan nazwa w wierszu ${rowIndex}, header=${header}`);
               }
-              if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
+              if (['logo', 'nazwa_prod', 'producent', 'manufacturer', 'brand'].some(h => header.includes(h))) obj['producent'] = value || '';
             });
             console.log(`Przetworzony wiersz ${rowIndex}:`, obj);
             return obj;
@@ -484,22 +513,23 @@ function importExcel() {
           const workbook = XLSX.read(e.target.result, { type: 'binary' });
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
           rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
-          const headers = rows[0].map(h => h.toString().toLowerCase().trim().replace(/\s+/g, ' '));
+          const headers = rows[0].map(h => h ? h.toString().toLowerCase().trim().replace(/\s+/g, ' ') : '');
           console.log("Nagłówki Excel:", headers);
           rows = rows.slice(1).map((row, rowIndex) => {
             let obj = {};
             headers.forEach((header, i) => {
               const value = row[i];
-              if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = value || '';
-              if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = value || '';
+              if (['index', 'indeks', 'code', 'product_code'].some(h => header.includes(h))) obj['indeks'] = value || '';
+              if (['ean', 'kod ean', 'barcode', 'kod_kreskowy'].some(h => header.includes(h))) obj['ean'] = value || '';
               if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
-              if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
-              if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.toLowerCase().replace(/[-\s]/g, '').includes(h.replace(/[-\s]/g, '')))) {
+              if (['cen', 'cena', 'price', 'netto', 'gross'].some(h => header.includes(h))) obj['cena'] = value || '';
+              const nameMatchers = ['nazwa', 'name', 'product_name', 'towar', 'description', 'cell text-decoration-none'];
+              if (nameMatchers.some(m => header.toLowerCase().replace(/[-\s]/g, '').includes(m.replace(/[-\s]/g, '')))) {
                 obj['nazwa'] = value && typeof value === 'string' ? value.toString().trim() : '';
                 console.log(`Mapa nazwy dla wiersza ${rowIndex}: header=${header}, value=${value}`);
                 if (!value) console.warn(`Pusta lub brakująca nazwa w wierszu ${rowIndex}, header=${header}`);
               }
-              if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
+              if (['logo', 'nazwa_prod', 'producent', 'manufacturer', 'brand'].some(h => header.includes(h))) obj['producent'] = value || '';
             });
             console.log(`Przetworzony wiersz ${rowIndex}:`, obj);
             return obj;
@@ -507,56 +537,84 @@ function importExcel() {
         }
         console.log("Przetworzone wiersze CSV/Excel:", rows);
         const newProducts = [];
-        const preservedEdits = { ...window.productEdits }; // Zachowaj istniejące edycje
-        rows.forEach((row, rowIndex) => {
+        const preservedEdits = { ...window.productEdits }; // POPRAWKA: Wcześniejsze - Zachowaj istniejące edycje
+        // POPRAWKA: Wcześniejsze - Nie resetuj pageEdits całkowicie
+        const oldPageEdits = { ...window.pageEdits };
+        
+        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+          const row = rows[rowIndex];
           const indeks = row['indeks'] || row[0];
-          if (indeks) {
-            const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString()) || {};
-            console.log(`Matched dla indeksu ${indeks} (wiersz ${rowIndex}):`, matched);
-            let barcodeImg = null;
-            if (row['ean'] && /^\d{12,13}$/.test(row['ean'])) {
-              try {
-                const barcodeCanvas = document.createElement('canvas');
-                JsBarcode(barcodeCanvas, row['ean'], {
-                  format: "EAN13",
-                  width: 1.6,
-                  height: 32,
-                  displayValue: true,
-                  fontSize: 9,
-                  margin: 0
-                });
-                barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
-              } catch (e) {
-                console.error(`Błąd generowania kodu kreskowego dla EAN: ${row['ean']}`, e);
-                document.getElementById('debug').innerText = "Błąd generowania kodu kreskowego";
+          if (!indeks) {
+            console.warn(`Pomijam wiersz ${rowIndex}: brak indeksu`);
+            continue;
+          }
+          // POPRAWKA: Wcześniejsze - Walidacja indeksu w JSON
+          const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString());
+          if (!matched) {
+            console.warn(`Indeks ${indeks} z Excela nie znaleziony w JSON! Pomijam produkt.`);
+            continue;
+          }
+          console.log(`Matched dla indeksu ${indeks} (wiersz ${rowIndex}):`, matched);
+          let barcodeImg = null;
+          if (row['ean'] && /^\d{12,13}$/.test(row['ean'])) {
+            try {
+              const barcodeCanvas = document.createElement('canvas');
+              JsBarcode(barcodeCanvas, row['ean'], {
+                format: "EAN13",
+                width: 1.6,
+                height: 32,
+                displayValue: true,
+                fontSize: 9,
+                margin: 0
+              });
+              barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
+            } catch (e) {
+              console.error(`Błąd generowania kodu kreskowego dla EAN: ${row['ean']}`, e);
+              document.getElementById('debug').innerText = "Błąd generowania kodu kreskowego";
+            }
+          }
+          let productImg = matched.img;
+          // POPRAWKA: Wcześniejsze - Dynamiczne ładowanie img jeśli brak w JSON
+          // POPRAWKA: Wybór obrazu - Wyraźne logowanie wyboru jpg/png
+          if (!productImg) {
+            console.log(`Brak img w JSON dla ${indeks}, próba dynamicznego ładowania...`);
+            const urls = [
+              `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${indeks}.jpg`,
+              `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${indeks}.png`
+            ];
+            for (const url of urls) {
+              productImg = await toBase64(url);
+              if (productImg) {
+                console.log(`Wybrano dynamicznie obraz dla ${indeks}: ${url}`);
+                break; // Zatrzymaj po pierwszym znalezionym obrazie
               }
             }
-            const product = {
-              nazwa: matched.nazwa && typeof matched.nazwa === 'string' && matched.nazwa.trim() ? matched.nazwa.trim() : (row['nazwa'] && typeof row['nazwa'] === 'string' && row['nazwa'].trim() ? row['nazwa'].trim() : ''),
-              ean: row['ean'] || matched.ean || '',
-              ranking: row['ranking'] || matched.ranking || '',
-              cena: row['cena'] || matched.cena || '',
-              indeks: indeks.toString(),
-              img: window.uploadedImages[indeks.toString()] || matched.img || null,
-              barcode: barcodeImg || matched.barcode || null,
-              producent: row['producent'] || matched.producent || ''
-            };
-            console.log(`Utworzono produkt dla indeksu ${indeks}:`, product);
-            newProducts.push(product);
           }
-        });
+          const product = {
+            nazwa: matched.nazwa && typeof matched.nazwa === 'string' && matched.nazwa.trim() ? matched.nazwa.trim() : (row['nazwa'] && typeof row['nazwa'] === 'string' && row['nazwa'].trim() ? row['nazwa'].trim() : ''),
+            ean: row['ean'] || matched.ean || '',
+            ranking: row['ranking'] || matched.ranking || '',
+            cena: row['cena'] || matched.cena || '',
+            indeks: indeks.toString(),
+            img: window.uploadedImages[indeks.toString()] || productImg || null,
+            barcode: barcodeImg || matched.barcode || null,
+            producent: row['producent'] || matched.producent || ''
+          };
+          console.log(`Utworzono produkt dla indeksu ${indeks}:`, product);
+          newProducts.push(product);
+        }
         console.log("Nowe produkty:", newProducts);
         if (newProducts.length) {
           window.products = newProducts;
-          window.productEdits = preservedEdits; // Przywróć zachowane edycje
-          window.pageEdits = {};
-          window.currentPage = 0; // Reset strony po imporcie
+          window.productEdits = preservedEdits;
+          window.pageEdits = { ...oldPageEdits };
+          window.currentPage = 0;
           window.renderCatalog();
           document.getElementById('pdfButton').disabled = false;
           document.getElementById('previewButton').disabled = false;
-          document.getElementById('debug').innerText = `Zaimportowano ${newProducts.length} produktów`;
+          document.getElementById('debug').innerText = `Zaimportowano ${newProducts.length} produktów (dopasowano z JSON)`;
         } else {
-          document.getElementById('debug').innerText = "Brak produktów po imporcie. Sprawdź format pliku.";
+          document.getElementById('debug').innerText = "Brak produktów po imporcie. Sprawdź indeksy w Excelu - muszą istnieć w JSON.";
         }
       } catch (e) {
         console.error("Błąd przetwarzania pliku Excel/CSV:", e);
@@ -574,6 +632,7 @@ function importExcel() {
     document.getElementById('debug').innerText = `Błąd importu pliku Excel/CSV: ${e.message}`;
   }
 }
+
 document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log('DOMContentLoaded wywołany');
@@ -598,7 +657,7 @@ document.addEventListener("DOMContentLoaded", () => {
         uploadArea.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop zdjęć: ${e.dataTransfer.files.length}`);
-          handleFiles(e.target.files, loadCustomImages);
+          handleFiles(e.dataTransfer.files, loadCustomImages);
         }
       });
       uploadArea.querySelector('.file-label').addEventListener("click", (e) => {
@@ -694,7 +753,7 @@ document.addEventListener("DOMContentLoaded", () => {
         backgroundUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop tła: ${e.dataTransfer.files.length}`);
-          handleFiles(e.target.files, loadCustomBackground);
+          handleFiles(e.dataTransfer.files, loadCustomBackground);
         }
       });
       backgroundUpload.querySelector('.file-label').addEventListener("click", (e) => {
@@ -726,7 +785,7 @@ document.addEventListener("DOMContentLoaded", () => {
         coverUpload.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop okładki: ${e.dataTransfer.files.length}`);
-          handleFiles(e.target.files, loadCustomCover);
+          handleFiles(e.dataTransfer.files, loadCustomCover);
         }
       });
       coverUpload.querySelector('.file-label').addEventListener("click", (e) => {
@@ -759,7 +818,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currencySelect.addEventListener('change', (e) => {
         window.globalCurrency = e.target.value;
         console.log(`Zmieniono walutę na: ${window.globalCurrency}`);
-        window.currentPage = 0; // Reset strony po zmianie waluty
+        window.currentPage = 0;
         window.renderCatalog();
       });
     }
@@ -768,14 +827,14 @@ document.addEventListener("DOMContentLoaded", () => {
       languageSelect.addEventListener('change', (e) => {
         window.globalLanguage = e.target.value;
         console.log(`Zmieniono język na: ${window.globalLanguage}`);
-        window.currentPage = 0; // Reset strony po zmianie języka
+        window.currentPage = 0;
         window.renderCatalog();
       });
     }
     const layoutSelect = document.getElementById('layoutSelect');
     if (layoutSelect) {
       layoutSelect.addEventListener('change', (e) => {
-        window.currentPage = 0; // Reset strony po zmianie układu
+        window.currentPage = 0;
         window.renderCatalog();
       });
     }
@@ -808,6 +867,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('debug').innerText = `Błąd inicjalizacji zdarzeń DOM: ${e.message}`;
   }
 });
+
 window.importExcel = importExcel;
 window.renderCatalog = renderCatalog;
 window.showBannerModal = showBannerModal;
