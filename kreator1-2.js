@@ -1,6 +1,7 @@
 console.log('kreator1-2.js załadowany');
 // Inicjalizacja zmiennej dla aktualnej strony
 window.currentPage = 0;
+
 async function toBase64(url) {
   try {
     const response = await fetch(url, { cache: 'no-cache' });
@@ -20,6 +21,7 @@ async function toBase64(url) {
     return null;
   }
 }
+
 async function uploadImagesToGitHub(files) {
   try {
     const githubToken = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN'; // Zastąp swoim tokenem GitHub
@@ -71,13 +73,13 @@ async function uploadImagesToGitHub(files) {
       }
     }
     document.getElementById('debug').innerText = `Przesłano ${fileArray.length} plików do GitHub`;
-    // Odśwież katalog po przesłaniu
     window.renderCatalog();
   } catch (e) {
     console.error('Błąd przesyłania zdjęć do GitHub:', e);
     document.getElementById('debug').innerText = `Błąd przesyłania zdjęć do GitHub: ${e.message}`;
   }
 }
+
 async function loadManufacturerLogos() {
   try {
     const response = await fetch("https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/Producenci.json");
@@ -104,7 +106,8 @@ async function loadManufacturerLogos() {
     document.getElementById('debug').innerText = `Błąd ładowania logów producentów: ${error.message}`;
   }
 }
-// POPRAWKA: Dodano retry (max 3 próby) i lepszą obsługę błędów dla loadProducts
+
+// POPRAWKA: Wybór obrazu - wyraźne logowanie wyboru jpg/png, zatrzymaj po pierwszym sukcesie
 async function loadProducts(retryCount = 0) {
   try {
     const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json");
@@ -116,11 +119,13 @@ async function loadProducts(retryCount = 0) {
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.png`
       ];
       let base64Img = null;
+      let selectedUrl = null;
       for (const url of urls) {
         base64Img = await toBase64(url);
         if (base64Img) {
-          console.log(`Załadowano obraz dla indeksu ${p.INDEKS}: ${url}`);
-          break;
+          selectedUrl = url;
+          console.log(`Wybrano obraz dla indeksu ${p.INDEKS}: ${url}`);
+          break; // Zatrzymaj po pierwszym znalezionym obrazie
         }
       }
       if (!base64Img) {
@@ -142,14 +147,15 @@ async function loadProducts(retryCount = 0) {
     console.error("Błąd loadProducts:", error);
     if (retryCount < 3) {
       console.log(`Retry ${retryCount + 1}/3 dla loadProducts...`);
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Czekaj 2s
+      await new Promise(resolve => setTimeout(resolve, 2000));
       await loadProducts(retryCount + 1);
     } else {
       document.getElementById('debug').innerText = `Błąd ładowania JSON po 3 próbach: ${error.message}`;
-      window.jsonProducts = []; // Ustaw pusty, by import mógł kontynuować z danymi z Excela
+      window.jsonProducts = [];
     }
   }
 }
+
 function handleFiles(files, callback) {
   if (!files || files.length === 0) {
     console.error("Brak plików do załadowania");
@@ -169,24 +175,29 @@ function handleFiles(files, callback) {
     reader.readAsDataURL(file);
   });
 }
+
 function loadCustomBanner(file, data) {
   window.selectedBanner = { id: "custom", data };
   console.log(`Załadowano baner: ${file.name}`);
 }
+
 function loadCustomBackground(file, data) {
   window.selectedBackground = { id: "customBackground", data };
   console.log(`Załadowano tło: ${file.name}`);
 }
+
 function loadCustomCover(file, data) {
   window.selectedCover = { id: "customCover", data };
   console.log(`Załadowano okładkę: ${file.name}`);
 }
+
 function loadCustomImages(file, data) {
   const fileName = file.name.split('.')[0];
   window.uploadedImages[fileName] = data;
   console.log(`Załadowano obraz dla indeksu: ${fileName}`);
   window.renderCatalog();
 }
+
 function showBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -202,6 +213,7 @@ function showBannerModal() {
     document.getElementById('debug').innerText = `Błąd pokazywania modalu banera: ${e.message}`;
   }
 }
+
 function hideBannerModal() {
   try {
     const bannerModal = document.getElementById('bannerModal');
@@ -213,6 +225,7 @@ function hideBannerModal() {
     document.getElementById('debug').innerText = `Błąd ukrywania modalu banera: ${e.message}`;
   }
 }
+
 async function loadBanners() {
   try {
     const bannerOptions = document.getElementById('bannerOptions');
@@ -250,12 +263,14 @@ async function loadBanners() {
     document.getElementById('debug').innerText = `Błąd ładowania banerów: ${e.message}`;
   }
 }
+
 function selectBanner(id, data) {
   window.selectedBanner = { id, data };
   document.querySelectorAll('.banner-preview').forEach(p => p.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
   hideBannerModal();
 }
+
 function renderCatalog() {
   try {
     console.log(`renderCatalog wywołany, currentPage: ${window.currentPage}`);
@@ -421,6 +436,7 @@ function renderCatalog() {
     document.getElementById('debug').innerText = `Błąd renderowania katalogu: ${e.message}`;
   }
 }
+
 function showPage(pageNum) {
   try {
     const totalPages = Math.ceil(window.products.length / getItemsPerPage());
@@ -432,6 +448,7 @@ function showPage(pageNum) {
     document.getElementById('debug').innerText = `Błąd przełączania strony: ${e.message}`;
   }
 }
+
 function getItemsPerPage() {
   const layout = document.getElementById('layoutSelect')?.value || "16";
   if (layout === "1") return 1;
@@ -442,8 +459,9 @@ function getItemsPerPage() {
   else if (layout === "4-2-4") return 10;
   return 16;
 }
-// POPRAWKA: Dodano await loadProducts() zawsze, walidacja istnienia indeksu w JSON, dynamiczne ładowanie img jeśli brak, lepsza mapa kolumn, zachowaj pageEdits
-async function importExcel() {  // Zmieniono na async
+
+// POPRAWKA: Wybór obrazu - wyraźne logowanie wyboru jpg/png w dynamicznym ładowaniu, zatrzymaj po pierwszym sukcesie
+async function importExcel() {
   try {
     const file = document.getElementById('excelFile').files[0];
     if (!file) {
@@ -451,12 +469,11 @@ async function importExcel() {  // Zmieniono na async
       document.getElementById('debug').innerText = "Błąd: Nie wybrano pliku";
       return;
     }
-    // POPRAWKA: Zawsze załaduj/aktualizuj JSON przed importem
     console.log("Ładowanie/aktualizacja jsonProducts przed importem...");
     await window.loadProducts();
     
     const reader = new FileReader();
-    reader.onload = async (e) => {  // async dla dynamicznego load img
+    reader.onload = async (e) => {
       try {
         let rows;
         if (file.name.endsWith('.csv')) {
@@ -469,7 +486,6 @@ async function importExcel() {  // Zmieniono na async
           }
           const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim().replace(/\s+/g, ' '));
           console.log("Nagłówki CSV:", headers);
-          // POPRAWKA: Lepsze mapowanie kolumn (więcej wariantów dla 'nazwa')
           rows = rows.map((row, rowIndex) => {
             let obj = {};
             headers.forEach((header, i) => {
@@ -478,7 +494,6 @@ async function importExcel() {  // Zmieniono na async
               if (['ean', 'kod ean', 'barcode', 'kod_kreskowy'].some(h => header.includes(h))) obj['ean'] = value || '';
               if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
               if (['cen', 'cena', 'price', 'netto', 'gross'].some(h => header.includes(h))) obj['cena'] = value || '';
-              // POPRAWKA: Bardziej robustne dla nazwy (obsługuje więcej wariantów, np. "Nazwa Towaru", "Product Name")
               const nameMatchers = ['nazwa', 'name', 'product_name', 'towar', 'description', 'cell text-decoration-none'];
               if (nameMatchers.some(m => header.toLowerCase().replace(/[-\s]/g, '').includes(m.replace(/[-\s]/g, '')))) {
                 obj['nazwa'] = value && typeof value === 'string' ? value.trim() : '';
@@ -496,7 +511,6 @@ async function importExcel() {  // Zmieniono na async
           rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
           const headers = rows[0].map(h => h ? h.toString().toLowerCase().trim().replace(/\s+/g, ' ') : '');
           console.log("Nagłówki Excel:", headers);
-          // POPRAWKA: Jak wyżej dla Excel
           rows = rows.slice(1).map((row, rowIndex) => {
             let obj = {};
             headers.forEach((header, i) => {
@@ -519,25 +533,20 @@ async function importExcel() {  // Zmieniono na async
         }
         console.log("Przetworzone wiersze CSV/Excel:", rows);
         const newProducts = [];
-        const preservedEdits = { ...window.productEdits }; // Zachowaj istniejące edycje
-        // POPRAWKA: Nie resetuj pageEdits całkowicie - zachowaj dla istniejących stron
+        const preservedEdits = { ...window.productEdits };
         const oldPageEdits = { ...window.pageEdits };
         
-        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {  // Użyj pętli for dla async
+        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
           const row = rows[rowIndex];
           const indeks = row['indeks'] || row[0];
           if (!indeks) {
             console.warn(`Pomijam wiersz ${rowIndex}: brak indeksu`);
             continue;
           }
-          // POPRAWKA: Walidacja - sprawdź czy indeks istnieje w JSON
           const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString());
           if (!matched) {
-            console.warn(`Indeks ${indeks} z Excela nie znaleziony w JSON! Używam tylko danych z Excela (bez obrazu z GitHub).`);
-            // Opcjonalnie: Dodaj produkt tylko z Excela, ale bez img z GitHub
-            // newProducts.push({ ...row, indeks: indeks.toString(), img: null, barcode: null });
-            // Lub pomiń: continue;
-            continue;  // Pomijam, by uniknąć pustych produktów - zmień na push jeśli chcesz
+            console.warn(`Indeks ${indeks} z Excela nie znaleziony w JSON! Pomijam produkt.`);
+            continue;
           }
           console.log(`Matched dla indeksu ${indeks} (wiersz ${rowIndex}):`, matched);
           let barcodeImg = null;
@@ -558,8 +567,8 @@ async function importExcel() {  // Zmieniono na async
               document.getElementById('debug').innerText = "Błąd generowania kodu kreskowego";
             }
           }
-          let productImg = matched.img;  // Domyślnie z JSON
-          // POPRAWKA: Jeśli brak img w JSON, spróbuj dynamicznie załadować z GitHub
+          let productImg = matched.img;
+          // POPRAWKA: Wybór obrazu - jeśli brak img w JSON, ładuj dynamicznie, zatrzymaj po pierwszym sukcesie
           if (!productImg) {
             console.log(`Brak img w JSON dla ${indeks}, próba dynamicznego ładowania...`);
             const urls = [
@@ -569,8 +578,8 @@ async function importExcel() {  // Zmieniono na async
             for (const url of urls) {
               productImg = await toBase64(url);
               if (productImg) {
-                console.log(`Dynamicznie załadowano obraz dla ${indeks}: ${url}`);
-                break;
+                console.log(`Wybrano dynamicznie obraz dla ${indeks}: ${url}`);
+                break; // Zatrzymaj po pierwszym znalezionym obrazie
               }
             }
           }
@@ -590,9 +599,9 @@ async function importExcel() {  // Zmieniono na async
         console.log("Nowe produkty:", newProducts);
         if (newProducts.length) {
           window.products = newProducts;
-          window.productEdits = preservedEdits; // Przywróć productEdits
-          window.pageEdits = { ...oldPageEdits }; // POPRAWKA: Zachowaj stare pageEdits
-          window.currentPage = 0; // Reset strony po imporcie
+          window.productEdits = preservedEdits;
+          window.pageEdits = { ...oldPageEdits };
+          window.currentPage = 0;
           window.renderCatalog();
           document.getElementById('pdfButton').disabled = false;
           document.getElementById('previewButton').disabled = false;
@@ -616,6 +625,7 @@ async function importExcel() {  // Zmieniono na async
     document.getElementById('debug').innerText = `Błąd importu pliku Excel/CSV: ${e.message}`;
   }
 }
+
 document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log('DOMContentLoaded wywołany');
@@ -785,7 +795,7 @@ document.addEventListener("DOMContentLoaded", () => {
       excelFileInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
           console.log(`Zmiana w excelFileInput, plik: ${e.target.files[0].name}`);
-          importExcel();  // Teraz async, ale OK w event
+          importExcel();
         }
       });
       fileLabelWrapper.addEventListener("click", (e) => {
@@ -801,7 +811,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currencySelect.addEventListener('change', (e) => {
         window.globalCurrency = e.target.value;
         console.log(`Zmieniono walutę na: ${window.globalCurrency}`);
-        window.currentPage = 0; // Reset strony po zmianie waluty
+        window.currentPage = 0;
         window.renderCatalog();
       });
     }
@@ -810,14 +820,14 @@ document.addEventListener("DOMContentLoaded", () => {
       languageSelect.addEventListener('change', (e) => {
         window.globalLanguage = e.target.value;
         console.log(`Zmieniono język na: ${window.globalLanguage}`);
-        window.currentPage = 0; // Reset strony po zmianie języka
+        window.currentPage = 0;
         window.renderCatalog();
       });
     }
     const layoutSelect = document.getElementById('layoutSelect');
     if (layoutSelect) {
       layoutSelect.addEventListener('change', (e) => {
-        window.currentPage = 0; // Reset strony po zmianie układu
+        window.currentPage = 0;
         window.renderCatalog();
       });
     }
@@ -844,13 +854,13 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Nie znaleziono elementu previewButton");
       document.getElementById('debug').innerText = "Błąd: Brak przycisku podglądu PDF";
     }
-    // POPRAWKA: Wywołaj loadProducts na starcie z retry
     window.loadProducts();
   } catch (e) {
     console.error('Błąd inicjalizacji zdarzeń DOM:', e);
     document.getElementById('debug').innerText = `Błąd inicjalizacji zdarzeń DOM: ${e.message}`;
   }
 });
+
 window.importExcel = importExcel;
 window.renderCatalog = renderCatalog;
 window.showBannerModal = showBannerModal;
