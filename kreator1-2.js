@@ -2,8 +2,9 @@ console.log('kreator1-2.js załadowany');
 // Inicjalizacja zmiennej dla aktualnej strony
 window.currentPage = 0;
 
-// Cache dla obrazów
+// Cache dla obrazów i kodów kreskowych
 const imageCache = new Map();
+const barcodeCache = new Map();
 
 async function toBase64(url) {
   if (imageCache.has(url)) {
@@ -485,11 +486,15 @@ async function importExcel() {
       try {
         let rows;
         if (file.name.endsWith('.csv')) {
-          const parsed = Papa.parse(e.target.result, { 
-            header: true, 
-            skipEmptyLines: true, 
-            dynamicTyping: true,
-            worker: true // Użycie Web Workera do parsowania CSV
+          const parsed = await new Promise((resolve, reject) => {
+            Papa.parse(e.target.result, {
+              header: true,
+              skipEmptyLines: true,
+              dynamicTyping: true,
+              worker: true,
+              complete: resolve,
+              error: reject
+            });
           });
           rows = parsed.data;
           if (rows.length === 0) {
@@ -537,8 +542,6 @@ async function importExcel() {
           });
         }
 
-        // Optymalizacja generowania kodów kreskowych
-        const barcodeCache = new Map();
         const newProducts = await Promise.all(rows.map(async row => {
           const indeks = row['indeks'] || row[0];
           if (!indeks) {
@@ -674,6 +677,49 @@ async function previewPDF() {
     const totalPages = Math.ceil(window.products.length / itemsPerPage);
     const imagePromises = [];
 
+    // Preload wszystkich obrazów przed generowaniem PDF
+    const preloadImages = window.products.map(async p => {
+      if (!p || !p.indeks) return;
+      const imgSrc = window.uploadedImages[p.indeks] || p.img || "https://dummyimage.com/120x84/eee/000&text=brak";
+      const logoSrc = (p.producent && window.manufacturerLogos[p.producent]) || "https://dummyimage.com/120x60/eee/000&text=brak";
+      const barcodeSrc = p.barcode || "https://dummyimage.com/85x32/eee/000&text=brak";
+
+      await Promise.all([
+        new Promise(resolve => {
+          const img = new Image();
+          img.crossOrigin = "Anonymous";
+          img.src = imgSrc;
+          img.onload = resolve;
+          img.onerror = () => {
+            console.warn(`Błąd preload obrazu dla produktu ${p.indeks}`);
+            resolve();
+          };
+        }),
+        showLogo && layout === "4" ? new Promise(resolve => {
+          const logoImg = new Image();
+          logoImg.crossOrigin = "Anonymous";
+          logoImg.src = logoSrc;
+          logoImg.onload = resolve;
+          logoImg.onerror = () => {
+            console.warn(`Błąd preload logo dla produktu ${p.indeks}`);
+            resolve();
+          };
+        }) : Promise.resolve(),
+        showEan && p.ean && p.barcode ? new Promise(resolve => {
+          const barcodeImg = new Image();
+          barcodeImg.crossOrigin = "Anonymous";
+          barcodeImg.src = barcodeSrc;
+          barcodeImg.onload = resolve;
+          barcodeImg.onerror = () => {
+            console.warn(`Błąd preload kodu kreskowego dla produktu ${p.indeks}`);
+            resolve();
+          };
+        }) : Promise.resolve()
+      ]);
+    });
+
+    await Promise.all(preloadImages);
+
     for (let page = 0; page < totalPages; page++) {
       if (page > 0) doc.addPage();
       const startIndex = page * itemsPerPage;
@@ -697,22 +743,7 @@ async function previewPDF() {
         const cenaFontSize = finalEdit.cenaFontSize === 'small' ? 8 : finalEdit.cenaFontSize === 'large' ? 12 : 10;
 
         const imgSrc = window.uploadedImages[p.indeks] || p.img || "https://dummyimage.com/120x84/eee/000&text=brak";
-        imagePromises.push(
-          new Promise(resolve => {
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = imgSrc;
-            img.onload = () => {
-              doc.addImage(img, 'JPEG', xOffset, yOffset, itemWidth * 0.6, itemHeight * 0.6, null, 'FAST');
-              resolve();
-            };
-            img.onerror = () => {
-              console.warn(`Błąd ładowania obrazu dla produktu ${p.indeks} w PDF`);
-              doc.addImage("https://dummyimage.com/120x84/eee/000&text=brak", 'JPEG', xOffset, yOffset, itemWidth * 0.6, itemHeight * 0.6, null, 'FAST');
-              resolve();
-            };
-          })
-        );
+        doc.addImage(imgSrc, 'JPEG', xOffset, yOffset, itemWidth * 0.6, itemHeight * 0.6, null, 'FAST');
 
         doc.setFont(finalEdit.nazwaFont || 'helvetica', 'bold');
         doc.setFontSize(nazwaFontSize);
@@ -743,41 +774,11 @@ async function previewPDF() {
 
         if (showLogo && layout === "4" && (finalEdit.logo || (p.producent && window.manufacturerLogos[p.producent]))) {
           const logoSrc = finalEdit.logo || window.manufacturerLogos[p.producent] || "https://dummyimage.com/120x60/eee/000&text=brak";
-          imagePromises.push(
-            new Promise(resolve => {
-              const logoImg = new Image();
-              logoImg.crossOrigin = "Anonymous";
-              logoImg.src = logoSrc;
-              logoImg.onload = () => {
-                doc.addImage(logoImg, 'JPEG', xOffset, yOffset + itemHeight * 0.6, itemWidth * 0.6, itemHeight * 0.3, null, 'FAST');
-                resolve();
-              };
-              logoImg.onerror = () => {
-                console.warn(`Błąd ładowania logo dla produktu ${p.indeks} w PDF`);
-                doc.addImage("https://dummyimage.com/120x60/eee/000&text=brak", 'JPEG', xOffset, yOffset + itemHeight * 0.6, itemWidth * 0.6, itemHeight * 0.3, null, 'FAST');
-                resolve();
-              };
-            })
-          );
+          doc.addImage(logoSrc, 'JPEG', xOffset, yOffset + itemHeight * 0.6, itemWidth * 0.6, itemHeight * 0.3, null, 'FAST');
         }
 
         if (showEan && p.ean && p.barcode) {
-          imagePromises.push(
-            new Promise(resolve => {
-              const barcodeImg = new Image();
-              barcodeImg.crossOrigin = "Anonymous";
-              barcodeImg.src = p.barcode;
-              barcodeImg.onload = () => {
-                doc.addImage(barcodeImg, 'PNG', xOffset, yOffset + itemHeight * 1.0, itemWidth * 0.4, itemHeight * 0.2, null, 'FAST');
-                resolve();
-              };
-              barcodeImg.onerror = () => {
-                console.warn(`Błąd ładowania kodu kreskowego dla produktu ${p.indeks} w PDF`);
-                doc.addImage("https://dummyimage.com/85x32/eee/000&text=brak", 'PNG', xOffset, yOffset + itemHeight * 1.0, itemWidth * 0.4, itemHeight * 0.2, null, 'FAST');
-                resolve();
-              };
-            })
-          );
+          doc.addImage(p.barcode, 'PNG', xOffset, yOffset + itemHeight * 1.0, itemWidth * 0.4, itemHeight * 0.2, null, 'FAST');
         }
 
         colCount++;
@@ -791,7 +792,6 @@ async function previewPDF() {
       }
     }
 
-    await Promise.all(imagePromises);
     const pdfOutput = doc.output('datauristring');
     const pdfWindow = window.open("", "_blank");
     pdfWindow.document.write(`<iframe width="100%" height="100%" src="${pdfOutput}"></iframe>`);
@@ -1024,5 +1024,7 @@ window.loadProducts = loadProducts;
 window.showPage = showPage;
 window.uploadImagesToGitHub = uploadImagesToGitHub;
 window.previewPDF = previewPDF;
+
+</xaiArtifact>
 
 
