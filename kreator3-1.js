@@ -254,7 +254,7 @@ function showVirtualEditModal(productIndex) {
     const nazwaFontSize = edit.nazwaFontSize === 'small' ? 12 : edit.nazwaFontSize === 'large' ? 16 : 14;
     const wrappedName = window.wrapText(product.nazwa || 'Brak nazwy', maxNameWidth, nazwaFontSize, edit.nazwaFont, canvas);
     const nazwaText = new fabric.Text(wrappedName, {
-      left: borderMargin + contentWidth / 2,
+      left: borderMargin + layoutName.x * contentWidth,
       top: borderMargin + layoutName.y * contentHeight,
       fontSize: nazwaFontSize,
       fill: edit.nazwaFontColor,
@@ -266,7 +266,9 @@ function showVirtualEditModal(productIndex) {
       hasBorders: true,
       lockScalingX: true,
       lockScalingY: true,
-      originX: 'center'
+      originX: 'center',
+      lockMovementX: true,
+      lockMovementY: true
     });
     canvas.add(nazwaText);
     console.log('Tekst nazwy dodany:', wrappedName, `fontSize: ${nazwaFontSize}`);
@@ -276,7 +278,7 @@ function showVirtualEditModal(productIndex) {
     const indeksFontSize = edit.indeksFontSize === 'small' ? 10 : edit.indeksFontSize === 'large' ? 14 : 12;
     const wrappedIndex = window.wrapText(`Indeks: ${product.indeks || '-'}`, maxIndexWidth, indeksFontSize, edit.indeksFont, canvas);
     const indeksText = new fabric.Text(wrappedIndex, {
-      left: borderMargin + contentWidth / 2,
+      left: borderMargin + layoutIndex.x * contentWidth,
       top: borderMargin + layoutIndex.y * contentHeight,
       fontSize: indeksFontSize,
       fill: edit.indeksFontColor,
@@ -288,7 +290,9 @@ function showVirtualEditModal(productIndex) {
       hasBorders: true,
       lockScalingX: true,
       lockScalingY: true,
-      originX: 'center'
+      originX: 'center',
+      lockMovementX: true,
+      lockMovementY: true
     });
     canvas.add(indeksText);
     console.log('Tekst indeksu dodany:', wrappedIndex, `fontSize: ${indeksFontSize}`);
@@ -300,7 +304,7 @@ function showVirtualEditModal(productIndex) {
       const rankingFontSize = edit.rankingFontSize === 'small' ? 10 : edit.rankingFontSize === 'large' ? 14 : 12;
       const wrappedRanking = window.wrapText(`RANKING: ${product.ranking}`, maxRankingWidth, rankingFontSize, edit.rankingFont, canvas);
       rankingText = new fabric.Text(wrappedRanking, {
-        left: borderMargin + contentWidth / 2,
+        left: borderMargin + layoutRanking.x * contentWidth,
         top: borderMargin + layoutRanking.y * contentHeight,
         fontSize: rankingFontSize,
         fill: edit.rankingFontColor,
@@ -312,7 +316,9 @@ function showVirtualEditModal(productIndex) {
         hasBorders: true,
         lockScalingX: true,
         lockScalingY: true,
-        originX: 'center'
+        originX: 'center',
+        lockMovementX: true,
+        lockMovementY: true
       });
       canvas.add(rankingText);
       console.log('Tekst rankingu dodany:', wrappedRanking, `fontSize: ${rankingFontSize}`);
@@ -325,7 +331,7 @@ function showVirtualEditModal(productIndex) {
       const cenaFontSize = edit.cenaFontSize === 'small' ? 12 : edit.cenaFontSize === 'large' ? 16 : 14;
       const wrappedPrice = window.wrapText(`${priceLabel}: ${product.cena} ${(edit.priceCurrency || window.globalCurrency) === 'EUR' ? '€' : '£'}`, maxPriceWidth, cenaFontSize, edit.cenaFont, canvas);
       cenaText = new fabric.Text(wrappedPrice, {
-        left: borderMargin + contentWidth / 2,
+        left: borderMargin + layoutPrice.x * contentWidth,
         top: borderMargin + layoutPrice.y * contentHeight,
         fontSize: cenaFontSize,
         fill: edit.cenaFontColor,
@@ -337,7 +343,9 @@ function showVirtualEditModal(productIndex) {
         hasBorders: true,
         lockScalingX: true,
         lockScalingY: true,
-        originX: 'center'
+        originX: 'center',
+        lockMovementX: true,
+        lockMovementY: true
       });
       canvas.add(cenaText);
       console.log('Tekst ceny dodany:', wrappedPrice, `fontSize: ${cenaFontSize}`);
@@ -382,42 +390,46 @@ function showVirtualEditModal(productIndex) {
     console.log('Dodawanie zdarzenia object:moving');
     canvas.on('object:moving', (e) => {
       const obj = e.target;
-      const objWidth = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledWidth() : obj.width;
-      const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
-      const minTop = borderMargin;
-      const maxTop = borderMargin + contentHeight - objHeight;
-      const minLeft = borderMargin;
-      const maxLeft = borderMargin + contentWidth - objWidth;
-      obj.set({
-        left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
-        top: Math.max(minTop, Math.min(obj.top, maxTop))
-      });
-      console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, angle: ${obj.angle || 0}`);
-    });
-    console.log('Dodawanie zdarzenia object:scaling');
-    canvas.on('object:scaling', (e) => {
-      const obj = e.target;
-      if (obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo') {
-        const maxW = contentWidth * (obj.id === 'image' ? 0.9 : obj.id === 'barcode' ? 0.8571 : 0.3);
-        const maxH = contentHeight * (obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1143 : 0.1);
-        const objWidth = obj.getScaledWidth();
-        const objHeight = obj.getScaledHeight();
-        if (objWidth > maxW || objHeight > maxH) {
-          const scale = Math.min(maxW / obj.width, maxH / obj.height);
-          obj.set({
-            scaleX: scale,
-            scaleY: scale
-          });
-        }
-        const minLeft = borderMargin;
-        const maxLeft = borderMargin + contentWidth - objWidth;
+      if (obj.id !== 'name' && obj.id !== 'index' && obj.id !== 'price' && obj.id !== 'ranking') {
+        const objWidth = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledWidth() : obj.width;
+        const objHeight = obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo' ? obj.getScaledHeight() : obj.height;
         const minTop = borderMargin;
         const maxTop = borderMargin + contentHeight - objHeight;
+        const minLeft = borderMargin;
+        const maxLeft = borderMargin + contentWidth - objWidth;
         obj.set({
           left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
           top: Math.max(minTop, Math.min(obj.top, maxTop))
         });
-        console.log(`Skalowano: ${obj.id}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle || 0}`);
+        console.log(`Przesunięto: ${obj.id}, left: ${obj.left}, top: ${obj.top}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, angle: ${obj.angle || 0}`);
+      }
+    });
+    console.log('Dodawanie zdarzenia object:scaling');
+    canvas.on('object:scaling', (e) => {
+      const obj = e.target;
+      if (obj.id !== 'name' && obj.id !== 'index' && obj.id !== 'price' && obj.id !== 'ranking') {
+        if (obj.id === 'image' || obj.id === 'barcode' || obj.id === 'logo') {
+          const maxW = contentWidth * (obj.id === 'image' ? 0.9 : obj.id === 'barcode' ? 0.8571 : 0.3);
+          const maxH = contentHeight * (obj.id === 'image' ? 0.4 : obj.id === 'barcode' ? 0.1143 : 0.1);
+          const objWidth = obj.getScaledWidth();
+          const objHeight = obj.getScaledHeight();
+          if (objWidth > maxW || objHeight > maxH) {
+            const scale = Math.min(maxW / obj.width, maxH / obj.height);
+            obj.set({
+              scaleX: scale,
+              scaleY: scale
+            });
+          }
+          const minLeft = borderMargin;
+          const maxLeft = borderMargin + contentWidth - objWidth;
+          const minTop = borderMargin;
+          const maxTop = borderMargin + contentHeight - objHeight;
+          obj.set({
+            left: Math.max(minLeft, Math.min(obj.left, maxLeft)),
+            top: Math.max(minTop, Math.min(obj.top, maxTop))
+          });
+          console.log(`Skalowano: ${obj.id}, scaleX: ${obj.scaleX}, scaleY: ${obj.scaleY}, width: ${objWidth}, height: ${objHeight}, angle: ${obj.angle || 0}`);
+        }
       }
     });
     console.log('Dodawanie zdarzenia object:rotating');
@@ -476,13 +488,7 @@ function showVirtualEditModal(productIndex) {
               fontSize: fontSize,
               text: wrappedText,
               width: maxWidth,
-              textAlign: 'center',
-              left: obj.left, // Zachowaj oryginalną pozycję
-              originX: obj.originX // Zachowaj oryginalny originX
-            });
-            const objHeight = obj.height;
-            obj.set({
-              top: Math.max(borderMargin, Math.min(obj.top, borderMargin + contentHeight - objHeight))
+              textAlign: 'center'
             });
             canvas.renderAll();
             console.log(`Zastosowano edycję tekstu dla ${layoutKey}: fontSize=${fontSize}`);
