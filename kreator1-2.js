@@ -491,11 +491,16 @@ async function importExcel() {
               header: true,
               skipEmptyLines: true,
               dynamicTyping: true,
-              worker: true,
-              complete: resolve,
-              error: reject
+              worker: false, // Wyłączenie Web Workera dla lepszej kontroli
+              complete: (result) => resolve(result),
+              error: (err) => reject(err)
             });
           });
+          if (!parsed || !parsed.data) {
+            console.error("Błąd parsowania CSV: Brak danych");
+            document.getElementById('debug').innerText = "Błąd: Nie udało się sparsować pliku CSV";
+            return;
+          }
           rows = parsed.data;
           if (rows.length === 0) {
             console.error("Plik CSV jest pusty lub niepoprawny");
@@ -675,7 +680,6 @@ async function previewPDF() {
     }
 
     const totalPages = Math.ceil(window.products.length / itemsPerPage);
-    const imagePromises = [];
 
     // Preload wszystkich obrazów przed generowaniem PDF
     const preloadImages = window.products.map(async p => {
@@ -1024,7 +1028,5 @@ window.loadProducts = loadProducts;
 window.showPage = showPage;
 window.uploadImagesToGitHub = uploadImagesToGitHub;
 window.previewPDF = previewPDF;
-
-</xaiArtifact>
 
 
