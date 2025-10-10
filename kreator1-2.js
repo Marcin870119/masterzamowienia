@@ -39,8 +39,8 @@ async function uploadImagesToGitHub(files) {
     const repoOwner = 'Marcin870119';
     const repoName = 'masterzamowienia';
     const folderPath = 'zdjecia-ukraina';
-    const batchSize = 50; // Zmniejszono batchSize
-    const delayMs = 500; // Zmniejszono opóźnienie
+    const batchSize = 50;
+    const delayMs = 500;
     const fileArray = Array.from(files);
     document.getElementById('debug').innerText = `Rozpoczęto przesyłanie ${fileArray.length} plików do GitHub...`;
 
@@ -485,7 +485,12 @@ async function importExcel() {
       try {
         let rows;
         if (file.name.endsWith('.csv')) {
-          const parsed = Papa.parse(e.target.result, { header: true, skipEmptyLines: true, dynamicTyping: true });
+          const parsed = Papa.parse(e.target.result, { 
+            header: true, 
+            skipEmptyLines: true, 
+            dynamicTyping: true,
+            worker: true // Użycie Web Workera do parsowania CSV
+          });
           rows = parsed.data;
           if (rows.length === 0) {
             console.error("Plik CSV jest pusty lub niepoprawny");
@@ -532,6 +537,8 @@ async function importExcel() {
           });
         }
 
+        // Optymalizacja generowania kodów kreskowych
+        const barcodeCache = new Map();
         const newProducts = await Promise.all(rows.map(async row => {
           const indeks = row['indeks'] || row[0];
           if (!indeks) {
@@ -541,16 +548,21 @@ async function importExcel() {
           const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString()) || {};
           let barcodeImg = null;
           if (row['ean'] && /^\d{12,13}$/.test(row['ean'])) {
-            const barcodeCanvas = document.createElement('canvas');
-            JsBarcode(barcodeCanvas, row['ean'], {
-              format: "EAN13",
-              width: 1.6,
-              height: 32,
-              displayValue: true,
-              fontSize: 9,
-              margin: 0
-            });
-            barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
+            if (barcodeCache.has(row['ean'])) {
+              barcodeImg = barcodeCache.get(row['ean']);
+            } else {
+              const barcodeCanvas = document.createElement('canvas');
+              JsBarcode(barcodeCanvas, row['ean'], {
+                format: "EAN13",
+                width: 1.6,
+                height: 32,
+                displayValue: true,
+                fontSize: 9,
+                margin: 0
+              });
+              barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
+              barcodeCache.set(row['ean'], barcodeImg);
+            }
           }
           let productImg = matched.img;
           if (!productImg) {
@@ -604,6 +616,189 @@ async function importExcel() {
   } catch (e) {
     console.error('Błąd importu pliku Excel/CSV:', e);
     document.getElementById('debug').innerText = `Błąd importu pliku Excel/CSV: ${e.message}`;
+  }
+}
+
+async function previewPDF() {
+  try {
+    console.log('Rozpoczęto generowanie podglądu PDF');
+    const doc = new window.jspdf.jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+      compress: true
+    });
+    const layout = document.getElementById('layoutSelect')?.value || "16";
+    const showCena = document.getElementById('showCena')?.checked || false;
+    const showLogo = document.getElementById('showLogo')?.checked || false;
+    const showRanking = document.getElementById('showRanking')?.checked || false;
+    const showEan = document.getElementById('showEan')?.checked || false;
+    const priceLabel = window.globalLanguage === 'en' ? 'Price' : 'Cena';
+    
+    let itemsPerPage;
+    let gridColumns;
+    let itemWidth, itemHeight;
+    
+    if (layout === "1") {
+      itemsPerPage = 1;
+      gridColumns = 1;
+      itemWidth = 180;
+      itemHeight = 200;
+    } else if (layout === "2") {
+      itemsPerPage = 2;
+      gridColumns = 2;
+      itemWidth = 90;
+      itemHeight = 100;
+    } else if (layout === "4") {
+      itemsPerPage = 4;
+      gridColumns = 2;
+      itemWidth = 90;
+      itemHeight = 50;
+    } else if (layout === "8") {
+      itemsPerPage = 8;
+      gridColumns = 4;
+      itemWidth = 45;
+      itemHeight = 50;
+    } else if (layout === "16") {
+      itemsPerPage = 16;
+      gridColumns = 4;
+      itemWidth = 45;
+      itemHeight = 25;
+    } else if (layout === "4-2-4") {
+      itemsPerPage = 10;
+      gridColumns = 4;
+      itemWidth = 45;
+      itemHeight = 30;
+    }
+
+    const totalPages = Math.ceil(window.products.length / itemsPerPage);
+    const imagePromises = [];
+
+    for (let page = 0; page < totalPages; page++) {
+      if (page > 0) doc.addPage();
+      const startIndex = page * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, window.products.length);
+      const pageProducts = window.products.slice(startIndex, endIndex);
+
+      let yOffset = 10;
+      let xOffset = 10;
+      let colCount = 0;
+
+      for (const p of pageProducts) {
+        if (!p || !p.indeks) continue;
+        const globalIndex = startIndex + pageProducts.indexOf(p);
+        const edit = window.productEdits[globalIndex] || {};
+        const pageEdit = window.pageEdits[page] || {};
+        const finalEdit = { ...pageEdit, ...edit };
+
+        const nazwaFontSize = finalEdit.nazwaFontSize === 'small' ? 8 : finalEdit.nazwaFontSize === 'large' ? 12 : 10;
+        const indeksFontSize = finalEdit.indeksFontSize === 'small' ? 6 : finalEdit.indeksFontSize === 'large' ? 10 : 8;
+        const rankingFontSize = finalEdit.rankingFontSize === 'small' ? 6 : finalEdit.rankingFontSize === 'large' ? 10 : 8;
+        const cenaFontSize = finalEdit.cenaFontSize === 'small' ? 8 : finalEdit.cenaFontSize === 'large' ? 12 : 10;
+
+        const imgSrc = window.uploadedImages[p.indeks] || p.img || "https://dummyimage.com/120x84/eee/000&text=brak";
+        imagePromises.push(
+          new Promise(resolve => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = imgSrc;
+            img.onload = () => {
+              doc.addImage(img, 'JPEG', xOffset, yOffset, itemWidth * 0.6, itemHeight * 0.6, null, 'FAST');
+              resolve();
+            };
+            img.onerror = () => {
+              console.warn(`Błąd ładowania obrazu dla produktu ${p.indeks} w PDF`);
+              doc.addImage("https://dummyimage.com/120x84/eee/000&text=brak", 'JPEG', xOffset, yOffset, itemWidth * 0.6, itemHeight * 0.6, null, 'FAST');
+              resolve();
+            };
+          })
+        );
+
+        doc.setFont(finalEdit.nazwaFont || 'helvetica', 'bold');
+        doc.setFontSize(nazwaFontSize);
+        doc.setTextColor(finalEdit.nazwaFontColor || '#000000');
+        doc.text(p.nazwa || 'Brak nazwy', xOffset, yOffset + itemHeight * 0.65);
+
+        doc.setFont(finalEdit.indeksFont || 'helvetica', 'normal');
+        doc.setFontSize(indeksFontSize);
+        doc.setTextColor(finalEdit.indeksFontColor || '#000000');
+        doc.text(`Indeks: ${p.indeks || 'Brak indeksu'}`, xOffset, yOffset + itemHeight * 0.75);
+
+        if (showRanking && p.ranking) {
+          doc.setFont(finalEdit.rankingFont || 'helvetica', 'normal');
+          doc.setFontSize(rankingFontSize);
+          doc.setTextColor(finalEdit.rankingFontColor || '#000000');
+          doc.text(`RANKING: ${p.ranking}`, xOffset, yOffset + itemHeight * 0.85);
+        }
+
+        if (showCena && p.cena) {
+          const currency = finalEdit.priceCurrency || window.globalCurrency;
+          const currencySymbol = currency === 'EUR' ? '€' : '£';
+          const showPriceLabel = finalEdit.showPriceLabel !== undefined ? finalEdit.showPriceLabel : true;
+          doc.setFont(finalEdit.cenaFont || 'helvetica', 'normal');
+          doc.setFontSize(cenaFontSize);
+          doc.setTextColor(finalEdit.cenaFontColor || '#000000');
+          doc.text(`${showPriceLabel ? `${priceLabel}: ` : ''}${p.cena} ${currencySymbol}`, xOffset, yOffset + itemHeight * 0.95);
+        }
+
+        if (showLogo && layout === "4" && (finalEdit.logo || (p.producent && window.manufacturerLogos[p.producent]))) {
+          const logoSrc = finalEdit.logo || window.manufacturerLogos[p.producent] || "https://dummyimage.com/120x60/eee/000&text=brak";
+          imagePromises.push(
+            new Promise(resolve => {
+              const logoImg = new Image();
+              logoImg.crossOrigin = "Anonymous";
+              logoImg.src = logoSrc;
+              logoImg.onload = () => {
+                doc.addImage(logoImg, 'JPEG', xOffset, yOffset + itemHeight * 0.6, itemWidth * 0.6, itemHeight * 0.3, null, 'FAST');
+                resolve();
+              };
+              logoImg.onerror = () => {
+                console.warn(`Błąd ładowania logo dla produktu ${p.indeks} w PDF`);
+                doc.addImage("https://dummyimage.com/120x60/eee/000&text=brak", 'JPEG', xOffset, yOffset + itemHeight * 0.6, itemWidth * 0.6, itemHeight * 0.3, null, 'FAST');
+                resolve();
+              };
+            })
+          );
+        }
+
+        if (showEan && p.ean && p.barcode) {
+          imagePromises.push(
+            new Promise(resolve => {
+              const barcodeImg = new Image();
+              barcodeImg.crossOrigin = "Anonymous";
+              barcodeImg.src = p.barcode;
+              barcodeImg.onload = () => {
+                doc.addImage(barcodeImg, 'PNG', xOffset, yOffset + itemHeight * 1.0, itemWidth * 0.4, itemHeight * 0.2, null, 'FAST');
+                resolve();
+              };
+              barcodeImg.onerror = () => {
+                console.warn(`Błąd ładowania kodu kreskowego dla produktu ${p.indeks} w PDF`);
+                doc.addImage("https://dummyimage.com/85x32/eee/000&text=brak", 'PNG', xOffset, yOffset + itemHeight * 1.0, itemWidth * 0.4, itemHeight * 0.2, null, 'FAST');
+                resolve();
+              };
+            })
+          );
+        }
+
+        colCount++;
+        if (colCount >= gridColumns) {
+          colCount = 0;
+          xOffset = 10;
+          yOffset += itemHeight + 10;
+        } else {
+          xOffset += itemWidth + 10;
+        }
+      }
+    }
+
+    await Promise.all(imagePromises);
+    const pdfOutput = doc.output('datauristring');
+    const pdfWindow = window.open("", "_blank");
+    pdfWindow.document.write(`<iframe width="100%" height="100%" src="${pdfOutput}"></iframe>`);
+    console.log('Podgląd PDF wygenerowany');
+  } catch (e) {
+    console.error('Błąd generowania podglądu PDF:', e);
+    document.getElementById('debug').innerText = `Błąd generowania podglądu PDF: ${e.message}`;
   }
 }
 
@@ -808,12 +1003,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (previewButton) {
       previewButton.addEventListener('click', () => {
         console.log('Kliknięto Podgląd PDF');
-        if (typeof window.previewPDF === 'function') {
-          window.previewPDF();
-        } else {
-          console.error('Funkcja previewPDF nie jest zdefiniowana');
-          document.getElementById('debug').innerText = "Błąd: Funkcja podglądu PDF nie jest dostępna";
-        }
+        window.previewPDF();
       });
     }
     window.loadProducts();
@@ -833,3 +1023,6 @@ window.selectBanner = selectBanner;
 window.loadProducts = loadProducts;
 window.showPage = showPage;
 window.uploadImagesToGitHub = uploadImagesToGitHub;
+window.previewPDF = previewPDF;
+
+
