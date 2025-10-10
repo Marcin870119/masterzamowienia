@@ -2,7 +2,13 @@ console.log('kreator1-2.js załadowany');
 // Inicjalizacja zmiennej dla aktualnej strony
 window.currentPage = 0;
 
+// Cache dla obrazów
+const imageCache = new Map();
+
 async function toBase64(url) {
+  if (imageCache.has(url)) {
+    return imageCache.get(url);
+  }
   try {
     const response = await fetch(url, { cache: 'no-cache' });
     if (!response.ok) {
@@ -10,12 +16,14 @@ async function toBase64(url) {
       return null;
     }
     const blob = await response.blob();
-    return new Promise((resolve, reject) => {
+    const result = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);
       reader.onerror = () => reject(new Error(`Błąd odczytu obrazu z ${url}`));
       reader.readAsDataURL(blob);
     });
+    imageCache.set(url, result);
+    return result;
   } catch (e) {
     console.warn(`Błąd konwersji URL na base64 (${url}):`, e);
     return null;
@@ -24,30 +32,34 @@ async function toBase64(url) {
 
 async function uploadImagesToGitHub(files) {
   try {
-    const githubToken = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN'; // Zastąp swoim tokenem GitHub
+    const githubToken = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN';
     if (!githubToken || githubToken === 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN') {
       throw new Error('Brak tokena GitHub. Wygeneruj token w ustawieniach GitHub i wstaw go w kodzie.');
     }
     const repoOwner = 'Marcin870119';
     const repoName = 'masterzamowienia';
     const folderPath = 'zdjecia-ukraina';
-    const batchSize = 100; // Maksymalna liczba plików w jednej partii
-    const delayMs = 1000; // Opóźnienie między partiami w milisekundach
+    const batchSize = 50; // Zmniejszono batchSize
+    const delayMs = 500; // Zmniejszono opóźnienie
     const fileArray = Array.from(files);
     document.getElementById('debug').innerText = `Rozpoczęto przesyłanie ${fileArray.length} plików do GitHub...`;
-    
-    for (let i = 0; i < fileArray.length; i += batchSize) {
-      const batch = fileArray.slice(i, i + batchSize);
-      console.log(`Przesyłanie partii ${Math.floor(i / batchSize) + 1} (${batch.length} plików)`);
-      
-      await Promise.all(batch.map(async (file) => {
-        const fileName = file.name;
-        const filePath = `${folderPath}/${fileName}`;
+
+    const uploadPromises = fileArray.map(file => ({
+      fileName: file.name,
+      filePath: `${folderPath}/${file.name}`,
+      contentPromise: new Promise(resolve => {
         const reader = new FileReader();
-        const content = await new Promise((resolve) => {
-          reader.onload = () => resolve(reader.result.split(',')[1]); // Usuń prefix data:image
-          reader.readAsDataURL(file);
-        });
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.readAsDataURL(file);
+      })
+    }));
+
+    for (let i = 0; i < fileArray.length; i += batchSize) {
+      const batch = uploadPromises.slice(i, i + batchSize);
+      console.log(`Przesyłanie partii ${Math.floor(i / batchSize) + 1} (${batch.length} plików)`);
+
+      await Promise.all(batch.map(async ({ fileName, filePath, contentPromise }) => {
+        const content = await contentPromise;
         const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
           method: 'PUT',
           headers: {
@@ -56,7 +68,7 @@ async function uploadImagesToGitHub(files) {
           },
           body: JSON.stringify({
             message: `Dodano obraz ${fileName}`,
-            content: content
+            content
           })
         });
         if (!response.ok) {
@@ -66,7 +78,7 @@ async function uploadImagesToGitHub(files) {
         }
         console.log(`Przesłano plik ${fileName} do GitHub`);
       }));
-      
+
       if (i + batchSize < fileArray.length) {
         console.log(`Oczekiwanie ${delayMs}ms przed przesłaniem kolejnej partii...`);
         await new Promise(resolve => setTimeout(resolve, delayMs));
@@ -85,21 +97,23 @@ async function loadManufacturerLogos() {
     const response = await fetch("https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/Producenci.json");
     if (!response.ok) throw new Error(`Nie udało się załadować Producenci.json: ${response.status}`);
     const jsonData = await response.json();
-    for (const manufacturer of jsonData) {
+    
+    const logoPromises = jsonData.map(async manufacturer => {
       const name = manufacturer.NAZWA_PROD?.trim() || '';
       const urls = [
         `https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/zdjecia/${name}.jpg`,
         `https://raw.githubusercontent.com/MasterMM2025/kreator-katalog/main/zdjecia/${name}.png`
       ];
-      let base64Logo = null;
       for (const url of urls) {
-        base64Logo = await toBase64(url);
-        if (base64Logo) break;
+        const base64Logo = await toBase64(url);
+        if (base64Logo) {
+          window.manufacturerLogos[name] = base64Logo;
+          return;
+        }
       }
-      if (base64Logo) {
-        window.manufacturerLogos[name] = base64Logo;
-      }
-    }
+    });
+
+    await Promise.all(logoPromises);
     console.log(`Załadowano loga producentów: ${Object.keys(window.manufacturerLogos).length}`);
   } catch (error) {
     console.error("Błąd ładowania logów producentów:", error);
@@ -112,7 +126,8 @@ async function loadProducts() {
     const response = await fetch("https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/UKRAINA.json");
     if (!response.ok) throw new Error(`Nie udało się załadować JSON: ${response.status}`);
     const jsonData = await response.json();
-    window.jsonProducts = await Promise.all(jsonData.map(async (p) => {
+
+    const productPromises = jsonData.map(async p => {
       const urls = [
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.jpg`,
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.png`
@@ -138,8 +153,10 @@ async function loadProducts() {
         img: base64Img,
         producent: p.NAZWA_PROD || ''
       };
-    }));
-    console.log(`Załadowano jsonProducts: ${window.jsonProducts.length}`, window.jsonProducts);
+    });
+
+    window.jsonProducts = await Promise.all(productPromises);
+    console.log(`Załadowano jsonProducts: ${window.jsonProducts.length}`);
   } catch (error) {
     console.error("Błąd loadProducts:", error);
     document.getElementById('debug').innerText = `Błąd ładowania JSON: ${error.message}`;
@@ -152,18 +169,21 @@ function handleFiles(files, callback) {
     document.getElementById('debug').innerText = "Brak zdjęć do załadowania";
     return;
   }
-  [...files].forEach(file => {
+  const filePromises = Array.from(files).map(file => new Promise(resolve => {
     const reader = new FileReader();
     reader.onload = (e) => {
       callback(file, e.target.result);
       document.getElementById('debug').innerText = `Załadowano plik: ${file.name}`;
+      resolve();
     };
     reader.onerror = () => {
       console.error(`Błąd ładowania pliku: ${file.name}`);
       document.getElementById('debug').innerText = `Błąd ładowania pliku: ${file.name}`;
+      resolve();
     };
     reader.readAsDataURL(file);
-  });
+  }));
+  Promise.all(filePromises);
 }
 
 function loadCustomBanner(file, data) {
@@ -226,28 +246,26 @@ async function loadBanners() {
     }
     bannerOptions.innerHTML = '';
     const bannerList = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    for (const id of bannerList) {
+    const bannerPromises = bannerList.map(async id => {
       const urls = [
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BANER/${id}.JPG`,
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BANER/${id}.jpg`,
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/BANER/${id}.png`
       ];
-      let base64Banner = null;
       for (const url of urls) {
-        base64Banner = await toBase64(url);
+        const base64Banner = await toBase64(url);
         if (base64Banner) {
           console.log(`Załadowano baner ${id}: ${url}`);
-          break;
+          const preview = document.createElement('img');
+          preview.src = base64Banner;
+          preview.className = 'banner-preview';
+          preview.onclick = () => selectBanner(id, base64Banner);
+          bannerOptions.appendChild(preview);
+          return;
         }
       }
-      if (base64Banner) {
-        const preview = document.createElement('img');
-        preview.src = base64Banner;
-        preview.className = 'banner-preview';
-        preview.onclick = () => selectBanner(id, base64Banner);
-        bannerOptions.appendChild(preview);
-      }
-    }
+    });
+    await Promise.all(bannerPromises);
   } catch (e) {
     console.error('Błąd ładowania banerów:', e);
     document.getElementById('debug').innerText = `Błąd ładowania banerów: ${e.message}`;
@@ -326,6 +344,7 @@ function renderCatalog() {
     pageDiv.style.gap = "25px";
     pageDiv.style.padding = "20px";
     container.appendChild(pageDiv);
+    
     pageProducts.forEach((p, pageIndex) => {
       if (!p || !p.indeks) {
         console.warn(`Produkt o indeksie ${startIndex + pageIndex} jest nieprawidłowy lub brak indeksu`, p);
@@ -352,7 +371,6 @@ function renderCatalog() {
       };
       const details = document.createElement('div');
       details.className = "details";
-      console.log(`Renderowanie produktu ${p.indeks}, nazwa: ${p.nazwa}, edit:`, finalEdit);
       details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}; font-size: ${nazwaFontSize}">${p.nazwa || 'Brak nazwy'}</b><br>` +
                          `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}; font-size: ${indeksFontSize}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
       if (showRanking && p.ranking) {
@@ -406,7 +424,6 @@ function renderCatalog() {
       layoutButton.innerHTML = '<i class="fas fa-object-group"></i> Edytuj układ';
       layoutButton.onclick = () => {
         console.log(`Kliknięto Edytuj układ dla produktu: ${globalIndex}`);
-        console.log(`showVirtualEditModal dostępny: ${typeof window.showVirtualEditModal}`);
         if (typeof window.showVirtualEditModal === 'function') {
           window.showVirtualEditModal(globalIndex);
         } else {
@@ -420,7 +437,6 @@ function renderCatalog() {
       item.appendChild(details);
       item.appendChild(buttonsContainer);
       pageDiv.appendChild(item);
-      console.log(`Dodano produkt ${p.indeks} z przyciskami edycji na stronie ${window.currentPage}, fontSizes:`, { nazwaFontSize, indeksFontSize, rankingFontSize, cenaFontSize });
     });
     console.log(`renderCatalog zakończony, strona: ${window.currentPage}, produkty: ${pageProducts.length}, totalPages: ${totalPages}`);
   } catch (e) {
@@ -443,13 +459,14 @@ function showPage(pageNum) {
 
 function getItemsPerPage() {
   const layout = document.getElementById('layoutSelect')?.value || "16";
-  if (layout === "1") return 1;
-  else if (layout === "2") return 2;
-  else if (layout === "4") return 4;
-  else if (layout === "8") return 8;
-  else if (layout === "16") return 16;
-  else if (layout === "4-2-4") return 10;
-  return 16;
+  return {
+    "1": 1,
+    "2": 2,
+    "4": 4,
+    "8": 8,
+    "16": 16,
+    "4-2-4": 10
+  }[layout] || 16;
 }
 
 async function importExcel() {
@@ -462,13 +479,13 @@ async function importExcel() {
     }
     console.log("Ładowanie/aktualizacja jsonProducts przed importem...");
     await window.loadProducts();
-    
+
     const reader = new FileReader();
     reader.onload = async (e) => {
       try {
         let rows;
         if (file.name.endsWith('.csv')) {
-          const parsed = Papa.parse(e.target.result, { header: true, skipEmptyLines: true });
+          const parsed = Papa.parse(e.target.result, { header: true, skipEmptyLines: true, dynamicTyping: true });
           rows = parsed.data;
           if (rows.length === 0) {
             console.error("Plik CSV jest pusty lub niepoprawny");
@@ -477,7 +494,7 @@ async function importExcel() {
           }
           const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim().replace(/\s+/g, ' '));
           console.log("Nagłówki CSV:", headers);
-          rows = rows.map((row, rowIndex) => {
+          rows = rows.map(row => {
             let obj = {};
             headers.forEach((header, i) => {
               const value = row[Object.keys(row)[i]];
@@ -487,21 +504,18 @@ async function importExcel() {
               if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
               if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.toLowerCase().replace(/[-\s]/g, '').includes(h.replace(/[-\s]/g, '')))) {
                 obj['nazwa'] = value && typeof value === 'string' ? value.trim() : '';
-                console.log(`Mapa nazwy dla wiersza ${rowIndex}: header=${header}, value=${value}`);
-                if (!value) console.warn(`Pusta lub brakująca nazwa w wierszu ${rowIndex}, header=${header}`);
               }
               if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
             });
-            console.log(`Przetworzony wiersz ${rowIndex}:`, obj);
             return obj;
           });
         } else {
-          const workbook = XLSX.read(e.target.result, { type: 'binary' });
+          const workbook = XLSX.read(e.target.result, { type: 'binary', raw: true });
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
           rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
           const headers = rows[0].map(h => h.toString().toLowerCase().trim().replace(/\s+/g, ' '));
           console.log("Nagłówki Excel:", headers);
-          rows = rows.slice(1).map((row, rowIndex) => {
+          rows = rows.slice(1).map(row => {
             let obj = {};
             headers.forEach((header, i) => {
               const value = row[i];
@@ -511,44 +525,35 @@ async function importExcel() {
               if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
               if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.toLowerCase().replace(/[-\s]/g, '').includes(h.replace(/[-\s]/g, '')))) {
                 obj['nazwa'] = value && typeof value === 'string' ? value.toString().trim() : '';
-                console.log(`Mapa nazwy dla wiersza ${rowIndex}: header=${header}, value=${value}`);
-                if (!value) console.warn(`Pusta lub brakująca nazwa w wierszu ${rowIndex}, header=${header}`);
               }
               if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
             });
-            console.log(`Przetworzony wiersz ${rowIndex}:`, obj);
             return obj;
           });
         }
-        console.log("Przetworzone wiersze CSV/Excel:", rows);
-        const newProducts = await Promise.all(rows.map(async (row, rowIndex) => {
+
+        const newProducts = await Promise.all(rows.map(async row => {
           const indeks = row['indeks'] || row[0];
           if (!indeks) {
-            console.warn(`Pomijam wiersz ${rowIndex}: brak indeksu`);
+            console.warn(`Pomijam wiersz: brak indeksu`);
             return null;
           }
           const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString()) || {};
-          console.log(`Matched dla indeksu ${indeks} (wiersz ${rowIndex}):`, matched);
           let barcodeImg = null;
           if (row['ean'] && /^\d{12,13}$/.test(row['ean'])) {
-            try {
-              const barcodeCanvas = document.createElement('canvas');
-              JsBarcode(barcodeCanvas, row['ean'], {
-                format: "EAN13",
-                width: 1.6,
-                height: 32,
-                displayValue: true,
-                fontSize: 9,
-                margin: 0
-              });
-              barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
-            } catch (e) {
-              console.error(`Błąd generowania kodu kreskowego dla EAN: ${row['ean']}`, e);
-            }
+            const barcodeCanvas = document.createElement('canvas');
+            JsBarcode(barcodeCanvas, row['ean'], {
+              format: "EAN13",
+              width: 1.6,
+              height: 32,
+              displayValue: true,
+              fontSize: 9,
+              margin: 0
+            });
+            barcodeImg = barcodeCanvas.toDataURL("image/png", 0.8);
           }
           let productImg = matched.img;
           if (!productImg) {
-            console.log(`Brak img w JSON dla ${indeks}, próba dynamicznego ładowania...`);
             const urls = [
               `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${indeks}.jpg`,
               `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${indeks}.png`
@@ -572,8 +577,8 @@ async function importExcel() {
             producent: row['producent'] || matched.producent || ''
           };
         }));
+
         window.products = newProducts.filter(p => p);
-        console.log("Nowe produkty:", window.products);
         if (window.products.length) {
           window.productEdits = { ...window.productEdits };
           window.pageEdits = { ...window.pageEdits };
@@ -605,6 +610,8 @@ async function importExcel() {
 document.addEventListener("DOMContentLoaded", () => {
   try {
     console.log('DOMContentLoaded wywołany');
+    window.manufacturerLogos = window.manufacturerLogos || {};
+    window.uploadedImages = window.uploadedImages || {};
     const imageInput = document.getElementById("imageInput");
     const uploadArea = document.getElementById("uploadArea");
     if (imageInput && uploadArea) {
@@ -633,9 +640,6 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         imageInput.click();
       });
-    } else {
-      console.error("Nie znaleziono elementów: imageInput lub uploadArea");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi zdjęć";
     }
     const githubImageInput = document.getElementById("githubImageInput");
     const githubUploadArea = document.getElementById("githubUploadArea");
@@ -658,16 +662,13 @@ document.addEventListener("DOMContentLoaded", () => {
         githubUploadArea.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop zdjęć do GitHub: ${e.dataTransfer.files.length}`);
-          window.uploadImagesToGitHub(e.dataTransfer.files);
+          window.uploadImagesToGitHub(e.target.files);
         }
       });
       githubUploadArea.querySelector('.file-label').addEventListener("click", (e) => {
         e.preventDefault();
         githubImageInput.click();
       });
-    } else {
-      console.error("Nie znaleziono elementów: githubImageInput lub githubUploadArea");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi przesyłania zdjęć do GitHub";
     }
     const bannerFileInput = document.getElementById("bannerFileInput");
     const bannerUpload = document.getElementById("bannerUpload");
@@ -697,9 +698,6 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         bannerFileInput.click();
       });
-    } else {
-      console.error("Nie znaleziono elementów: bannerFileInput lub bannerUpload");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi banera";
     }
     const backgroundFileInput = document.getElementById("backgroundFileInput");
     const backgroundUpload = document.getElementById("backgroundUpload");
@@ -729,9 +727,6 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         backgroundFileInput.click();
       });
-    } else {
-      console.error("Nie znaleziono elementów: backgroundFileInput lub backgroundUpload");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi tła";
     }
     const coverFileInput = document.getElementById("coverFileInput");
     const coverUpload = document.getElementById("coverUpload");
@@ -761,9 +756,6 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         coverFileInput.click();
       });
-    } else {
-      console.error("Nie znaleziono elementów: coverFileInput lub coverUpload");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi okładki";
     }
     const excelFileInput = document.getElementById("excelFile");
     const fileLabelWrapper = document.querySelector(".file-label-wrapper");
@@ -778,9 +770,6 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         excelFileInput.click();
       });
-    } else {
-      console.error("Nie znaleziono elementów: excelFileInput lub fileLabelWrapper");
-      document.getElementById('debug').innerText = "Błąd: Brak elementów do obsługi importu Excel";
     }
     const currencySelect = document.getElementById('currencySelect');
     if (currencySelect) {
@@ -802,7 +791,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const layoutSelect = document.getElementById('layoutSelect');
     if (layoutSelect) {
-      layoutSelect.addEventListener('change', (e) => {
+      layoutSelect.addEventListener('change', () => {
         window.currentPage = 0;
         window.renderCatalog();
       });
@@ -826,11 +815,9 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById('debug').innerText = "Błąd: Funkcja podglądu PDF nie jest dostępna";
         }
       });
-    } else {
-      console.error("Nie znaleziono elementu previewButton");
-      document.getElementById('debug').innerText = "Błąd: Brak przycisku podglądu PDF";
     }
     window.loadProducts();
+    window.loadManufacturerLogos();
   } catch (e) {
     console.error('Błąd inicjalizacji zdarzeń DOM:', e);
     document.getElementById('debug').innerText = `Błąd inicjalizacji zdarzeń DOM: ${e.message}`;
