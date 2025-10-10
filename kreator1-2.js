@@ -28,7 +28,7 @@ async function uploadImagesToGitHub(files) {
     }
     const repoOwner = 'Marcin870119';
     const repoName = 'masterzamowienia';
-    const folderPath = 'zdjecia-dodatkowe';
+    const folderPath = 'zdjecia-ukraina';
     const batchSize = 100; // Maksymalna liczba plików w jednej partii
     const delayMs = 1000; // Opóźnienie między partiami w milisekundach
     const fileArray = Array.from(files);
@@ -112,11 +112,7 @@ async function loadProducts() {
     window.jsonProducts = await Promise.all(jsonData.map(async (p) => {
       const urls = [
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.jpg`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.png`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.jpg`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.png`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-dodatkowe/${p.INDEKS}.jpg`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-dodatkowe/${p.INDEKS}.png`
+        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.png`
       ];
       let base64Img = null;
       for (const url of urls) {
@@ -602,7 +598,7 @@ document.addEventListener("DOMContentLoaded", () => {
         uploadArea.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop zdjęć: ${e.dataTransfer.files.length}`);
-          handleFiles(e.dataTransfer.files, loadCustomImages);
+          handleFiles(e.target.files, loadCustomImages);
         }
       });
       uploadArea.querySelector('.file-label').addEventListener("click", (e) => {
@@ -634,7 +630,7 @@ document.addEventListener("DOMContentLoaded", () => {
         githubUploadArea.classList.remove("dragover");
         if (e.dataTransfer.files.length > 0) {
           console.log(`Drop zdjęć do GitHub: ${e.dataTransfer.files.length}`);
-          window.uploadImagesToGitHub(e.dataTransfer.files);
+          window.uploadImagesToGitHub(e.target.files);
         }
       });
       githubUploadArea.querySelector('.file-label').addEventListener("click", (e) => {
