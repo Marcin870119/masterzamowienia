@@ -52,11 +52,20 @@ async function loadProducts() {
     if (!response.ok) throw new Error(`Nie udało się załadować JSON: ${response.status}`);
     const jsonData = await response.json();
     window.jsonProducts = await Promise.all(jsonData.map(async (p) => {
+      // Mapowanie indeksu na ID pliku w Google Drive (przykład, wymaga dostarczenia ID)
+      // TODO: Zastąp poniższe wartości rzeczywistymi ID plików z folderu Google Drive
+      const googleDriveFileIds = {
+        '18981': 'EXAMPLE_FILE_ID_18981', // Zastąp ID pliku dla 18981.jpg/png
+        '53496': 'EXAMPLE_FILE_ID_53496'  // Zastąp ID pliku dla 53496.jpg/png
+        // Dodaj kolejne mapowania indeks -> fileId
+      };
+      const fileId = googleDriveFileIds[p.INDEKS] || 'UNKNOWN';
       const urls = [
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.jpg`,
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/zdjecia-ukraina/${p.INDEKS}.png`,
         `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.jpg`,
-        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.png`
+        `https://raw.githubusercontent.com/Marcin870119/masterzamowienia/main/rumunia/${p.INDEKS}.png`,
+        `https://drive.google.com/uc?export=download&id=${fileId}`
       ];
       let base64Img = null;
       for (const url of urls) {
@@ -65,6 +74,9 @@ async function loadProducts() {
           console.log(`Załadowano obraz dla indeksu ${p.INDEKS}: ${url}`);
           break;
         }
+      }
+      if (!base64Img) {
+        console.warn(`Nie znaleziono obrazu dla indeksu ${p.INDEKS} w żadnym źródle`);
       }
       return {
         nazwa: p.NAZWA_TOWARU || '',
@@ -280,7 +292,7 @@ function renderCatalog() {
       };
       const details = document.createElement('div');
       details.className = "details";
-      console.log(`Renderowanie produktu ${p.indeks}, nazwa: ${p.nazwa}`); // Log nazwy produktu
+      console.log(`Renderowanie produktu ${p.indeks}, nazwa: ${p.nazwa}`);
       details.innerHTML = `<b style="font-family: ${finalEdit.nazwaFont || 'Arial'}; color: ${finalEdit.nazwaFontColor || '#000000'}; font-size: ${nazwaFontSize}">${p.nazwa || 'Brak nazwy'}</b><br>` +
                          `<span style="font-family: ${finalEdit.indeksFont || 'Arial'}; color: ${finalEdit.indeksFontColor || '#000000'}; font-size: ${indeksFontSize}">Indeks: ${p.indeks || 'Brak indeksu'}</span>`;
       if (showRanking && p.ranking) {
