@@ -67,18 +67,17 @@ async function loadProducts() {
         }
       }
       return {
-        nazwa: p.NAZWA || '',
-        opakowanie: p.OPAKOWANIE || '',
-        ean: p["unit barcode"] || '',
+        nazwa: p.NAZWA_TOWARU || '',
+        opakowanie: p.IL_OPK_ZB || '',
+        ean: p.KOD_KRESKOWY || '',
         ranking: p.RANKING || '',
-        cena: p.CENA || '',
+        cena: p.CENA_KATALOGOWA || '',
         indeks: p.INDEKS?.toString() || '',
         img: base64Img,
         producent: p.NAZWA_PROD || ''
       };
     }));
-    console.log(`Załadowano jsonProducts: ${window.jsonProducts.length}`);
-    await loadManufacturerLogos();
+    console.log(`Załadowano jsonProducts: ${window.jsonProducts.length}`, window.jsonProducts);
   } catch (error) {
     console.error("Błąd loadProducts:", error);
     document.getElementById('debug').innerText = `Błąd ładowania JSON: ${error.message}`;
