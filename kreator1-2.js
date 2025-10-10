@@ -401,8 +401,9 @@ function importExcel() {
             document.getElementById('debug').innerText = "Błąd: Plik CSV jest pusty";
             return;
           }
-          const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim());
-          rows = rows.map(row => {
+          const headers = Object.keys(rows[0]).map(h => h.toLowerCase().trim().replace(/\s+/g, ' '));
+          console.log("Nagłówki CSV:", headers);
+          rows = rows.map((row, rowIndex) => {
             let obj = {};
             headers.forEach((header, i) => {
               const value = row[Object.keys(row)[i]];
@@ -410,35 +411,48 @@ function importExcel() {
               if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = value || '';
               if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
               if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
-              if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.includes(h))) obj['nazwa'] = value || '';
+              if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.toLowerCase().replace(/[-\s]/g, '').includes(h.replace(/[-\s]/g, '')))) {
+                obj['nazwa'] = value && typeof value === 'string' ? value.trim() : '';
+                console.log(`Mapa nazwy dla wiersza ${rowIndex}: header=${header}, value=${value}`);
+                if (!value) console.warn(`Pusta lub brakująca nazwa w wierszu ${rowIndex}, header=${header}`);
+              }
               if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
             });
+            console.log(`Przetworzony wiersz ${rowIndex}:`, obj);
             return obj;
           });
         } else {
           const workbook = XLSX.read(e.target.result, { type: 'binary' });
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
           rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
-          const headers = rows[0].map(h => h.toString().toLowerCase().trim());
-          rows = rows.slice(1).map(row => {
+          const headers = rows[0].map(h => h.toString().toLowerCase().trim().replace(/\s+/g, ' '));
+          console.log("Nagłówki Excel:", headers);
+          rows = rows.slice(1).map((row, rowIndex) => {
             let obj = {};
             headers.forEach((header, i) => {
-              if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = row[i] || '';
-              if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = row[i] || '';
-              if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = row[i] || '';
-              if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = row[i] || '';
-              if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.includes(h))) obj['nazwa'] = row[i] || '';
-              if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = row[i] || '';
+              const value = row[i];
+              if (['index', 'indeks'].some(h => header.includes(h))) obj['indeks'] = value || '';
+              if (['ean', 'kod ean', 'barcode'].some(h => header.includes(h))) obj['ean'] = value || '';
+              if (['rank', 'ranking'].some(h => header.includes(h))) obj['ranking'] = value || '';
+              if (['cen', 'cena', 'price', 'netto'].some(h => header.includes(h))) obj['cena'] = value || '';
+              if (['nazwa', 'name', 'cell text-decoration-none'].some(h => header.toLowerCase().replace(/[-\s]/g, '').includes(h.replace(/[-\s]/g, '')))) {
+                obj['nazwa'] = value && typeof value === 'string' ? value.toString().trim() : '';
+                console.log(`Mapa nazwy dla wiersza ${rowIndex}: header=${header}, value=${value}`);
+                if (!value) console.warn(`Pusta lub brakująca nazwa w wierszu ${rowIndex}, header=${header}`);
+              }
+              if (['logo', 'nazwa_prod', 'producent', 'manufacturer'].some(h => header.includes(h))) obj['producent'] = value || '';
             });
+            console.log(`Przetworzony wiersz ${rowIndex}:`, obj);
             return obj;
           });
         }
         console.log("Przetworzone wiersze CSV/Excel:", rows);
         const newProducts = [];
-        rows.forEach(row => {
+        rows.forEach((row, rowIndex) => {
           const indeks = row['indeks'] || row[0];
           if (indeks) {
             const matched = window.jsonProducts.find(p => p.indeks.toString() === indeks.toString()) || {};
+            console.log(`Matched dla indeksu ${indeks} (wiersz ${rowIndex}):`, matched);
             let barcodeImg = null;
             if (row['ean'] && /^\d{12,13}$/.test(row['ean'])) {
               try {
@@ -457,8 +471,8 @@ function importExcel() {
                 document.getElementById('debug').innerText = "Błąd generowania kodu kreskowego";
               }
             }
-            newProducts.push({
-              nazwa: row['nazwa'] || matched.nazwa || '',
+            const product = {
+              nazwa: matched.nazwa && typeof matched.nazwa === 'string' && matched.nazwa.trim() ? matched.nazwa.trim() : (row['nazwa'] && typeof row['nazwa'] === 'string' && row['nazwa'].trim() ? row['nazwa'].trim() : ''),
               ean: row['ean'] || matched.ean || '',
               ranking: row['ranking'] || matched.ranking || '',
               cena: row['cena'] || matched.cena || '',
@@ -466,7 +480,9 @@ function importExcel() {
               img: window.uploadedImages[indeks.toString()] || matched.img || null,
               barcode: barcodeImg || matched.barcode || null,
               producent: row['producent'] || matched.producent || ''
-            });
+            };
+            console.log(`Utworzono produkt dla indeksu ${indeks}:`, product);
+            newProducts.push(product);
           }
         });
         console.log("Nowe produkty:", newProducts);
