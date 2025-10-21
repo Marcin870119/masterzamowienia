@@ -1,1032 +1,362 @@
 [
   {
-    "INDEKS": "55665",
-    "NAZWA": "22 CARATS CROISSANT Z NADZIENIEM O SMAKU CREME BRULEE 55G SOFIO BULGARIA",
-    "OPAKOWANIE": "32",
-    "CENA": "0.35",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "1",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "47486",
-    "NAZWA": "22 CARATS CROISSANT Z NADZIENIEM TRUSKAWKOWYM 52G SOFIO BULGARIA",
-    "OPAKOWANIE": "32",
-    "CENA": "0.35",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "2",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "55667",
-    "NAZWA": "22 CARATS DUO CROISSANT Z NADZIENIEM KAKAOWO-MLECZNYM 80G SOFIO BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.54",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "3",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "55666",
-    "NAZWA": "22 CARATS DUO CROISSANT Z NADZIENIEM O SMAKU WISNIOWO-MLECZNYM 80G SOFIO BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.54",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "4",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "56238",
-    "NAZWA": "7 DAYS 185G ROGALIK Z NADZ.MILLEFEUILLE BULGARIA MONDELEZ",
-    "OPAKOWANIE": "8",
-    "CENA": "1.6",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "5",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "56240",
-    "NAZWA": "7 DAYS 60G ROGALIK Z NADZ.MILLEFEUILLE BULGARIA MONDELEZ",
-    "OPAKOWANIE": "15",
-    "CENA": "0.64",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "6",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "56231",
-    "NAZWA": "7 DAYS 60G ROGALIK Z NADZ.MORELOWYM BULGARIA MONDELEZ",
-    "OPAKOWANIE": "20",
-    "CENA": "0.53",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "7",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "56227",
-    "NAZWA": "7 DAYS 60G ROGALIK Z NADZ.SZAMPANSKIM BULGARIA MONDELEZ",
-    "OPAKOWANIE": "30",
-    "CENA": "0.52",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "8",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "56236",
-    "NAZWA": "7 DAYS 92G ROGALIK Z NADZ.KAKAO&WANILIA BULGARIA MONDELEZ",
-    "OPAKOWANIE": "20",
-    "CENA": "0.6",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "9",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "56237",
-    "NAZWA": "7 DAYS 92G ROGALIK Z NADZ.KREM BRULEE BULGARIA MONDELEZ",
-    "OPAKOWANIE": "20",
-    "CENA": "0.59",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "10",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "56235",
-    "NAZWA": "7 DAYS 92G ROGALIK Z NADZ.KWASNEJ WISNI I WANILII BULGARIA MONDELEZ",
-    "OPAKOWANIE": "20",
-    "CENA": "0.6",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "11",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "55653",
-    "NAZWA": "AGI CIASTKA KRUCHE Z MIGDALAMI W CUKRZE PUDRZE 280G SOFIO BULGARIA",
-    "OPAKOWANIE": "14",
-    "CENA": "2.19",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "12",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "55562",
-    "NAZWA": "AMPHORA 135G PRALINY AMFORA BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.99",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "13",
-    "Producent": "AMFORA"
-  },
-  {
-    "INDEKS": "55788",
-    "NAZWA": "ARTU 80G CZEKOLADA DUBAJSKA ARTU BULGARIA",
-    "OPAKOWANIE": "22",
-    "CENA": "3.99",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "14",
-    "Producent": "ARTU"
-  },
-  {
-    "INDEKS": "56972",
-    "NAZWA": "BATONIK DUBAJSKI BOLCI 30G BULGARIA",
-    "OPAKOWANIE": "96",
-    "CENA": "1.61",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "15",
-    "Producent": "BOLCI"
-  },
-  {
-    "INDEKS": "55789",
-    "NAZWA": "BEYOGLU 36G CZEKOLADA DUBAJSKA BEYOGLU BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "2.06",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "16",
-    "Producent": "BEYOGLU"
-  },
-  {
-    "INDEKS": "56357",
-    "NAZWA": "BOROVETS 52G WAFELEK ZE SKORKA POMARANCZOWA W CZEKOLADZIE BULGARIA DAY & NIGHT",
-    "OPAKOWANIE": "72",
-    "CENA": "0.24",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "17",
-    "Producent": "DAY & NIGHT LTD"
-  },
-  {
-    "INDEKS": "56353",
-    "NAZWA": "BOROVETS 55G WAFELEK ORZECHOWY W CZEKOLADZIE BULGARIA DAY & NIGHT",
-    "OPAKOWANIE": "72",
-    "CENA": "0.24",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "18",
-    "Producent": "DAY & NIGHT LTD"
-  },
-  {
-    "INDEKS": "56355",
-    "NAZWA": "BOROVETS 630G WAFELKI ORZECHOWE BULGARIA DAY & NIGHT",
-    "OPAKOWANIE": "21",
-    "CENA": "2.12",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "19",
-    "Producent": "DAY & NIGHT LTD"
-  },
-  {
-    "INDEKS": "55560",
-    "NAZWA": "CHERNOMORTES 172G PRALINY CHERNOMORETS BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "1.97",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "20",
-    "Producent": "CHERNOMORETS"
-  },
-  {
-    "INDEKS": "55559",
-    "NAZWA": "CHERNOMORTES 75G TORCIK WAFLOWY O SMAKU POMARANCZOWYM CHERNOMORETS BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.42",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "21",
-    "Producent": "CHERNOMORETS"
-  },
-  {
-    "INDEKS": "56121",
-    "NAZWA": "CHOFA 110G WAFEL Z KREMEM KAKAOWY W MLECZNEJ CZEKOLADZIE BULGARIA SWEET PLUS",
-    "OPAKOWANIE": "12",
-    "CENA": "1.55",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "22",
-    "Producent": "SWEET +"
-  },
-  {
-    "INDEKS": "56973",
-    "NAZWA": "CZEKOLADA DUBAJSKA BOLCI 100G BULGARIA",
-    "OPAKOWANIE": "45",
-    "CENA": "4.28",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "23",
-    "Producent": "BOLCI"
-  },
-  {
-    "INDEKS": "55654",
-    "NAZWA": "DAISY 180G TRUFLE DUBAJSKIE DAISY BULGARIA",
-    "OPAKOWANIE": "20",
-    "CENA": "1.59",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "24",
-    "Producent": "DAISY"
-  },
-  {
-    "INDEKS": "55656",
-    "NAZWA": "DAISY 60G BATONIK DUBAJSKI DAISY BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.44",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "25",
-    "Producent": "DAISY"
-  },
-  {
-    "INDEKS": "56467",
-    "NAZWA": "DERONI 1,05KG LUTENICA PASTA WARZYWNA DOMOWA G.MIELONA BULGARIA",
+    "INDEKS": "26868",
+    "NAZWA": "SALAMI RUSTIC EXTRA - SALAM RUSTIC EXTRA 300G CRISTIM RUMUNIA",
     "OPAKOWANIE": "4",
-    "CENA": "5.79",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "26",
-    "Producent": "DERONI"
+    "CENA": "1.56",
+    "KATEGORIA": "",
+    "RANKING": "1"
   },
   {
-    "INDEKS": "56457",
-    "NAZWA": "DERONI 260G LUTENICA PASTA WARZYWNA DOMOWA D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "1.58",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "27",
-    "Producent": "DERONI"
+    "INDEKS": "26870",
+    "NAZWA": "SALAMI SASESC MINI - SALAM SASESC MINI 350G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "2.59",
+    "KATEGORIA": "",
+    "RANKING": "2"
   },
   {
-    "INDEKS": "56456",
-    "NAZWA": "DERONI 260G LUTENICA PASTA WARZYWNA TRADYCYJNA D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "1.5",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "28",
-    "Producent": "DERONI"
+    "INDEKS": "28234",
+    "NAZWA": "SALAMI VARA - SALAM DE VARA 300G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "1.56",
+    "KATEGORIA": "",
+    "RANKING": "3"
   },
   {
-    "INDEKS": "56462",
-    "NAZWA": "DERONI 265G LUTENICA PASTA WARZYWNA DOMOWA G.MIELONA BULGARIA",
+    "INDEKS": "35071",
+    "NAZWA": "MORTADELA CHLOPSKA WIEPRZOWA - PARIZER TARANESC CU PORC CIRCA 4KG CRISTIM RUMUNIA",
     "OPAKOWANIE": "6",
+    "CENA": "3.92",
+    "KATEGORIA": "",
+    "RANKING": "4"
+  },
+  {
+    "INDEKS": "27022",
+    "NAZWA": "SALCESON - TOBA 500G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "3.04",
+    "KATEGORIA": "",
+    "RANKING": "5"
+  },
+  {
+    "INDEKS": "26866",
+    "NAZWA": "SALAMI SASESC - SALAM SASESC 650G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "10",
+    "CENA": "3.89",
+    "KATEGORIA": "",
+    "RANKING": "6"
+  },
+  {
+    "INDEKS": "28257",
+    "NAZWA": "SALAMI LETNIE PODSUSZANE - SALAM DE VARA USCAT 300G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "4",
+    "CENA": "2.28",
+    "KATEGORIA": "",
+    "RANKING": "7"
+  },
+  {
+    "INDEKS": "28289",
+    "NAZWA": "MORTADELA DROBIOWA CHLOPSKA - PARIZER TARANESC CU PUI GASTRO CIRCA 4,3KG CRISTIM RUMUNIA",
+    "OPAKOWANIE": "6",
+    "CENA": "3.73",
+    "KATEGORIA": "",
+    "RANKING": "8"
+  },
+  {
+    "INDEKS": "28235",
+    "NAZWA": "SALAMI CASA - SALAM DE CASA 400G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "6",
+    "CENA": "2.24",
+    "KATEGORIA": "",
+    "RANKING": "9"
+  },
+  {
+    "INDEKS": "27021",
+    "NAZWA": "SALAMI TURIST - SALAM TURIST 500G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "2",
+    "CENA": "2.9",
+    "KATEGORIA": "",
+    "RANKING": "10"
+  },
+  {
+    "INDEKS": "27017",
+    "NAZWA": "MORTADELA DROBIOWA MINI - MINI PARIZER CU PUI 500G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "3",
+    "CENA": "2.27",
+    "KATEGORIA": "M",
+    "RANKING": "11"
+  },
+  {
+    "INDEKS": "27019",
+    "NAZWA": "SALAMI WIEPRZOWE - SALAM DE PORC 500G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "25",
+    "CENA": "2.69",
+    "KATEGORIA": "",
+    "RANKING": "12"
+  },
+  {
+    "INDEKS": "26872",
+    "NAZWA": "SALAMI PODSUSZANE - SALAM USCAT 350G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "10",
+    "CENA": "2.89",
+    "KATEGORIA": "",
+    "RANKING": "13"
+  },
+  {
+    "INDEKS": "37836",
+    "NAZWA": "BOCZEK WEDZONY EXTRA COSTITA AFUMATA EXTRA 300G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "15",
+    "CENA": "2.49",
+    "KATEGORIA": "",
+    "RANKING": "14"
+  },
+  {
+    "INDEKS": "27016",
+    "NAZWA": "KABANOSY - CARNATI CABANOS 300G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "2.04",
+    "KATEGORIA": "",
+    "RANKING": "15"
+  },
+  {
+    "INDEKS": "28231",
+    "NAZWA": "MORTADELA WIEPRZOWA MINI - MINI PARIZER CU PORC 400G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "4",
+    "CENA": "1.86",
+    "KATEGORIA": "",
+    "RANKING": "16"
+  },
+  {
+    "INDEKS": "26869",
+    "NAZWA": "SALAMI Z SZYNKA - SALAM DE SUNCA 450G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "2.49",
+    "KATEGORIA": "",
+    "RANKING": "17"
+  },
+  {
+    "INDEKS": "28232",
+    "NAZWA": "SALAMI VICTORIA MINI - SALAM VICTORIA MINI 400G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "3.5",
+    "CENA": "2.3",
+    "KATEGORIA": "",
+    "RANKING": "18"
+  },
+  {
+    "INDEKS": "33083",
+    "NAZWA": "SALCESON Z INDYKA - TOBA CURCAN 300G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "1.8",
+    "CENA": "2.38",
+    "KATEGORIA": "",
+    "RANKING": "19"
+  },
+  {
+    "INDEKS": "33084",
+    "NAZWA": "SALCESON Z GOLONKA - TOBA CU CIOLAN 300G CRISTIM MATACHE MACELARU RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "2.5",
+    "KATEGORIA": "M",
+    "RANKING": "20"
+  },
+  {
+    "INDEKS": "28271",
+    "NAZWA": "MORTADELA WIEJSKA DROBIOWA - PARIZER TARANESC CU PUI 400G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "4.3",
     "CENA": "1.94",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "29",
-    "Producent": "DERONI"
+    "KATEGORIA": "",
+    "RANKING": "21"
   },
   {
-    "INDEKS": "56475",
-    "NAZWA": "DERONI 270G LUTENICA PASTA WARZYWNA PETEL YELLOW LABEL D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "0.94",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "30",
-    "Producent": "DERONI"
+    "INDEKS": "35073",
+    "NAZWA": "SKWARKI - JUMARI DE PORC 250G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "8",
+    "CENA": "2.57",
+    "KATEGORIA": "",
+    "RANKING": "22"
   },
   {
-    "INDEKS": "56469",
-    "NAZWA": "DERONI 310G LUTENICA PASTA WARZYWNA TODORKA DOMOWA G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "1.35",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "31",
-    "Producent": "DERONI"
+    "INDEKS": "33081",
+    "NAZWA": "SALAMI ITALIAN PODSUSZANE - SALAM ITALIAN USCAT 450G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "4",
+    "CENA": "3.29",
+    "KATEGORIA": "",
+    "RANKING": "23"
   },
   {
-    "INDEKS": "56470",
-    "NAZWA": "DERONI 310G LUTENICA PASTA WARZYWNA TODORKA YELLOW LABEL D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "1.25",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "32",
-    "Producent": "DERONI"
+    "INDEKS": "47916",
+    "NAZWA": "SER KASZKAWAL - CASCAVAL CLASIC 250G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "10",
+    "CENA": "2.31",
+    "KATEGORIA": "",
+    "RANKING": "24"
   },
   {
-    "INDEKS": "56476",
-    "NAZWA": "DERONI 400G KASZA KUSKUS BULGARIA",
-    "OPAKOWANIE": "27",
-    "CENA": "0.85",
-    "Kategoria": "Kuchnia w proszku",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "33",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56468",
-    "NAZWA": "DERONI 510G LUTENICA PASTA WARZYWNA FINES DOMOWA BEZ CUKRU G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "3.8",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "34",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56464",
-    "NAZWA": "DERONI 515G LUTENICA PASTA WARZYWNA VELIKA DOMOWA G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
+    "INDEKS": "30231",
+    "NAZWA": "SALAMI RUSTIC GASTRO OK 2,4KG CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
     "CENA": "4.89",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "35",
-    "Producent": "DERONI"
+    "KATEGORIA": "",
+    "RANKING": "25"
   },
   {
-    "INDEKS": "56463",
-    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA DOMOWA G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "3.32",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "36",
-    "Producent": "DERONI"
+    "INDEKS": "28272",
+    "NAZWA": "MORTADELA WIEJSKA WIEPRZOWA - PARIZER TARANESC CU PORC 400G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "3",
+    "CENA": "2.17",
+    "KATEGORIA": "",
+    "RANKING": "26"
   },
   {
-    "INDEKS": "56455",
-    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA GORNOTRAKIYSKA G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.65",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "37",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56465",
-    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA PIKANTNA D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.45",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "38",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56453",
-    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA STAROSIELSKA G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "3.65",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "39",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56458",
-    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA TRADYCYJNA D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.29",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "40",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56466",
-    "NAZWA": "DERONI 520G LUTENICA PASTA WARZYWNA TSARITSA DOMOWA G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "4.46",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "41",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56460",
-    "NAZWA": "DERONI 525G LUTENICA PASTA WARZYWNA DOMOWA D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.68",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "42",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56473",
-    "NAZWA": "DERONI 570G LUTENICA PASTA WARZYWNA PETEL G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.22",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "43",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "27266",
-    "NAZWA": "DERONI 570G LUTENICA PASTA WARZYWNA TODORKA DOMOWA G.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.51",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "44",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56474",
-    "NAZWA": "DERONI 575G LUTENICA PASTA WARZYWNA PETEL YELLOW LABEL D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "1.67",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "45",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "56472",
-    "NAZWA": "DERONI 575G LUTENICA PASTA WARZYWNA TODORKA YELLOW LABEL D.MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.22",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "46",
-    "Producent": "DERONI"
-  },
-  {
-    "INDEKS": "45881",
-    "NAZWA": "DIAMANT 50G CIASTKO CZEKOLADOWE BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.31",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "47",
-    "Producent": "DIAMANT"
-  },
-  {
-    "INDEKS": "45808",
-    "NAZWA": "DUO CIASTKA KAKAOWE Z KREMEM 165G SOFIO BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "1.22",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "48",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "45809",
-    "NAZWA": "DUO CIASTKA KAKAOWE Z KREMEM W POLEWIE 150G SOFIO BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "1.22",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "49",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "56964",
-    "NAZWA": "EURENI 80G CZEKOLADA ANGEL HAIR MIX BULGARIA/EURENI MIXED CHOCOLATES ANGEL HAIR 80G",
-    "OPAKOWANIE": "10",
-    "CENA": "4.09",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "50",
-    "Producent": "EURENI"
-  },
-  {
-    "INDEKS": "56120",
-    "NAZWA": "EVERYDAY 240G HERBATNIKI Z PIANKA O SMAKU WANILIOWYM W POLEWIE KAKAOWEJ BULGARIA KARMELA",
-    "OPAKOWANIE": "12",
-    "CENA": "1.8",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "51",
-    "Producent": "KARMELLA"
-  },
-  {
-    "INDEKS": "45810",
-    "NAZWA": "GOFRA CIASTKA W KSZTALCIE GOFROW 155G SOFIO BULGARIA",
-    "OPAKOWANIE": "12",
-    "CENA": "1.37",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "52",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "55554",
-    "NAZWA": "KUBETI KUBZ 60G CHRUPKI O SMAKU KETCHUPU KUBETI BULGARIA",
-    "OPAKOWANIE": "15",
-    "CENA": "0.57",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "53",
-    "Producent": "KUBETI"
-  },
-  {
-    "INDEKS": "55555",
-    "NAZWA": "KUBETI KUBZ 60G CHRUPKI O SMAKU PIZZY KUBETI BULGARIA",
-    "OPAKOWANIE": "15",
-    "CENA": "0.57",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "54",
-    "Producent": "KUBETI"
-  },
-  {
-    "INDEKS": "55553",
-    "NAZWA": "KUBETI KUBZ 60G CHRUPKI O SMAKU TZATZIKI BULGARIA",
-    "OPAKOWANIE": "15",
-    "CENA": "0.57",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "55",
-    "Producent": "KUBETI"
-  },
-  {
-    "INDEKS": "56122",
-    "NAZWA": "MEDENKI 50G CIASTKO O SMAKU MIODOWO-CYNAMONOWYM W POLEWIE BULGARIA SWEET PLUS",
-    "OPAKOWANIE": "16",
-    "CENA": "0.3",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "56",
-    "Producent": "SWEET +"
-  },
-  {
-    "INDEKS": "55556",
-    "NAZWA": "MEDOVINKA 40G CIASTKA MIODOWE W CZEKOLADZIE MEDOVINA BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.29",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "57",
-    "Producent": "MEDOVINA"
-  },
-  {
-    "INDEKS": "55557",
-    "NAZWA": "MEDOVINKA 50G CIASTKA MIODOWE W CZEKOLADZIE MEDOVINA BULGARIA",
-    "OPAKOWANIE": "20",
-    "CENA": "0.28",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "58",
-    "Producent": "MEDOVINA"
-  },
-  {
-    "INDEKS": "55558",
-    "NAZWA": "MEDOVINKA 65G CIASTKA CZEKOLADOWE Z NADZ.JABLKOWYM MEDOVINA BULGARIA",
-    "OPAKOWANIE": "16",
-    "CENA": "0.34",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "59",
-    "Producent": "MEDOVINA"
-  },
-  {
-    "INDEKS": "56311",
-    "NAZWA": "MILKA CZEKOLADA 100G Z CALYMI ORZECHAMI BULGARIA",
-    "OPAKOWANIE": "17",
-    "CENA": "1.16",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "60",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "56310",
-    "NAZWA": "MILKA CZEKOLADA 90G MOCNO CZEKOLADOWA BULGARIA",
-    "OPAKOWANIE": "25",
-    "CENA": "1.16",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "61",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "56312",
-    "NAZWA": "MILKA CZEKOLADA 90G NOISETTE BULGARIA",
-    "OPAKOWANIE": "25",
-    "CENA": "1.16",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "62",
-    "Producent": "MONDELEZ BG"
-  },
-  {
-    "INDEKS": "55564",
-    "NAZWA": "MLIN 60G HRUS HRUS PALUSZKI SLONE MLIN BULGARIA",
-    "OPAKOWANIE": "60",
-    "CENA": "0.18",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "63",
-    "Producent": "MLIN"
-  },
-  {
-    "INDEKS": "55671",
-    "NAZWA": "NAPOLEON DESER Z CIASTA FRANC. Z NADZIENIEM KAKAOWYM 90G SOFIO BULGARIA",
-    "OPAKOWANIE": "10",
-    "CENA": "0.52",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "64",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "55670",
-    "NAZWA": "NAPOLEON DESER Z CIASTA FRANC. Z NADZIENIEM O SMAKU MLECZNYM 90G SOFIO BULGARIA",
-    "OPAKOWANIE": "10",
-    "CENA": "0.52",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "65",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "55669",
-    "NAZWA": "NAPOLEON DESER Z CIASTA FRANC. Z NADZIENIEM O SMAKU WANILIOWYM 90G SOFIO BULGARIA",
-    "OPAKOWANIE": "10",
-    "CENA": "0.52",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "66",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "55658",
-    "NAZWA": "OLIMPIA CIASTKA Z DODATKIEM MASLA 120G SOFIO BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "1.15",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "67",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "56056",
-    "NAZWA": "OLINESA 230G MAJONEZ WEDZONY BULGARIA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.25",
-    "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "68",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56054",
-    "NAZWA": "OLINESA 470G MAJONEZ STOLOWY BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "1.89",
-    "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "69",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56061",
-    "NAZWA": "OLINESA 480G AJVAR W STYLU DOMOWYM GRUBO MIELONY BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "3.49",
-    "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "70",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56062",
-    "NAZWA": "OLINESA 510G KYOPOOLU PASTA Z BAKLAZANA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.6",
-    "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "71",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56063",
-    "NAZWA": "OLINESA 510G PASTA Z BAKLAZANA W STYLU DOMOWYM GRUBO MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "1.98",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "72",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56060",
-    "NAZWA": "OLINESA 515G LUTENICA PASTA WARZYWNA PREMIUM GRUBO MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "3.6",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "73",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56058",
-    "NAZWA": "OLINESA 515G LUTENICA PASTA WARZYWNA W STYLU DOMOWYM LAGODNA GRUBO MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.83",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "74",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56057",
-    "NAZWA": "OLINESA 520G LUTENICA PASTA WARZYWNA TRADYCYJNA LAGODNA GLADKA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.09",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "75",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56059",
-    "NAZWA": "OLINESA 530G LUTENICA PASTA WARZYWNA RODZINNA RECEPTURA LAGODNA GRUBO MIELONA BULGARIA",
-    "OPAKOWANIE": "6",
-    "CENA": "2.99",
-    "Kategoria": "Kuchnia dania gotowe",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "76",
-    "Producent": "OLINESA"
-  },
-  {
-    "INDEKS": "56065",
-    "NAZWA": "OLINESA 670G MINI OGORKI KONSERWOWE (3-6) BULGARIA",
+    "INDEKS": "35074",
+    "NAZWA": "SALCESON WIEPRZOWY - TOBA PORC GASTRO CIRCA 3,4KG CRISTIM RUMUNIA",
     "OPAKOWANIE": "4",
-    "CENA": "2.01",
-    "Kategoria": "Przetwory owocowo warzywne",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "77",
-    "Producent": "OLINESA"
+    "CENA": "5.53",
+    "KATEGORIA": "",
+    "RANKING": "27"
   },
   {
-    "INDEKS": "56064",
-    "NAZWA": "OLINESA 670G OGORKI KONSERWOWE (6-9) BULGARIA",
+    "INDEKS": "28233",
+    "NAZWA": "CRISTIM 100G SALAMI SASESC RUMUNIA",
     "OPAKOWANIE": "4",
-    "CENA": "1.36",
-    "Kategoria": "Przetwory owocowo warzywne",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "78",
-    "Producent": "OLINESA"
+    "CENA": "0.99",
+    "KATEGORIA": "",
+    "RANKING": "28"
   },
   {
-    "INDEKS": "56055",
-    "NAZWA": "OLINESA MAJONEZ Z KORNISZONEM 230G BULGARIA",
-    "OPAKOWANIE": "8",
-    "CENA": "1.15",
-    "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "79",
-    "Producent": "OLINESA"
+    "INDEKS": "30230",
+    "NAZWA": "SALAMI SASESC GASTRO OK 2KG CRISTIM RUMUNIA",
+    "OPAKOWANIE": "1.8",
+    "CENA": "7.06",
+    "KATEGORIA": "",
+    "RANKING": "29"
   },
   {
-    "INDEKS": "56969",
-    "NAZWA": "ONLY 85G CZEKOLADA ANGEL HAIR BULGARIA",
-    "OPAKOWANIE": "18",
-    "CENA": "3.97",
-    "Kategoria": "Dodatki do potraw",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "80",
-    "Producent": "ONLY"
+    "INDEKS": "30232",
+    "NAZWA": "SALAMI VICTORIA - SALAM VICTORIA GASTRO CIRCA 2,5KG CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "4.99",
+    "KATEGORIA": "",
+    "RANKING": "30"
   },
   {
-    "INDEKS": "56974",
-    "NAZWA": "PRALINY DUBAJSKIE BOLCI 96G BULGARIA",
-    "OPAKOWANIE": "12",
-    "CENA": "6",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "81",
-    "Producent": "BOLCI"
+    "INDEKS": "35077",
+    "NAZWA": "SALAMI WIEPRZOWE - PORC GASTRO CIRCA 2KG CRISTIM RUMUNIA",
+    "OPAKOWANIE": "4",
+    "CENA": "5.16",
+    "KATEGORIA": "",
+    "RANKING": "31"
   },
   {
-    "INDEKS": "45897",
-    "NAZWA": "SALZA PALUCHY KLASYCZNE Z SOLA 220G SOFIO BULGARIA",
-    "OPAKOWANIE": "12",
-    "CENA": "1.32",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "82",
-    "Producent": "SOFIO"
+    "INDEKS": "47935",
+    "NAZWA": "MOZZARELLA 300G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "25",
+    "CENA": "2.24",
+    "KATEGORIA": "M",
+    "RANKING": "32"
   },
   {
-    "INDEKS": "45899",
-    "NAZWA": "SALZA PALUCHY Z MAKA Z SAMOPSZY I SOLA HIMALAJSKA 220G SOFIO BULGARIA",
-    "OPAKOWANIE": "12",
-    "CENA": "1.32",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "83",
-    "Producent": "SOFIO"
+    "INDEKS": "28262",
+    "NAZWA": "BACON SLICED - BOCZEK PLASTRY - 100G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "10",
+    "CENA": "1.19",
+    "KATEGORIA": "",
+    "RANKING": "33"
   },
   {
-    "INDEKS": "45898",
-    "NAZWA": "SALZA PALUCHY Z MAKIEM 220G SOFIO BULGARIA",
-    "OPAKOWANIE": "12",
-    "CENA": "1.32",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "84",
-    "Producent": "SOFIO"
+    "INDEKS": "30234",
+    "NAZWA": "KABANOSY CARNATI CABANOS GASTRO OK. 1KG CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "5.59",
+    "KATEGORIA": "",
+    "RANKING": "34"
   },
   {
-    "INDEKS": "55668",
-    "NAZWA": "SALZA PALUCHY Z SEZAMEM 190G SOFIO BULGARIA",
-    "OPAKOWANIE": "12",
-    "CENA": "1.32",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "85",
-    "Producent": "SOFIO"
+    "INDEKS": "57327",
+    "NAZWA": "CRISTIM MATACHE MACELARU OK,1KG KIELBASKI OLTENESTI-CARNATI OLTENESTI RUMUNIA",
+    "OPAKOWANIE": "2.2",
+    "CENA": "6.59",
+    "KATEGORIA": "",
+    "RANKING": "35"
   },
   {
-    "INDEKS": "55565",
-    "NAZWA": "SAVIMEX ZLATNA DOBRUDJA 60G PALUSZKI SLONE SAVIMEX BULGARIA",
-    "OPAKOWANIE": "60",
-    "CENA": "0.18",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "86",
-    "Producent": "SAVIMEX"
+    "INDEKS": "41198",
+    "NAZWA": "BOCZEK WEDZONY - KAIZER AFUMAT 300G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "2.35",
+    "KATEGORIA": "",
+    "RANKING": "36"
   },
   {
-    "INDEKS": "55561",
-    "NAZWA": "SEZONI 160G PRALINY TRUSKAWKOWE SEZONI BULGARIA",
-    "OPAKOWANIE": "14",
-    "CENA": "1.99",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "87",
-    "Producent": "SEZONI"
+    "INDEKS": "41194",
+    "NAZWA": "BOCZEK WEDZONY - KAIZER AFUMAT OK. 1,1KG CRISTIM RUMUNIA",
+    "OPAKOWANIE": "4",
+    "CENA": "6.73",
+    "KATEGORIA": "",
+    "RANKING": "37"
   },
   {
-    "INDEKS": "45939",
-    "NAZWA": "STRACCIATELLA WAFELEK 32G SOFIO BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.29",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "88",
-    "Producent": "SOFIO"
+    "INDEKS": "56675",
+    "NAZWA": "CRISTIM MATACHE MACELARU OK.3,5KG SZYNKA Z PIERSI KURCZAKA-SUNCA DIN PIEPT DE PUI CRISTIM",
+    "OPAKOWANIE": "3.5",
+    "CENA": "7.19",
+    "KATEGORIA": "",
+    "RANKING": "38"
   },
   {
-    "INDEKS": "55652",
-    "NAZWA": "SWEET PLUS 140G CIASTKA DUBAI Z KREMEM PISTACJOWYM I KREMEM KADAIF SWEET + BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "1.44",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "89",
-    "Producent": "SWEET +"
+    "INDEKS": "41195",
+    "NAZWA": "MORTADELA DROBIOWA - MINI PARIZER CU PUI BETEX 500G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "2.63",
+    "KATEGORIA": "",
+    "RANKING": "39"
   },
   {
-    "INDEKS": "55566",
-    "NAZWA": "SWEET PLUS 150G CIASTKA KAWOWE W CZEKOLADZIE SWEET PLUS BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "1.11",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "90",
-    "Producent": "SWEET +"
+    "INDEKS": "52399",
+    "NAZWA": "CRISTIM 400G SZYNKA -SUNCA PRAGA RUMUNIA",
+    "OPAKOWANIE": "4",
+    "CENA": "2.78",
+    "KATEGORIA": "",
+    "RANKING": "40"
   },
   {
-    "INDEKS": "55648",
-    "NAZWA": "SWEET PLUS 35G WAFELEK Z KREMEM PISTACJOWYM I Z KREMEM KADAIF OBLEWANY CZEKOLADA SWEET +",
-    "OPAKOWANIE": "12",
-    "CENA": "0.39",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "91",
-    "Producent": "SWEET +"
+    "INDEKS": "37934",
+    "NAZWA": "SZYNKA WIEJSKA WEDZONA - SUNCULITA TARANEASCA AFUMATA 300G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "3",
+    "CENA": "2.17",
+    "KATEGORIA": "",
+    "RANKING": "41"
   },
   {
-    "INDEKS": "55649",
-    "NAZWA": "SWEET PLUS 50G BISZKOPT W KREMEM PISTACJOWYM I KREMEM KADAIF SWEET + BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.37",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "92",
-    "Producent": "SWEET +"
+    "INDEKS": "28261",
+    "NAZWA": "AZUGA FILLET SLICED - PLASTRY FILETA DROBIOWEGO Z AZUGI - MUSCHI AZUGA SKIN 100G CRISTIM RUMUNIA",
+    "OPAKOWANIE": "10",
+    "CENA": "1.09",
+    "KATEGORIA": "M",
+    "RANKING": "42"
   },
   {
-    "INDEKS": "55567",
-    "NAZWA": "SWEET PLUS MIRACLE 75G WAFELEK ORZECHOWY W CZEKOLADZIE SWEET PLUS BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.42",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "93",
-    "Producent": "SWEET +"
+    "INDEKS": "57328",
+    "NAZWA": "CRISTIM 260G KIELBASKI GRATARESCU-CARNATI GRATARESCU RUMUNIA",
+    "OPAKOWANIE": "15",
+    "CENA": "2.1",
+    "KATEGORIA": "M",
+    "RANKING": "43"
   },
   {
-    "INDEKS": "45954",
-    "NAZWA": "VARNA WAFELEK Z KREMEM KAKAOWYM 32G SOFIO BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.29",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "94",
-    "Producent": "SOFIO"
+    "INDEKS": "52392",
+    "NAZWA": "CRISTIM 460G KIELBASKI WIEPRZOWE-CARNATI DE PORC GROSI RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "3.15",
+    "KATEGORIA": "M",
+    "RANKING": "44"
   },
   {
-    "INDEKS": "45952",
-    "NAZWA": "VARNA WAFELEK Z KREMEM MLECZNYM 32G SOFIO BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "0.29",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "95",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "56108",
-    "NAZWA": "WAFER ROLLS 130G RURKI WAFLOWE Z KREMEM KAKAOWYM BULGARIA SWEET PLUS",
-    "OPAKOWANIE": "24",
-    "CENA": "0.96",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "96",
-    "Producent": "SWEET +"
-  },
-  {
-    "INDEKS": "56119",
-    "NAZWA": "WAFER ROLLS 130G RURKI WAFLOWE Z KREMEM ORZECHOWYM BULGARIA SWEET PLUS",
-    "OPAKOWANIE": "24",
-    "CENA": "0.96",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "97",
-    "Producent": "SWEET +"
-  },
-  {
-    "INDEKS": "55563",
-    "NAZWA": "ZAKUSKA 315G HERBATNIKI ZAKUSKA BULGARIA",
-    "OPAKOWANIE": "24",
-    "CENA": "1.14",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "98",
-    "Producent": "ZAKUSKA"
-  },
-  {
-    "INDEKS": "56308",
-    "NAZWA": "ZAYO BAYO 40G CHRUPKI MASLANE NATURALNE BULGARIA SANI KONS TODOROVI",
-    "OPAKOWANIE": "20",
-    "CENA": "0.24",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "99",
-    "Producent": "SANI KONS TODOROVI GENERATL PARTNERSHIP"
-  },
-  {
-    "INDEKS": "56306",
-    "NAZWA": "ZAYO BAYO 45G CHRUPKI CEBULKOWE BULGARIA SANI KONS TODOROVI",
-    "OPAKOWANIE": "20",
-    "CENA": "0.3",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "100",
-    "Producent": "SANI KONS TODOROVI GENERATL PARTNERSHIP"
-  },
-  {
-    "INDEKS": "56307",
-    "NAZWA": "ZAYO BAYO 60G CHRUPKI SMIETANA&KOPEREK BULGARIA SANI KONS TODOROVI",
-    "OPAKOWANIE": "20",
-    "CENA": "0.33",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "101",
-    "Producent": "SANI KONS TODOROVI GENERATL PARTNERSHIP"
-  },
-  {
-    "INDEKS": "45887",
-    "NAZWA": "ZEFFO CIASTKA KAKAOWE Z PIANKA POSYPANE WIORKAMI KOKOSOWYMI 115G SOFIO BULGARIA",
-    "OPAKOWANIE": "12",
-    "CENA": "1.46",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "102",
-    "Producent": "SOFIO"
-  },
-  {
-    "INDEKS": "45886",
-    "NAZWA": "ZEFFO CIASTKA KAKAOWE Z PIANKA W POLEWIE KAKOWEJ 150G SOFIO BULGARIA",
-    "OPAKOWANIE": "12",
-    "CENA": "1.46",
-    "Kategoria": "Słodycze",
-    "Stany magazynowe": "1500 szt.",
-    "Ranking": "103",
-    "Producent": "SOFIO"
+    "INDEKS": "27020",
+    "NAZWA": "SALAMI SASESC 250 CRISTIM RUMUNIA",
+    "OPAKOWANIE": "5",
+    "CENA": "1.95",
+    "KATEGORIA": "M",
+    "RANKING": "45"
   }
 ]
